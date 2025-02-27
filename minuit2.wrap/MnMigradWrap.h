@@ -2,8 +2,7 @@
 #define _MIGRADWRAP_H_
 
 #include "minuit2/MnMigrad.h"
-#include "minuit2/FcnGradientBase.h"
-#include "FCNGradientBaseWrap.h"
+#include "FCNWrap.h"
 #include <iostream>
 
 namespace ROOT
@@ -13,7 +12,7 @@ namespace ROOT
         class MnMigradWrap : public MnMigrad
         {
             public:
-                MnMigradWrap(const FCNGradientBaseWrap& fcn, const MnUserParameterState& par, const MnStrategy& str = MnStrategy(1)) : MnMigrad(fcn, par, str)
+                MnMigradWrap(const FCNWrap& fcn, const MnUserParameterState& par, const MnStrategy& str = MnStrategy(1)) : MnMigrad(fcn, par, str)
                 {
                     fcn.Up();
                     std::cout << "Hello MnMigradWrap" << std::endl;

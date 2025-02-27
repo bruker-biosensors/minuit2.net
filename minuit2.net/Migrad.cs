@@ -5,11 +5,11 @@ namespace minuit2.net;
 
 public class Migrad : MnMigradWrap
 {
-    public Migrad(FCNGradientBaseWrap fcn, MnUserParameterState par, MnStrategy str) : base(fcn, par, str)
+    public Migrad(FCNWrap fcn, MnUserParameterState par, MnStrategy str) : base(fcn, par, str)
     {
     }
 
-    public Migrad(FCNGradientBaseWrap fcn, MnUserParameterState par) : base(fcn, par)
+    public Migrad(FCNWrap fcn, MnUserParameterState par) : base(fcn, par)
     {
     }
 }

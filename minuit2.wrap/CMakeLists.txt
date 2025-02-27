@@ -15,12 +15,12 @@ SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES CPLUSPLUS ON)
 #SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES nodefaultctor ON)
 
 set(SOURCE_FILES 
-FCNGradientBaseWrap.cpp
+FCNWrap.cpp
  MnMigradWrap.cpp
   Minuit2.i)
 
 set(HEADER_FILES 
-FCNGradientBaseWrap.h
+FCNWrap.h
  MnMigradWrap.h)
 
 SWIG_ADD_LIBRARY(minuit2.wrap

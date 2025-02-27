@@ -1,0 +1,31 @@
+build
+# Build results
+[Dd]ebug/
+[Rr]elease/
+[Rr]eleases/
+[Oo]utput/
+[Bb]in/
+[Oo]bj/
+
+# nuget packages
+[Pp]ackages
+
+# merge left overs
+*.orig
+*.user
+
+# User specific settings
+*.csproj.user
+*.vcxproj.user
+#.editorconfig
+.vs/
+.idea/
+
+# Merge backups
+*.orig
+
+# Log files
+*.log
+
+#vscode
+.vscode
