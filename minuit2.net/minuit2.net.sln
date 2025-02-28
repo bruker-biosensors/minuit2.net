@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minuit2.net", "minuit2.net.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApplication", "..\TestApplication\TestApplication\TestApplication.csproj", "{14807CC5-7D0B-4DF3-8FA3-850C07D6C6D0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minuit2.UnitTests", "..\minuit2.UnitTests\minuit2.UnitTests.csproj", "{3F218799-CAE2-493B-9CF0-0322AA9B07BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{14807CC5-7D0B-4DF3-8FA3-850C07D6C6D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14807CC5-7D0B-4DF3-8FA3-850C07D6C6D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14807CC5-7D0B-4DF3-8FA3-850C07D6C6D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F218799-CAE2-493B-9CF0-0322AA9B07BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F218799-CAE2-493B-9CF0-0322AA9B07BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F218799-CAE2-493B-9CF0-0322AA9B07BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F218799-CAE2-493B-9CF0-0322AA9B07BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
