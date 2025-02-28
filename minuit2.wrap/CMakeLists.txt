@@ -10,9 +10,9 @@ include(UseSWIG)
 # INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 # SET(CMAKE_SWIG_FLAGS "")
-
 SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES CPLUSPLUS ON)
 #SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES nodefaultctor ON)
+
 
 
 set(SOURCE_FILES 
@@ -34,6 +34,8 @@ target_include_directories(minuit2.wrap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
  set_target_properties(minuit2.wrap PROPERTIES
   SWIG_USE_TARGET_INCLUDE_DIRECTORIES ON
   POSITION_INDEPENDENT_CODE ON)
+
+target_include_directories(minuit2.wrap PRIVATE ${root_minuit2_SOURCE_DIR}/Core/Foundation/inc)
 
 #add_library(minuit2.wrap SHARED ${SOURCE_FILES}  ${HEADER_FILES})
 

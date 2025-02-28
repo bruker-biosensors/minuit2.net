@@ -15,4 +15,12 @@ public interface FCNBase {
   double ErrorDef();
   double Up();
   void SetErrorDef(double arg0);
+  bool HasGradient();
+  VectorDouble Gradient(VectorDouble arg0);
+  VectorDouble GradientWithPrevResult(VectorDouble parameters, SWIGTYPE_p_double arg1, SWIGTYPE_p_double arg2, SWIGTYPE_p_double arg3);
+  GradientParameterSpace gradParameterSpace();
+  VectorDouble G2(VectorDouble arg0);
+  VectorDouble Hessian(VectorDouble arg0);
+  bool HasHessian();
+  bool HasG2();
 }

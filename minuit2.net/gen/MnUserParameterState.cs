@@ -59,7 +59,7 @@ public class MnUserParameterState : global::System.IDisposable {
   public MnUserParameterState() : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_0(), true) {
   }
 
-  public MnUserParameterState(VectorDouble arg0, VectorDouble arg1) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_1(VectorDouble.getCPtr(arg0), VectorDouble.getCPtr(arg1)), true) {
+  public MnUserParameterState(SWIGTYPE_p_std__spanT_double_const_t arg0, SWIGTYPE_p_std__spanT_double_const_t arg1) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_1(SWIGTYPE_p_std__spanT_double_const_t.getCPtr(arg0), SWIGTYPE_p_std__spanT_double_const_t.getCPtr(arg1)), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
@@ -67,11 +67,11 @@ public class MnUserParameterState : global::System.IDisposable {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public MnUserParameterState(VectorDouble arg0, VectorDouble arg1, uint arg2) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_3(VectorDouble.getCPtr(arg0), VectorDouble.getCPtr(arg1), arg2), true) {
+  public MnUserParameterState(SWIGTYPE_p_std__spanT_double_const_t arg0, SWIGTYPE_p_std__spanT_double_const_t arg1, uint arg2) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_3(SWIGTYPE_p_std__spanT_double_const_t.getCPtr(arg0), SWIGTYPE_p_std__spanT_double_const_t.getCPtr(arg1), arg2), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public MnUserParameterState(VectorDouble arg0, SWIGTYPE_p_MnUserCovariance arg1) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_4(VectorDouble.getCPtr(arg0), SWIGTYPE_p_MnUserCovariance.getCPtr(arg1)), true) {
+  public MnUserParameterState(SWIGTYPE_p_std__spanT_double_const_t arg0, SWIGTYPE_p_MnUserCovariance arg1) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_4(SWIGTYPE_p_std__spanT_double_const_t.getCPtr(arg0), SWIGTYPE_p_MnUserCovariance.getCPtr(arg1)), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
@@ -185,6 +185,11 @@ public class MnUserParameterState : global::System.IDisposable {
 
   public void Add(string arg0, double arg1) {
     Minuit2PINVOKE.MnUserParameterState_Add__SWIG_2(swigCPtr, arg0, arg1);
+    if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public void AddCovariance(SWIGTYPE_p_MnUserCovariance arg0) {
+    Minuit2PINVOKE.MnUserParameterState_AddCovariance(swigCPtr, SWIGTYPE_p_MnUserCovariance.getCPtr(arg0));
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 

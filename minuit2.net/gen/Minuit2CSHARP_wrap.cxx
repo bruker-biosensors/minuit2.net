@@ -636,6 +636,7 @@ SWIGINTERN bool std_vector_Sl_double_Sg__Remove(std::vector< double > *self,doub
       }
 
     //#include "Minuit2/GenericFunction.h"
+    #include "ROOT/RSpan.hxx"
     #include "Minuit2/FCNBase.h"
     #include "Minuit2/MnMatrixfwd.h"
     //#include "Minuit2/FCNGradientBase.h"
@@ -1134,21 +1135,25 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserParameterState__SWIG_0() {
 
 SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserParameterState__SWIG_1(void * jarg1, void * jarg2) {
   void * jresult ;
-  std::vector< double > *arg1 = 0 ;
-  std::vector< double > *arg2 = 0 ;
+  std::span< double const > arg1 ;
+  std::span< double const > arg2 ;
+  std::span< double const > *argp1 ;
+  std::span< double const > *argp2 ;
   ROOT::Minuit2::MnUserParameterState *result = 0 ;
   
-  arg1 = (std::vector< double > *)jarg1;
-  if (!arg1) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+  argp1 = (std::span< double const > *)jarg1; 
+  if (!argp1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null std::span< double const >", 0);
     return 0;
-  } 
-  arg2 = (std::vector< double > *)jarg2;
-  if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+  }
+  arg1 = *argp1; 
+  argp2 = (std::span< double const > *)jarg2; 
+  if (!argp2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null std::span< double const >", 0);
     return 0;
-  } 
-  result = (ROOT::Minuit2::MnUserParameterState *)new ROOT::Minuit2::MnUserParameterState((std::vector< double > const &)*arg1,(std::vector< double > const &)*arg2);
+  }
+  arg2 = *argp2; 
+  result = (ROOT::Minuit2::MnUserParameterState *)new ROOT::Minuit2::MnUserParameterState(SWIG_STD_MOVE(arg1),SWIG_STD_MOVE(arg2));
   jresult = (void *)result; 
   return jresult;
 }
@@ -1172,23 +1177,27 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserParameterState__SWIG_2(void * jar
 
 SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserParameterState__SWIG_3(void * jarg1, void * jarg2, unsigned int jarg3) {
   void * jresult ;
-  std::vector< double > *arg1 = 0 ;
-  std::vector< double > *arg2 = 0 ;
+  std::span< double const > arg1 ;
+  std::span< double const > arg2 ;
   unsigned int arg3 ;
+  std::span< double const > *argp1 ;
+  std::span< double const > *argp2 ;
   ROOT::Minuit2::MnUserParameterState *result = 0 ;
   
-  arg1 = (std::vector< double > *)jarg1;
-  if (!arg1) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+  argp1 = (std::span< double const > *)jarg1; 
+  if (!argp1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null std::span< double const >", 0);
     return 0;
-  } 
-  arg2 = (std::vector< double > *)jarg2;
-  if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+  }
+  arg1 = *argp1; 
+  argp2 = (std::span< double const > *)jarg2; 
+  if (!argp2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null std::span< double const >", 0);
     return 0;
-  } 
+  }
+  arg2 = *argp2; 
   arg3 = (unsigned int)jarg3; 
-  result = (ROOT::Minuit2::MnUserParameterState *)new ROOT::Minuit2::MnUserParameterState((std::vector< double > const &)*arg1,(std::vector< double > const &)*arg2,arg3);
+  result = (ROOT::Minuit2::MnUserParameterState *)new ROOT::Minuit2::MnUserParameterState(SWIG_STD_MOVE(arg1),SWIG_STD_MOVE(arg2),arg3);
   jresult = (void *)result; 
   return jresult;
 }
@@ -1196,21 +1205,23 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserParameterState__SWIG_3(void * jar
 
 SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserParameterState__SWIG_4(void * jarg1, void * jarg2) {
   void * jresult ;
-  std::vector< double > *arg1 = 0 ;
+  std::span< double const > arg1 ;
   MnUserCovariance *arg2 = 0 ;
+  std::span< double const > *argp1 ;
   ROOT::Minuit2::MnUserParameterState *result = 0 ;
   
-  arg1 = (std::vector< double > *)jarg1;
-  if (!arg1) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+  argp1 = (std::span< double const > *)jarg1; 
+  if (!argp1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null std::span< double const >", 0);
     return 0;
-  } 
+  }
+  arg1 = *argp1; 
   arg2 = (MnUserCovariance *)jarg2;
   if (!arg2) {
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "MnUserCovariance const & is null", 0);
     return 0;
   } 
-  result = (ROOT::Minuit2::MnUserParameterState *)new ROOT::Minuit2::MnUserParameterState((std::vector< double > const &)*arg1,(MnUserCovariance const &)*arg2);
+  result = (ROOT::Minuit2::MnUserParameterState *)new ROOT::Minuit2::MnUserParameterState(SWIG_STD_MOVE(arg1),(MnUserCovariance const &)*arg2);
   jresult = (void *)result; 
   return jresult;
 }
@@ -1536,6 +1547,20 @@ SWIGEXPORT void SWIGSTDCALL CSharp_MnUserParameterState_Add__SWIG_2(void * jarg1
   arg2 = &arg2_str; 
   arg3 = (double)jarg3; 
   (arg1)->Add((std::string const &)*arg2,arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_MnUserParameterState_AddCovariance(void * jarg1, void * jarg2) {
+  ROOT::Minuit2::MnUserParameterState *arg1 = (ROOT::Minuit2::MnUserParameterState *) 0 ;
+  MnUserCovariance *arg2 = 0 ;
+  
+  arg1 = (ROOT::Minuit2::MnUserParameterState *)jarg1; 
+  arg2 = (MnUserCovariance *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "MnUserCovariance const & is null", 0);
+    return ;
+  } 
+  (arg1)->AddCovariance((MnUserCovariance const &)*arg2);
 }
 
 
@@ -2777,21 +2802,25 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserParameters__SWIG_0() {
 
 SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserParameters__SWIG_1(void * jarg1, void * jarg2) {
   void * jresult ;
-  std::vector< double > *arg1 = 0 ;
-  std::vector< double > *arg2 = 0 ;
+  std::span< double const > arg1 ;
+  std::span< double const > arg2 ;
+  std::span< double const > *argp1 ;
+  std::span< double const > *argp2 ;
   ROOT::Minuit2::MnUserParameters *result = 0 ;
   
-  arg1 = (std::vector< double > *)jarg1;
-  if (!arg1) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+  argp1 = (std::span< double const > *)jarg1; 
+  if (!argp1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null std::span< double const >", 0);
     return 0;
-  } 
-  arg2 = (std::vector< double > *)jarg2;
-  if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+  }
+  arg1 = *argp1; 
+  argp2 = (std::span< double const > *)jarg2; 
+  if (!argp2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null std::span< double const >", 0);
     return 0;
-  } 
-  result = (ROOT::Minuit2::MnUserParameters *)new ROOT::Minuit2::MnUserParameters((std::vector< double > const &)*arg1,(std::vector< double > const &)*arg2);
+  }
+  arg2 = *argp2; 
+  result = (ROOT::Minuit2::MnUserParameters *)new ROOT::Minuit2::MnUserParameters(SWIG_STD_MOVE(arg1),SWIG_STD_MOVE(arg2));
   jresult = (void *)result; 
   return jresult;
 }
@@ -3354,17 +3383,19 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserCovariance__SWIG_0() {
 
 SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserCovariance__SWIG_1(void * jarg1, unsigned int jarg2) {
   void * jresult ;
-  std::vector< double > *arg1 = 0 ;
+  std::span< double const > arg1 ;
   unsigned int arg2 ;
+  std::span< double const > *argp1 ;
   ROOT::Minuit2::MnUserCovariance *result = 0 ;
   
-  arg1 = (std::vector< double > *)jarg1;
-  if (!arg1) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+  argp1 = (std::span< double const > *)jarg1; 
+  if (!argp1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null std::span< double const >", 0);
     return 0;
-  } 
+  }
+  arg1 = *argp1; 
   arg2 = (unsigned int)jarg2; 
-  result = (ROOT::Minuit2::MnUserCovariance *)new ROOT::Minuit2::MnUserCovariance((std::vector< double > const &)*arg1,arg2);
+  result = (ROOT::Minuit2::MnUserCovariance *)new ROOT::Minuit2::MnUserCovariance(SWIG_STD_MOVE(arg1),arg2);
   jresult = (void *)result; 
   return jresult;
 }
@@ -3391,30 +3422,6 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserCovariance__SWIG_3(unsigned int j
   
   arg1 = (unsigned int)jarg1; 
   result = (ROOT::Minuit2::MnUserCovariance *)new ROOT::Minuit2::MnUserCovariance(arg1);
-  jresult = (void *)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_delete_MnUserCovariance(void * jarg1) {
-  ROOT::Minuit2::MnUserCovariance *arg1 = (ROOT::Minuit2::MnUserCovariance *) 0 ;
-  
-  arg1 = (ROOT::Minuit2::MnUserCovariance *)jarg1; 
-  delete arg1;
-}
-
-
-SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserCovariance__SWIG_4(void * jarg1) {
-  void * jresult ;
-  ROOT::Minuit2::MnUserCovariance *arg1 = 0 ;
-  ROOT::Minuit2::MnUserCovariance *result = 0 ;
-  
-  arg1 = (ROOT::Minuit2::MnUserCovariance *)jarg1;
-  if (!arg1) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ROOT::Minuit2::MnUserCovariance const & is null", 0);
-    return 0;
-  } 
-  result = (ROOT::Minuit2::MnUserCovariance *)new ROOT::Minuit2::MnUserCovariance((ROOT::Minuit2::MnUserCovariance const &)*arg1);
   jresult = (void *)result; 
   return jresult;
 }
@@ -3466,10 +3473,10 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_MnUserCovariance_size(void * jarg1) {
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_delete_FCNBaseSwigImpl(void * jarg1) {
-  ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
+SWIGEXPORT void SWIGSTDCALL CSharp_delete_MnUserCovariance(void * jarg1) {
+  ROOT::Minuit2::MnUserCovariance *arg1 = (ROOT::Minuit2::MnUserCovariance *) 0 ;
   
-  arg1 = (ROOT::Minuit2::FCNBase *)jarg1; 
+  arg1 = (ROOT::Minuit2::MnUserCovariance *)jarg1; 
   delete arg1;
 }
 
@@ -3508,6 +3515,140 @@ SWIGEXPORT void SWIGSTDCALL CSharp_FCNBaseSwigImpl_SetErrorDef(void * jarg1, dou
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasGradient(void * jarg1) {
+  unsigned int jresult ;
+  ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
+  bool result;
+  
+  arg1 = (ROOT::Minuit2::FCNBase *)jarg1; 
+  result = (bool)((ROOT::Minuit2::FCNBase const *)arg1)->HasGradient();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_Gradient(void * jarg1, void * jarg2) {
+  void * jresult ;
+  ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
+  std::vector< double > *arg2 = 0 ;
+  std::vector< double > result;
+  
+  arg1 = (ROOT::Minuit2::FCNBase *)jarg1; 
+  arg2 = (std::vector< double > *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+    return 0;
+  } 
+  result = ((ROOT::Minuit2::FCNBase const *)arg1)->Gradient((std::vector< double > const &)*arg2);
+  jresult = new std::vector< double >(result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_GradientWithPrevResult(void * jarg1, void * jarg2, void * jarg3, void * jarg4, void * jarg5) {
+  void * jresult ;
+  ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
+  std::vector< double > *arg2 = 0 ;
+  double *arg3 = (double *) 0 ;
+  double *arg4 = (double *) 0 ;
+  double *arg5 = (double *) 0 ;
+  std::vector< double > result;
+  
+  arg1 = (ROOT::Minuit2::FCNBase *)jarg1; 
+  arg2 = (std::vector< double > *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+    return 0;
+  } 
+  arg3 = (double *)jarg3; 
+  arg4 = (double *)jarg4; 
+  arg5 = (double *)jarg5; 
+  result = ((ROOT::Minuit2::FCNBase const *)arg1)->GradientWithPrevResult((std::vector< double > const &)*arg2,arg3,arg4,arg5);
+  jresult = new std::vector< double >(result); 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_FCNBaseSwigImpl_gradParameterSpace(void * jarg1) {
+  int jresult ;
+  ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
+  ROOT::Minuit2::GradientParameterSpace result;
+  
+  arg1 = (ROOT::Minuit2::FCNBase *)jarg1; 
+  result = (ROOT::Minuit2::GradientParameterSpace)((ROOT::Minuit2::FCNBase const *)arg1)->gradParameterSpace();
+  jresult = (int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_G2(void * jarg1, void * jarg2) {
+  void * jresult ;
+  ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
+  std::vector< double > *arg2 = 0 ;
+  std::vector< double > result;
+  
+  arg1 = (ROOT::Minuit2::FCNBase *)jarg1; 
+  arg2 = (std::vector< double > *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+    return 0;
+  } 
+  result = ((ROOT::Minuit2::FCNBase const *)arg1)->G2((std::vector< double > const &)*arg2);
+  jresult = new std::vector< double >(result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_Hessian(void * jarg1, void * jarg2) {
+  void * jresult ;
+  ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
+  std::vector< double > *arg2 = 0 ;
+  std::vector< double > result;
+  
+  arg1 = (ROOT::Minuit2::FCNBase *)jarg1; 
+  arg2 = (std::vector< double > *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+    return 0;
+  } 
+  result = ((ROOT::Minuit2::FCNBase const *)arg1)->Hessian((std::vector< double > const &)*arg2);
+  jresult = new std::vector< double >(result); 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasHessian(void * jarg1) {
+  unsigned int jresult ;
+  ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
+  bool result;
+  
+  arg1 = (ROOT::Minuit2::FCNBase *)jarg1; 
+  result = (bool)((ROOT::Minuit2::FCNBase const *)arg1)->HasHessian();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasG2(void * jarg1) {
+  unsigned int jresult ;
+  ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
+  bool result;
+  
+  arg1 = (ROOT::Minuit2::FCNBase *)jarg1; 
+  result = (bool)((ROOT::Minuit2::FCNBase const *)arg1)->HasG2();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_delete_FCNBaseSwigImpl(void * jarg1) {
+  ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
+  
+  arg1 = (ROOT::Minuit2::FCNBase *)jarg1; 
+  delete arg1;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_0(void * jarg1, double jarg2) {
   void * jresult ;
   MinimumSeed *arg1 = 0 ;
@@ -3529,9 +3670,10 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_0(void * jarg1, d
 SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_1(void * jarg1, void * jarg2, double jarg3, int jarg4) {
   void * jresult ;
   MinimumSeed *arg1 = 0 ;
-  std::vector< ROOT::Minuit2::MinimumState > *arg2 = 0 ;
+  SwigValueWrapper< std::span< ROOT::Minuit2::MinimumState const > > arg2 ;
   double arg3 ;
   ROOT::Minuit2::FunctionMinimum::Status arg4 ;
+  std::span< ROOT::Minuit2::MinimumState const > *argp2 ;
   ROOT::Minuit2::FunctionMinimum *result = 0 ;
   
   arg1 = (MinimumSeed *)jarg1;
@@ -3539,14 +3681,15 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_1(void * jarg1, v
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "MinimumSeed const & is null", 0);
     return 0;
   } 
-  arg2 = (std::vector< ROOT::Minuit2::MinimumState > *)jarg2;
-  if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< ROOT::Minuit2::MinimumState > const & is null", 0);
+  argp2 = (std::span< ROOT::Minuit2::MinimumState const > *)jarg2; 
+  if (!argp2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null std::span< ROOT::Minuit2::MinimumState const >", 0);
     return 0;
-  } 
+  }
+  arg2 = *argp2; 
   arg3 = (double)jarg3; 
   arg4 = (ROOT::Minuit2::FunctionMinimum::Status)jarg4; 
-  result = (ROOT::Minuit2::FunctionMinimum *)new ROOT::Minuit2::FunctionMinimum((MinimumSeed const &)*arg1,(std::vector< ROOT::Minuit2::MinimumState > const &)*arg2,arg3,arg4);
+  result = (ROOT::Minuit2::FunctionMinimum *)new ROOT::Minuit2::FunctionMinimum((MinimumSeed const &)*arg1,SWIG_STD_MOVE(arg2),arg3,arg4);
   jresult = (void *)result; 
   return jresult;
 }
@@ -3555,8 +3698,9 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_1(void * jarg1, v
 SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_2(void * jarg1, void * jarg2, double jarg3) {
   void * jresult ;
   MinimumSeed *arg1 = 0 ;
-  std::vector< ROOT::Minuit2::MinimumState > *arg2 = 0 ;
+  SwigValueWrapper< std::span< ROOT::Minuit2::MinimumState const > > arg2 ;
   double arg3 ;
+  std::span< ROOT::Minuit2::MinimumState const > *argp2 ;
   ROOT::Minuit2::FunctionMinimum *result = 0 ;
   
   arg1 = (MinimumSeed *)jarg1;
@@ -3564,13 +3708,14 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_2(void * jarg1, v
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "MinimumSeed const & is null", 0);
     return 0;
   } 
-  arg2 = (std::vector< ROOT::Minuit2::MinimumState > *)jarg2;
-  if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< ROOT::Minuit2::MinimumState > const & is null", 0);
+  argp2 = (std::span< ROOT::Minuit2::MinimumState const > *)jarg2; 
+  if (!argp2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null std::span< ROOT::Minuit2::MinimumState const >", 0);
     return 0;
-  } 
+  }
+  arg2 = *argp2; 
   arg3 = (double)jarg3; 
-  result = (ROOT::Minuit2::FunctionMinimum *)new ROOT::Minuit2::FunctionMinimum((MinimumSeed const &)*arg1,(std::vector< ROOT::Minuit2::MinimumState > const &)*arg2,arg3);
+  result = (ROOT::Minuit2::FunctionMinimum *)new ROOT::Minuit2::FunctionMinimum((MinimumSeed const &)*arg1,SWIG_STD_MOVE(arg2),arg3);
   jresult = (void *)result; 
   return jresult;
 }

@@ -59,7 +59,7 @@ public class MnUserParameters : global::System.IDisposable {
   public MnUserParameters() : this(Minuit2PINVOKE.new_MnUserParameters__SWIG_0(), true) {
   }
 
-  public MnUserParameters(VectorDouble arg0, VectorDouble arg1) : this(Minuit2PINVOKE.new_MnUserParameters__SWIG_1(VectorDouble.getCPtr(arg0), VectorDouble.getCPtr(arg1)), true) {
+  public MnUserParameters(SWIGTYPE_p_std__spanT_double_const_t arg0, SWIGTYPE_p_std__spanT_double_const_t arg1) : this(Minuit2PINVOKE.new_MnUserParameters__SWIG_1(SWIGTYPE_p_std__spanT_double_const_t.getCPtr(arg0), SWIGTYPE_p_std__spanT_double_const_t.getCPtr(arg1)), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 

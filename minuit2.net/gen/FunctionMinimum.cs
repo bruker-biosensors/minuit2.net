@@ -60,11 +60,11 @@ public class FunctionMinimum : global::System.IDisposable {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public FunctionMinimum(SWIGTYPE_p_MinimumSeed seed, SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t states, double up, FunctionMinimum.Status status) : this(Minuit2PINVOKE.new_FunctionMinimum__SWIG_1(SWIGTYPE_p_MinimumSeed.getCPtr(seed), SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t.getCPtr(states), up, (int)status), true) {
+  public FunctionMinimum(SWIGTYPE_p_MinimumSeed seed, SWIGTYPE_p_std__spanT_ROOT__Minuit2__MinimumState_const_t states, double up, FunctionMinimum.Status status) : this(Minuit2PINVOKE.new_FunctionMinimum__SWIG_1(SWIGTYPE_p_MinimumSeed.getCPtr(seed), SWIGTYPE_p_std__spanT_ROOT__Minuit2__MinimumState_const_t.getCPtr(states), up, (int)status), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public FunctionMinimum(SWIGTYPE_p_MinimumSeed seed, SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t states, double up) : this(Minuit2PINVOKE.new_FunctionMinimum__SWIG_2(SWIGTYPE_p_MinimumSeed.getCPtr(seed), SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t.getCPtr(states), up), true) {
+  public FunctionMinimum(SWIGTYPE_p_MinimumSeed seed, SWIGTYPE_p_std__spanT_ROOT__Minuit2__MinimumState_const_t states, double up) : this(Minuit2PINVOKE.new_FunctionMinimum__SWIG_2(SWIGTYPE_p_MinimumSeed.getCPtr(seed), SWIGTYPE_p_std__spanT_ROOT__Minuit2__MinimumState_const_t.getCPtr(states), up), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 

@@ -20,8 +20,9 @@ namespace std {
 
 %{
     //#include "Minuit2/GenericFunction.h"
+    #include "ROOT/RSpan.hxx"
     #include "Minuit2/FCNBase.h"
-    #include "Minuit2/MnMatrix.h"
+    #include "Minuit2/MnMatrixfwd.h"
     //#include "Minuit2/FCNGradientBase.h"
     #include "FCNWrap.h"
     #include "Minuit2/MnUserParameters.h"
@@ -43,7 +44,7 @@ namespace std {
 %feature("director") FCNWrap;
 //%feature("director") ROOT::Minuit2::FCNGradientBaseWrap::Up;
 //%feature("director") ROOT::Minuit2::FCNGradientBaseWrap::Gradient;
-%include "Minuit2/MnMatrix.h"
+%include "Minuit2/MnMatrixfwd.h"
 %include "Minuit2/LAVector.h"
 %include "Minuit2/MinimumParameters.h"
 %include "FCNWrap.h"

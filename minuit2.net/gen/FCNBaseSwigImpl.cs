@@ -75,4 +75,48 @@ public class FCNBaseSwigImpl : FCNBase, global::System.IDisposable {
     Minuit2PINVOKE.FCNBaseSwigImpl_SetErrorDef(swigCPtr, arg0);
   }
 
+  public virtual bool HasGradient() {
+    bool ret = Minuit2PINVOKE.FCNBaseSwigImpl_HasGradient(swigCPtr);
+    return ret;
+  }
+
+  public virtual VectorDouble Gradient(VectorDouble arg0) {
+    VectorDouble ret = new VectorDouble(Minuit2PINVOKE.FCNBaseSwigImpl_Gradient(swigCPtr, VectorDouble.getCPtr(arg0)), true);
+    if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public virtual VectorDouble GradientWithPrevResult(VectorDouble parameters, SWIGTYPE_p_double arg1, SWIGTYPE_p_double arg2, SWIGTYPE_p_double arg3) {
+    VectorDouble ret = new VectorDouble(Minuit2PINVOKE.FCNBaseSwigImpl_GradientWithPrevResult(swigCPtr, VectorDouble.getCPtr(parameters), SWIGTYPE_p_double.getCPtr(arg1), SWIGTYPE_p_double.getCPtr(arg2), SWIGTYPE_p_double.getCPtr(arg3)), true);
+    if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public virtual GradientParameterSpace gradParameterSpace() {
+    GradientParameterSpace ret = (GradientParameterSpace)Minuit2PINVOKE.FCNBaseSwigImpl_gradParameterSpace(swigCPtr);
+    return ret;
+  }
+
+  public virtual VectorDouble G2(VectorDouble arg0) {
+    VectorDouble ret = new VectorDouble(Minuit2PINVOKE.FCNBaseSwigImpl_G2(swigCPtr, VectorDouble.getCPtr(arg0)), true);
+    if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public virtual VectorDouble Hessian(VectorDouble arg0) {
+    VectorDouble ret = new VectorDouble(Minuit2PINVOKE.FCNBaseSwigImpl_Hessian(swigCPtr, VectorDouble.getCPtr(arg0)), true);
+    if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public virtual bool HasHessian() {
+    bool ret = Minuit2PINVOKE.FCNBaseSwigImpl_HasHessian(swigCPtr);
+    return ret;
+  }
+
+  public virtual bool HasG2() {
+    bool ret = Minuit2PINVOKE.FCNBaseSwigImpl_HasG2(swigCPtr);
+    return ret;
+  }
+
 }

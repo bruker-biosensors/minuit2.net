@@ -59,7 +59,7 @@ public class MnUserCovariance : global::System.IDisposable {
   public MnUserCovariance() : this(Minuit2PINVOKE.new_MnUserCovariance__SWIG_0(), true) {
   }
 
-  public MnUserCovariance(VectorDouble data, uint nrow) : this(Minuit2PINVOKE.new_MnUserCovariance__SWIG_1(VectorDouble.getCPtr(data), nrow), true) {
+  public MnUserCovariance(SWIGTYPE_p_std__spanT_double_const_t data, uint nrow) : this(Minuit2PINVOKE.new_MnUserCovariance__SWIG_1(SWIGTYPE_p_std__spanT_double_const_t.getCPtr(data), nrow), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
@@ -67,10 +67,6 @@ public class MnUserCovariance : global::System.IDisposable {
   }
 
   public MnUserCovariance(uint n) : this(Minuit2PINVOKE.new_MnUserCovariance__SWIG_3(n), true) {
-  }
-
-  public MnUserCovariance(MnUserCovariance cov) : this(Minuit2PINVOKE.new_MnUserCovariance__SWIG_4(MnUserCovariance.getCPtr(cov)), true) {
-    if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void Scale(double f) {
