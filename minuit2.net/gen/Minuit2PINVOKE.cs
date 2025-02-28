@@ -641,11 +641,11 @@ class Minuit2PINVOKE {
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_FCNWrap")]
   public static extern global::System.IntPtr new_FCNWrap();
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Run")]
-  public static extern double FCNWrap_Run(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Cost")]
+  public static extern double FCNWrap_Cost(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_RunSwigExplicitFCNWrap")]
-  public static extern double FCNWrap_RunSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_CostSwigExplicitFCNWrap")]
+  public static extern double FCNWrap_CostSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Up")]
   public static extern double FCNWrap_Up(global::System.Runtime.InteropServices.HandleRef jarg1);

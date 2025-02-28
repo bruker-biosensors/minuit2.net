@@ -13,10 +13,9 @@ namespace ROOT
         public:
             FCNWrap()
             {
-                std::cout << "Hello FCNGradientBaseWrap" << std::endl;
             }
 
-            virtual double Run(std::vector<double> const& v) const;
+            virtual double Cost(std::vector<double> const& v) const;
 
 
             virtual double Up() const;

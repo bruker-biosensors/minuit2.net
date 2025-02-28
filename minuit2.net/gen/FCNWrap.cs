@@ -60,8 +60,8 @@ public class FCNWrap : global::System.IDisposable {
     SwigDirectorConnect();
   }
 
-  public virtual double Run(VectorDouble v) {
-    double ret = (SwigDerivedClassHasMethod("Run", swigMethodTypes0) ? Minuit2PINVOKE.FCNWrap_RunSwigExplicitFCNWrap(swigCPtr, VectorDouble.getCPtr(v)) : Minuit2PINVOKE.FCNWrap_Run(swigCPtr, VectorDouble.getCPtr(v)));
+  public virtual double Cost(VectorDouble v) {
+    double ret = (SwigDerivedClassHasMethod("Cost", swigMethodTypes0) ? Minuit2PINVOKE.FCNWrap_CostSwigExplicitFCNWrap(swigCPtr, VectorDouble.getCPtr(v)) : Minuit2PINVOKE.FCNWrap_Cost(swigCPtr, VectorDouble.getCPtr(v)));
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -72,8 +72,8 @@ public class FCNWrap : global::System.IDisposable {
   }
 
   private void SwigDirectorConnect() {
-    if (SwigDerivedClassHasMethod("Run", swigMethodTypes0))
-      swigDelegate0 = new SwigDelegateFCNWrap_0(SwigDirectorMethodRun);
+    if (SwigDerivedClassHasMethod("Cost", swigMethodTypes0))
+      swigDelegate0 = new SwigDelegateFCNWrap_0(SwigDirectorMethodCost);
     if (SwigDerivedClassHasMethod("Up", swigMethodTypes1))
       swigDelegate1 = new SwigDelegateFCNWrap_1(SwigDirectorMethodUp);
     Minuit2PINVOKE.FCNWrap_director_connect(swigCPtr, swigDelegate0, swigDelegate1);
@@ -113,8 +113,8 @@ public class FCNWrap : global::System.IDisposable {
     return false;
   }
 
-  private double SwigDirectorMethodRun(global::System.IntPtr v) {
-    return Run(new VectorDouble(v, false));
+  private double SwigDirectorMethodCost(global::System.IntPtr v) {
+    return Cost(new VectorDouble(v, false));
   }
 
   private double SwigDirectorMethodUp() {

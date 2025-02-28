@@ -2,10 +2,10 @@
 
 double ROOT::Minuit2::FCNWrap::operator()(std::vector<double> const& v) const
 {
-    return Run(v);
+    return Cost(v);
 }
 
-double ROOT::Minuit2::FCNWrap::Run(std::vector<double> const& v) const
+double ROOT::Minuit2::FCNWrap::Cost(std::vector<double> const& v) const
 {
     return 0;
 }

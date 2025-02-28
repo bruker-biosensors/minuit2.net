@@ -29,7 +29,7 @@ public class LeastSquares : FCNWrap
     {
     }
 
-    public override double Run(VectorDouble v)
+    public override double Cost(VectorDouble v)
     {
         double f = 0.0;
 
