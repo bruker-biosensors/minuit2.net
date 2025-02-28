@@ -60,25 +60,21 @@ public class FunctionMinimum : global::System.IDisposable {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public FunctionMinimum(SWIGTYPE_p_MinimumSeed seed, SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t states, double up) : this(Minuit2PINVOKE.new_FunctionMinimum__SWIG_1(SWIGTYPE_p_MinimumSeed.getCPtr(seed), SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t.getCPtr(states), up), true) {
+  public FunctionMinimum(SWIGTYPE_p_MinimumSeed seed, SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t states, double up, FunctionMinimum.Status status) : this(Minuit2PINVOKE.new_FunctionMinimum__SWIG_1(SWIGTYPE_p_MinimumSeed.getCPtr(seed), SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t.getCPtr(states), up, (int)status), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public FunctionMinimum(SWIGTYPE_p_MinimumSeed seed, SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t states, double up, SWIGTYPE_p_BasicFunctionMinimum__MnReachedCallLimit arg3) : this(Minuit2PINVOKE.new_FunctionMinimum__SWIG_2(SWIGTYPE_p_MinimumSeed.getCPtr(seed), SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t.getCPtr(states), up, SWIGTYPE_p_BasicFunctionMinimum__MnReachedCallLimit.getCPtr(arg3)), true) {
+  public FunctionMinimum(SWIGTYPE_p_MinimumSeed seed, SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t states, double up) : this(Minuit2PINVOKE.new_FunctionMinimum__SWIG_2(SWIGTYPE_p_MinimumSeed.getCPtr(seed), SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t.getCPtr(states), up), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public FunctionMinimum(SWIGTYPE_p_MinimumSeed seed, SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t states, double up, SWIGTYPE_p_BasicFunctionMinimum__MnAboveMaxEdm arg3) : this(Minuit2PINVOKE.new_FunctionMinimum__SWIG_3(SWIGTYPE_p_MinimumSeed.getCPtr(seed), SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t.getCPtr(states), up, SWIGTYPE_p_BasicFunctionMinimum__MnAboveMaxEdm.getCPtr(arg3)), true) {
+  public void Add(MinimumState state, FunctionMinimum.Status status) {
+    Minuit2PINVOKE.FunctionMinimum_Add__SWIG_0(swigCPtr, MinimumState.getCPtr(state), (int)status);
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
   public void Add(MinimumState state) {
-    Minuit2PINVOKE.FunctionMinimum_Add__SWIG_0(swigCPtr, MinimumState.getCPtr(state));
-    if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
-  }
-
-  public void Add(MinimumState state, SWIGTYPE_p_BasicFunctionMinimum__MnAboveMaxEdm arg1) {
-    Minuit2PINVOKE.FunctionMinimum_Add__SWIG_1(swigCPtr, MinimumState.getCPtr(state), SWIGTYPE_p_BasicFunctionMinimum__MnAboveMaxEdm.getCPtr(arg1));
+    Minuit2PINVOKE.FunctionMinimum_Add__SWIG_1(swigCPtr, MinimumState.getCPtr(state));
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
@@ -199,6 +195,12 @@ public class FunctionMinimum : global::System.IDisposable {
 
   public void SetErrorDef(double up) {
     Minuit2PINVOKE.FunctionMinimum_SetErrorDef(swigCPtr, up);
+  }
+
+  public enum Status {
+    MnValid,
+    MnReachedCallLimit,
+    MnAboveMaxEdm
   }
 
 }

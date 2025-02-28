@@ -10,8 +10,9 @@ include(FetchContent)
 
 FetchContent_Declare(
     minuit2
-    GIT_REPOSITORY https://github.com/GooFit/Minuit2.git
-    GIT_TAG v6-24-00
+    GIT_REPOSITORY https://github.com/root-project/root.git
+    GIT_TAG v6-32-04
+    SOURCE_SUBDIR math/minuit2
 )
 FetchContent_MakeAvailable(minuit2)
 add_subdirectory("minuit2.net")

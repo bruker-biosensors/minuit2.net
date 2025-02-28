@@ -637,7 +637,7 @@ SWIGINTERN bool std_vector_Sl_double_Sg__Remove(std::vector< double > *self,doub
 
     //#include "Minuit2/GenericFunction.h"
     #include "Minuit2/FCNBase.h"
-    #include "Minuit2/MnMatrix.h"
+    #include "Minuit2/MnMatrixfwd.h"
     //#include "Minuit2/FCNGradientBase.h"
     #include "FCNWrap.h"
     #include "Minuit2/MnUserParameters.h"
@@ -906,6 +906,30 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_MnStrategy_HessianGradientNCycles(voi
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_MnStrategy_HessianCentralFDMixedDerivatives(void * jarg1) {
+  unsigned int jresult ;
+  ROOT::Minuit2::MnStrategy *arg1 = (ROOT::Minuit2::MnStrategy *) 0 ;
+  unsigned int result;
+  
+  arg1 = (ROOT::Minuit2::MnStrategy *)jarg1; 
+  result = (unsigned int)((ROOT::Minuit2::MnStrategy const *)arg1)->HessianCentralFDMixedDerivatives();
+  jresult = (unsigned int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_MnStrategy_HessianForcePosDef(void * jarg1) {
+  unsigned int jresult ;
+  ROOT::Minuit2::MnStrategy *arg1 = (ROOT::Minuit2::MnStrategy *) 0 ;
+  unsigned int result;
+  
+  arg1 = (ROOT::Minuit2::MnStrategy *)jarg1; 
+  result = (unsigned int)((ROOT::Minuit2::MnStrategy const *)arg1)->HessianForcePosDef();
+  jresult = (unsigned int)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT int SWIGSTDCALL CSharp_MnStrategy_StorageLevel(void * jarg1) {
   int jresult ;
   ROOT::Minuit2::MnStrategy *arg1 = (ROOT::Minuit2::MnStrategy *) 0 ;
@@ -954,6 +978,18 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_MnStrategy_IsHigh(void * jarg1) {
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_MnStrategy_IsVeryHigh(void * jarg1) {
+  unsigned int jresult ;
+  ROOT::Minuit2::MnStrategy *arg1 = (ROOT::Minuit2::MnStrategy *) 0 ;
+  bool result;
+  
+  arg1 = (ROOT::Minuit2::MnStrategy *)jarg1; 
+  result = (bool)((ROOT::Minuit2::MnStrategy const *)arg1)->IsVeryHigh();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_MnStrategy_SetLowStrategy(void * jarg1) {
   ROOT::Minuit2::MnStrategy *arg1 = (ROOT::Minuit2::MnStrategy *) 0 ;
   
@@ -975,6 +1011,14 @@ SWIGEXPORT void SWIGSTDCALL CSharp_MnStrategy_SetHighStrategy(void * jarg1) {
   
   arg1 = (ROOT::Minuit2::MnStrategy *)jarg1; 
   (arg1)->SetHighStrategy();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_MnStrategy_SetVeryHighStrategy(void * jarg1) {
+  ROOT::Minuit2::MnStrategy *arg1 = (ROOT::Minuit2::MnStrategy *) 0 ;
+  
+  arg1 = (ROOT::Minuit2::MnStrategy *)jarg1; 
+  (arg1)->SetVeryHighStrategy();
 }
 
 
@@ -1045,6 +1089,26 @@ SWIGEXPORT void SWIGSTDCALL CSharp_MnStrategy_SetHessianGradientNCycles(void * j
   arg1 = (ROOT::Minuit2::MnStrategy *)jarg1; 
   arg2 = (unsigned int)jarg2; 
   (arg1)->SetHessianGradientNCycles(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_MnStrategy_SetHessianCentralFDMixedDerivatives(void * jarg1, unsigned int jarg2) {
+  ROOT::Minuit2::MnStrategy *arg1 = (ROOT::Minuit2::MnStrategy *) 0 ;
+  unsigned int arg2 ;
+  
+  arg1 = (ROOT::Minuit2::MnStrategy *)jarg1; 
+  arg2 = (unsigned int)jarg2; 
+  (arg1)->SetHessianCentralFDMixedDerivatives(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_MnStrategy_SetHessianForcePosDef(void * jarg1, unsigned int jarg2) {
+  ROOT::Minuit2::MnStrategy *arg1 = (ROOT::Minuit2::MnStrategy *) 0 ;
+  unsigned int arg2 ;
+  
+  arg1 = (ROOT::Minuit2::MnStrategy *)jarg1; 
+  arg2 = (unsigned int)jarg2; 
+  (arg1)->SetHessianForcePosDef(arg2);
 }
 
 
@@ -1193,30 +1257,6 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserParameterState__SWIG_6(void * jar
     return 0;
   } 
   result = (ROOT::Minuit2::MnUserParameterState *)new ROOT::Minuit2::MnUserParameterState((ROOT::Minuit2::MinimumState const &)*arg1,arg2,(MnUserTransformation const &)*arg3);
-  jresult = (void *)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_delete_MnUserParameterState(void * jarg1) {
-  ROOT::Minuit2::MnUserParameterState *arg1 = (ROOT::Minuit2::MnUserParameterState *) 0 ;
-  
-  arg1 = (ROOT::Minuit2::MnUserParameterState *)jarg1; 
-  delete arg1;
-}
-
-
-SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnUserParameterState__SWIG_7(void * jarg1) {
-  void * jresult ;
-  ROOT::Minuit2::MnUserParameterState *arg1 = 0 ;
-  ROOT::Minuit2::MnUserParameterState *result = 0 ;
-  
-  arg1 = (ROOT::Minuit2::MnUserParameterState *)jarg1;
-  if (!arg1) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ROOT::Minuit2::MnUserParameterState const & is null", 0);
-    return 0;
-  } 
-  result = (ROOT::Minuit2::MnUserParameterState *)new ROOT::Minuit2::MnUserParameterState((ROOT::Minuit2::MnUserParameterState const &)*arg1);
   jresult = (void *)result; 
   return jresult;
 }
@@ -1944,6 +1984,14 @@ SWIGEXPORT void SWIGSTDCALL CSharp_MnUserParameterState_SetPrecision(void * jarg
   arg1 = (ROOT::Minuit2::MnUserParameterState *)jarg1; 
   arg2 = (double)jarg2; 
   (arg1)->SetPrecision(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_delete_MnUserParameterState(void * jarg1) {
+  ROOT::Minuit2::MnUserParameterState *arg1 = (ROOT::Minuit2::MnUserParameterState *) 0 ;
+  
+  arg1 = (ROOT::Minuit2::MnUserParameterState *)jarg1; 
+  delete arg1;
 }
 
 
@@ -3478,7 +3526,33 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_0(void * jarg1, d
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_1(void * jarg1, void * jarg2, double jarg3) {
+SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_1(void * jarg1, void * jarg2, double jarg3, int jarg4) {
+  void * jresult ;
+  MinimumSeed *arg1 = 0 ;
+  std::vector< ROOT::Minuit2::MinimumState > *arg2 = 0 ;
+  double arg3 ;
+  ROOT::Minuit2::FunctionMinimum::Status arg4 ;
+  ROOT::Minuit2::FunctionMinimum *result = 0 ;
+  
+  arg1 = (MinimumSeed *)jarg1;
+  if (!arg1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "MinimumSeed const & is null", 0);
+    return 0;
+  } 
+  arg2 = (std::vector< ROOT::Minuit2::MinimumState > *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< ROOT::Minuit2::MinimumState > const & is null", 0);
+    return 0;
+  } 
+  arg3 = (double)jarg3; 
+  arg4 = (ROOT::Minuit2::FunctionMinimum::Status)jarg4; 
+  result = (ROOT::Minuit2::FunctionMinimum *)new ROOT::Minuit2::FunctionMinimum((MinimumSeed const &)*arg1,(std::vector< ROOT::Minuit2::MinimumState > const &)*arg2,arg3,arg4);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_2(void * jarg1, void * jarg2, double jarg3) {
   void * jresult ;
   MinimumSeed *arg1 = 0 ;
   std::vector< ROOT::Minuit2::MinimumState > *arg2 = 0 ;
@@ -3502,71 +3576,23 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_1(void * jarg1, v
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_2(void * jarg1, void * jarg2, double jarg3, void * jarg4) {
-  void * jresult ;
-  MinimumSeed *arg1 = 0 ;
-  std::vector< ROOT::Minuit2::MinimumState > *arg2 = 0 ;
-  double arg3 ;
-  ROOT::Minuit2::FunctionMinimum::MnReachedCallLimit arg4 ;
-  ROOT::Minuit2::FunctionMinimum::MnReachedCallLimit *argp4 ;
-  ROOT::Minuit2::FunctionMinimum *result = 0 ;
+SWIGEXPORT void SWIGSTDCALL CSharp_FunctionMinimum_Add__SWIG_0(void * jarg1, void * jarg2, int jarg3) {
+  ROOT::Minuit2::FunctionMinimum *arg1 = (ROOT::Minuit2::FunctionMinimum *) 0 ;
+  ROOT::Minuit2::MinimumState *arg2 = 0 ;
+  ROOT::Minuit2::FunctionMinimum::Status arg3 ;
   
-  arg1 = (MinimumSeed *)jarg1;
-  if (!arg1) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "MinimumSeed const & is null", 0);
-    return 0;
-  } 
-  arg2 = (std::vector< ROOT::Minuit2::MinimumState > *)jarg2;
+  arg1 = (ROOT::Minuit2::FunctionMinimum *)jarg1; 
+  arg2 = (ROOT::Minuit2::MinimumState *)jarg2;
   if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< ROOT::Minuit2::MinimumState > const & is null", 0);
-    return 0;
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ROOT::Minuit2::MinimumState const & is null", 0);
+    return ;
   } 
-  arg3 = (double)jarg3; 
-  argp4 = (ROOT::Minuit2::FunctionMinimum::MnReachedCallLimit *)jarg4; 
-  if (!argp4) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null ROOT::Minuit2::FunctionMinimum::MnReachedCallLimit", 0);
-    return 0;
-  }
-  arg4 = *argp4; 
-  result = (ROOT::Minuit2::FunctionMinimum *)new ROOT::Minuit2::FunctionMinimum((MinimumSeed const &)*arg1,(std::vector< ROOT::Minuit2::MinimumState > const &)*arg2,arg3,SWIG_STD_MOVE(arg4));
-  jresult = (void *)result; 
-  return jresult;
+  arg3 = (ROOT::Minuit2::FunctionMinimum::Status)jarg3; 
+  (arg1)->Add((ROOT::Minuit2::MinimumState const &)*arg2,arg3);
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_new_FunctionMinimum__SWIG_3(void * jarg1, void * jarg2, double jarg3, void * jarg4) {
-  void * jresult ;
-  MinimumSeed *arg1 = 0 ;
-  std::vector< ROOT::Minuit2::MinimumState > *arg2 = 0 ;
-  double arg3 ;
-  ROOT::Minuit2::FunctionMinimum::MnAboveMaxEdm arg4 ;
-  ROOT::Minuit2::FunctionMinimum::MnAboveMaxEdm *argp4 ;
-  ROOT::Minuit2::FunctionMinimum *result = 0 ;
-  
-  arg1 = (MinimumSeed *)jarg1;
-  if (!arg1) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "MinimumSeed const & is null", 0);
-    return 0;
-  } 
-  arg2 = (std::vector< ROOT::Minuit2::MinimumState > *)jarg2;
-  if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< ROOT::Minuit2::MinimumState > const & is null", 0);
-    return 0;
-  } 
-  arg3 = (double)jarg3; 
-  argp4 = (ROOT::Minuit2::FunctionMinimum::MnAboveMaxEdm *)jarg4; 
-  if (!argp4) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null ROOT::Minuit2::FunctionMinimum::MnAboveMaxEdm", 0);
-    return 0;
-  }
-  arg4 = *argp4; 
-  result = (ROOT::Minuit2::FunctionMinimum *)new ROOT::Minuit2::FunctionMinimum((MinimumSeed const &)*arg1,(std::vector< ROOT::Minuit2::MinimumState > const &)*arg2,arg3,SWIG_STD_MOVE(arg4));
-  jresult = (void *)result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_FunctionMinimum_Add__SWIG_0(void * jarg1, void * jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_FunctionMinimum_Add__SWIG_1(void * jarg1, void * jarg2) {
   ROOT::Minuit2::FunctionMinimum *arg1 = (ROOT::Minuit2::FunctionMinimum *) 0 ;
   ROOT::Minuit2::MinimumState *arg2 = 0 ;
   
@@ -3577,28 +3603,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_FunctionMinimum_Add__SWIG_0(void * jarg1, voi
     return ;
   } 
   (arg1)->Add((ROOT::Minuit2::MinimumState const &)*arg2);
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_FunctionMinimum_Add__SWIG_1(void * jarg1, void * jarg2, void * jarg3) {
-  ROOT::Minuit2::FunctionMinimum *arg1 = (ROOT::Minuit2::FunctionMinimum *) 0 ;
-  ROOT::Minuit2::MinimumState *arg2 = 0 ;
-  ROOT::Minuit2::FunctionMinimum::MnAboveMaxEdm arg3 ;
-  ROOT::Minuit2::FunctionMinimum::MnAboveMaxEdm *argp3 ;
-  
-  arg1 = (ROOT::Minuit2::FunctionMinimum *)jarg1; 
-  arg2 = (ROOT::Minuit2::MinimumState *)jarg2;
-  if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ROOT::Minuit2::MinimumState const & is null", 0);
-    return ;
-  } 
-  argp3 = (ROOT::Minuit2::FunctionMinimum::MnAboveMaxEdm *)jarg3; 
-  if (!argp3) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null ROOT::Minuit2::FunctionMinimum::MnAboveMaxEdm", 0);
-    return ;
-  }
-  arg3 = *argp3; 
-  (arg1)->Add((ROOT::Minuit2::MinimumState const &)*arg2,SWIG_STD_MOVE(arg3));
 }
 
 
@@ -4047,8 +4051,8 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_MinimumState__SWIG_2(void * jarg1, doub
 SWIGEXPORT void * SWIGSTDCALL CSharp_new_MinimumState__SWIG_3(void * jarg1, void * jarg2, void * jarg3, double jarg4, int jarg5) {
   void * jresult ;
   ROOT::Minuit2::MinimumParameters *arg1 = 0 ;
-  ROOT::Minuit2::MinimumError *arg2 = 0 ;
-  ROOT::Minuit2::FunctionGradient *arg3 = 0 ;
+  MinimumError *arg2 = 0 ;
+  FunctionGradient *arg3 = 0 ;
   double arg4 ;
   int arg5 ;
   ROOT::Minuit2::MinimumState *result = 0 ;
@@ -4058,19 +4062,19 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_MinimumState__SWIG_3(void * jarg1, void
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ROOT::Minuit2::MinimumParameters const & is null", 0);
     return 0;
   } 
-  arg2 = (ROOT::Minuit2::MinimumError *)jarg2;
+  arg2 = (MinimumError *)jarg2;
   if (!arg2) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ROOT::Minuit2::MinimumError const & is null", 0);
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "MinimumError const & is null", 0);
     return 0;
   } 
-  arg3 = (ROOT::Minuit2::FunctionGradient *)jarg3;
+  arg3 = (FunctionGradient *)jarg3;
   if (!arg3) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ROOT::Minuit2::FunctionGradient const & is null", 0);
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "FunctionGradient const & is null", 0);
     return 0;
   } 
   arg4 = (double)jarg4; 
   arg5 = (int)jarg5; 
-  result = (ROOT::Minuit2::MinimumState *)new ROOT::Minuit2::MinimumState((ROOT::Minuit2::MinimumParameters const &)*arg1,(ROOT::Minuit2::MinimumError const &)*arg2,(ROOT::Minuit2::FunctionGradient const &)*arg3,arg4,arg5);
+  result = (ROOT::Minuit2::MinimumState *)new ROOT::Minuit2::MinimumState((ROOT::Minuit2::MinimumParameters const &)*arg1,(MinimumError const &)*arg2,(FunctionGradient const &)*arg3,arg4,arg5);
   jresult = (void *)result; 
   return jresult;
 }
@@ -4115,10 +4119,10 @@ SWIGEXPORT int SWIGSTDCALL CSharp_MinimumState_size(void * jarg1) {
 SWIGEXPORT void * SWIGSTDCALL CSharp_MinimumState_Error(void * jarg1) {
   void * jresult ;
   ROOT::Minuit2::MinimumState *arg1 = (ROOT::Minuit2::MinimumState *) 0 ;
-  ROOT::Minuit2::MinimumError *result = 0 ;
+  MinimumError *result = 0 ;
   
   arg1 = (ROOT::Minuit2::MinimumState *)jarg1; 
-  result = (ROOT::Minuit2::MinimumError *) &((ROOT::Minuit2::MinimumState const *)arg1)->Error();
+  result = (MinimumError *) &((ROOT::Minuit2::MinimumState const *)arg1)->Error();
   jresult = (void *)result; 
   return jresult;
 }
@@ -4127,10 +4131,10 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_MinimumState_Error(void * jarg1) {
 SWIGEXPORT void * SWIGSTDCALL CSharp_MinimumState_Gradient(void * jarg1) {
   void * jresult ;
   ROOT::Minuit2::MinimumState *arg1 = (ROOT::Minuit2::MinimumState *) 0 ;
-  ROOT::Minuit2::FunctionGradient *result = 0 ;
+  FunctionGradient *result = 0 ;
   
   arg1 = (ROOT::Minuit2::MinimumState *)jarg1; 
-  result = (ROOT::Minuit2::FunctionGradient *) &((ROOT::Minuit2::MinimumState const *)arg1)->Gradient();
+  result = (FunctionGradient *) &((ROOT::Minuit2::MinimumState const *)arg1)->Gradient();
   jresult = (void *)result; 
   return jresult;
 }

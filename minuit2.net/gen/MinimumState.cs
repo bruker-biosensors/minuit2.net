@@ -66,7 +66,7 @@ public class MinimumState : global::System.IDisposable {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public MinimumState(MinimumParameters states, SWIGTYPE_p_ROOT__Minuit2__MinimumError err, SWIGTYPE_p_ROOT__Minuit2__FunctionGradient grad, double edm, int nfcn) : this(Minuit2PINVOKE.new_MinimumState__SWIG_3(MinimumParameters.getCPtr(states), SWIGTYPE_p_ROOT__Minuit2__MinimumError.getCPtr(err), SWIGTYPE_p_ROOT__Minuit2__FunctionGradient.getCPtr(grad), edm, nfcn), true) {
+  public MinimumState(MinimumParameters states, SWIGTYPE_p_MinimumError err, SWIGTYPE_p_FunctionGradient grad, double edm, int nfcn) : this(Minuit2PINVOKE.new_MinimumState__SWIG_3(MinimumParameters.getCPtr(states), SWIGTYPE_p_MinimumError.getCPtr(err), SWIGTYPE_p_FunctionGradient.getCPtr(grad), edm, nfcn), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
@@ -85,13 +85,13 @@ public class MinimumState : global::System.IDisposable {
     return ret;
   }
 
-  public SWIGTYPE_p_ROOT__Minuit2__MinimumError Error() {
-    SWIGTYPE_p_ROOT__Minuit2__MinimumError ret = new SWIGTYPE_p_ROOT__Minuit2__MinimumError(Minuit2PINVOKE.MinimumState_Error(swigCPtr), false);
+  public SWIGTYPE_p_MinimumError Error() {
+    SWIGTYPE_p_MinimumError ret = new SWIGTYPE_p_MinimumError(Minuit2PINVOKE.MinimumState_Error(swigCPtr), false);
     return ret;
   }
 
-  public SWIGTYPE_p_ROOT__Minuit2__FunctionGradient Gradient() {
-    SWIGTYPE_p_ROOT__Minuit2__FunctionGradient ret = new SWIGTYPE_p_ROOT__Minuit2__FunctionGradient(Minuit2PINVOKE.MinimumState_Gradient(swigCPtr), false);
+  public SWIGTYPE_p_FunctionGradient Gradient() {
+    SWIGTYPE_p_FunctionGradient ret = new SWIGTYPE_p_FunctionGradient(Minuit2PINVOKE.MinimumState_Gradient(swigCPtr), false);
     return ret;
   }
 

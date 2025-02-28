@@ -83,10 +83,6 @@ public class MnUserParameterState : global::System.IDisposable {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public MnUserParameterState(MnUserParameterState state) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_7(MnUserParameterState.getCPtr(state)), true) {
-    if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
-  }
-
   public SWIGTYPE_p_MnUserParameters Parameters() {
     SWIGTYPE_p_MnUserParameters ret = new SWIGTYPE_p_MnUserParameters(Minuit2PINVOKE.MnUserParameterState_Parameters(swigCPtr), false);
     return ret;

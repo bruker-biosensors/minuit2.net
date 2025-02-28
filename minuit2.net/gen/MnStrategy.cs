@@ -102,6 +102,16 @@ public class MnStrategy : global::System.IDisposable {
     return ret;
   }
 
+  public uint HessianCentralFDMixedDerivatives() {
+    uint ret = Minuit2PINVOKE.MnStrategy_HessianCentralFDMixedDerivatives(swigCPtr);
+    return ret;
+  }
+
+  public uint HessianForcePosDef() {
+    uint ret = Minuit2PINVOKE.MnStrategy_HessianForcePosDef(swigCPtr);
+    return ret;
+  }
+
   public int StorageLevel() {
     int ret = Minuit2PINVOKE.MnStrategy_StorageLevel(swigCPtr);
     return ret;
@@ -122,6 +132,11 @@ public class MnStrategy : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsVeryHigh() {
+    bool ret = Minuit2PINVOKE.MnStrategy_IsVeryHigh(swigCPtr);
+    return ret;
+  }
+
   public void SetLowStrategy() {
     Minuit2PINVOKE.MnStrategy_SetLowStrategy(swigCPtr);
   }
@@ -132,6 +147,10 @@ public class MnStrategy : global::System.IDisposable {
 
   public void SetHighStrategy() {
     Minuit2PINVOKE.MnStrategy_SetHighStrategy(swigCPtr);
+  }
+
+  public void SetVeryHighStrategy() {
+    Minuit2PINVOKE.MnStrategy_SetVeryHighStrategy(swigCPtr);
   }
 
   public void SetGradientNCycles(uint n) {
@@ -160,6 +179,14 @@ public class MnStrategy : global::System.IDisposable {
 
   public void SetHessianGradientNCycles(uint n) {
     Minuit2PINVOKE.MnStrategy_SetHessianGradientNCycles(swigCPtr, n);
+  }
+
+  public void SetHessianCentralFDMixedDerivatives(uint flag) {
+    Minuit2PINVOKE.MnStrategy_SetHessianCentralFDMixedDerivatives(swigCPtr, flag);
+  }
+
+  public void SetHessianForcePosDef(uint flag) {
+    Minuit2PINVOKE.MnStrategy_SetHessianForcePosDef(swigCPtr, flag);
   }
 
   public void SetStorageLevel(uint level) {
