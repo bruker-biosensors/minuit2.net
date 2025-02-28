@@ -5,18 +5,40 @@ using System.Reflection;
 
 namespace minuit2.net;
 
-public class LeastSquares(List<double> x, List<double> y, double y_err, Func<double,double,double,double> model) :FCNWrap
+public class LeastSquares : FCNWrap
 {
+    private readonly List<double> yErrSquared;
+    private readonly List<double> xData;
+    private readonly List<double> yData;
+    private readonly Func<double, IList<double>, double> model;
+
+    public LeastSquares(List<double> x, List<double> y, List<double> yError, Func<double, IList<double>, double> model)
+    {
+        if (x.Count != y.Count || x.Count != yError.Count)
+        {
+            throw new ArgumentException("x, y and yError must have the same length");
+        }
+        this.yErrSquared = yError;
+        this.xData = x;
+        this.yData = y;
+        this.model = model;
+    }
+
+    public LeastSquares(List<double> x, List<double> y, double yError, Func<double, IList<double>, double> model)
+        : this(x, y, Enumerable.Range(0, y.Count()).Select(_ => yError * yError).ToList(), model)
+    {
+    }
+
     public override double Run(VectorDouble v)
     {
         double f = 0.0;
 
-        foreach(var data in x.Zip(y))
+        foreach (var data in xData.Zip(yData, yErrSquared))
         {
-            double diff = data.Second - model(data.First, v.ElementAt(0), v.ElementAt(1));
-            f += diff * diff;
+            double diff = data.Second - model(data.First, v);
+            f += diff * diff / data.Third;
         }
-        f /= x.Count();
+
         return f;
     }
 
