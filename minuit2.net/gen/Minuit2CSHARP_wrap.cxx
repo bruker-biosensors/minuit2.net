@@ -667,16 +667,16 @@ SwigDirector_FCNWrap::SwigDirector_FCNWrap() : ROOT::Minuit2::FCNWrap(), Swig::D
   swig_init_callbacks();
 }
 
-double SwigDirector_FCNWrap::Run(std::vector< double > const &v) const {
+double SwigDirector_FCNWrap::Cost(std::vector< double > const &v) const {
   double c_result = SwigValueInit< double >() ;
   double jresult = 0 ;
   void * jv = 0 ;
   
-  if (!swig_callbackRun) {
-    return ROOT::Minuit2::FCNWrap::Run(v);
+  if (!swig_callbackCost) {
+    return ROOT::Minuit2::FCNWrap::Cost(v);
   } else {
     jv = (std::vector< double > *) &v; 
-    jresult = (double) swig_callbackRun(jv);
+    jresult = (double) swig_callbackCost(jv);
     c_result = (double)jresult; 
   }
   return c_result;
@@ -695,13 +695,13 @@ double SwigDirector_FCNWrap::Up() const {
   return c_result;
 }
 
-void SwigDirector_FCNWrap::swig_connect_director(SWIG_Callback0_t callbackRun, SWIG_Callback1_t callbackUp) {
-  swig_callbackRun = callbackRun;
+void SwigDirector_FCNWrap::swig_connect_director(SWIG_Callback0_t callbackCost, SWIG_Callback1_t callbackUp) {
+  swig_callbackCost = callbackCost;
   swig_callbackUp = callbackUp;
 }
 
 void SwigDirector_FCNWrap::swig_init_callbacks() {
-  swig_callbackRun = 0;
+  swig_callbackCost = 0;
   swig_callbackUp = 0;
 }
 
@@ -2642,7 +2642,7 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_new_FCNWrap() {
 }
 
 
-SWIGEXPORT double SWIGSTDCALL CSharp_FCNWrap_Run(void * jarg1, void * jarg2) {
+SWIGEXPORT double SWIGSTDCALL CSharp_FCNWrap_Cost(void * jarg1, void * jarg2) {
   double jresult ;
   ROOT::Minuit2::FCNWrap *arg1 = (ROOT::Minuit2::FCNWrap *) 0 ;
   std::vector< double > *arg2 = 0 ;
@@ -2654,13 +2654,13 @@ SWIGEXPORT double SWIGSTDCALL CSharp_FCNWrap_Run(void * jarg1, void * jarg2) {
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
     return 0;
   } 
-  result = (double)((ROOT::Minuit2::FCNWrap const *)arg1)->Run((std::vector< double > const &)*arg2);
+  result = (double)((ROOT::Minuit2::FCNWrap const *)arg1)->Cost((std::vector< double > const &)*arg2);
   jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT double SWIGSTDCALL CSharp_FCNWrap_RunSwigExplicitFCNWrap(void * jarg1, void * jarg2) {
+SWIGEXPORT double SWIGSTDCALL CSharp_FCNWrap_CostSwigExplicitFCNWrap(void * jarg1, void * jarg2) {
   double jresult ;
   ROOT::Minuit2::FCNWrap *arg1 = (ROOT::Minuit2::FCNWrap *) 0 ;
   std::vector< double > *arg2 = 0 ;
@@ -2672,7 +2672,7 @@ SWIGEXPORT double SWIGSTDCALL CSharp_FCNWrap_RunSwigExplicitFCNWrap(void * jarg1
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
     return 0;
   } 
-  result = (double)((ROOT::Minuit2::FCNWrap const *)arg1)->ROOT::Minuit2::FCNWrap::Run((std::vector< double > const &)*arg2);
+  result = (double)((ROOT::Minuit2::FCNWrap const *)arg1)->ROOT::Minuit2::FCNWrap::Cost((std::vector< double > const &)*arg2);
   jresult = result; 
   return jresult;
 }

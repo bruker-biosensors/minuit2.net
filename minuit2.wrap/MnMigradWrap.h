@@ -14,16 +14,7 @@ namespace ROOT
             public:
                 MnMigradWrap(const FCNWrap& fcn, const MnUserParameterState& par, const MnStrategy& str = MnStrategy(1)) : MnMigrad(fcn, par, str)
                 {
-                    fcn.Up();
-                    std::cout << "Hello MnMigradWrap" << std::endl;
                 }
-
-                //MnMigradWrap(const FCNGradientBase& fcn, const MnUserParameterState& par, const MnStrategy& str = MnStrategy(1))
-                //    : MnMigrad(fcn, par, str)
-                //{
-                //    fcn.Up();
-                //    std::cout << "Hello MnMigradWrap" << std::endl;
-                //}
 
                 FunctionMinimum Run(unsigned int maxfcn = 0, double tolerance = 0.1);
         };

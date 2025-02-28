@@ -13,15 +13,15 @@ class SwigDirector_FCNWrap : public ROOT::Minuit2::FCNWrap, public Swig::Directo
 
 public:
     SwigDirector_FCNWrap();
-    virtual double Run(std::vector< double > const &v) const;
+    virtual double Cost(std::vector< double > const &v) const;
     virtual double Up() const;
 
     typedef double (SWIGSTDCALL* SWIG_Callback0_t)(void *);
     typedef double (SWIGSTDCALL* SWIG_Callback1_t)();
-    void swig_connect_director(SWIG_Callback0_t callbackRun, SWIG_Callback1_t callbackUp);
+    void swig_connect_director(SWIG_Callback0_t callbackCost, SWIG_Callback1_t callbackUp);
 
 private:
-    SWIG_Callback0_t swig_callbackRun;
+    SWIG_Callback0_t swig_callbackCost;
     SWIG_Callback1_t swig_callbackUp;
     void swig_init_callbacks();
 };

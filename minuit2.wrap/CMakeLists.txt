@@ -14,6 +14,7 @@ include(UseSWIG)
 SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES CPLUSPLUS ON)
 #SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES nodefaultctor ON)
 
+
 set(SOURCE_FILES 
 FCNWrap.cpp
  MnMigradWrap.cpp
@@ -25,7 +26,7 @@ FCNWrap.h
 
 SWIG_ADD_LIBRARY(minuit2.wrap
 LANGUAGE csharp
-OUTPUT_DIR ${MINUIT2NET_PATH}
+OUTPUT_DIR ${MINUIT2NET_PATH}/gen
 SOURCES ${SOURCE_FILES}  ${HEADER_FILES})
 
 
@@ -37,4 +38,7 @@ target_include_directories(minuit2.wrap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 #add_library(minuit2.wrap SHARED ${SOURCE_FILES}  ${HEADER_FILES})
 
 TARGET_LINK_LIBRARIES(minuit2.wrap PRIVATE Minuit2::Minuit2)
+add_custom_command(TARGET minuit2.wrap POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/Release/minuit2.wrap.dll ${MINUIT2NET_PATH}
+  )
 
