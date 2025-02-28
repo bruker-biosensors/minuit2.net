@@ -1,6 +1,5 @@
 name: Build Minuit2 C++ Wrapper
 run-name: ${{ github.actor }} is creating a new wrapper 🚀
-on: [push]
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
