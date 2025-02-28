@@ -18,14 +18,14 @@ public class LeastSquares : FCNWrap
         {
             throw new ArgumentException("x, y and yError must have the same length");
         }
-        this.yErrSquared = yError;
+        this.yErrSquared = yError.Select( err => err*err).ToList();
         this.xData = x;
         this.yData = y;
         this.model = model;
     }
 
     public LeastSquares(List<double> x, List<double> y, double yError, Func<double, IList<double>, double> model)
-        : this(x, y, Enumerable.Range(0, y.Count()).Select(_ => yError * yError).ToList(), model)
+        : this(x, y, Enumerable.Range(0, y.Count()).Select(_ => yError).ToList(), model)
     {
     }
 
