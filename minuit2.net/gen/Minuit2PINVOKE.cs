@@ -665,6 +665,18 @@ class Minuit2PINVOKE {
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_CostSwigExplicitFCNWrap")]
   public static extern double FCNWrap_CostSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Gradient")]
+  public static extern global::System.IntPtr FCNWrap_Gradient(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_GradientSwigExplicitFCNWrap")]
+  public static extern global::System.IntPtr FCNWrap_GradientSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_HasGradient")]
+  public static extern bool FCNWrap_HasGradient(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_HasGradientSwigExplicitFCNWrap")]
+  public static extern bool FCNWrap_HasGradientSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Up")]
   public static extern double FCNWrap_Up(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -675,7 +687,7 @@ class Minuit2PINVOKE {
   public static extern void delete_FCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_director_connect")]
-  public static extern void FCNWrap_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, FCNWrap.SwigDelegateFCNWrap_0 delegate0, FCNWrap.SwigDelegateFCNWrap_1 delegate1);
+  public static extern void FCNWrap_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, FCNWrap.SwigDelegateFCNWrap_0 delegate0, FCNWrap.SwigDelegateFCNWrap_1 delegate1, FCNWrap.SwigDelegateFCNWrap_2 delegate2, FCNWrap.SwigDelegateFCNWrap_3 delegate3);
 
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserParameters__SWIG_0")]
   public static extern global::System.IntPtr new_MnUserParameters__SWIG_0();
