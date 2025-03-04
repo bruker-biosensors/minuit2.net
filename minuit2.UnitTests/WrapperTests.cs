@@ -1,5 +1,3 @@
-using minuit2.net;
-
 namespace minuit2.UnitTests;
 
 public class WrapperTests
