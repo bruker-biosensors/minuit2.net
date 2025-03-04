@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class MinimumState : global::System.IDisposable {
+internal class MinimumState : global::System.IDisposable {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
   protected bool swigCMemOwn;
 

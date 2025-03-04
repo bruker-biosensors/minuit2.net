@@ -665,6 +665,18 @@ class Minuit2PINVOKE {
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_CostSwigExplicitFCNWrap")]
   public static extern double FCNWrap_CostSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Gradient")]
+  public static extern global::System.IntPtr FCNWrap_Gradient(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_GradientSwigExplicitFCNWrap")]
+  public static extern global::System.IntPtr FCNWrap_GradientSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_HasGradient")]
+  public static extern bool FCNWrap_HasGradient(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_HasGradientSwigExplicitFCNWrap")]
+  public static extern bool FCNWrap_HasGradientSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Up")]
   public static extern double FCNWrap_Up(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -675,7 +687,7 @@ class Minuit2PINVOKE {
   public static extern void delete_FCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_director_connect")]
-  public static extern void FCNWrap_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, FCNWrap.SwigDelegateFCNWrap_0 delegate0, FCNWrap.SwigDelegateFCNWrap_1 delegate1);
+  public static extern void FCNWrap_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, FCNWrap.SwigDelegateFCNWrap_0 delegate0, FCNWrap.SwigDelegateFCNWrap_1 delegate1, FCNWrap.SwigDelegateFCNWrap_2 delegate2, FCNWrap.SwigDelegateFCNWrap_3 delegate3);
 
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserParameters__SWIG_0")]
   public static extern global::System.IntPtr new_MnUserParameters__SWIG_0();
@@ -821,41 +833,41 @@ class Minuit2PINVOKE {
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_MnUserCovariance")]
   public static extern void delete_MnUserCovariance(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBaseSwigImpl_ErrorDef")]
-  public static extern double FCNBaseSwigImpl_ErrorDef(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBase_ErrorDef")]
+  public static extern double FCNBase_ErrorDef(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBaseSwigImpl_Up")]
-  public static extern double FCNBaseSwigImpl_Up(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBase_Up")]
+  public static extern double FCNBase_Up(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBaseSwigImpl_SetErrorDef")]
-  public static extern void FCNBaseSwigImpl_SetErrorDef(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBase_SetErrorDef")]
+  public static extern void FCNBase_SetErrorDef(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBaseSwigImpl_HasGradient")]
-  public static extern bool FCNBaseSwigImpl_HasGradient(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBase_HasGradient")]
+  public static extern bool FCNBase_HasGradient(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBaseSwigImpl_Gradient")]
-  public static extern global::System.IntPtr FCNBaseSwigImpl_Gradient(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBase_Gradient")]
+  public static extern global::System.IntPtr FCNBase_Gradient(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBaseSwigImpl_GradientWithPrevResult")]
-  public static extern global::System.IntPtr FCNBaseSwigImpl_GradientWithPrevResult(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, global::System.Runtime.InteropServices.HandleRef jarg4, global::System.Runtime.InteropServices.HandleRef jarg5);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBase_GradientWithPrevResult")]
+  public static extern global::System.IntPtr FCNBase_GradientWithPrevResult(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, global::System.Runtime.InteropServices.HandleRef jarg4, global::System.Runtime.InteropServices.HandleRef jarg5);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBaseSwigImpl_gradParameterSpace")]
-  public static extern int FCNBaseSwigImpl_gradParameterSpace(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBase_gradParameterSpace")]
+  public static extern int FCNBase_gradParameterSpace(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBaseSwigImpl_G2")]
-  public static extern global::System.IntPtr FCNBaseSwigImpl_G2(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBase_G2")]
+  public static extern global::System.IntPtr FCNBase_G2(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBaseSwigImpl_Hessian")]
-  public static extern global::System.IntPtr FCNBaseSwigImpl_Hessian(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBase_Hessian")]
+  public static extern global::System.IntPtr FCNBase_Hessian(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBaseSwigImpl_HasHessian")]
-  public static extern bool FCNBaseSwigImpl_HasHessian(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBase_HasHessian")]
+  public static extern bool FCNBase_HasHessian(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBaseSwigImpl_HasG2")]
-  public static extern bool FCNBaseSwigImpl_HasG2(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBase_HasG2")]
+  public static extern bool FCNBase_HasG2(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_FCNBaseSwigImpl")]
-  public static extern void delete_FCNBaseSwigImpl(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_FCNBase")]
+  public static extern void delete_FCNBase(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_FunctionMinimum__SWIG_0")]
   public static extern global::System.IntPtr new_FunctionMinimum__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
@@ -1012,7 +1024,4 @@ class Minuit2PINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_MinimumState")]
   public static extern void delete_MinimumState(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBaseSwigImpl_FCNBase_GetInterfaceCPtr")]
-  public static extern global::System.IntPtr FCNBaseSwigImpl_FCNBase_GetInterfaceCPtr(global::System.IntPtr jarg1);
 }

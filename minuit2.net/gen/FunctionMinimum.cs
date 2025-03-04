@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class FunctionMinimum : global::System.IDisposable {
+internal class FunctionMinimum : global::System.IDisposable {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
   protected bool swigCMemOwn;
 

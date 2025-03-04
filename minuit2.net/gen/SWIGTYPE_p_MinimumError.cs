@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class SWIGTYPE_p_MinimumError {
+internal class SWIGTYPE_p_MinimumError {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
 
   internal SWIGTYPE_p_MinimumError(global::System.IntPtr cPtr, bool futureUse) {

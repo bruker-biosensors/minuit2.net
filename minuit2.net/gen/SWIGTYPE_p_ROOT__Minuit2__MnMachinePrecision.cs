@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class SWIGTYPE_p_ROOT__Minuit2__MnMachinePrecision {
+internal class SWIGTYPE_p_ROOT__Minuit2__MnMachinePrecision {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
 
   internal SWIGTYPE_p_ROOT__Minuit2__MnMachinePrecision(global::System.IntPtr cPtr, bool futureUse) {

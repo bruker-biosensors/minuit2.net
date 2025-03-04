@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t {
+internal class SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
 
   internal SWIGTYPE_p_std__vectorT_ROOT__Minuit2__MinimumState_t(global::System.IntPtr cPtr, bool futureUse) {

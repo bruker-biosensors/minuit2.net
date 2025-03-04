@@ -683,6 +683,38 @@ double SwigDirector_FCNWrap::Cost(std::vector< double > const &v) const {
   return c_result;
 }
 
+std::vector< double > SwigDirector_FCNWrap::Gradient(std::vector< double > const &arg0) const {
+  std::vector< double > c_result ;
+  void * jresult = 0 ;
+  void * jarg0 = 0 ;
+  
+  if (!swig_callbackGradient) {
+    return ROOT::Minuit2::FCNWrap::Gradient(arg0);
+  } else {
+    jarg0 = (std::vector< double > *) &arg0; 
+    jresult = (void *) swig_callbackGradient(jarg0);
+    if (!jresult) {
+      SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Unexpected null return for type std::vector< double >", 0);
+      return c_result;
+    }
+    c_result = *(std::vector< double > *)jresult; 
+  }
+  return c_result;
+}
+
+bool SwigDirector_FCNWrap::HasGradient() const {
+  bool c_result = SwigValueInit< bool >() ;
+  unsigned int jresult = 0 ;
+  
+  if (!swig_callbackHasGradient) {
+    return ROOT::Minuit2::FCNWrap::HasGradient();
+  } else {
+    jresult = (unsigned int) swig_callbackHasGradient();
+    c_result = jresult ? true : false; 
+  }
+  return c_result;
+}
+
 double SwigDirector_FCNWrap::Up() const {
   double c_result = SwigValueInit< double >() ;
   double jresult = 0 ;
@@ -696,13 +728,17 @@ double SwigDirector_FCNWrap::Up() const {
   return c_result;
 }
 
-void SwigDirector_FCNWrap::swig_connect_director(SWIG_Callback0_t callbackCost, SWIG_Callback1_t callbackUp) {
+void SwigDirector_FCNWrap::swig_connect_director(SWIG_Callback0_t callbackCost, SWIG_Callback1_t callbackGradient, SWIG_Callback2_t callbackHasGradient, SWIG_Callback3_t callbackUp) {
   swig_callbackCost = callbackCost;
+  swig_callbackGradient = callbackGradient;
+  swig_callbackHasGradient = callbackHasGradient;
   swig_callbackUp = callbackUp;
 }
 
 void SwigDirector_FCNWrap::swig_init_callbacks() {
   swig_callbackCost = 0;
+  swig_callbackGradient = 0;
+  swig_callbackHasGradient = 0;
   swig_callbackUp = 0;
 }
 
@@ -2751,6 +2787,66 @@ SWIGEXPORT double SWIGSTDCALL CSharp_FCNWrap_CostSwigExplicitFCNWrap(void * jarg
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNWrap_Gradient(void * jarg1, void * jarg2) {
+  void * jresult ;
+  ROOT::Minuit2::FCNWrap *arg1 = (ROOT::Minuit2::FCNWrap *) 0 ;
+  std::vector< double > *arg2 = 0 ;
+  std::vector< double > result;
+  
+  arg1 = (ROOT::Minuit2::FCNWrap *)jarg1; 
+  arg2 = (std::vector< double > *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+    return 0;
+  } 
+  result = ((ROOT::Minuit2::FCNWrap const *)arg1)->Gradient((std::vector< double > const &)*arg2);
+  jresult = new std::vector< double >(result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNWrap_GradientSwigExplicitFCNWrap(void * jarg1, void * jarg2) {
+  void * jresult ;
+  ROOT::Minuit2::FCNWrap *arg1 = (ROOT::Minuit2::FCNWrap *) 0 ;
+  std::vector< double > *arg2 = 0 ;
+  std::vector< double > result;
+  
+  arg1 = (ROOT::Minuit2::FCNWrap *)jarg1; 
+  arg2 = (std::vector< double > *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "std::vector< double > const & is null", 0);
+    return 0;
+  } 
+  result = ((ROOT::Minuit2::FCNWrap const *)arg1)->ROOT::Minuit2::FCNWrap::Gradient((std::vector< double > const &)*arg2);
+  jresult = new std::vector< double >(result); 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNWrap_HasGradient(void * jarg1) {
+  unsigned int jresult ;
+  ROOT::Minuit2::FCNWrap *arg1 = (ROOT::Minuit2::FCNWrap *) 0 ;
+  bool result;
+  
+  arg1 = (ROOT::Minuit2::FCNWrap *)jarg1; 
+  result = (bool)((ROOT::Minuit2::FCNWrap const *)arg1)->HasGradient();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNWrap_HasGradientSwigExplicitFCNWrap(void * jarg1) {
+  unsigned int jresult ;
+  ROOT::Minuit2::FCNWrap *arg1 = (ROOT::Minuit2::FCNWrap *) 0 ;
+  bool result;
+  
+  arg1 = (ROOT::Minuit2::FCNWrap *)jarg1; 
+  result = (bool)((ROOT::Minuit2::FCNWrap const *)arg1)->ROOT::Minuit2::FCNWrap::HasGradient();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT double SWIGSTDCALL CSharp_FCNWrap_Up(void * jarg1) {
   double jresult ;
   ROOT::Minuit2::FCNWrap *arg1 = (ROOT::Minuit2::FCNWrap *) 0 ;
@@ -2783,10 +2879,10 @@ SWIGEXPORT void SWIGSTDCALL CSharp_delete_FCNWrap(void * jarg1) {
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_FCNWrap_director_connect(void *objarg, SwigDirector_FCNWrap::SWIG_Callback0_t callback0, SwigDirector_FCNWrap::SWIG_Callback1_t callback1) {
+SWIGEXPORT void SWIGSTDCALL CSharp_FCNWrap_director_connect(void *objarg, SwigDirector_FCNWrap::SWIG_Callback0_t callback0, SwigDirector_FCNWrap::SWIG_Callback1_t callback1, SwigDirector_FCNWrap::SWIG_Callback2_t callback2, SwigDirector_FCNWrap::SWIG_Callback3_t callback3) {
   ROOT::Minuit2::FCNWrap *obj = (ROOT::Minuit2::FCNWrap *)objarg;
   SwigDirector_FCNWrap *director = static_cast<SwigDirector_FCNWrap *>(obj);
-  director->swig_connect_director(callback0, callback1);
+  director->swig_connect_director(callback0, callback1, callback2, callback3);
 }
 
 
@@ -3481,7 +3577,7 @@ SWIGEXPORT void SWIGSTDCALL CSharp_delete_MnUserCovariance(void * jarg1) {
 }
 
 
-SWIGEXPORT double SWIGSTDCALL CSharp_FCNBaseSwigImpl_ErrorDef(void * jarg1) {
+SWIGEXPORT double SWIGSTDCALL CSharp_FCNBase_ErrorDef(void * jarg1) {
   double jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   double result;
@@ -3493,7 +3589,7 @@ SWIGEXPORT double SWIGSTDCALL CSharp_FCNBaseSwigImpl_ErrorDef(void * jarg1) {
 }
 
 
-SWIGEXPORT double SWIGSTDCALL CSharp_FCNBaseSwigImpl_Up(void * jarg1) {
+SWIGEXPORT double SWIGSTDCALL CSharp_FCNBase_Up(void * jarg1) {
   double jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   double result;
@@ -3505,7 +3601,7 @@ SWIGEXPORT double SWIGSTDCALL CSharp_FCNBaseSwigImpl_Up(void * jarg1) {
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_FCNBaseSwigImpl_SetErrorDef(void * jarg1, double jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_FCNBase_SetErrorDef(void * jarg1, double jarg2) {
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   double arg2 ;
   
@@ -3515,7 +3611,7 @@ SWIGEXPORT void SWIGSTDCALL CSharp_FCNBaseSwigImpl_SetErrorDef(void * jarg1, dou
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasGradient(void * jarg1) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBase_HasGradient(void * jarg1) {
   unsigned int jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   bool result;
@@ -3527,7 +3623,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasGradient(void * ja
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_Gradient(void * jarg1, void * jarg2) {
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBase_Gradient(void * jarg1, void * jarg2) {
   void * jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   std::vector< double > *arg2 = 0 ;
@@ -3545,7 +3641,7 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_Gradient(void * jarg1, void
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_GradientWithPrevResult(void * jarg1, void * jarg2, void * jarg3, void * jarg4, void * jarg5) {
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBase_GradientWithPrevResult(void * jarg1, void * jarg2, void * jarg3, void * jarg4, void * jarg5) {
   void * jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   std::vector< double > *arg2 = 0 ;
@@ -3569,7 +3665,7 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_GradientWithPrevResult(void
 }
 
 
-SWIGEXPORT int SWIGSTDCALL CSharp_FCNBaseSwigImpl_gradParameterSpace(void * jarg1) {
+SWIGEXPORT int SWIGSTDCALL CSharp_FCNBase_gradParameterSpace(void * jarg1) {
   int jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   ROOT::Minuit2::GradientParameterSpace result;
@@ -3581,7 +3677,7 @@ SWIGEXPORT int SWIGSTDCALL CSharp_FCNBaseSwigImpl_gradParameterSpace(void * jarg
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_G2(void * jarg1, void * jarg2) {
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBase_G2(void * jarg1, void * jarg2) {
   void * jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   std::vector< double > *arg2 = 0 ;
@@ -3599,7 +3695,7 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_G2(void * jarg1, void * jar
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_Hessian(void * jarg1, void * jarg2) {
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBase_Hessian(void * jarg1, void * jarg2) {
   void * jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   std::vector< double > *arg2 = 0 ;
@@ -3617,7 +3713,7 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_Hessian(void * jarg1, void 
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasHessian(void * jarg1) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBase_HasHessian(void * jarg1) {
   unsigned int jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   bool result;
@@ -3629,7 +3725,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasHessian(void * jar
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasG2(void * jarg1) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBase_HasG2(void * jarg1) {
   unsigned int jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   bool result;
@@ -3641,7 +3737,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasG2(void * jarg1) {
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_delete_FCNBaseSwigImpl(void * jarg1) {
+SWIGEXPORT void SWIGSTDCALL CSharp_delete_FCNBase(void * jarg1) {
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   
   arg1 = (ROOT::Minuit2::FCNBase *)jarg1; 
@@ -4364,10 +4460,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_delete_MinimumState(void * jarg1) {
   delete arg1;
 }
 
-
-SWIGEXPORT ROOT::Minuit2::FCNBase * SWIGSTDCALL CSharp_FCNBaseSwigImpl_FCNBase_GetInterfaceCPtr(ROOT::Minuit2::FCNBase *jarg1) {
-    return (ROOT::Minuit2::FCNBase *)jarg1;
-}
 
 #ifdef __cplusplus
 }

@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class Minuit2 {
+internal class Minuit2 {
   public static int Mndaxpy(uint arg0, double arg1, SWIGTYPE_p_double arg2, int arg3, SWIGTYPE_p_double arg4, int arg5) {
     int ret = Minuit2PINVOKE.Mndaxpy(arg0, arg1, SWIGTYPE_p_double.getCPtr(arg2), arg3, SWIGTYPE_p_double.getCPtr(arg4), arg5);
     return ret;

@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class SWIGTYPE_p_MnGlobalCorrelationCoeff {
+internal class SWIGTYPE_p_MnGlobalCorrelationCoeff {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
 
   internal SWIGTYPE_p_MnGlobalCorrelationCoeff(global::System.IntPtr cPtr, bool futureUse) {

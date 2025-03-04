@@ -3,13 +3,34 @@
 
 namespace minuit2.net;
 
-public class Migrad : MnMigradWrap
+public class Migrad
 {
-    public Migrad(FCNWrap fcn, MnUserParameterState par, MnStrategy str) : base(fcn, par, str)
+    private readonly MnMigradWrap migrad;
+
+    //not sure if those are needed,
+    //but otherwise they will be collected by the GC and and memory might be freed on the C++ side
+    //having this variable here insures correct lifetime management.
+    private readonly CostFunctionWrapper wrapper;
+    private readonly MnUserParameterState parameters;
+
+
+    public Migrad(ICostFunction fcn, UserParameters par)
     {
+        wrapper = new CostFunctionWrapper(fcn);
+        parameters = par.GetParameterStates();
+        migrad = new MnMigradWrap(wrapper, parameters);
     }
 
-    public Migrad(FCNWrap fcn, MnUserParameterState par) : base(fcn, par)
+    public List<double> Evaluate()
     {
+        var retList = new List<double>();
+        var result = migrad.Run();
+        var doublearray = DoubleArray.frompointer(result.Parameters().Vec().Data());
+        for (uint i = 0; i < result.Parameters().Vec().size(); i++)
+        {
+            retList.Add(doublearray.getitem(i));
+        }
+
+        return retList;
     }
 }

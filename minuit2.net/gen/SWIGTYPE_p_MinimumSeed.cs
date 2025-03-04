@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class SWIGTYPE_p_MinimumSeed {
+internal class SWIGTYPE_p_MinimumSeed {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
 
   internal SWIGTYPE_p_MinimumSeed(global::System.IntPtr cPtr, bool futureUse) {

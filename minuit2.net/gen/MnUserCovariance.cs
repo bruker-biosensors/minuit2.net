@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class MnUserCovariance : global::System.IDisposable {
+internal class MnUserCovariance : global::System.IDisposable {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
   protected bool swigCMemOwn;
 

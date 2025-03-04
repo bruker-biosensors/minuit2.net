@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class FCNWrap : global::System.IDisposable {
+internal class FCNWrap : global::System.IDisposable {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
   protected bool swigCMemOwn;
 
@@ -66,17 +66,32 @@ public class FCNWrap : global::System.IDisposable {
     return ret;
   }
 
+  public virtual VectorDouble Gradient(VectorDouble arg0) {
+    VectorDouble ret = new VectorDouble((SwigDerivedClassHasMethod("Gradient", swigMethodTypes1) ? Minuit2PINVOKE.FCNWrap_GradientSwigExplicitFCNWrap(swigCPtr, VectorDouble.getCPtr(arg0)) : Minuit2PINVOKE.FCNWrap_Gradient(swigCPtr, VectorDouble.getCPtr(arg0))), true);
+    if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public virtual bool HasGradient() {
+    bool ret = (SwigDerivedClassHasMethod("HasGradient", swigMethodTypes2) ? Minuit2PINVOKE.FCNWrap_HasGradientSwigExplicitFCNWrap(swigCPtr) : Minuit2PINVOKE.FCNWrap_HasGradient(swigCPtr));
+    return ret;
+  }
+
   public virtual double Up() {
-    double ret = (SwigDerivedClassHasMethod("Up", swigMethodTypes1) ? Minuit2PINVOKE.FCNWrap_UpSwigExplicitFCNWrap(swigCPtr) : Minuit2PINVOKE.FCNWrap_Up(swigCPtr));
+    double ret = (SwigDerivedClassHasMethod("Up", swigMethodTypes3) ? Minuit2PINVOKE.FCNWrap_UpSwigExplicitFCNWrap(swigCPtr) : Minuit2PINVOKE.FCNWrap_Up(swigCPtr));
     return ret;
   }
 
   private void SwigDirectorConnect() {
     if (SwigDerivedClassHasMethod("Cost", swigMethodTypes0))
       swigDelegate0 = new SwigDelegateFCNWrap_0(SwigDirectorMethodCost);
-    if (SwigDerivedClassHasMethod("Up", swigMethodTypes1))
-      swigDelegate1 = new SwigDelegateFCNWrap_1(SwigDirectorMethodUp);
-    Minuit2PINVOKE.FCNWrap_director_connect(swigCPtr, swigDelegate0, swigDelegate1);
+    if (SwigDerivedClassHasMethod("Gradient", swigMethodTypes1))
+      swigDelegate1 = new SwigDelegateFCNWrap_1(SwigDirectorMethodGradient);
+    if (SwigDerivedClassHasMethod("HasGradient", swigMethodTypes2))
+      swigDelegate2 = new SwigDelegateFCNWrap_2(SwigDirectorMethodHasGradient);
+    if (SwigDerivedClassHasMethod("Up", swigMethodTypes3))
+      swigDelegate3 = new SwigDelegateFCNWrap_3(SwigDirectorMethodUp);
+    Minuit2PINVOKE.FCNWrap_director_connect(swigCPtr, swigDelegate0, swigDelegate1, swigDelegate2, swigDelegate3);
   }
 
   private bool SwigDerivedClassHasMethod(string methodName, global::System.Type[] methodTypes) {
@@ -117,16 +132,30 @@ public class FCNWrap : global::System.IDisposable {
     return Cost(new VectorDouble(v, false));
   }
 
+  private global::System.IntPtr SwigDirectorMethodGradient(global::System.IntPtr arg0) {
+    return VectorDouble.getCPtr(Gradient(new VectorDouble(arg0, false))).Handle;
+  }
+
+  private bool SwigDirectorMethodHasGradient() {
+    return HasGradient();
+  }
+
   private double SwigDirectorMethodUp() {
     return Up();
   }
 
   public delegate double SwigDelegateFCNWrap_0(global::System.IntPtr v);
-  public delegate double SwigDelegateFCNWrap_1();
+  public delegate global::System.IntPtr SwigDelegateFCNWrap_1(global::System.IntPtr arg0);
+  public delegate bool SwigDelegateFCNWrap_2();
+  public delegate double SwigDelegateFCNWrap_3();
 
   private SwigDelegateFCNWrap_0 swigDelegate0;
   private SwigDelegateFCNWrap_1 swigDelegate1;
+  private SwigDelegateFCNWrap_2 swigDelegate2;
+  private SwigDelegateFCNWrap_3 swigDelegate3;
 
   private static global::System.Type[] swigMethodTypes0 = new global::System.Type[] { typeof(VectorDouble) };
-  private static global::System.Type[] swigMethodTypes1 = new global::System.Type[] {  };
+  private static global::System.Type[] swigMethodTypes1 = new global::System.Type[] { typeof(VectorDouble) };
+  private static global::System.Type[] swigMethodTypes2 = new global::System.Type[] {  };
+  private static global::System.Type[] swigMethodTypes3 = new global::System.Type[] {  };
 }

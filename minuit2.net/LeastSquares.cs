@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace minuit2.net;
 
-public class LeastSquares : FCNWrap
+public class LeastSquares : ICostFunction
 {
     private readonly List<double> yErrSquared;
     private readonly List<double> xData;
@@ -29,7 +29,7 @@ public class LeastSquares : FCNWrap
     {
     }
 
-    public override double Cost(VectorDouble v)
+    public double EvaluateCost(IList<double> v)
     {
         double f = 0.0;
 
@@ -40,10 +40,5 @@ public class LeastSquares : FCNWrap
         }
 
         return f;
-    }
-
-    public override double Up()
-    {
-        return 1; // according to the documentation this is the default value for chisquaredfits
     }
 }

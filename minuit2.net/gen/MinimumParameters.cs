@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class MinimumParameters : global::System.IDisposable {
+internal class MinimumParameters : global::System.IDisposable {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
   protected bool swigCMemOwn;
 

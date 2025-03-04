@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class DoubleArray : global::System.IDisposable {
+internal class DoubleArray : global::System.IDisposable {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
   protected bool swigCMemOwn;
 

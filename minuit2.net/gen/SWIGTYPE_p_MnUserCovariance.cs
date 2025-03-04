@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class SWIGTYPE_p_MnUserCovariance {
+internal class SWIGTYPE_p_MnUserCovariance {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
 
   internal SWIGTYPE_p_MnUserCovariance(global::System.IntPtr cPtr, bool futureUse) {

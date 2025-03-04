@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class VectorDouble : global::System.IDisposable, global::System.Collections.IEnumerable, global::System.Collections.Generic.IList<double>
+internal class VectorDouble : global::System.IDisposable, global::System.Collections.IEnumerable, global::System.Collections.Generic.IList<double>
  {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
   protected bool swigCMemOwn;
