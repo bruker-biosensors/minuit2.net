@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class MnStrategy : global::System.IDisposable {
+internal class MnStrategy : global::System.IDisposable {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
   protected bool swigCMemOwn;
 

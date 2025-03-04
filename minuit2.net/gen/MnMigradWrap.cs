@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class MnMigradWrap : global::System.IDisposable {
+internal class MnMigradWrap : global::System.IDisposable {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
   protected bool swigCMemOwn;
 

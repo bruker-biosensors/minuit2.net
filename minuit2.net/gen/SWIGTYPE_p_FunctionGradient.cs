@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class SWIGTYPE_p_FunctionGradient {
+internal class SWIGTYPE_p_FunctionGradient {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
 
   internal SWIGTYPE_p_FunctionGradient(global::System.IntPtr cPtr, bool futureUse) {

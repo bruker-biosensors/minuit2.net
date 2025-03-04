@@ -1,4 +1,6 @@
 %module(directors="1") Minuit2 //enable directors
+%typemap(csclassmodifiers) SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE &&, SWIGTYPE [], SWIGTYPE (CLASS::*) "internal class"
+%pragma(csharp) moduleclassmodifiers="internal class"
 %include <swiginterface.i>
 %include "stl.i"
 %include "std_vector.i"
@@ -11,7 +13,8 @@
 
 
 //%interface_impl(ROOT::Minuit2::GenericFunction);
-%interface_impl(ROOT::Minuit2::FCNBase);
+//%interface_impl(ROOT::Minuit2::FCNBase);
+//%typemap(csinterfacemodifiers) FCNBase "internal interface"
 %include "Minuit2/MnStrategy.h"
 %include "Minuit2/MnUserParameterState.h"
 namespace std {

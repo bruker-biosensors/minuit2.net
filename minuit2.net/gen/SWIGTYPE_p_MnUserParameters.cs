@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class SWIGTYPE_p_MnUserParameters {
+internal class SWIGTYPE_p_MnUserParameters {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
 
   internal SWIGTYPE_p_MnUserParameters(global::System.IntPtr cPtr, bool futureUse) {

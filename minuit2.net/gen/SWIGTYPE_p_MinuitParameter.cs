@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class SWIGTYPE_p_MinuitParameter {
+internal class SWIGTYPE_p_MinuitParameter {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
 
   internal SWIGTYPE_p_MinuitParameter(global::System.IntPtr cPtr, bool futureUse) {

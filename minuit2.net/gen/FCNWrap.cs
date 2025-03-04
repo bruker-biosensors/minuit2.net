@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 
-public class FCNWrap : global::System.IDisposable {
+internal class FCNWrap : global::System.IDisposable {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
   protected bool swigCMemOwn;
 

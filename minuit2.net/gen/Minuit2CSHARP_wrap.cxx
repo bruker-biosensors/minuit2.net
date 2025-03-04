@@ -3481,7 +3481,7 @@ SWIGEXPORT void SWIGSTDCALL CSharp_delete_MnUserCovariance(void * jarg1) {
 }
 
 
-SWIGEXPORT double SWIGSTDCALL CSharp_FCNBaseSwigImpl_ErrorDef(void * jarg1) {
+SWIGEXPORT double SWIGSTDCALL CSharp_FCNBase_ErrorDef(void * jarg1) {
   double jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   double result;
@@ -3493,7 +3493,7 @@ SWIGEXPORT double SWIGSTDCALL CSharp_FCNBaseSwigImpl_ErrorDef(void * jarg1) {
 }
 
 
-SWIGEXPORT double SWIGSTDCALL CSharp_FCNBaseSwigImpl_Up(void * jarg1) {
+SWIGEXPORT double SWIGSTDCALL CSharp_FCNBase_Up(void * jarg1) {
   double jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   double result;
@@ -3505,7 +3505,7 @@ SWIGEXPORT double SWIGSTDCALL CSharp_FCNBaseSwigImpl_Up(void * jarg1) {
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_FCNBaseSwigImpl_SetErrorDef(void * jarg1, double jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_FCNBase_SetErrorDef(void * jarg1, double jarg2) {
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   double arg2 ;
   
@@ -3515,7 +3515,7 @@ SWIGEXPORT void SWIGSTDCALL CSharp_FCNBaseSwigImpl_SetErrorDef(void * jarg1, dou
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasGradient(void * jarg1) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBase_HasGradient(void * jarg1) {
   unsigned int jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   bool result;
@@ -3527,7 +3527,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasGradient(void * ja
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_Gradient(void * jarg1, void * jarg2) {
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBase_Gradient(void * jarg1, void * jarg2) {
   void * jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   std::vector< double > *arg2 = 0 ;
@@ -3545,7 +3545,7 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_Gradient(void * jarg1, void
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_GradientWithPrevResult(void * jarg1, void * jarg2, void * jarg3, void * jarg4, void * jarg5) {
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBase_GradientWithPrevResult(void * jarg1, void * jarg2, void * jarg3, void * jarg4, void * jarg5) {
   void * jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   std::vector< double > *arg2 = 0 ;
@@ -3569,7 +3569,7 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_GradientWithPrevResult(void
 }
 
 
-SWIGEXPORT int SWIGSTDCALL CSharp_FCNBaseSwigImpl_gradParameterSpace(void * jarg1) {
+SWIGEXPORT int SWIGSTDCALL CSharp_FCNBase_gradParameterSpace(void * jarg1) {
   int jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   ROOT::Minuit2::GradientParameterSpace result;
@@ -3581,7 +3581,7 @@ SWIGEXPORT int SWIGSTDCALL CSharp_FCNBaseSwigImpl_gradParameterSpace(void * jarg
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_G2(void * jarg1, void * jarg2) {
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBase_G2(void * jarg1, void * jarg2) {
   void * jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   std::vector< double > *arg2 = 0 ;
@@ -3599,7 +3599,7 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_G2(void * jarg1, void * jar
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_Hessian(void * jarg1, void * jarg2) {
+SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBase_Hessian(void * jarg1, void * jarg2) {
   void * jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   std::vector< double > *arg2 = 0 ;
@@ -3617,7 +3617,7 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_FCNBaseSwigImpl_Hessian(void * jarg1, void 
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasHessian(void * jarg1) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBase_HasHessian(void * jarg1) {
   unsigned int jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   bool result;
@@ -3629,7 +3629,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasHessian(void * jar
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasG2(void * jarg1) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBase_HasG2(void * jarg1) {
   unsigned int jresult ;
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   bool result;
@@ -3641,7 +3641,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_FCNBaseSwigImpl_HasG2(void * jarg1) {
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_delete_FCNBaseSwigImpl(void * jarg1) {
+SWIGEXPORT void SWIGSTDCALL CSharp_delete_FCNBase(void * jarg1) {
   ROOT::Minuit2::FCNBase *arg1 = (ROOT::Minuit2::FCNBase *) 0 ;
   
   arg1 = (ROOT::Minuit2::FCNBase *)jarg1; 
@@ -4364,10 +4364,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_delete_MinimumState(void * jarg1) {
   delete arg1;
 }
 
-
-SWIGEXPORT ROOT::Minuit2::FCNBase * SWIGSTDCALL CSharp_FCNBaseSwigImpl_FCNBase_GetInterfaceCPtr(ROOT::Minuit2::FCNBase *jarg1) {
-    return (ROOT::Minuit2::FCNBase *)jarg1;
-}
 
 #ifdef __cplusplus
 }
