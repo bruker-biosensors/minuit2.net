@@ -5,5 +5,5 @@ namespace minuit2.net;
 
 public interface ICostFunction
 {
-    double EvaluateCost(IList<double> parameters);
+    double ValueFor(IList<double> parameters);
 }

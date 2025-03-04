@@ -29,13 +29,13 @@ public class LeastSquares : ICostFunction
     {
     }
 
-    public double EvaluateCost(IList<double> v)
+    public double ValueFor(IList<double> parameters)
     {
         double f = 0.0;
 
         foreach (var data in xData.Zip(yData, yErrSquared))
         {
-            double diff = data.Second - model(data.First, v);
+            double diff = data.Second - model(data.First, parameters);
             f += diff * diff / data.Third;
         }
 
