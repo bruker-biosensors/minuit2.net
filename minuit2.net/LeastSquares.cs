@@ -11,7 +11,7 @@ public class LeastSquares : ICostFunction
     private LeastSquares(IList<double> x, IList<double> y, IList<double> yError, Func<double, IList<double>, double> model)
     {
         if (x.Count != y.Count || x.Count != yError.Count)
-            throw new ArgumentException("x, y and yError must have the same length");
+            throw new ArgumentException($"{nameof(x)}, {nameof(y)} and {nameof(yError)} must have the same length");
         
         _data = x.Zip(y, yError).Select(t => new DataPoint(t.First, t.Second, t.Third)).ToList();
         _model = model;
