@@ -12,7 +12,7 @@ public class UserParameters(params Parameter[] parameters)
         var states = new MnUserParameterState();
         foreach (var parameter in parameters)
         {
-            states.Add(parameter.Name, parameter.Value, 0.1);
+            states.Add(parameter.Name, parameter.Value, parameter.Value * 0.01);
         }
         return states;
     }
