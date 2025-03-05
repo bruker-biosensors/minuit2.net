@@ -4,6 +4,11 @@ public class MigradResult
 {
     internal MigradResult(FunctionMinimum functionMinimum)
     {
+        BestValues = BestValuesFrom(functionMinimum);
+    }
+
+    private static List<double> BestValuesFrom(FunctionMinimum functionMinimum)
+    {
         var retList = new List<double>();
         var doublearray = DoubleArray.frompointer(functionMinimum.Parameters().Vec().Data());
         for (uint i = 0; i < functionMinimum.Parameters().Vec().size(); i++)
@@ -11,8 +16,8 @@ public class MigradResult
             retList.Add(doublearray.getitem(i));
         }
 
-        BestValues = retList;
+        return retList;
     }
-    
+
     public IReadOnlyCollection<double> BestValues { get; }
 }
