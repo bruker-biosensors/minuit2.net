@@ -15,10 +15,12 @@ internal static class MigradResultAssertionExtensions
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global", Justification = "Adhere to convention")]
 internal class MigradResultAssertions(MigradResult value) : ObjectAssertions<MigradResult, MigradResultAssertions>(value, null)
 {
-    public AndConstraint<MigradResultAssertions> HaveBestValues(IReadOnlyCollection<double> expectedValues, double relativeTolerance = 0.001)
+    private const double RelativeTolerance = 0.001;
+    
+    public AndConstraint<MigradResultAssertions> HaveBestValues(IReadOnlyCollection<double> expectedValues)
     {
         Subject.BestValues.Should().BeEquivalentTo(expectedValues, options => options
-            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * relativeTolerance)))
+            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * RelativeTolerance)))
             .WhenTypeIs<double>());
         return new AndConstraint<MigradResultAssertions>(this);
     }
