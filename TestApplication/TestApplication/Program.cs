@@ -27,7 +27,7 @@ for (int i = 0; i < 1000; i++)
 
     Migrad migrad = new Migrad(fcn, state);
 
-    var result = migrad.Evaluate();
+    var result = migrad.Run();
 }
 Console.WriteLine($"Migrad took {sw.ElapsedMilliseconds} ms");
 

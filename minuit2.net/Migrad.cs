@@ -18,7 +18,7 @@ public class Migrad
         migrad = new MnMigradWrap(wrapper, parameters);
     }
 
-    public List<double> Evaluate()
+    public List<double> Run()
     {
         var retList = new List<double>();
         var result = migrad.Run();
