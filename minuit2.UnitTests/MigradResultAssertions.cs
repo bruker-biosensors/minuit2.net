@@ -24,4 +24,12 @@ internal class MigradResultAssertions(MigradResult value) : ObjectAssertions<Mig
             .WhenTypeIs<double>());
         return new AndConstraint<MigradResultAssertions>(this);
     }
+
+    public AndConstraint<MigradResultAssertions>  HaveCovarianceMatrix(double[,] expectedValues)
+    {
+        Subject.CovarianceMatrix.Should().BeEquivalentTo(expectedValues, options => options
+            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * RelativeTolerance)))
+            .WhenTypeIs<double>());
+        return new AndConstraint<MigradResultAssertions>(this);
+    }
 }
