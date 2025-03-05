@@ -24,11 +24,13 @@ public class MinimizationResultTests
         3.77, 0.07, -4.45
     ];
 
+    private const double YError = 0.1;  // standard deviation of noise used to generate the above y-values
+
     
     [Test]
     public void basic_scenario()
     {
-        var cost = new LeastSquares(_xValues, _yValues, 0.1, _cubicPoly);
+        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly);
         
         var initialParameters = new UserParameters(
             new Parameter("c0", 10.75), 
