@@ -41,7 +41,7 @@ public class MinimizationResultTests
         var minimizer = new Migrad(cost, initialParameters);
         var result = minimizer.Run();
 
-        result.Should().BeEquivalentTo([9.976261866327437, -1.9622541480976985, 0.9906196650169466, -0.09936114330982032], 
+        result.BestValues.Should().BeEquivalentTo([9.976261866327437, -1.9622541480976985, 0.9906196650169466, -0.09936114330982032], 
             options => options
                 .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
                 .WhenTypeIs<double>());

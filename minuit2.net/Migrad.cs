@@ -18,16 +18,5 @@ public class Migrad
         migrad = new MnMigradWrap(wrapper, parameters);
     }
 
-    public List<double> Run()
-    {
-        var retList = new List<double>();
-        var result = migrad.Run();
-        var doublearray = DoubleArray.frompointer(result.Parameters().Vec().Data());
-        for (uint i = 0; i < result.Parameters().Vec().size(); i++)
-        {
-            retList.Add(doublearray.getitem(i));
-        }
-
-        return retList;
-    }
+    public MigradResult Run() => new(migrad.Run());
 }
