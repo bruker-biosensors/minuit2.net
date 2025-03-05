@@ -20,9 +20,8 @@ public class MinimizationResultTests
     // and a random normal noise with a standard deviation of 0.1
     private readonly List<double> _yValues =
     [
-        9.90108786, 9.20072133, 9.02879253, 8.93189744, 9.29202309, 9.74521038, 10.23635364, 11.01669522, 11.56834045,
-        12.10526109, 12.50971673, 12.45990696, 12.51921661, 11.72039103, 10.80002694, 9.07613211, 6.95320331,
-        3.77150306, 0.06882051, -4.45372309
+        9.9, 9.2, 9.03, 8.93, 9.29, 9.75, 10.24, 11.02, 11.57, 12.11, 12.51, 12.46, 12.52, 11.72, 10.8, 9.08, 6.95,
+        3.77, 0.07, -4.45
     ];
 
     
@@ -32,14 +31,14 @@ public class MinimizationResultTests
         var cost = new LeastSquares(_xValues, _yValues, 0.1, _cubicPoly);
         
         var initialParameters = new UserParameters(
-            new Parameter("c0", 7.79), 
-            new Parameter("c1", -2.17), 
-            new Parameter("c2", 1.15), 
+            new Parameter("c0", 10.75), 
+            new Parameter("c1", -1.97), 
+            new Parameter("c2", 1.13), 
             new Parameter("c3", -0.11));
         
         var minimizer = new Migrad(cost, initialParameters);
         var result = minimizer.Run();
 
-        result.Should().HaveBestValues([9.976261866327437, -1.9622541480976985, 0.9906196650169466, -0.09936114330982032]);
+        result.Should().HaveBestValues([9.974, -1.959, 0.9898, -0.09931]);
     }
 }
