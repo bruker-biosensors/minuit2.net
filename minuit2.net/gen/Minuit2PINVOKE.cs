@@ -338,6 +338,147 @@ class Minuit2PINVOKE {
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnStrategy_SetStorageLevel")]
   public static extern void MnStrategy_SetStorageLevel(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_VectorDouble__SWIG_0")]
+  public static extern global::System.IntPtr new_VectorDouble__SWIG_0();
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_VectorDouble__SWIG_1")]
+  public static extern global::System.IntPtr new_VectorDouble__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Clear")]
+  public static extern void VectorDouble_Clear(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Add")]
+  public static extern void VectorDouble_Add(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_size")]
+  public static extern uint VectorDouble_size(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_empty")]
+  public static extern bool VectorDouble_empty(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_capacity")]
+  public static extern uint VectorDouble_capacity(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_reserve")]
+  public static extern void VectorDouble_reserve(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_VectorDouble__SWIG_2")]
+  public static extern global::System.IntPtr new_VectorDouble__SWIG_2(int jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_getitemcopy")]
+  public static extern double VectorDouble_getitemcopy(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_getitem")]
+  public static extern double VectorDouble_getitem(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_setitem")]
+  public static extern void VectorDouble_setitem(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, double jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_AddRange")]
+  public static extern void VectorDouble_AddRange(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_GetRange")]
+  public static extern global::System.IntPtr VectorDouble_GetRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Insert")]
+  public static extern void VectorDouble_Insert(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, double jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_InsertRange")]
+  public static extern void VectorDouble_InsertRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_RemoveAt")]
+  public static extern void VectorDouble_RemoveAt(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_RemoveRange")]
+  public static extern void VectorDouble_RemoveRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Repeat")]
+  public static extern global::System.IntPtr VectorDouble_Repeat(double jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Reverse__SWIG_0")]
+  public static extern void VectorDouble_Reverse__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Reverse__SWIG_1")]
+  public static extern void VectorDouble_Reverse__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_SetRange")]
+  public static extern void VectorDouble_SetRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Contains")]
+  public static extern bool VectorDouble_Contains(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_IndexOf")]
+  public static extern int VectorDouble_IndexOf(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_LastIndexOf")]
+  public static extern int VectorDouble_LastIndexOf(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Remove")]
+  public static extern bool VectorDouble_Remove(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_VectorDouble")]
+  public static extern void delete_VectorDouble(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_FCNWrap")]
+  public static extern global::System.IntPtr new_FCNWrap();
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Cost")]
+  public static extern double FCNWrap_Cost(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_CostSwigExplicitFCNWrap")]
+  public static extern double FCNWrap_CostSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Gradient")]
+  public static extern global::System.IntPtr FCNWrap_Gradient(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_GradientSwigExplicitFCNWrap")]
+  public static extern global::System.IntPtr FCNWrap_GradientSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_HasGradient")]
+  public static extern bool FCNWrap_HasGradient(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_HasGradientSwigExplicitFCNWrap")]
+  public static extern bool FCNWrap_HasGradientSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Up")]
+  public static extern double FCNWrap_Up(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_UpSwigExplicitFCNWrap")]
+  public static extern double FCNWrap_UpSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_FCNWrap")]
+  public static extern void delete_FCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_director_connect")]
+  public static extern void FCNWrap_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, FCNWrap.SwigDelegateFCNWrap_0 delegate0, FCNWrap.SwigDelegateFCNWrap_1 delegate1, FCNWrap.SwigDelegateFCNWrap_2 delegate2, FCNWrap.SwigDelegateFCNWrap_3 delegate3);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserCovariance__SWIG_0")]
+  public static extern global::System.IntPtr new_MnUserCovariance__SWIG_0();
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserCovariance__SWIG_1")]
+  public static extern global::System.IntPtr new_MnUserCovariance__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserCovariance__SWIG_2")]
+  public static extern global::System.IntPtr new_MnUserCovariance__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserCovariance__SWIG_3")]
+  public static extern global::System.IntPtr new_MnUserCovariance__SWIG_3(uint jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserCovariance_Scale")]
+  public static extern void MnUserCovariance_Scale(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserCovariance_Data")]
+  public static extern global::System.IntPtr MnUserCovariance_Data(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserCovariance_Nrow")]
+  public static extern uint MnUserCovariance_Nrow(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserCovariance_size")]
+  public static extern uint MnUserCovariance_size(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_MnUserCovariance")]
+  public static extern void delete_MnUserCovariance(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserParameterState__SWIG_0")]
   public static extern global::System.IntPtr new_MnUserParameterState__SWIG_0();
 
@@ -521,318 +662,6 @@ class Minuit2PINVOKE {
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_MnUserParameterState")]
   public static extern void delete_MnUserParameterState(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_VectorDouble__SWIG_0")]
-  public static extern global::System.IntPtr new_VectorDouble__SWIG_0();
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_VectorDouble__SWIG_1")]
-  public static extern global::System.IntPtr new_VectorDouble__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Clear")]
-  public static extern void VectorDouble_Clear(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Add")]
-  public static extern void VectorDouble_Add(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_size")]
-  public static extern uint VectorDouble_size(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_empty")]
-  public static extern bool VectorDouble_empty(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_capacity")]
-  public static extern uint VectorDouble_capacity(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_reserve")]
-  public static extern void VectorDouble_reserve(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_VectorDouble__SWIG_2")]
-  public static extern global::System.IntPtr new_VectorDouble__SWIG_2(int jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_getitemcopy")]
-  public static extern double VectorDouble_getitemcopy(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_getitem")]
-  public static extern double VectorDouble_getitem(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_setitem")]
-  public static extern void VectorDouble_setitem(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, double jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_AddRange")]
-  public static extern void VectorDouble_AddRange(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_GetRange")]
-  public static extern global::System.IntPtr VectorDouble_GetRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Insert")]
-  public static extern void VectorDouble_Insert(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, double jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_InsertRange")]
-  public static extern void VectorDouble_InsertRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_RemoveAt")]
-  public static extern void VectorDouble_RemoveAt(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_RemoveRange")]
-  public static extern void VectorDouble_RemoveRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Repeat")]
-  public static extern global::System.IntPtr VectorDouble_Repeat(double jarg1, int jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Reverse__SWIG_0")]
-  public static extern void VectorDouble_Reverse__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Reverse__SWIG_1")]
-  public static extern void VectorDouble_Reverse__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_SetRange")]
-  public static extern void VectorDouble_SetRange(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Contains")]
-  public static extern bool VectorDouble_Contains(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_IndexOf")]
-  public static extern int VectorDouble_IndexOf(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_LastIndexOf")]
-  public static extern int VectorDouble_LastIndexOf(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_VectorDouble_Remove")]
-  public static extern bool VectorDouble_Remove(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_VectorDouble")]
-  public static extern void delete_VectorDouble(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_Mndaxpy")]
-  public static extern int Mndaxpy(uint jarg1, double jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, int jarg4, global::System.Runtime.InteropServices.HandleRef jarg5, int jarg6);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_Mndscal")]
-  public static extern int Mndscal(uint jarg1, double jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, int jarg4);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_Mndspmv")]
-  public static extern int Mndspmv(string jarg1, uint jarg2, double jarg3, global::System.Runtime.InteropServices.HandleRef jarg4, global::System.Runtime.InteropServices.HandleRef jarg5, int jarg6, double jarg7, global::System.Runtime.InteropServices.HandleRef jarg8, int jarg9);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_LAVector__SWIG_0")]
-  public static extern global::System.IntPtr new_LAVector__SWIG_0(uint jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_LAVector")]
-  public static extern void delete_LAVector(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_LAVector__SWIG_1")]
-  public static extern global::System.IntPtr new_LAVector__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_LAVector_Data__SWIG_0")]
-  public static extern global::System.IntPtr LAVector_Data__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_LAVector_size")]
-  public static extern uint LAVector_size(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MinimumParameters__SWIG_0")]
-  public static extern global::System.IntPtr new_MinimumParameters__SWIG_0(uint jarg1, double jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MinimumParameters__SWIG_1")]
-  public static extern global::System.IntPtr new_MinimumParameters__SWIG_1(uint jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MinimumParameters__SWIG_2")]
-  public static extern global::System.IntPtr new_MinimumParameters__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MinimumParameters__SWIG_3")]
-  public static extern global::System.IntPtr new_MinimumParameters__SWIG_3(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, double jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumParameters_Vec")]
-  public static extern global::System.IntPtr MinimumParameters_Vec(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumParameters_Dirin")]
-  public static extern global::System.IntPtr MinimumParameters_Dirin(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumParameters_Fval")]
-  public static extern double MinimumParameters_Fval(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumParameters_IsValid")]
-  public static extern bool MinimumParameters_IsValid(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumParameters_HasStepSize")]
-  public static extern bool MinimumParameters_HasStepSize(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_MinimumParameters")]
-  public static extern void delete_MinimumParameters(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_FCNWrap")]
-  public static extern global::System.IntPtr new_FCNWrap();
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Cost")]
-  public static extern double FCNWrap_Cost(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_CostSwigExplicitFCNWrap")]
-  public static extern double FCNWrap_CostSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Gradient")]
-  public static extern global::System.IntPtr FCNWrap_Gradient(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_GradientSwigExplicitFCNWrap")]
-  public static extern global::System.IntPtr FCNWrap_GradientSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_HasGradient")]
-  public static extern bool FCNWrap_HasGradient(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_HasGradientSwigExplicitFCNWrap")]
-  public static extern bool FCNWrap_HasGradientSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_Up")]
-  public static extern double FCNWrap_Up(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_UpSwigExplicitFCNWrap")]
-  public static extern double FCNWrap_UpSwigExplicitFCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_FCNWrap")]
-  public static extern void delete_FCNWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNWrap_director_connect")]
-  public static extern void FCNWrap_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, FCNWrap.SwigDelegateFCNWrap_0 delegate0, FCNWrap.SwigDelegateFCNWrap_1 delegate1, FCNWrap.SwigDelegateFCNWrap_2 delegate2, FCNWrap.SwigDelegateFCNWrap_3 delegate3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserParameters__SWIG_0")]
-  public static extern global::System.IntPtr new_MnUserParameters__SWIG_0();
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserParameters__SWIG_1")]
-  public static extern global::System.IntPtr new_MnUserParameters__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_MnUserParameters")]
-  public static extern void delete_MnUserParameters(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserParameters__SWIG_2")]
-  public static extern global::System.IntPtr new_MnUserParameters__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Trafo")]
-  public static extern global::System.IntPtr MnUserParameters_Trafo(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_VariableParameters")]
-  public static extern uint MnUserParameters_VariableParameters(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Parameters")]
-  public static extern global::System.IntPtr MnUserParameters_Parameters(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Params")]
-  public static extern global::System.IntPtr MnUserParameters_Params(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Errors")]
-  public static extern global::System.IntPtr MnUserParameters_Errors(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Parameter")]
-  public static extern global::System.IntPtr MnUserParameters_Parameter(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Add__SWIG_0")]
-  public static extern bool MnUserParameters_Add__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, double jarg3, double jarg4);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Add__SWIG_1")]
-  public static extern bool MnUserParameters_Add__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, double jarg3, double jarg4, double jarg5, double jarg6);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Add__SWIG_2")]
-  public static extern bool MnUserParameters_Add__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, double jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Fix__SWIG_0")]
-  public static extern void MnUserParameters_Fix__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Release__SWIG_0")]
-  public static extern void MnUserParameters_Release__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_RemoveLimits__SWIG_0")]
-  public static extern void MnUserParameters_RemoveLimits__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_SetValue__SWIG_0")]
-  public static extern void MnUserParameters_SetValue__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2, double jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_SetError__SWIG_0")]
-  public static extern void MnUserParameters_SetError__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2, double jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_SetLimits__SWIG_0")]
-  public static extern void MnUserParameters_SetLimits__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2, double jarg3, double jarg4);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_SetUpperLimit__SWIG_0")]
-  public static extern void MnUserParameters_SetUpperLimit__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2, double jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_SetLowerLimit__SWIG_0")]
-  public static extern void MnUserParameters_SetLowerLimit__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2, double jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_SetName")]
-  public static extern void MnUserParameters_SetName(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2, string jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Value__SWIG_0")]
-  public static extern double MnUserParameters_Value__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Error__SWIG_0")]
-  public static extern double MnUserParameters_Error__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Fix__SWIG_1")]
-  public static extern void MnUserParameters_Fix__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Release__SWIG_1")]
-  public static extern void MnUserParameters_Release__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_SetValue__SWIG_1")]
-  public static extern void MnUserParameters_SetValue__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, double jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_SetError__SWIG_1")]
-  public static extern void MnUserParameters_SetError__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, double jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_SetLimits__SWIG_1")]
-  public static extern void MnUserParameters_SetLimits__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, double jarg3, double jarg4);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_SetUpperLimit__SWIG_1")]
-  public static extern void MnUserParameters_SetUpperLimit__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, double jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_SetLowerLimit__SWIG_1")]
-  public static extern void MnUserParameters_SetLowerLimit__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, double jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_RemoveLimits__SWIG_1")]
-  public static extern void MnUserParameters_RemoveLimits__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Value__SWIG_1")]
-  public static extern double MnUserParameters_Value__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Error__SWIG_1")]
-  public static extern double MnUserParameters_Error__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Index")]
-  public static extern uint MnUserParameters_Index(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_GetName")]
-  public static extern string MnUserParameters_GetName(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Name")]
-  public static extern string MnUserParameters_Name(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_Precision")]
-  public static extern global::System.IntPtr MnUserParameters_Precision(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserParameters_SetPrecision")]
-  public static extern void MnUserParameters_SetPrecision(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserCovariance__SWIG_0")]
-  public static extern global::System.IntPtr new_MnUserCovariance__SWIG_0();
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserCovariance__SWIG_1")]
-  public static extern global::System.IntPtr new_MnUserCovariance__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserCovariance__SWIG_2")]
-  public static extern global::System.IntPtr new_MnUserCovariance__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1, uint jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnUserCovariance__SWIG_3")]
-  public static extern global::System.IntPtr new_MnUserCovariance__SWIG_3(uint jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserCovariance_Scale")]
-  public static extern void MnUserCovariance_Scale(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserCovariance_Data")]
-  public static extern global::System.IntPtr MnUserCovariance_Data(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserCovariance_Nrow")]
-  public static extern uint MnUserCovariance_Nrow(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnUserCovariance_size")]
-  public static extern uint MnUserCovariance_size(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_MnUserCovariance")]
-  public static extern void delete_MnUserCovariance(global::System.Runtime.InteropServices.HandleRef jarg1);
-
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_FCNBase_ErrorDef")]
   public static extern double FCNBase_ErrorDef(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -976,52 +805,4 @@ class Minuit2PINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_MnMigradWrap")]
   public static extern void delete_MnMigradWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MinimumState__SWIG_0")]
-  public static extern global::System.IntPtr new_MinimumState__SWIG_0(uint jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MinimumState__SWIG_1")]
-  public static extern global::System.IntPtr new_MinimumState__SWIG_1(double jarg1, double jarg2, int jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MinimumState__SWIG_2")]
-  public static extern global::System.IntPtr new_MinimumState__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1, double jarg2, int jarg3);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MinimumState__SWIG_3")]
-  public static extern global::System.IntPtr new_MinimumState__SWIG_3(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, double jarg4, int jarg5);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumState_Parameters")]
-  public static extern global::System.IntPtr MinimumState_Parameters(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumState_Vec")]
-  public static extern global::System.IntPtr MinimumState_Vec(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumState_size")]
-  public static extern int MinimumState_size(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumState_Error")]
-  public static extern global::System.IntPtr MinimumState_Error(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumState_Gradient")]
-  public static extern global::System.IntPtr MinimumState_Gradient(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumState_Fval")]
-  public static extern double MinimumState_Fval(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumState_Edm")]
-  public static extern double MinimumState_Edm(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumState_NFcn")]
-  public static extern int MinimumState_NFcn(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumState_IsValid")]
-  public static extern bool MinimumState_IsValid(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumState_HasParameters")]
-  public static extern bool MinimumState_HasParameters(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MinimumState_HasCovariance")]
-  public static extern bool MinimumState_HasCovariance(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_MinimumState")]
-  public static extern void delete_MinimumState(global::System.Runtime.InteropServices.HandleRef jarg1);
 }

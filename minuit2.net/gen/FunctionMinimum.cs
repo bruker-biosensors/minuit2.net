@@ -68,13 +68,13 @@ internal class FunctionMinimum : global::System.IDisposable {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public void Add(MinimumState state, FunctionMinimum.Status status) {
-    Minuit2PINVOKE.FunctionMinimum_Add__SWIG_0(swigCPtr, MinimumState.getCPtr(state), (int)status);
+  public void Add(SWIGTYPE_p_ROOT__Minuit2__MinimumState state, FunctionMinimum.Status status) {
+    Minuit2PINVOKE.FunctionMinimum_Add__SWIG_0(swigCPtr, SWIGTYPE_p_ROOT__Minuit2__MinimumState.getCPtr(state), (int)status);
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public void Add(MinimumState state) {
-    Minuit2PINVOKE.FunctionMinimum_Add__SWIG_1(swigCPtr, MinimumState.getCPtr(state));
+  public void Add(SWIGTYPE_p_ROOT__Minuit2__MinimumState state) {
+    Minuit2PINVOKE.FunctionMinimum_Add__SWIG_1(swigCPtr, SWIGTYPE_p_ROOT__Minuit2__MinimumState.getCPtr(state));
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
@@ -93,8 +93,8 @@ internal class FunctionMinimum : global::System.IDisposable {
     return ret;
   }
 
-  public MnUserParameters UserParameters() {
-    MnUserParameters ret = new MnUserParameters(Minuit2PINVOKE.FunctionMinimum_UserParameters(swigCPtr), false);
+  public SWIGTYPE_p_MnUserParameters UserParameters() {
+    SWIGTYPE_p_MnUserParameters ret = new SWIGTYPE_p_MnUserParameters(Minuit2PINVOKE.FunctionMinimum_UserParameters(swigCPtr), false);
     return ret;
   }
 
@@ -103,13 +103,13 @@ internal class FunctionMinimum : global::System.IDisposable {
     return ret;
   }
 
-  public MinimumState State() {
-    MinimumState ret = new MinimumState(Minuit2PINVOKE.FunctionMinimum_State(swigCPtr), false);
+  public SWIGTYPE_p_ROOT__Minuit2__MinimumState State() {
+    SWIGTYPE_p_ROOT__Minuit2__MinimumState ret = new SWIGTYPE_p_ROOT__Minuit2__MinimumState(Minuit2PINVOKE.FunctionMinimum_State(swigCPtr), false);
     return ret;
   }
 
-  public MinimumParameters Parameters() {
-    MinimumParameters ret = new MinimumParameters(Minuit2PINVOKE.FunctionMinimum_Parameters(swigCPtr), false);
+  public SWIGTYPE_p_MinimumParameters Parameters() {
+    SWIGTYPE_p_MinimumParameters ret = new SWIGTYPE_p_MinimumParameters(Minuit2PINVOKE.FunctionMinimum_Parameters(swigCPtr), false);
     return ret;
   }
 

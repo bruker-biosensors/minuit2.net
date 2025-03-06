@@ -5,9 +5,8 @@ public class MigradResult
     internal MigradResult(FunctionMinimum functionMinimum)
     {
         var state = functionMinimum.UserState();
-        
         BestValues = state.Params().ToList();
-        CovarianceMatrix = CovarianceMatrixFrom(functionMinimum);
+        CovarianceMatrix = CovarianceMatrixFrom(state);
 
         // Meta information about the result
         IsValid = functionMinimum.IsValid();
@@ -33,30 +32,32 @@ public class MigradResult
     // threshold value (computed as = 0.001 * tolerance * up).
     public bool HasConverged { get; }
 
-    private static double[,] CovarianceMatrixFrom(FunctionMinimum functionMinimum)
-    {
-        var numberOfParameters = functionMinimum.UserParameters().Params().Count;
+    private static double[,] CovarianceMatrixFrom(MnUserParameterState state)
+    { 
+        var numberOfParameters = state.Params().Count;
         var covarianceMatrix = new double[numberOfParameters, numberOfParameters];
 
-        var covariancesOfVariables = functionMinimum.UserCovariance().Data() ?? [];
-        var numberOfVariables = (int)functionMinimum.UserCovariance().Nrow();
-        var indexMap = Enumerable.Range(0, numberOfVariables).ToDictionary(
-            variableIndex => (int)functionMinimum.UserState().ExtOfInt((uint)variableIndex), i => i);
+        var numberOfVariables = (int)state.VariableParameters();
+        var covariances = state.Covariance().Data();
+
+        var indexMap = Enumerable.Range(0, numberOfVariables)
+            .ToDictionary(ParameterIndex, variableIndex => variableIndex);
 
         for (var i = 0; i < numberOfParameters; i++)
         {
-            if (!indexMap.TryGetValue(i, out var iMapped)) continue;
+            if (!indexMap.TryGetValue(i, out var rowVariableIndex)) continue;
             for (var j = 0; j < numberOfParameters; j++)
             {
-                if (!indexMap.TryGetValue(j, out var jMapped)) continue;
-                var flatIndex = FlatIndexFrom(iMapped, jMapped);
-                covarianceMatrix[i, j] = covariancesOfVariables[flatIndex];
-                covarianceMatrix[j, i] = covariancesOfVariables[flatIndex];
+                if (!indexMap.TryGetValue(j, out var columnVariableIndex)) continue;
+                var flatIndex = FlatIndex(rowVariableIndex, columnVariableIndex);
+                covarianceMatrix[i, j] = covariances[flatIndex];
+                covarianceMatrix[j, i] = covariances[flatIndex];
             }
         }
 
         return covarianceMatrix;
 
-        int FlatIndexFrom(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
+        int ParameterIndex(int variableIndex) => (int)state.ExtOfInt((uint)variableIndex);
+        int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
 }

@@ -10,19 +10,4 @@
 
 
 internal class Minuit2 {
-  public static int Mndaxpy(uint arg0, double arg1, SWIGTYPE_p_double arg2, int arg3, SWIGTYPE_p_double arg4, int arg5) {
-    int ret = Minuit2PINVOKE.Mndaxpy(arg0, arg1, SWIGTYPE_p_double.getCPtr(arg2), arg3, SWIGTYPE_p_double.getCPtr(arg4), arg5);
-    return ret;
-  }
-
-  public static int Mndscal(uint arg0, double arg1, SWIGTYPE_p_double arg2, int arg3) {
-    int ret = Minuit2PINVOKE.Mndscal(arg0, arg1, SWIGTYPE_p_double.getCPtr(arg2), arg3);
-    return ret;
-  }
-
-  public static int Mndspmv(string arg0, uint arg1, double arg2, SWIGTYPE_p_double arg3, SWIGTYPE_p_double arg4, int arg5, double arg6, SWIGTYPE_p_double arg7, int arg8) {
-    int ret = Minuit2PINVOKE.Mndspmv(arg0, arg1, arg2, SWIGTYPE_p_double.getCPtr(arg3), SWIGTYPE_p_double.getCPtr(arg4), arg5, arg6, SWIGTYPE_p_double.getCPtr(arg7), arg8);
-    return ret;
-  }
-
 }
