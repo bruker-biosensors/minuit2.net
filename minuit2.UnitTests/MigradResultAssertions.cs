@@ -56,4 +56,10 @@ internal class MigradResultAssertions(MigradResult value) : ObjectAssertions<Mig
         Subject.HasConverged.Should().Be(expectedHasConverged);
         return new AndConstraint<MigradResultAssertions>(this);
     }
+
+    public AndConstraint<MigradResultAssertions> HaveCostValue(double expectedValue)
+    {
+        Subject.CostValue.Should().BeApproximately(expectedValue, Math.Abs(expectedValue * RelativeTolerance));
+        return new AndConstraint<MigradResultAssertions>(this);
+    }
 }

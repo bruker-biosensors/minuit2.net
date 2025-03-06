@@ -46,8 +46,9 @@ public class MinimizationResultTests
             .HaveNumberOfFunctionCallsGreaterThan(10).And
             .HaveReachedFunctionCallLimit(false).And
             .HaveConverged(true).And
+            .HaveCostValue(12.49).And
             .HaveBestValues([9.974, -1.959, 0.9898, -0.09931]).And
-            .HaveCovarianceMatrix(new[,] 
+            .HaveCovarianceMatrix(new[,]
             {
                 { 0.005623, -0.004301, 0.000881, -5.271e-05 },
                 { -0.004301, 0.004923, -0.001177, 7.655e-05 },

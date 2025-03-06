@@ -4,6 +4,8 @@ public class MigradResult
 {
     internal MigradResult(FunctionMinimum functionMinimum)
     {
+        CostValue = functionMinimum.Fval();
+        
         var state = functionMinimum.UserState();
         BestValues = state.Params().ToList();
         CovarianceMatrix = CovarianceMatrixFrom(state);
@@ -14,7 +16,9 @@ public class MigradResult
         HasReachedFunctionCallLimit = functionMinimum.HasReachedCallLimit();
         HasConverged = !functionMinimum.IsAboveMaxEdm();
     }
-    
+
+    public double CostValue { get; }
+
     public IReadOnlyCollection<double> BestValues { get; }
     public double[,] CovarianceMatrix { get; }
     
