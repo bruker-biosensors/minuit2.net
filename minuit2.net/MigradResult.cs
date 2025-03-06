@@ -4,9 +4,12 @@ public class MigradResult
 {
     internal MigradResult(FunctionMinimum functionMinimum)
     {
+        IsValid = functionMinimum.IsValid();
         BestValues = BestValuesFrom(functionMinimum);
         CovarianceMatrix = CovarianceMatrixFrom(functionMinimum);
     }
+    
+    public bool IsValid { get; }
 
     public IReadOnlyCollection<double> BestValues { get; }
     public double[,] CovarianceMatrix { get; }
