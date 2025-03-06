@@ -18,8 +18,7 @@ public class MigradResult
     public IReadOnlyCollection<double> BestValues { get; }
     public double[,] CovarianceMatrix { get; }
     
-    // IsValid is "true" when the minimizer did find a minimum without running into troubles.
-    // Reasons for an invalid result ("false") are 
+    // The result is considered valid if the minimizer did not run into any troubles. Reasons for an invalid result are: 
     // - the number of allowed function calls has been exhausted
     // - the minimizer could not improve the values of the parameters (and knowing that it has not converged yet)
     // - a problem with the calculation of the covariance matrix
