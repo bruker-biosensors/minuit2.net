@@ -9,7 +9,8 @@ public class MigradResult
 
         // Meta information about the result
         IsValid = functionMinimum.IsValid();
-        HasReachedCallLimit = functionMinimum.HasReachedCallLimit();
+        NumberOfFunctionCalls = functionMinimum.NFcn();
+        HasReachedFunctionCallLimit = functionMinimum.HasReachedCallLimit();
     }
     
     public IReadOnlyCollection<double> BestValues { get; }
@@ -22,7 +23,8 @@ public class MigradResult
     // - a problem with the calculation of the covariance matrix
     // source: https://root.cern.ch/doc/master/Minuit2Page.html
     public bool IsValid { get; }
-    public bool HasReachedCallLimit { get; }
+    public int NumberOfFunctionCalls { get; }
+    public bool HasReachedFunctionCallLimit { get; }
     
     private static List<double> BestValuesFrom(FunctionMinimum functionMinimum) =>
         functionMinimum.UserParameters().Params().ToList();

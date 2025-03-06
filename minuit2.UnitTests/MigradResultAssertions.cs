@@ -39,9 +39,15 @@ internal class MigradResultAssertions(MigradResult value) : ObjectAssertions<Mig
         return new AndConstraint<MigradResultAssertions>(this);
     }
 
-    public AndConstraint<MigradResultAssertions> HaveReachedCallLimit(bool expectedHasReachedCallLimit)
+    public AndConstraint<MigradResultAssertions> HaveReachedFunctionCallLimit(bool expectedHasReachedCallLimit)
     {
-        Subject.HasReachedCallLimit.Should().Be(expectedHasReachedCallLimit);
+        Subject.HasReachedFunctionCallLimit.Should().Be(expectedHasReachedCallLimit);
+        return new AndConstraint<MigradResultAssertions>(this);
+    }
+
+    public AndConstraint<MigradResultAssertions> HaveNumberOfFunctionCallsGreaterThan(int number)
+    {
+        Subject.NumberOfFunctionCalls.Should().BeGreaterThan(number);
         return new AndConstraint<MigradResultAssertions>(this);
     }
 }
