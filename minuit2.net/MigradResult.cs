@@ -4,7 +4,9 @@ public class MigradResult
 {
     internal MigradResult(FunctionMinimum functionMinimum)
     {
-        BestValues = BestValuesFrom(functionMinimum);
+        var state = functionMinimum.UserState();
+        
+        BestValues = state.Params().ToList();
         CovarianceMatrix = CovarianceMatrixFrom(functionMinimum);
 
         // Meta information about the result
@@ -30,9 +32,6 @@ public class MigradResult
     // The minimizer is deemed to have converged when the expected vertical distance to the minimum (EDM) falls below a
     // threshold value (computed as = 0.001 * tolerance * up).
     public bool HasConverged { get; }
-    
-    private static List<double> BestValuesFrom(FunctionMinimum functionMinimum) =>
-        functionMinimum.UserParameters().Params().ToList();
 
     private static double[,] CovarianceMatrixFrom(FunctionMinimum functionMinimum)
     {
