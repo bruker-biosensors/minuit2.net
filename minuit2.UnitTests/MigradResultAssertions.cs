@@ -17,17 +17,23 @@ internal class MigradResultAssertions(MigradResult value) : ObjectAssertions<Mig
 {
     private const double RelativeTolerance = 0.001;
     
-    public AndConstraint<MigradResultAssertions> HaveBestValues(IReadOnlyCollection<double> expectedValues)
+    public AndConstraint<MigradResultAssertions> HaveCostValue(double expectedValue)
     {
-        Subject.BestValues.Should().BeEquivalentTo(expectedValues, options => options
+        Subject.CostValue.Should().BeApproximately(expectedValue, Math.Abs(expectedValue * RelativeTolerance));
+        return new AndConstraint<MigradResultAssertions>(this);
+    }
+    
+    public AndConstraint<MigradResultAssertions> HaveParameterValues(IReadOnlyCollection<double> expectedValues)
+    {
+        Subject.ParameterValues.Should().BeEquivalentTo(expectedValues, options => options
             .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * RelativeTolerance)))
             .WhenTypeIs<double>());
         return new AndConstraint<MigradResultAssertions>(this);
     }
 
-    public AndConstraint<MigradResultAssertions> HaveCovarianceMatrix(double[,] expectedValues)
+    public AndConstraint<MigradResultAssertions> HaveParameterCovarianceMatrix(double[,] expectedValues)
     {
-        Subject.CovarianceMatrix.Should().BeEquivalentTo(expectedValues, options => options
+        Subject.ParameterCovarianceMatrix.Should().BeEquivalentTo(expectedValues, options => options
             .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * RelativeTolerance)))
             .WhenTypeIs<double>());
         return new AndConstraint<MigradResultAssertions>(this);
@@ -54,12 +60,6 @@ internal class MigradResultAssertions(MigradResult value) : ObjectAssertions<Mig
     public AndConstraint<MigradResultAssertions> HaveConverged(bool expectedHasConverged)
     {
         Subject.HasConverged.Should().Be(expectedHasConverged);
-        return new AndConstraint<MigradResultAssertions>(this);
-    }
-
-    public AndConstraint<MigradResultAssertions> HaveCostValue(double expectedValue)
-    {
-        Subject.CostValue.Should().BeApproximately(expectedValue, Math.Abs(expectedValue * RelativeTolerance));
         return new AndConstraint<MigradResultAssertions>(this);
     }
 }

@@ -7,8 +7,8 @@ public class MigradResult
         CostValue = functionMinimum.Fval();
         
         var state = functionMinimum.UserState();
-        BestValues = state.Params().ToList();
-        CovarianceMatrix = CovarianceMatrixFrom(state);
+        ParameterValues = state.Params().ToList();
+        ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
 
         // Meta information about the result
         IsValid = functionMinimum.IsValid();
@@ -19,8 +19,8 @@ public class MigradResult
 
     public double CostValue { get; }
 
-    public IReadOnlyCollection<double> BestValues { get; }
-    public double[,] CovarianceMatrix { get; }
+    public IReadOnlyCollection<double> ParameterValues { get; }
+    public double[,] ParameterCovarianceMatrix { get; }
     
     // The result is considered valid if the minimizer did not run into any troubles. Reasons for an invalid result are: 
     // - the number of allowed function calls has been exhausted
