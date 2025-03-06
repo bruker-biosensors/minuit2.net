@@ -40,9 +40,9 @@ internal class MinimizationResultAssertions(MinimizationResult value)
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
-    public AndConstraint<MinimizationResultAssertions> HaveIsValid(bool expectedIsValid)
+    public AndConstraint<MinimizationResultAssertions> HaveIsValid(bool expectedValue)
     {
-        Subject.IsValid.Should().Be(expectedIsValid);
+        Subject.IsValid.Should().Be(expectedValue);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
     
@@ -52,21 +52,21 @@ internal class MinimizationResultAssertions(MinimizationResult value)
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
-    public AndConstraint<MinimizationResultAssertions> HaveReachedFunctionCallLimit(bool expectedHasReachedCallLimit)
+    public AndConstraint<MinimizationResultAssertions> HaveReachedFunctionCallLimit(bool expectedValue)
     {
-        Subject.HasReachedFunctionCallLimit.Should().Be(expectedHasReachedCallLimit);
+        Subject.HasReachedFunctionCallLimit.Should().Be(expectedValue);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
-    public AndConstraint<MinimizationResultAssertions> HaveNumberOfFunctionCallsGreaterThan(int expectedMinimumNumber)
+    public AndConstraint<MinimizationResultAssertions> HaveNumberOfFunctionCallsGreaterThan(int expectedValue)
     {
-        Subject.NumberOfFunctionCalls.Should().BeGreaterThan(expectedMinimumNumber);
+        Subject.NumberOfFunctionCalls.Should().BeGreaterThan(expectedValue);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
-    public AndConstraint<MinimizationResultAssertions> HaveConverged(bool expectedHasConverged)
+    public AndConstraint<MinimizationResultAssertions> HaveConverged(bool expectedValue)
     {
-        Subject.HasConverged.Should().Be(expectedHasConverged);
+        Subject.HasConverged.Should().Be(expectedValue);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 }
