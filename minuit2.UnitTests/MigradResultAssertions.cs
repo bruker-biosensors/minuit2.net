@@ -38,4 +38,10 @@ internal class MigradResultAssertions(MigradResult value) : ObjectAssertions<Mig
         Subject.IsValid.Should().Be(expectedIsValid);
         return new AndConstraint<MigradResultAssertions>(this);
     }
+
+    public AndConstraint<MigradResultAssertions> HaveReachedCallLimit(bool expectedHasReachedCallLimit)
+    {
+        Subject.HasReachedCallLimit.Should().Be(expectedHasReachedCallLimit);
+        return new AndConstraint<MigradResultAssertions>(this);
+    }
 }

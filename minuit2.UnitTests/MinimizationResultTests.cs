@@ -43,6 +43,7 @@ public class MinimizationResultTests
 
         result.Should()
             .HaveIsValid(true).And
+            .HaveReachedCallLimit(false).And
             .HaveBestValues([9.974, -1.959, 0.9898, -0.09931]).And
             .HaveCovarianceMatrix(new[,] 
             {
