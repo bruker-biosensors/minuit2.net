@@ -45,9 +45,15 @@ internal class MigradResultAssertions(MigradResult value) : ObjectAssertions<Mig
         return new AndConstraint<MigradResultAssertions>(this);
     }
 
-    public AndConstraint<MigradResultAssertions> HaveNumberOfFunctionCallsGreaterThan(int number)
+    public AndConstraint<MigradResultAssertions> HaveNumberOfFunctionCallsGreaterThan(int expectedMinimumNumber)
     {
-        Subject.NumberOfFunctionCalls.Should().BeGreaterThan(number);
+        Subject.NumberOfFunctionCalls.Should().BeGreaterThan(expectedMinimumNumber);
+        return new AndConstraint<MigradResultAssertions>(this);
+    }
+
+    public AndConstraint<MigradResultAssertions> HaveConverged(bool expectedHasConverged)
+    {
+        Subject.HasConverged.Should().Be(expectedHasConverged);
         return new AndConstraint<MigradResultAssertions>(this);
     }
 }

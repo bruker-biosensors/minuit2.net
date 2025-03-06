@@ -11,6 +11,7 @@ public class MigradResult
         IsValid = functionMinimum.IsValid();
         NumberOfFunctionCalls = functionMinimum.NFcn();
         HasReachedFunctionCallLimit = functionMinimum.HasReachedCallLimit();
+        HasConverged = !functionMinimum.IsAboveMaxEdm();
     }
     
     public IReadOnlyCollection<double> BestValues { get; }
@@ -25,6 +26,10 @@ public class MigradResult
     public bool IsValid { get; }
     public int NumberOfFunctionCalls { get; }
     public bool HasReachedFunctionCallLimit { get; }
+    
+    // The minimizer is deemed to have converged when the expected vertical distance to the minimum (EDM) falls below a
+    // threshold value (computed as = 0.001 * tolerance * up).
+    public bool HasConverged { get; }
     
     private static List<double> BestValuesFrom(FunctionMinimum functionMinimum) =>
         functionMinimum.UserParameters().Params().ToList();
