@@ -12,11 +12,12 @@ public class MinimizationResult
 
         // Meta information about the result
         IsValid = functionMinimum.IsValid();
+        NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = functionMinimum.NFcn();
         HasReachedFunctionCallLimit = functionMinimum.HasReachedCallLimit();
         HasConverged = !functionMinimum.IsAboveMaxEdm();
     }
-
+    
     public double CostValue { get; }
 
     public IReadOnlyCollection<double> ParameterValues { get; }
@@ -28,6 +29,7 @@ public class MinimizationResult
     // - a problem with the calculation of the covariance matrix
     // source: https://root.cern.ch/doc/master/Minuit2Page.html
     public bool IsValid { get; }
+    public int NumberOfVariables { get; }
     public int NumberOfFunctionCalls { get; }
     public bool HasReachedFunctionCallLimit { get; }
     

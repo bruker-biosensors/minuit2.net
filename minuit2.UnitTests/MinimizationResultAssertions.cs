@@ -45,6 +45,12 @@ internal class MinimizationResultAssertions(MinimizationResult value)
         Subject.IsValid.Should().Be(expectedIsValid);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
+    
+    public AndConstraint<MinimizationResultAssertions> HaveNumberOfVariables(int expectedValue)
+    {
+        Subject.NumberOfVariables.Should().Be(expectedValue);
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
 
     public AndConstraint<MinimizationResultAssertions> HaveReachedFunctionCallLimit(bool expectedHasReachedCallLimit)
     {

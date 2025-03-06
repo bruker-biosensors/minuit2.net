@@ -43,6 +43,7 @@ public class MinimizationResultTests
 
         result.Should()
             .HaveIsValid(true).And
+            .HaveNumberOfVariables(4).And
             .HaveNumberOfFunctionCallsGreaterThan(10).And
             .HaveReachedFunctionCallLimit(false).And
             .HaveConverged(true).And
