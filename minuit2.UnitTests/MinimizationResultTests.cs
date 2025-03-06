@@ -41,9 +41,10 @@ public class MinimizationResultTests
         var minimizer = new Migrad(cost, initialParameters);
         var result = minimizer.Run();
 
-        result.Should().BeValid()
-            .And.HaveBestValues([9.974, -1.959, 0.9898, -0.09931])
-            .And.HaveCovarianceMatrix(new[,]
+        result.Should()
+            .HaveIsValid(true).And
+            .HaveBestValues([9.974, -1.959, 0.9898, -0.09931]).And
+            .HaveCovarianceMatrix(new[,] 
             {
                 { 0.005623, -0.004301, 0.000881, -5.271e-05 },
                 { -0.004301, 0.004923, -0.001177, 7.655e-05 },

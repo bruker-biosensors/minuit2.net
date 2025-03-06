@@ -33,9 +33,9 @@ internal class MigradResultAssertions(MigradResult value) : ObjectAssertions<Mig
         return new AndConstraint<MigradResultAssertions>(this);
     }
 
-    public AndConstraint<MigradResultAssertions> BeValid()
+    public AndConstraint<MigradResultAssertions> HaveIsValid(bool expectedIsValid)
     {
-        Subject.IsValid.Should().BeTrue();
+        Subject.IsValid.Should().Be(expectedIsValid);
         return new AndConstraint<MigradResultAssertions>(this);
     }
 }
