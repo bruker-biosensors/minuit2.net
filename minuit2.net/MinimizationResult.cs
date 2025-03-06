@@ -1,8 +1,8 @@
 namespace minuit2.net;
 
-public class MigradResult
+public class MinimizationResult
 {
-    internal MigradResult(FunctionMinimum functionMinimum)
+    internal MinimizationResult(FunctionMinimum functionMinimum)
     {
         CostValue = functionMinimum.Fval();
         

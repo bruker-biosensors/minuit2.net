@@ -1,0 +1,66 @@
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using FluentAssertions;
+using FluentAssertions.Primitives;
+using minuit2.net;
+
+namespace minuit2.UnitTests;
+
+internal static class MinimizationResultAssertionExtensions
+{
+    public static MinimizationResultAssertions Should(this MinimizationResult actualValue) => new(actualValue);
+}
+
+[DebuggerStepThrough]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global", Justification = "Adhere to convention")]
+internal class MinimizationResultAssertions(MinimizationResult value)
+    : ObjectAssertions<MinimizationResult, MinimizationResultAssertions>(value, null)
+{
+    private const double RelativeTolerance = 0.001;
+    
+    public AndConstraint<MinimizationResultAssertions> HaveCostValue(double expectedValue)
+    {
+        Subject.CostValue.Should().BeApproximately(expectedValue, Math.Abs(expectedValue * RelativeTolerance));
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
+    
+    public AndConstraint<MinimizationResultAssertions> HaveParameterValues(IReadOnlyCollection<double> expectedValues)
+    {
+        Subject.ParameterValues.Should().BeEquivalentTo(expectedValues, options => options
+            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * RelativeTolerance)))
+            .WhenTypeIs<double>());
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
+
+    public AndConstraint<MinimizationResultAssertions> HaveParameterCovarianceMatrix(double[,] expectedValues)
+    {
+        Subject.ParameterCovarianceMatrix.Should().BeEquivalentTo(expectedValues, options => options
+            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * RelativeTolerance)))
+            .WhenTypeIs<double>());
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
+
+    public AndConstraint<MinimizationResultAssertions> HaveIsValid(bool expectedIsValid)
+    {
+        Subject.IsValid.Should().Be(expectedIsValid);
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
+
+    public AndConstraint<MinimizationResultAssertions> HaveReachedFunctionCallLimit(bool expectedHasReachedCallLimit)
+    {
+        Subject.HasReachedFunctionCallLimit.Should().Be(expectedHasReachedCallLimit);
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
+
+    public AndConstraint<MinimizationResultAssertions> HaveNumberOfFunctionCallsGreaterThan(int expectedMinimumNumber)
+    {
+        Subject.NumberOfFunctionCalls.Should().BeGreaterThan(expectedMinimumNumber);
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
+
+    public AndConstraint<MinimizationResultAssertions> HaveConverged(bool expectedHasConverged)
+    {
+        Subject.HasConverged.Should().Be(expectedHasConverged);
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
+}

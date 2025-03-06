@@ -18,5 +18,5 @@ public class Migrad
         migrad = new MnMigradWrap(wrapper, parameters);
     }
 
-    public MigradResult Run() => new(migrad.Run());
+    public MinimizationResult Run() => new(migrad.Run());
 }
