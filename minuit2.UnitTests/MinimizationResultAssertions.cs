@@ -14,7 +14,7 @@ internal static class MinimizationResultAssertionExtensions
 [DebuggerStepThrough]
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global", Justification = "Adhere to convention")]
 internal class MinimizationResultAssertions(MinimizationResult value)
-    : ObjectAssertions<MinimizationResult, MinimizationResultAssertions>(value, null)
+    : ObjectAssertions<MinimizationResult, MinimizationResultAssertions>(value)
 {
     private const double RelativeTolerance = 0.001;
     
