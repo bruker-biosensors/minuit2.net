@@ -57,4 +57,35 @@ public class MinimizationResultTests
                 { -5.271e-05, 7.655e-05, -2.067e-05, 1.45e-06 }
             });
     }
+
+    [Test]
+    public void fixed_parameters_scenario()
+    {
+        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly);
+
+        var initialParameters = new UserParameters(
+            new Parameter("c0", 10.75),
+            new Parameter("c1", -1.97, IsFixed: true),
+            new Parameter("c2", 1.13),
+            new Parameter("c3", -0.11, IsFixed: true));
+        
+        var minimizer = new Migrad(cost, initialParameters);
+        var result = minimizer.Run();
+
+        result.Should()
+            .HaveIsValid(true).And
+            .HaveNumberOfVariables(2).And
+            .HaveNumberOfFunctionCallsGreaterThan(10).And
+            .HaveReachedFunctionCallLimit(false).And
+            .HaveConverged(true).And
+            .HaveCostValue(437.7).And
+            .HaveParameterValues([9.411, -1.97, 1.088, -0.11]).And
+            .HaveParameterCovarianceMatrix(new[,]
+            {
+                { 0.001092, 0.0, -1.918e-05, 0.0 },
+                { 0.0, 0.0, 0.0, 0.0 },
+                { -1.918e-05, 0.0, 6.211e-07, 0.0 },
+                { 0.0, 0.0, 0.0, 0.0 }
+            });
+    }
 }
