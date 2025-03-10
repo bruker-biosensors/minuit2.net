@@ -16,26 +16,26 @@ internal static class MinimizationResultAssertionExtensions
 internal class MinimizationResultAssertions(MinimizationResult value)
     : ObjectAssertions<MinimizationResult, MinimizationResultAssertions>(value)
 {
-    private const double RelativeTolerance = 0.001;
+    private const double DefaultRelativeTolerance = 0.001;
     
     public AndConstraint<MinimizationResultAssertions> HaveCostValue(double expectedValue)
     {
-        Subject.CostValue.Should().BeApproximately(expectedValue, Math.Abs(expectedValue * RelativeTolerance));
+        Subject.CostValue.Should().BeApproximately(expectedValue, Math.Abs(expectedValue * DefaultRelativeTolerance));
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
     
     public AndConstraint<MinimizationResultAssertions> HaveParameterValues(IReadOnlyCollection<double> expectedValues)
     {
         Subject.ParameterValues.Should().BeEquivalentTo(expectedValues, options => options
-            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * RelativeTolerance)))
+            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * DefaultRelativeTolerance)))
             .WhenTypeIs<double>());
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
-    public AndConstraint<MinimizationResultAssertions> HaveParameterCovarianceMatrix(double[,] expectedValues)
+    public AndConstraint<MinimizationResultAssertions> HaveParameterCovarianceMatrix(double[,] expectedValues, double? relativeTolerance = null)
     {
         Subject.ParameterCovarianceMatrix.Should().BeEquivalentTo(expectedValues, options => options
-            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * RelativeTolerance)))
+            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * (relativeTolerance ?? DefaultRelativeTolerance))))
             .WhenTypeIs<double>());
         return new AndConstraint<MinimizationResultAssertions>(this);
     }

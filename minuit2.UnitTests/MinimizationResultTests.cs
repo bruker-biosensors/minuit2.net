@@ -88,4 +88,35 @@ public class MinimizationResultTests
                 { 0.0, 0.0, 0.0, 0.0 }
             });
     }
+
+    [Test]
+    public void limited_parameters_scenario()
+    {
+        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly);
+
+        var initialParameters = new UserParameters(
+            new Parameter("c0", 10.75, LowerLimit: 10.5),
+            new Parameter("c1", -1.97),
+            new Parameter("c2", 1.13),
+            new Parameter("c3", -0.11, UpperLimit: -0.105));
+        
+        var minimizer = new Migrad(cost, initialParameters);
+        var result = minimizer.Run();
+
+        result.Should()
+            .HaveIsValid(true).And
+            .HaveNumberOfVariables(4).And
+            .HaveNumberOfFunctionCallsGreaterThan(10).And
+            .HaveReachedFunctionCallLimit(false).And
+            .HaveConverged(true).And
+            .HaveCostValue(62.34).And
+            .HaveParameterValues([10.5, -2.39, 1.082, -0.105]).And
+            .HaveParameterCovarianceMatrix(new[,]
+            {
+                { 7.023e-09, -3.654e-09, 3.124e-10, -1.261e-14 },
+                { -3.654e-09, 0.0002602, -3.344e-05, 5.468e-09 },
+                { 3.124e-10, -3.344e-05, 4.594e-06, -1.873e-09 },
+                { -1.261e-14, 5.468e-09, -1.873e-09, 1.211e-10 }
+            }, relativeTolerance: 0.003);  
+    }
 }
