@@ -11,10 +11,13 @@ public class Migrad
     private readonly MnUserParameterState parameters;
 
 
-    public Migrad(ICostFunction fcn, UserParameters par)
+    public Migrad(ICostFunction costFunction, UserParameters userParameters)
     {
-        wrapper = new CostFunctionWrapper(fcn);
-        parameters = par.GetParameterStates();
+        if (userParameters.AreNotMatching(costFunction.Parameters))
+            throw new ArgumentException($"{nameof(userParameters)} must match the {nameof(costFunction.Parameters)}");
+        
+        wrapper = new CostFunctionWrapper(costFunction);
+        parameters = userParameters.OrderedBy(costFunction.Parameters).AsState();
         migrad = new MnMigradWrap(wrapper, parameters);
     }
 

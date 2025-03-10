@@ -30,7 +30,7 @@ public class MinimizationResultTests
     [Test]
     public void basic_scenario()
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly);
+        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
         
         var initialParameters = new UserParameters(
             new Parameter("c0", 10.75), 
@@ -61,7 +61,7 @@ public class MinimizationResultTests
     [Test]
     public void fixed_parameters_scenario()
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly);
+        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
 
         var initialParameters = new UserParameters(
             new Parameter("c0", 10.75),
@@ -92,7 +92,7 @@ public class MinimizationResultTests
     [Test]
     public void limited_parameters_scenario()
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly);
+        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
 
         var initialParameters = new UserParameters(
             new Parameter("c0", 10.75, LowerLimit: 10.5),

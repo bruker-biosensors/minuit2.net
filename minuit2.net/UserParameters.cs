@@ -1,10 +1,15 @@
 ﻿namespace minuit2.net;
 
-public record Parameter(string Name, double Value, bool IsFixed = false, double? LowerLimit = null, double? UpperLimit = null);
+public record Parameter(
+    string Name,
+    double Value,
+    bool IsFixed = false,
+    double? LowerLimit = null,
+    double? UpperLimit = null);
 
 public class UserParameters(params Parameter[] parameters)
 {
-    internal MnUserParameterState GetParameterStates()
+    internal MnUserParameterState AsState()
     {
         var states = new MnUserParameterState();
         foreach (var parameter in parameters)
@@ -16,4 +21,17 @@ public class UserParameters(params Parameter[] parameters)
         }
         return states;
     }
+
+    internal bool AreNotMatching(IList<string> parameterNames)
+    {
+        if (parameters.Length != parameterNames.Count) return true;
+        if (parameterNames.Any(IsNotPresent)) return true;
+
+        return false;
+    }
+
+    private bool IsNotPresent(string parameterName) => parameters.All(p => p.Name != parameterName);
+
+    internal UserParameters OrderedBy(IList<string> parameterNames) =>
+        new(parameters.OrderBy(p => parameterNames.IndexOf(p.Name)).ToArray());
 }
