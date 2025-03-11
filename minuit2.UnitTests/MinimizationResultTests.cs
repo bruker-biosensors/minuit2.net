@@ -191,4 +191,40 @@ public class MinimizationResultTests
                 { -4.115e-05, 5.977e-05, -1.614e-05, 1.132e-06 }
             });
     }
+
+    [Test, Description("""
+                       When minimizing a sum of least squares, the parameter covariances should be auto-scaled when any 
+                       of the cost functions have missing data uncertainties. Our how would we do it otherwise?
+                       """)]
+    public void global_parameter_scenario_with_partly_missing_data_uncertainties()
+    {
+        var cost = new LeastSquares(_xValues, _yValues, _cubicPoly, ["c0", "c1", "c2", "c3"]) + 
+                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        
+        var initialParameters = new UserParameters(
+            new Parameter("c3", -0.11),
+            new Parameter("c2", 1.13),
+            new Parameter("c1", -1.97),
+            new Parameter("c0", 10.75));
+        
+        var minimizer = new Migrad(cost, initialParameters);
+        var result = minimizer.Run();
+
+        result.Should()
+            .HaveIsValid(true).And
+            .HaveNumberOfVariables(4).And
+            .HaveNumberOfFunctionCallsGreaterThan(10).And
+            .HaveReachedFunctionCallLimit(false).And
+            .HaveConverged(true).And
+            .HaveCostValue(12.62).And
+            .HaveParameters(["c0", "c1", "c2", "c3"]).And
+            .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
+            .HaveParameterCovarianceMatrix(new[,]
+            {
+                { 0.001951, -0.001493, 0.0003057, -1.829e-05 },
+                { -0.001493, 0.001708, -0.0004086, 2.656e-05 },
+                { 0.0003057, -0.0004086, 0.0001054, -7.172e-06 },
+                { -1.829e-05, 2.656e-05, -7.172e-06, 5.033e-07 }
+            });
+    }
 }

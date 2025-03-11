@@ -2,7 +2,7 @@ namespace minuit2.net;
 
 public class LeastSquaresResult : MinimizationResult
 {
-    internal LeastSquaresResult(FunctionMinimum functionMinimum, LeastSquares costFunction)
+    internal LeastSquaresResult(FunctionMinimum functionMinimum, ILeastSquares costFunction)
         : base(functionMinimum, costFunction)
     {
         var numberOfData = costFunction.NumberOfData;

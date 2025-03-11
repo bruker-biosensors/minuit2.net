@@ -1,6 +1,6 @@
 namespace minuit2.net;
 
-internal class CostFunctionSum(ICostFunction left, ICostFunction right) : ICostFunction
+internal class LeastSquaresSum(ILeastSquares left, ILeastSquares right) : ILeastSquares
 {
     private readonly List<int> _rightParameterIndices = RightParameterIndicesFrom(left.Parameters, right.Parameters);
 
@@ -11,6 +11,8 @@ internal class CostFunctionSum(ICostFunction left, ICostFunction right) : ICostF
     }
 
     public IList<string> Parameters { get; } = left.Parameters.Union(right.Parameters).ToList();
+    public int NumberOfData { get; } = left.NumberOfData + right.NumberOfData;
+    public bool ShouldScaleCovariances { get; } = left.ShouldScaleCovariances || right.ShouldScaleCovariances;
 
     public double ValueFor(IList<double> parameterValues) => left.ValueFor(Left(parameterValues)) + right.ValueFor(Right(parameterValues));
 

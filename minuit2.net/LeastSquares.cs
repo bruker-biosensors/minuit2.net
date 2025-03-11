@@ -2,7 +2,7 @@
 
 namespace minuit2.net;
 
-public class LeastSquares : ICostFunction, IAdditionOperators<LeastSquares, ICostFunction, ICostFunction>
+public class LeastSquares : ILeastSquares, IAdditionOperators<LeastSquares, ILeastSquares, ILeastSquares>
 {
     private readonly List<DataPoint> _data;
     private readonly Func<double, IList<double>, double> _model;
@@ -37,19 +37,18 @@ public class LeastSquares : ICostFunction, IAdditionOperators<LeastSquares, ICos
         if (CannotBeMapped(parameters, model))
             throw new ArgumentException($"{nameof(parameters)} has fewer elements than the number of parameters in {nameof(model)}");
         
-        NumberOfData = x.Count;
-        ShouldScaleCovariances = shouldScaleCovariances;
-        
         _data = x.Zip(y, yError).Select(t => new DataPoint(t.First, t.Second, t.Third)).ToList();
         _model = model;
+        
         Parameters = parameters;
+        NumberOfData = x.Count;
+        ShouldScaleCovariances = shouldScaleCovariances;
     }
 
-    internal int NumberOfData { get; }
-    internal bool ShouldScaleCovariances { get; }
-
     public IList<string> Parameters { get; }
-
+    public int NumberOfData { get; }
+    public bool ShouldScaleCovariances { get; }
+    
     private static bool CannotBeMapped(IList<string> parameters, Func<double, IList<double>, double> model)
     {
         try
@@ -68,5 +67,5 @@ public class LeastSquares : ICostFunction, IAdditionOperators<LeastSquares, ICos
         .Select(residual => residual * residual)
         .Sum();
 
-    public static ICostFunction operator +(LeastSquares left, ICostFunction right) => new CostFunctionSum(left, right);
+    public static ILeastSquares operator +(LeastSquares left, ILeastSquares right) => new LeastSquaresSum(left, right);
 }
