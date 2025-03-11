@@ -6,14 +6,13 @@ public class LeastSquares : ICostFunction, IAdditionOperators<LeastSquares, ICos
 {
     private readonly List<DataPoint> _data;
     private readonly Func<double, IList<double>, double> _model;
-    private readonly bool _scaleCovariances;
-
+    
     public LeastSquares(
         IList<double> x,
         IList<double> y,
         Func<double, IList<double>, double> model,
         IList<string> parameters)
-        : this(x, y, 1.0, model, parameters, scaleCovariances: true) { }
+        : this(x, y, 1.0, model, parameters, shouldScaleCovariances: true) { }
     
     public LeastSquares(
         IList<double> x,
@@ -21,8 +20,8 @@ public class LeastSquares : ICostFunction, IAdditionOperators<LeastSquares, ICos
         double yError,
         Func<double, IList<double>, double> model,
         IList<string> parameters, 
-        bool scaleCovariances = false)
-        : this(x, y, Enumerable.Repeat(yError, y.Count).ToList(), model, parameters, scaleCovariances) { }
+        bool shouldScaleCovariances = false)
+        : this(x, y, Enumerable.Repeat(yError, y.Count).ToList(), model, parameters, shouldScaleCovariances) { }
 
     private LeastSquares(
         IList<double> x, 
@@ -30,7 +29,7 @@ public class LeastSquares : ICostFunction, IAdditionOperators<LeastSquares, ICos
         IList<double> yError,
         Func<double, IList<double>, double> model, 
         IList<string> parameters, 
-        bool scaleCovariances)
+        bool shouldScaleCovariances)
     {
         if (x.Count != y.Count || x.Count != yError.Count)
             throw new ArgumentException($"{nameof(x)}, {nameof(y)} and {nameof(yError)} must have the same length");
@@ -38,11 +37,16 @@ public class LeastSquares : ICostFunction, IAdditionOperators<LeastSquares, ICos
         if (CannotBeMapped(parameters, model))
             throw new ArgumentException($"{nameof(parameters)} has fewer elements than the number of parameters in {nameof(model)}");
         
+        NumberOfData = x.Count;
+        ShouldScaleCovariances = shouldScaleCovariances;
+        
         _data = x.Zip(y, yError).Select(t => new DataPoint(t.First, t.Second, t.Third)).ToList();
         _model = model;
-        _scaleCovariances = scaleCovariances;
         Parameters = parameters;
     }
+
+    internal int NumberOfData { get; }
+    internal bool ShouldScaleCovariances { get; }
 
     public IList<string> Parameters { get; }
 
@@ -63,18 +67,6 @@ public class LeastSquares : ICostFunction, IAdditionOperators<LeastSquares, ICos
         .Select(datum => (datum.Y - _model(datum.X, parameterValues)) / datum.YError)
         .Select(residual => residual * residual)
         .Sum();
-    
-    public double CovarianceScaleFactorFor(double costValue, int numberOfVariables)
-    {
-        if (!_scaleCovariances) return 1;
-        
-        // Auto-scale the covariances to match the values obtained when data uncertainties are estimated such that
-        // the reduced chi-squared equals 1. This is the default behaviour in lmfit.
-        // source: https://lmfit.github.io/lmfit-py/fitting.html#uncertainties-in-variable-parameters-and-their-correlations
-        var degreesOfFreedom = _data.Count - numberOfVariables;
-        var reducedChiSquared = costValue / degreesOfFreedom;
-        return reducedChiSquared;
-    }
 
     public static ICostFunction operator +(LeastSquares left, ICostFunction right) => new CostFunctionSum(left, right);
 }

@@ -1,0 +1,15 @@
+namespace minuit2.net;
+
+public class LeastSquaresResult : MinimizationResult
+{
+    internal LeastSquaresResult(FunctionMinimum functionMinimum, LeastSquares costFunction)
+        : base(functionMinimum, costFunction)
+    {
+        var numberOfData = costFunction.NumberOfData;
+        var degreesOfFreedom = numberOfData - NumberOfVariables;
+        var reducedChiSquared = CostValue / degreesOfFreedom;
+
+        if (costFunction.ShouldScaleCovariances)
+            ParameterCovarianceMatrix = CovarianceMatrixFrom(functionMinimum.UserState(), reducedChiSquared);
+    }
+}

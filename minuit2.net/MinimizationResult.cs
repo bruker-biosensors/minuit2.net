@@ -6,27 +6,25 @@ public class MinimizationResult
     {
         CostValue = functionMinimum.Fval();
         
-        // Meta information about the result
         var state = functionMinimum.UserState();
+        Parameters = costFunction.Parameters.ToList();
+        ParameterValues = state.Params().ToList();
+        ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
+
+        // Meta information about the result
         IsValid = functionMinimum.IsValid();
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = functionMinimum.NFcn();
         HasReachedFunctionCallLimit = functionMinimum.HasReachedCallLimit();
         HasConverged = !functionMinimum.IsAboveMaxEdm();
-        
-        // Parameter information
-        Parameters = costFunction.Parameters.ToList();
-        ParameterValues = state.Params().ToList();
-        var covarianceScaleFactor = costFunction.CovarianceScaleFactorFor(CostValue, NumberOfVariables);
-        ParameterCovarianceMatrix = CovarianceMatrixFrom(state, covarianceScaleFactor);
     }
     
     public double CostValue { get; }
 
     public IReadOnlyCollection<string> Parameters { get; }
     public IReadOnlyCollection<double> ParameterValues { get; }
-    public double[,] ParameterCovarianceMatrix { get; }
-    
+    public double[,] ParameterCovarianceMatrix { get; protected init; }
+
     // The result is considered valid if the minimizer did not run into any troubles. Reasons for an invalid result are: 
     // - the number of allowed function calls has been exhausted
     // - the minimizer could not improve the values of the parameters (and knowing that it has not converged yet)
@@ -41,7 +39,7 @@ public class MinimizationResult
     // threshold value (computed as = 0.001 * tolerance * up).
     public bool HasConverged { get; }
 
-    private static double[,] CovarianceMatrixFrom(MnUserParameterState state, double scaleFactor)
+    private protected static double[,] CovarianceMatrixFrom(MnUserParameterState state, double scaleFactor = 1)
     {
         var covariance = state.Covariance();
         covariance.Scale(scaleFactor);

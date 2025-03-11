@@ -2,8 +2,8 @@
 
 public class Migrad
 {
-    private readonly MnMigradWrap _migrad;
     private readonly ICostFunction _costFunction;
+    private readonly MnMigradWrap _migrad;
 
     //not sure if those are needed,
     //but otherwise they will be collected by the GC and and memory might be freed on the C++ side
@@ -23,5 +23,13 @@ public class Migrad
         _migrad = new MnMigradWrap(wrapper, parameters);
     }
 
-    public MinimizationResult Run() => new(_migrad.Run(), _costFunction);
+    public MinimizationResult Run()
+    {
+        var migradResult = _migrad.Run();
+
+        if (_costFunction is LeastSquares leastSquares)
+            return new LeastSquaresResult(migradResult, leastSquares);
+        
+        return new MinimizationResult(migradResult, _costFunction);
+    }
 }
