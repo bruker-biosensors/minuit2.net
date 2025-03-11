@@ -17,4 +17,6 @@ internal class CostFunctionSum(ICostFunction left, ICostFunction right) : ICostF
     private List<double> Left(IList<double> parameterValues) => parameterValues.Take(left.Parameters.Count).ToList();
     
     private List<double> Right(IList<double> parameterValues) => _rightParameterIndices.Select(i => parameterValues[i]).ToList();
+
+    public double CovarianceScaleFactorFor(double costValue, int numberOfVariables) => 1;
 }

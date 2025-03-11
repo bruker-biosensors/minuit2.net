@@ -2,21 +2,23 @@ namespace minuit2.net;
 
 public class MinimizationResult
 {
-    internal MinimizationResult(FunctionMinimum functionMinimum, IReadOnlyCollection<string> parameters)
+    internal MinimizationResult(FunctionMinimum functionMinimum, ICostFunction costFunction)
     {
         CostValue = functionMinimum.Fval();
         
-        var state = functionMinimum.UserState();
-        Parameters = parameters;
-        ParameterValues = state.Params().ToList();
-        ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
-
         // Meta information about the result
+        var state = functionMinimum.UserState();
         IsValid = functionMinimum.IsValid();
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = functionMinimum.NFcn();
         HasReachedFunctionCallLimit = functionMinimum.HasReachedCallLimit();
         HasConverged = !functionMinimum.IsAboveMaxEdm();
+        
+        // Parameter information
+        Parameters = costFunction.Parameters.ToList();
+        ParameterValues = state.Params().ToList();
+        var covarianceScaleFactor = costFunction.CovarianceScaleFactorFor(CostValue, NumberOfVariables);
+        ParameterCovarianceMatrix = CovarianceMatrixFrom(state, covarianceScaleFactor);
     }
     
     public double CostValue { get; }
@@ -39,17 +41,18 @@ public class MinimizationResult
     // threshold value (computed as = 0.001 * tolerance * up).
     public bool HasConverged { get; }
 
-    private static double[,] CovarianceMatrixFrom(MnUserParameterState state)
-    { 
-        var numberOfParameters = state.Params().Count;
-        var covarianceMatrix = new double[numberOfParameters, numberOfParameters];
-
+    private static double[,] CovarianceMatrixFrom(MnUserParameterState state, double scaleFactor)
+    {
+        var covariance = state.Covariance();
+        covariance.Scale(scaleFactor);
+        var covarianceValues = covariance.Data();
+        
         var numberOfVariables = (int)state.VariableParameters();
-        var covariances = state.Covariance().Data();
-
         var indexMap = Enumerable.Range(0, numberOfVariables)
             .ToDictionary(ParameterIndex, variableIndex => variableIndex);
-
+        
+        var numberOfParameters = state.Params().Count;
+        var covarianceMatrix = new double[numberOfParameters, numberOfParameters];
         for (var i = 0; i < numberOfParameters; i++)
         {
             if (!indexMap.TryGetValue(i, out var rowVariableIndex)) continue;
@@ -57,8 +60,8 @@ public class MinimizationResult
             {
                 if (!indexMap.TryGetValue(j, out var columnVariableIndex)) continue;
                 var flatIndex = FlatIndex(rowVariableIndex, columnVariableIndex);
-                covarianceMatrix[i, j] = covariances[flatIndex];
-                covarianceMatrix[j, i] = covariances[flatIndex];
+                covarianceMatrix[i, j] = covarianceValues[flatIndex];
+                covarianceMatrix[j, i] = covarianceValues[flatIndex];
             }
         }
 

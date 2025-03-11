@@ -159,4 +159,36 @@ public class MinimizationResultTests
                 { -2.635e-05, 3.902e-05, -1.033e-05, 7.12e-07, 3.752e-05, 7.384e-07 }
             });
     }
+
+    [Test]
+    public void missing_data_uncertainties_scenario()
+    {
+        var cost = new LeastSquares(_xValues, _yValues, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        
+        var initialParameters = new UserParameters(
+            new Parameter("c3", -0.11),
+            new Parameter("c2", 1.13),
+            new Parameter("c0", 10.75),
+            new Parameter("c1", -1.97));
+        
+        var minimizer = new Migrad(cost, initialParameters);
+        var result = minimizer.Run();
+
+        result.Should()
+            .HaveIsValid(true).And
+            .HaveNumberOfVariables(4).And
+            .HaveNumberOfFunctionCallsGreaterThan(10).And
+            .HaveReachedFunctionCallLimit(false).And
+            .HaveConverged(true).And
+            .HaveCostValue(0.1249).And
+            .HaveParameters(["c0", "c1", "c2", "c3"]).And
+            .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
+            .HaveParameterCovarianceMatrix(new[,]
+            {
+                { 0.004391, -0.003358, 0.0006878, -4.115e-05 },
+                { -0.003358, 0.003843, -0.0009193, 5.977e-05 },
+                { 0.0006878, -0.0009193, 0.0002371, -1.614e-05 },
+                { -4.115e-05, 5.977e-05, -1.614e-05, 1.132e-06 }
+            });
+    }
 }
