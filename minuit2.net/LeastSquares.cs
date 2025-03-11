@@ -46,8 +46,8 @@ public class LeastSquares : ICostFunction
         }
     }
 
-    public double ValueFor(IList<double> parameters) => _data
-        .Select(datum => (datum.Y - _model(datum.X, parameters)) / datum.YError)
+    public double ValueFor(IList<double> parameterValues) => _data
+        .Select(datum => (datum.Y - _model(datum.X, parameterValues)) / datum.YError)
         .Select(residual => residual * residual)
         .Sum();
 }
