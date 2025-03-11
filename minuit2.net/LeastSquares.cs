@@ -1,6 +1,8 @@
-﻿namespace minuit2.net;
+﻿using System.Numerics;
 
-public class LeastSquares : ICostFunction
+namespace minuit2.net;
+
+public class LeastSquares : ICostFunction, IAdditionOperators<LeastSquares, ICostFunction, ICostFunction>
 {
     private readonly List<DataPoint> _data;
     private readonly Func<double, IList<double>, double> _model;
@@ -50,4 +52,6 @@ public class LeastSquares : ICostFunction
         .Select(datum => (datum.Y - _model(datum.X, parameterValues)) / datum.YError)
         .Select(residual => residual * residual)
         .Sum();
+
+    public static ICostFunction operator +(LeastSquares left, ICostFunction right) => new CostFunctionSum(left, right);
 }
