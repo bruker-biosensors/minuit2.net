@@ -2,6 +2,6 @@
 
 public interface ICostFunction
 {
-    internal IList<string> Parameters { get; }
+    IList<string> Parameters { get; }
     double ValueFor(IList<double> parameters);
 }
