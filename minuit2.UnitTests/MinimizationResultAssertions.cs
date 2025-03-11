@@ -24,6 +24,12 @@ internal class MinimizationResultAssertions(MinimizationResult value)
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
     
+    public AndConstraint<MinimizationResultAssertions> HaveParameters(IEnumerable<string> expectedValues)
+    {
+        Subject.Parameters.Should().Equal(expectedValues);
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
+    
     public AndConstraint<MinimizationResultAssertions> HaveParameterValues(IReadOnlyCollection<double> expectedValues)
     {
         Subject.ParameterValues.Should().BeEquivalentTo(expectedValues, options => options

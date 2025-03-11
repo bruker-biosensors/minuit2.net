@@ -48,6 +48,7 @@ public class MinimizationResultTests
             .HaveReachedFunctionCallLimit(false).And
             .HaveConverged(true).And
             .HaveCostValue(12.49).And
+            .HaveParameters(["c0", "c1", "c2", "c3"]).And
             .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
             .HaveParameterCovarianceMatrix(new[,]
             {
@@ -79,6 +80,7 @@ public class MinimizationResultTests
             .HaveReachedFunctionCallLimit(false).And
             .HaveConverged(true).And
             .HaveCostValue(437.7).And
+            .HaveParameters(["c0", "c1", "c2", "c3"]).And
             .HaveParameterValues([9.411, -1.97, 1.088, -0.11]).And
             .HaveParameterCovarianceMatrix(new[,]
             {
@@ -110,6 +112,7 @@ public class MinimizationResultTests
             .HaveReachedFunctionCallLimit(false).And
             .HaveConverged(true).And
             .HaveCostValue(62.34).And
+            .HaveParameters(["c0", "c1", "c2", "c3"]).And
             .HaveParameterValues([10.5, -2.39, 1.082, -0.105]).And
             .HaveParameterCovarianceMatrix(new[,]
             {
@@ -145,6 +148,7 @@ public class MinimizationResultTests
             .HaveReachedFunctionCallLimit(false).And
             .HaveConverged(true).And
             .HaveCostValue(24.99).And
+            .HaveParameters(["c0", "c1", "c2", "c3", "c1_1", "c3_1"]).And
             .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931, -1.959, -0.09931]).And
             .HaveParameterCovarianceMatrix(new[,]
             {

@@ -2,11 +2,12 @@ namespace minuit2.net;
 
 public class MinimizationResult
 {
-    internal MinimizationResult(FunctionMinimum functionMinimum)
+    internal MinimizationResult(FunctionMinimum functionMinimum, IReadOnlyCollection<string> parameters)
     {
         CostValue = functionMinimum.Fval();
         
         var state = functionMinimum.UserState();
+        Parameters = parameters;
         ParameterValues = state.Params().ToList();
         ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
 
@@ -20,6 +21,7 @@ public class MinimizationResult
     
     public double CostValue { get; }
 
+    public IReadOnlyCollection<string> Parameters { get; }
     public IReadOnlyCollection<double> ParameterValues { get; }
     public double[,] ParameterCovarianceMatrix { get; }
     
