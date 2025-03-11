@@ -1,8 +1,8 @@
 namespace minuit2.net;
 
-public class LeastSquaresResult : MinimizationResult
+public class LeastSquaresMinimizationResult : MinimizationResult
 {
-    internal LeastSquaresResult(FunctionMinimum functionMinimum, ILeastSquares costFunction)
+    internal LeastSquaresMinimizationResult(FunctionMinimum functionMinimum, ILeastSquares costFunction)
         : base(functionMinimum, costFunction)
     {
         var numberOfData = costFunction.NumberOfData;
