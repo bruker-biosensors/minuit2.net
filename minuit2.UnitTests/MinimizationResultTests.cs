@@ -32,11 +32,11 @@ public class MinimizationResultTests
     {
         var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
         
-        var initialParameters = new UserParameters(
-            new Parameter("c3", -0.11),
-            new Parameter("c2", 1.13),
-            new Parameter("c0", 10.75),
-            new Parameter("c1", -1.97));
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c3", -0.11),
+            new ParameterConfiguration("c2", 1.13),
+            new ParameterConfiguration("c0", 10.75),
+            new ParameterConfiguration("c1", -1.97));
         
         var minimizer = new Migrad(cost, initialParameters);
         var result = minimizer.Run();
@@ -64,11 +64,11 @@ public class MinimizationResultTests
     {
         var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
 
-        var initialParameters = new UserParameters(
-            new Parameter("c3", -0.11, IsFixed: true),
-            new Parameter("c2", 1.13),
-            new Parameter("c1", -1.97, IsFixed: true),
-            new Parameter("c0", 10.75));
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c3", -0.11, IsFixed: true),
+            new ParameterConfiguration("c2", 1.13),
+            new ParameterConfiguration("c1", -1.97, IsFixed: true),
+            new ParameterConfiguration("c0", 10.75));
         
         var minimizer = new Migrad(cost, initialParameters);
         var result = minimizer.Run();
@@ -96,11 +96,11 @@ public class MinimizationResultTests
     {
         var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
 
-        var initialParameters = new UserParameters(
-            new Parameter("c3", -0.11, UpperLimit: -0.105),
-            new Parameter("c2", 1.13),
-            new Parameter("c1", -1.97),
-            new Parameter("c0", 10.75, LowerLimit: 10.5));
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c3", -0.11, UpperLimit: -0.105),
+            new ParameterConfiguration("c2", 1.13),
+            new ParameterConfiguration("c1", -1.97),
+            new ParameterConfiguration("c0", 10.75, LowerLimit: 10.5));
         
         var minimizer = new Migrad(cost, initialParameters);
         var result = minimizer.Run();
@@ -130,14 +130,14 @@ public class MinimizationResultTests
                    new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1_1", "c2", "c3_1"]) +
                    new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2_2", "c3"]);
         
-        var initialParameters = new UserParameters(
-            new Parameter("c2_2", 0.9),
-            new Parameter("c3_1", -0.15),
-            new Parameter("c1_1", -2.1),
-            new Parameter("c3", -0.11),
-            new Parameter("c2", 1.13),
-            new Parameter("c1", -1.97),
-            new Parameter("c0", 10.75));
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c2_2", 0.9),
+            new ParameterConfiguration("c3_1", -0.15),
+            new ParameterConfiguration("c1_1", -2.1),
+            new ParameterConfiguration("c3", -0.11),
+            new ParameterConfiguration("c2", 1.13),
+            new ParameterConfiguration("c1", -1.97),
+            new ParameterConfiguration("c0", 10.75));
         
         var minimizer = new Migrad(cost, initialParameters);
         var result = minimizer.Run();
@@ -168,11 +168,11 @@ public class MinimizationResultTests
     {
         var cost = new LeastSquares(_xValues, _yValues, _cubicPoly, ["c0", "c1", "c2", "c3"]);
         
-        var initialParameters = new UserParameters(
-            new Parameter("c3", -0.11),
-            new Parameter("c2", 1.13),
-            new Parameter("c0", 10.75),
-            new Parameter("c1", -1.97));
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c3", -0.11),
+            new ParameterConfiguration("c2", 1.13),
+            new ParameterConfiguration("c0", 10.75),
+            new ParameterConfiguration("c1", -1.97));
         
         var minimizer = new Migrad(cost, initialParameters);
         var result = minimizer.Run();
@@ -204,11 +204,11 @@ public class MinimizationResultTests
         var cost = new LeastSquares(_xValues, _yValues, _cubicPoly, ["c0", "c1", "c2", "c3"]) + 
                    new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
         
-        var initialParameters = new UserParameters(
-            new Parameter("c3", -0.11),
-            new Parameter("c2", 1.13),
-            new Parameter("c1", -1.97),
-            new Parameter("c0", 10.75));
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c3", -0.11),
+            new ParameterConfiguration("c2", 1.13),
+            new ParameterConfiguration("c1", -1.97),
+            new ParameterConfiguration("c0", 10.75));
         
         var minimizer = new Migrad(cost, initialParameters);
         var result = minimizer.Run();

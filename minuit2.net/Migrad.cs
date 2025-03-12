@@ -12,14 +12,14 @@ public class Migrad
     private readonly MnUserParameterState parameters;
 
 
-    public Migrad(ICostFunction costFunction, UserParameters userParameters)
+    public Migrad(ICostFunction costFunction, ParameterConfigurations parameterConfigurations)
     {
         _costFunction = costFunction;
-        if (userParameters.AreNotMatching(costFunction.Parameters))
-            throw new ArgumentException($"The {nameof(userParameters)} must correspond to the {nameof(costFunction.Parameters)} defined by the {nameof(costFunction)}");
+        if (parameterConfigurations.AreNotMatching(costFunction.Parameters))
+            throw new ArgumentException($"The {nameof(parameterConfigurations)} must correspond to the {nameof(costFunction.Parameters)} defined by the {nameof(costFunction)}");
         
         wrapper = new CostFunctionWrapper(costFunction);
-        parameters = userParameters.OrderedBy(costFunction.Parameters).AsState();
+        parameters = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
         _migrad = new MnMigradWrap(wrapper, parameters);
     }
 

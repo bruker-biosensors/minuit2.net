@@ -1,13 +1,13 @@
 ﻿namespace minuit2.net;
 
-public record Parameter(
+public record ParameterConfiguration(
     string Name,
     double Value,
     bool IsFixed = false,
     double? LowerLimit = null,
     double? UpperLimit = null);
 
-public class UserParameters(params Parameter[] parameters)
+public class ParameterConfigurations(params ParameterConfiguration[] parameters)
 {
     internal MnUserParameterState AsState()
     {
@@ -32,6 +32,6 @@ public class UserParameters(params Parameter[] parameters)
 
     private bool IsNotPresent(string parameterName) => parameters.All(p => p.Name != parameterName);
 
-    internal UserParameters OrderedBy(IList<string> parameterNames) =>
+    internal ParameterConfigurations OrderedBy(IList<string> parameterNames) =>
         new(parameters.OrderBy(p => parameterNames.IndexOf(p.Name)).ToArray());
 }
