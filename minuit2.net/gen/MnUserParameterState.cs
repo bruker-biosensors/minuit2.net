@@ -71,15 +71,15 @@ internal class MnUserParameterState : global::System.IDisposable {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public MnUserParameterState(SWIGTYPE_p_std__spanT_double_const_t arg0, SWIGTYPE_p_MnUserCovariance arg1) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_4(SWIGTYPE_p_std__spanT_double_const_t.getCPtr(arg0), SWIGTYPE_p_MnUserCovariance.getCPtr(arg1)), true) {
+  public MnUserParameterState(SWIGTYPE_p_std__spanT_double_const_t arg0, MnUserCovariance arg1) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_4(SWIGTYPE_p_std__spanT_double_const_t.getCPtr(arg0), MnUserCovariance.getCPtr(arg1)), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public MnUserParameterState(SWIGTYPE_p_MnUserParameters arg0, SWIGTYPE_p_MnUserCovariance arg1) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_5(SWIGTYPE_p_MnUserParameters.getCPtr(arg0), SWIGTYPE_p_MnUserCovariance.getCPtr(arg1)), true) {
+  public MnUserParameterState(SWIGTYPE_p_MnUserParameters arg0, MnUserCovariance arg1) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_5(SWIGTYPE_p_MnUserParameters.getCPtr(arg0), MnUserCovariance.getCPtr(arg1)), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public MnUserParameterState(MinimumState arg0, double arg1, SWIGTYPE_p_MnUserTransformation arg2) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_6(MinimumState.getCPtr(arg0), arg1, SWIGTYPE_p_MnUserTransformation.getCPtr(arg2)), true) {
+  public MnUserParameterState(SWIGTYPE_p_ROOT__Minuit2__MinimumState arg0, double arg1, SWIGTYPE_p_MnUserTransformation arg2) : this(Minuit2PINVOKE.new_MnUserParameterState__SWIG_6(SWIGTYPE_p_ROOT__Minuit2__MinimumState.getCPtr(arg0), arg1, SWIGTYPE_p_MnUserTransformation.getCPtr(arg2)), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
@@ -88,8 +88,8 @@ internal class MnUserParameterState : global::System.IDisposable {
     return ret;
   }
 
-  public SWIGTYPE_p_MnUserCovariance Covariance() {
-    SWIGTYPE_p_MnUserCovariance ret = new SWIGTYPE_p_MnUserCovariance(Minuit2PINVOKE.MnUserParameterState_Covariance(swigCPtr), false);
+  public MnUserCovariance Covariance() {
+    MnUserCovariance ret = new MnUserCovariance(Minuit2PINVOKE.MnUserParameterState_Covariance(swigCPtr), false);
     return ret;
   }
 
@@ -98,8 +98,8 @@ internal class MnUserParameterState : global::System.IDisposable {
     return ret;
   }
 
-  public SWIGTYPE_p_MnUserCovariance Hessian() {
-    SWIGTYPE_p_MnUserCovariance ret = new SWIGTYPE_p_MnUserCovariance(Minuit2PINVOKE.MnUserParameterState_Hessian(swigCPtr), true);
+  public MnUserCovariance Hessian() {
+    MnUserCovariance ret = new MnUserCovariance(Minuit2PINVOKE.MnUserParameterState_Hessian(swigCPtr), true);
     return ret;
   }
 
@@ -108,8 +108,8 @@ internal class MnUserParameterState : global::System.IDisposable {
     return ret;
   }
 
-  public SWIGTYPE_p_MnUserCovariance IntCovariance() {
-    SWIGTYPE_p_MnUserCovariance ret = new SWIGTYPE_p_MnUserCovariance(Minuit2PINVOKE.MnUserParameterState_IntCovariance(swigCPtr), false);
+  public MnUserCovariance IntCovariance() {
+    MnUserCovariance ret = new MnUserCovariance(Minuit2PINVOKE.MnUserParameterState_IntCovariance(swigCPtr), false);
     return ret;
   }
 
@@ -188,8 +188,8 @@ internal class MnUserParameterState : global::System.IDisposable {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public void AddCovariance(SWIGTYPE_p_MnUserCovariance arg0) {
-    Minuit2PINVOKE.MnUserParameterState_AddCovariance(swigCPtr, SWIGTYPE_p_MnUserCovariance.getCPtr(arg0));
+  public void AddCovariance(MnUserCovariance arg0) {
+    Minuit2PINVOKE.MnUserParameterState_AddCovariance(swigCPtr, MnUserCovariance.getCPtr(arg0));
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 

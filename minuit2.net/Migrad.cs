@@ -2,7 +2,8 @@
 
 public class Migrad
 {
-    private readonly MnMigradWrap migrad;
+    private readonly ICostFunction _costFunction;
+    private readonly MnMigradWrap _migrad;
 
     //not sure if those are needed,
     //but otherwise they will be collected by the GC and and memory might be freed on the C++ side
@@ -11,23 +12,24 @@ public class Migrad
     private readonly MnUserParameterState parameters;
 
 
-    public Migrad(ICostFunction fcn, UserParameters par)
+    public Migrad(ICostFunction costFunction, ParameterConfigurations parameterConfigurations)
     {
-        wrapper = new CostFunctionWrapper(fcn);
-        parameters = par.GetParameterStates();
-        migrad = new MnMigradWrap(wrapper, parameters);
+        _costFunction = costFunction;
+        if (parameterConfigurations.AreNotMatching(costFunction.Parameters))
+            throw new ArgumentException($"The {nameof(parameterConfigurations)} must correspond to the {nameof(costFunction.Parameters)} defined by the {nameof(costFunction)}");
+        
+        wrapper = new CostFunctionWrapper(costFunction);
+        parameters = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
+        _migrad = new MnMigradWrap(wrapper, parameters);
     }
 
-    public List<double> Evaluate()
+    public MinimizationResult Run()
     {
-        var retList = new List<double>();
-        var result = migrad.Run();
-        var doublearray = DoubleArray.frompointer(result.Parameters().Vec().Data());
-        for (uint i = 0; i < result.Parameters().Vec().size(); i++)
-        {
-            retList.Add(doublearray.getitem(i));
-        }
+        var migradResult = _migrad.Run();
 
-        return retList;
+        if (_costFunction is ILeastSquares leastSquares)
+            return new LeastSquaresMinimizationResult(migradResult, leastSquares);
+        
+        return new MinimizationResult(migradResult, _costFunction);
     }
 }

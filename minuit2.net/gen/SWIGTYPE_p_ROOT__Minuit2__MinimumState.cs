@@ -9,22 +9,22 @@
 //------------------------------------------------------------------------------
 
 
-internal class SWIGTYPE_p_ROOT__Minuit2__MnMachinePrecision {
+internal class SWIGTYPE_p_ROOT__Minuit2__MinimumState {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
 
-  internal SWIGTYPE_p_ROOT__Minuit2__MnMachinePrecision(global::System.IntPtr cPtr, bool futureUse) {
+  internal SWIGTYPE_p_ROOT__Minuit2__MinimumState(global::System.IntPtr cPtr, bool futureUse) {
     swigCPtr = new global::System.Runtime.InteropServices.HandleRef(this, cPtr);
   }
 
-  protected SWIGTYPE_p_ROOT__Minuit2__MnMachinePrecision() {
+  protected SWIGTYPE_p_ROOT__Minuit2__MinimumState() {
     swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
   }
 
-  internal static global::System.Runtime.InteropServices.HandleRef getCPtr(SWIGTYPE_p_ROOT__Minuit2__MnMachinePrecision obj) {
+  internal static global::System.Runtime.InteropServices.HandleRef getCPtr(SWIGTYPE_p_ROOT__Minuit2__MinimumState obj) {
     return (obj == null) ? new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero) : obj.swigCPtr;
   }
 
-  internal static global::System.Runtime.InteropServices.HandleRef swigRelease(SWIGTYPE_p_ROOT__Minuit2__MnMachinePrecision obj) {
+  internal static global::System.Runtime.InteropServices.HandleRef swigRelease(SWIGTYPE_p_ROOT__Minuit2__MinimumState obj) {
     return (obj == null) ? new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero) : obj.swigCPtr;
   }
 }

@@ -1,4 +1,3 @@
-using FluentAssertions;
 using minuit2.net;
 
 namespace minuit2.UnitTests;
@@ -21,29 +20,214 @@ public class MinimizationResultTests
     // and a random normal noise with a standard deviation of 0.1
     private readonly List<double> _yValues =
     [
-        9.90108786, 9.20072133, 9.02879253, 8.93189744, 9.29202309, 9.74521038, 10.23635364, 11.01669522, 11.56834045,
-        12.10526109, 12.50971673, 12.45990696, 12.51921661, 11.72039103, 10.80002694, 9.07613211, 6.95320331,
-        3.77150306, 0.06882051, -4.45372309
+        9.9, 9.2, 9.03, 8.93, 9.29, 9.75, 10.24, 11.02, 11.57, 12.11, 12.51, 12.46, 12.52, 11.72, 10.8, 9.08, 6.95,
+        3.77, 0.07, -4.45
     ];
+
+    private const double YError = 0.1;  // standard deviation of noise used to generate the above y-values
 
     
     [Test]
     public void basic_scenario()
     {
-        var cost = new LeastSquares(_xValues, _yValues, 0.1, _cubicPoly);
+        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
         
-        var initialParameters = new UserParameters(
-            new Parameter("c0", 7.79), 
-            new Parameter("c1", -2.17), 
-            new Parameter("c2", 1.15), 
-            new Parameter("c3", -0.11));
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c3", -0.11),
+            new ParameterConfiguration("c2", 1.13),
+            new ParameterConfiguration("c0", 10.75),
+            new ParameterConfiguration("c1", -1.97));
         
         var minimizer = new Migrad(cost, initialParameters);
-        var result = minimizer.Evaluate();
+        var result = minimizer.Run();
 
-        result.Should().BeEquivalentTo([9.976261866327437, -1.9622541480976985, 0.9906196650169466, -0.09936114330982032], 
-            options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
-                .WhenTypeIs<double>());
+        result.Should()
+            .HaveIsValid(true).And
+            .HaveNumberOfVariables(4).And
+            .HaveNumberOfFunctionCallsGreaterThan(10).And
+            .HaveReachedFunctionCallLimit(false).And
+            .HaveConverged(true).And
+            .HaveCostValue(12.49).And
+            .HaveParameters(["c0", "c1", "c2", "c3"]).And
+            .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
+            .HaveParameterCovarianceMatrix(new[,]
+            {
+                { 0.005623, -0.004301, 0.000881, -5.271e-05 },
+                { -0.004301, 0.004923, -0.001177, 7.655e-05 },
+                { 0.000881, -0.001177, 0.0003037, -2.067e-05 },
+                { -5.271e-05, 7.655e-05, -2.067e-05, 1.45e-06 }
+            });
+    }
+
+    [Test]
+    public void fixed_parameters_scenario()
+    {
+        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c3", -0.11, IsFixed: true),
+            new ParameterConfiguration("c2", 1.13),
+            new ParameterConfiguration("c1", -1.97, IsFixed: true),
+            new ParameterConfiguration("c0", 10.75));
+        
+        var minimizer = new Migrad(cost, initialParameters);
+        var result = minimizer.Run();
+
+        result.Should()
+            .HaveIsValid(true).And
+            .HaveNumberOfVariables(2).And
+            .HaveNumberOfFunctionCallsGreaterThan(10).And
+            .HaveReachedFunctionCallLimit(false).And
+            .HaveConverged(true).And
+            .HaveCostValue(437.7).And
+            .HaveParameters(["c0", "c1", "c2", "c3"]).And
+            .HaveParameterValues([9.411, -1.97, 1.088, -0.11]).And
+            .HaveParameterCovarianceMatrix(new[,]
+            {
+                { 0.001092, 0.0, -1.918e-05, 0.0 },
+                { 0.0, 0.0, 0.0, 0.0 },
+                { -1.918e-05, 0.0, 6.211e-07, 0.0 },
+                { 0.0, 0.0, 0.0, 0.0 }
+            });
+    }
+
+    [Test]
+    public void limited_parameters_scenario()
+    {
+        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c3", -0.11, UpperLimit: -0.105),
+            new ParameterConfiguration("c2", 1.13),
+            new ParameterConfiguration("c1", -1.97),
+            new ParameterConfiguration("c0", 10.75, LowerLimit: 10.5));
+        
+        var minimizer = new Migrad(cost, initialParameters);
+        var result = minimizer.Run();
+
+        result.Should()
+            .HaveIsValid(true).And
+            .HaveNumberOfVariables(4).And
+            .HaveNumberOfFunctionCallsGreaterThan(10).And
+            .HaveReachedFunctionCallLimit(false).And
+            .HaveConverged(true).And
+            .HaveCostValue(62.34).And
+            .HaveParameters(["c0", "c1", "c2", "c3"]).And
+            .HaveParameterValues([10.5, -2.39, 1.082, -0.105]).And
+            .HaveParameterCovarianceMatrix(new[,]
+            {
+                { 7.023e-09, -3.654e-09, 3.124e-10, -1.261e-14 },
+                { -3.654e-09, 0.0002602, -3.344e-05, 5.468e-09 },
+                { 3.124e-10, -3.344e-05, 4.594e-06, -1.873e-09 },
+                { -1.261e-14, 5.468e-09, -1.873e-09, 1.211e-10 }
+            }, relativeTolerance: 0.003);  
+    }
+
+    [Test]
+    public void global_parameters_scenario()
+    {
+        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]) + 
+                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1_1", "c2", "c3_1"]) +
+                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2_2", "c3"]);
+        
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c2_2", 0.9),
+            new ParameterConfiguration("c3_1", -0.15),
+            new ParameterConfiguration("c1_1", -2.1),
+            new ParameterConfiguration("c3", -0.11),
+            new ParameterConfiguration("c2", 1.13),
+            new ParameterConfiguration("c1", -1.97),
+            new ParameterConfiguration("c0", 10.75));
+        
+        var minimizer = new Migrad(cost, initialParameters);
+        var result = minimizer.Run();
+
+        result.Should()
+            .HaveIsValid(true).And
+            .HaveNumberOfVariables(7).And
+            .HaveNumberOfFunctionCallsGreaterThan(10).And
+            .HaveReachedFunctionCallLimit(false).And
+            .HaveConverged(true).And
+            .HaveCostValue(37.48).And
+            .HaveParameters(["c0", "c1", "c2", "c3", "c1_1", "c3_1", "c2_2"]).And
+            .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931, -1.959, -0.09931, 0.9898]).And
+            .HaveParameterCovarianceMatrix(new[,]
+            {
+                { 0.001874, -0.001434, 0.0002936, -1.757e-05, -0.001434, -1.757e-05, 0.0002936 },
+                { -0.001434, 0.001658, -0.0003923, 2.527e-05, 0.001606, 2.601e-05, -0.0003926 },
+                { 0.0002936, -0.0003923, 0.0001013, -6.886e-06, -0.0003926, -6.894e-06, 0.0001011 },
+                { -1.757e-05, 2.527e-05, -6.886e-06, 4.879e-07, 2.601e-05, 4.745e-07, -6.894e-06 },
+                { -0.001434, 0.001606, -0.0003926, 2.601e-05, 0.001709, 2.453e-05, -0.000392 },
+                { -1.757e-05, 2.601e-05, -6.894e-06, 4.745e-07, 2.453e-05, 5.014e-07, -6.879e-06 },
+                { 0.0002936, -0.0003926, 0.0001011, -6.894e-06, -0.000392, -6.879e-06, 0.0001015 }
+            });
+    }
+
+    [Test]
+    public void missing_data_uncertainties_scenario()
+    {
+        var cost = new LeastSquares(_xValues, _yValues, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c3", -0.11),
+            new ParameterConfiguration("c2", 1.13),
+            new ParameterConfiguration("c0", 10.75),
+            new ParameterConfiguration("c1", -1.97));
+        
+        var minimizer = new Migrad(cost, initialParameters);
+        var result = minimizer.Run();
+
+        result.Should()
+            .HaveIsValid(true).And
+            .HaveNumberOfVariables(4).And
+            .HaveNumberOfFunctionCallsGreaterThan(10).And
+            .HaveReachedFunctionCallLimit(false).And
+            .HaveConverged(true).And
+            .HaveCostValue(0.1249).And
+            .HaveParameters(["c0", "c1", "c2", "c3"]).And
+            .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
+            .HaveParameterCovarianceMatrix(new[,]
+            {
+                { 0.004391, -0.003358, 0.0006878, -4.115e-05 },
+                { -0.003358, 0.003843, -0.0009193, 5.977e-05 },
+                { 0.0006878, -0.0009193, 0.0002371, -1.614e-05 },
+                { -4.115e-05, 5.977e-05, -1.614e-05, 1.132e-06 }
+            });
+    }
+
+    [Test, Description("""
+                       When minimizing a sum of least squares, the parameter covariances should be auto-scaled when any 
+                       of the cost functions have missing data uncertainties. Our how would we do it otherwise?
+                       """)]
+    public void global_parameter_scenario_with_partly_missing_data_uncertainties()
+    {
+        var cost = new LeastSquares(_xValues, _yValues, _cubicPoly, ["c0", "c1", "c2", "c3"]) + 
+                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c3", -0.11),
+            new ParameterConfiguration("c2", 1.13),
+            new ParameterConfiguration("c1", -1.97),
+            new ParameterConfiguration("c0", 10.75));
+        
+        var minimizer = new Migrad(cost, initialParameters);
+        var result = minimizer.Run();
+
+        result.Should()
+            .HaveIsValid(true).And
+            .HaveNumberOfVariables(4).And
+            .HaveNumberOfFunctionCallsGreaterThan(10).And
+            .HaveReachedFunctionCallLimit(false).And
+            .HaveConverged(true).And
+            .HaveCostValue(12.62).And
+            .HaveParameters(["c0", "c1", "c2", "c3"]).And
+            .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
+            .HaveParameterCovarianceMatrix(new[,]
+            {
+                { 0.001951, -0.001493, 0.0003057, -1.829e-05 },
+                { -0.001493, 0.001708, -0.0004086, 2.656e-05 },
+                { 0.0003057, -0.0004086, 0.0001054, -7.172e-06 },
+                { -1.829e-05, 2.656e-05, -7.172e-06, 5.033e-07 }
+            });
     }
 }
