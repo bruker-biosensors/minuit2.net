@@ -127,9 +127,11 @@ public class MinimizationResultTests
     public void global_parameters_scenario()
     {
         var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]) + 
-                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1_1", "c2", "c3_1"]);
+                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1_1", "c2", "c3_1"]) +
+                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2_2", "c3"]);
         
         var initialParameters = new UserParameters(
+            new Parameter("c2_2", 0.9),
             new Parameter("c3_1", -0.15),
             new Parameter("c1_1", -2.1),
             new Parameter("c3", -0.11),
@@ -142,21 +144,22 @@ public class MinimizationResultTests
 
         result.Should()
             .HaveIsValid(true).And
-            .HaveNumberOfVariables(6).And
+            .HaveNumberOfVariables(7).And
             .HaveNumberOfFunctionCallsGreaterThan(10).And
             .HaveReachedFunctionCallLimit(false).And
             .HaveConverged(true).And
-            .HaveCostValue(24.99).And
-            .HaveParameters(["c0", "c1", "c2", "c3", "c1_1", "c3_1"]).And
-            .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931, -1.959, -0.09931]).And
+            .HaveCostValue(37.48).And
+            .HaveParameters(["c0", "c1", "c2", "c3", "c1_1", "c3_1", "c2_2"]).And
+            .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931, -1.959, -0.09931, 0.9898]).And
             .HaveParameterCovarianceMatrix(new[,]
             {
-                { 0.002811, -0.00215, 0.0004404, -2.635e-05, -0.00215, -2.635e-05 },
-                { -0.00215, 0.002512, -0.0005887, 3.752e-05, 0.00241, 3.902e-05 },
-                { 0.0004404, -0.0005887, 0.0001518, -1.033e-05, -0.0005887, -1.033e-05 },
-                { -2.635e-05, 3.752e-05, -1.033e-05, 7.383e-07, 3.902e-05, 7.12e-07 },
-                { -0.00215, 0.00241, -0.0005887, 3.902e-05, 0.002512, 3.752e-05 },
-                { -2.635e-05, 3.902e-05, -1.033e-05, 7.12e-07, 3.752e-05, 7.384e-07 }
+                { 0.001874, -0.001434, 0.0002936, -1.757e-05, -0.001434, -1.757e-05, 0.0002936 },
+                { -0.001434, 0.001658, -0.0003923, 2.527e-05, 0.001606, 2.601e-05, -0.0003926 },
+                { 0.0002936, -0.0003923, 0.0001013, -6.886e-06, -0.0003926, -6.894e-06, 0.0001011 },
+                { -1.757e-05, 2.527e-05, -6.886e-06, 4.879e-07, 2.601e-05, 4.745e-07, -6.894e-06 },
+                { -0.001434, 0.001606, -0.0003926, 2.601e-05, 0.001709, 2.453e-05, -0.000392 },
+                { -1.757e-05, 2.601e-05, -6.894e-06, 4.745e-07, 2.453e-05, 5.014e-07, -6.879e-06 },
+                { 0.0002936, -0.0003926, 0.0001011, -6.894e-06, -0.000392, -6.879e-06, 0.0001015 }
             });
     }
 

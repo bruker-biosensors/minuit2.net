@@ -1,6 +1,6 @@
 namespace minuit2.net;
 
-internal class LeastSquaresSum(ILeastSquares left, ILeastSquares right) : ILeastSquares
+public class LeastSquaresSum(ILeastSquares left, ILeastSquares right) : ILeastSquares
 {
     private readonly List<int> _rightParameterIndices = RightParameterIndicesFrom(left.Parameters, right.Parameters);
 
@@ -19,4 +19,6 @@ internal class LeastSquaresSum(ILeastSquares left, ILeastSquares right) : ILeast
     private List<double> Left(IList<double> parameterValues) => parameterValues.Take(left.Parameters.Count).ToList();
     
     private List<double> Right(IList<double> parameterValues) => _rightParameterIndices.Select(i => parameterValues[i]).ToList();
+
+    public static LeastSquaresSum operator +(LeastSquaresSum left, ILeastSquares right) => new(left, right);
 }
