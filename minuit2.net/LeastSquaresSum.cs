@@ -2,6 +2,8 @@ namespace minuit2.net;
 
 public class LeastSquaresSum(ILeastSquares left, ILeastSquares right) : ILeastSquares
 {
+    public static LeastSquaresSum Seed => new(LeastSquares.Seed, LeastSquares.Seed);
+
     private readonly List<int> _rightParameterIndices = RightParameterIndicesFrom(left.Parameters, right.Parameters);
 
     private static List<int> RightParameterIndicesFrom(IList<string> leftParameters, IList<string> rightParameters)
