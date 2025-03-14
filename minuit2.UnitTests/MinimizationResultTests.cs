@@ -59,6 +59,27 @@ public class MinimizationResultTests
             });
     }
 
+    [TestCase(double.NegativeInfinity, double.PositiveInfinity)]
+    [TestCase(double.NaN, double.PositiveInfinity)]
+    [TestCase(double.NegativeInfinity, double.NaN)]
+    [TestCase(double.NaN, double.NaN)]
+    [Description("Ensure that the minimizer handles infinite bounds the same way as if there were no bounds")]
+    public void basic_scenario_with_explicitly_provided_infinite_bounds(double lowerLimit, double upperLimit)
+    {
+        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+
+        var initialParameters = new ParameterConfigurations(
+            new ParameterConfiguration("c3", -0.11, LowerLimit: lowerLimit, UpperLimit: upperLimit),
+            new ParameterConfiguration("c2", 1.13, LowerLimit: lowerLimit, UpperLimit: upperLimit),
+            new ParameterConfiguration("c0", 10.75, LowerLimit: lowerLimit, UpperLimit: upperLimit),
+            new ParameterConfiguration("c1", -1.97, LowerLimit: lowerLimit, UpperLimit: upperLimit));
+        
+        var minimizer = new Migrad(cost, initialParameters);
+        var result = minimizer.Run();
+
+        result.Should().HaveIsValid(true).And.HaveCostValue(12.49);
+    }
+
     [Test]
     public void fixed_parameters_scenario()
     {
