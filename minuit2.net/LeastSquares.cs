@@ -42,6 +42,8 @@ public class LeastSquares : ILeastSquares
         NumberOfData = x.Count;
         ShouldScaleCovariances = shouldScaleCovariances;
     }
+    
+    internal static LeastSquares Seed => new([], [], [], (_, _) => 0, [], false);
 
     public IList<string> Parameters { get; }
     public int NumberOfData { get; }
