@@ -7,12 +7,12 @@ public record ParameterConfiguration(
     double? LowerLimit = null,
     double? UpperLimit = null);
 
-public class ParameterConfigurations(params ParameterConfiguration[] parameters)
+internal static class ParameterConfigurationExtensions
 {
-    internal MnUserParameterState AsState()
+    public static MnUserParameterState AsState(this IEnumerable<ParameterConfiguration> parameterConfigurations)
     {
         var states = new MnUserParameterState();
-        foreach (var parameter in parameters)
+        foreach (var parameter in parameterConfigurations)
         {
             states.Add(parameter.Name, parameter.Value, parameter.Value * 0.01);
             if (parameter.IsFixed) states.Fix(parameter.Name);
@@ -21,17 +21,17 @@ public class ParameterConfigurations(params ParameterConfiguration[] parameters)
         }
         return states;
     }
-
-    internal bool AreNotMatching(IList<string> parameterNames)
+    
+    public static bool AreNotMatching(this IReadOnlyCollection<ParameterConfiguration> parameterConfigurations, 
+        IList<string> parameterNames)
     {
-        if (parameters.Length != parameterNames.Count) return true;
-        if (parameterNames.Any(IsNotPresent)) return true;
-
-        return false;
+        if (parameterConfigurations.Count != parameterNames.Count) return true;
+        return !parameterConfigurations.All(p => parameterNames.Contains(p.Name));
     }
 
-    private bool IsNotPresent(string parameterName) => parameters.All(p => p.Name != parameterName);
-
-    internal ParameterConfigurations OrderedBy(IList<string> parameterNames) =>
-        new(parameters.OrderBy(p => parameterNames.IndexOf(p.Name)).ToArray());
+    public static IEnumerable<ParameterConfiguration> OrderedBy(this IEnumerable<ParameterConfiguration> parameterConfigurations, 
+        IList<string> parameterNames)
+    {
+        return parameterConfigurations.OrderBy(p => parameterNames.IndexOf(p.Name));
+    }
 }
