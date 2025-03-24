@@ -10,9 +10,8 @@ public class Migrad
     //having this variable here insures correct lifetime management.
     private readonly CostFunctionWrapper wrapper;
     private readonly MnUserParameterState parameters;
-
-
-    public Migrad(ICostFunction costFunction, ParameterConfigurations parameterConfigurations)
+    
+    public Migrad(ICostFunction costFunction, IReadOnlyCollection<ParameterConfiguration> parameterConfigurations)
     {
         _costFunction = costFunction;
         if (parameterConfigurations.AreNotMatching(costFunction.Parameters))

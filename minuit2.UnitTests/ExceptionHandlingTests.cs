@@ -12,7 +12,7 @@ public class ExceptionHandlingTests
     public void The_minimization_forwards_exceptions_thrown_by_the_model_function()
     {
         var cost = new LeastSquares([1], [2], 3, ModelFunctionThrowing(new TestException("Test message")), []);
-        var minimizer = new Migrad(cost, new ParameterConfigurations());
+        var minimizer = new Migrad(cost, []);
         minimizer.Invoking(m => m.Run()).Should().ThrowExactly<TestException>().WithMessage("Test message");
     }
 
