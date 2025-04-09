@@ -2,6 +2,10 @@
 
 public class LeastSquares : ILeastSquares
 {
+    // For chi-squared fits Up = 1 corresponds to standard 1-sigma parameter errors
+    // (Up = 4 would correspond to 2-sigma errors).
+    internal const double ChiSquaredUp = 1;
+    
     private readonly List<DataPoint> _data;
     private readonly Func<double, IList<double>, double> _model;
     
@@ -51,7 +55,7 @@ public class LeastSquares : ILeastSquares
         .Select(residual => residual * residual)
         .Sum();
 
-    public double Up => 1;
+    public double Up => ChiSquaredUp;
 
     public static LeastSquaresSum operator +(LeastSquares left, ILeastSquares right) => new(left, right);
 }

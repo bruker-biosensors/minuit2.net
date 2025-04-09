@@ -18,7 +18,7 @@ public class LeastSquaresSum(ILeastSquares left, ILeastSquares right) : ILeastSq
 
     public double ValueFor(IList<double> parameterValues) => left.ValueFor(Left(parameterValues)) + right.ValueFor(Right(parameterValues));
     
-    public double Up => 1;
+    public double Up => LeastSquares.ChiSquaredUp;
 
     private List<double> Left(IList<double> parameterValues) => parameterValues.Take(left.Parameters.Count).ToList();
     
