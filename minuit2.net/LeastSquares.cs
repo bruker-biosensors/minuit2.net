@@ -50,6 +50,8 @@ public class LeastSquares : ILeastSquares
         .Select(datum => (datum.Y - _model(datum.X, parameterValues)) / datum.YError)
         .Select(residual => residual * residual)
         .Sum();
-    
+
+    public double Up => 1;
+
     public static LeastSquaresSum operator +(LeastSquares left, ILeastSquares right) => new(left, right);
 }

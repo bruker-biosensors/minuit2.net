@@ -7,4 +7,6 @@ internal class CostFunctionWrap(ICostFunction function) : FCNWrap
     public override VectorDouble Gradient(VectorDouble parameters) => new();
 
     public override bool HasGradient() => false;
+
+    public override double Up() => function.Up;
 }
