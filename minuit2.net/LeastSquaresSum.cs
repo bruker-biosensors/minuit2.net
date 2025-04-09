@@ -18,6 +18,13 @@ public class LeastSquaresSum(ILeastSquares left, ILeastSquares right) : ILeastSq
 
     public double ValueFor(IList<double> parameterValues) => left.ValueFor(Left(parameterValues)) + right.ValueFor(Right(parameterValues));
     
+    public IList<double> GradientFor(IList<double> parameters)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool HasGradient => left.HasGradient && right.HasGradient;
+
     public double Up => LeastSquares.ChiSquaredUp;
 
     private List<double> Left(IList<double> parameterValues) => parameterValues.Take(left.Parameters.Count).ToList();

@@ -55,6 +55,13 @@ public class LeastSquares : ILeastSquares
         .Select(residual => residual * residual)
         .Sum();
 
+    public IList<double> GradientFor(IList<double> parameters)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool HasGradient => false;
+
     public double Up => ChiSquaredUp;
 
     public static LeastSquaresSum operator +(LeastSquares left, ILeastSquares right) => new(left, right);
