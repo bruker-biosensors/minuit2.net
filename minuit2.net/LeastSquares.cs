@@ -12,25 +12,25 @@ public class LeastSquares : ILeastSquares
     public LeastSquares(
         IList<double> x,
         IList<double> y,
-        Func<double, IList<double>, double> model,
-        IList<string> parameters)
-        : this(x, y, 1.0, model, parameters, shouldScaleCovariances: true) { }
+        IList<string> parameters,
+        Func<double, IList<double>, double> model)
+        : this(x, y, 1.0, parameters, model, shouldScaleCovariances: true) { }
     
     public LeastSquares(
         IList<double> x,
         IList<double> y,
         double yError,
+        IList<string> parameters,
         Func<double, IList<double>, double> model,
-        IList<string> parameters, 
         bool shouldScaleCovariances = false)
-        : this(x, y, Enumerable.Repeat(yError, y.Count).ToList(), model, parameters, shouldScaleCovariances) { }
+        : this(x, y, Enumerable.Repeat(yError, y.Count).ToList(), parameters, model, shouldScaleCovariances) { }
 
     private LeastSquares(
-        IList<double> x, 
-        IList<double> y, 
+        IList<double> x,
+        IList<double> y,
         IList<double> yError,
-        Func<double, IList<double>, double> model, 
-        IList<string> parameters, 
+        IList<string> parameters,
+        Func<double, IList<double>, double> model,
         bool shouldScaleCovariances)
     {
         if (x.Count != y.Count || x.Count != yError.Count)
@@ -44,7 +44,7 @@ public class LeastSquares : ILeastSquares
         ShouldScaleCovariances = shouldScaleCovariances;
     }
     
-    internal static LeastSquares Seed => new([], [], [], (_, _) => 0, [], false);
+    internal static LeastSquares Seed => new([], [], [], [], (_, _) => 0, false);
 
     public IList<string> Parameters { get; }
     public int NumberOfData { get; }

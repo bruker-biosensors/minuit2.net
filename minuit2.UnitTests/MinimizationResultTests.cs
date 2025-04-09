@@ -30,7 +30,7 @@ public class MinimizationResultTests
     [Test]
     public void basic_scenario()
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        var cost = new LeastSquares(_xValues, _yValues, YError, ["c0", "c1", "c2", "c3"], _cubicPoly);
         
         ParameterConfiguration[] parameterConfigurations = 
         [
@@ -68,7 +68,7 @@ public class MinimizationResultTests
     [Description("Ensure that the minimizer handles infinite bounds the same way as if there were no bounds")]
     public void basic_scenario_with_explicitly_provided_infinite_bounds(double lowerLimit, double upperLimit)
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        var cost = new LeastSquares(_xValues, _yValues, YError, ["c0", "c1", "c2", "c3"], _cubicPoly);
 
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -83,11 +83,11 @@ public class MinimizationResultTests
 
         result.Should().HaveIsValid(true).And.HaveCostValue(12.49);
     }
-
+    
     [Test]
     public void fixed_parameters_scenario()
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        var cost = new LeastSquares(_xValues, _yValues, YError, ["c0", "c1", "c2", "c3"], _cubicPoly);
 
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -121,7 +121,7 @@ public class MinimizationResultTests
     [Test]
     public void limited_parameters_scenario()
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        var cost = new LeastSquares(_xValues, _yValues, YError, ["c0", "c1", "c2", "c3"], _cubicPoly);
 
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -155,9 +155,9 @@ public class MinimizationResultTests
     [Test]
     public void global_parameters_scenario()
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]) + 
-                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1_1", "c2", "c3_1"]) +
-                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2_2", "c3"]);
+        var cost = new LeastSquares(_xValues, _yValues, YError, ["c0", "c1", "c2", "c3"], _cubicPoly) + 
+                   new LeastSquares(_xValues, _yValues, YError, ["c0", "c1_1", "c2", "c3_1"], _cubicPoly) +
+                   new LeastSquares(_xValues, _yValues, YError, ["c0", "c1", "c2_2", "c3"], _cubicPoly);
 
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -197,7 +197,7 @@ public class MinimizationResultTests
     [Test]
     public void missing_data_uncertainties_scenario()
     {
-        var cost = new LeastSquares(_xValues, _yValues, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        var cost = new LeastSquares(_xValues, _yValues, ["c0", "c1", "c2", "c3"], _cubicPoly);
 
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -234,8 +234,8 @@ public class MinimizationResultTests
                        """)]
     public void global_parameter_scenario_with_partly_missing_data_uncertainties()
     {
-        var cost = new LeastSquares(_xValues, _yValues, _cubicPoly, ["c0", "c1", "c2", "c3"]) + 
-                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        var cost = new LeastSquares(_xValues, _yValues, ["c0", "c1", "c2", "c3"], _cubicPoly) + 
+                   new LeastSquares(_xValues, _yValues, YError, ["c0", "c1", "c2", "c3"], _cubicPoly);
 
         ParameterConfiguration[] parameterConfigurations = 
         [

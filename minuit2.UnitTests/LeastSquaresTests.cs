@@ -16,7 +16,7 @@ public class LeastSquaresTests
         var xValues = SomeValues(xValueCount);
         var yValues = SomeValues(yValueCount);
         
-        var construction = void () => _ = new LeastSquares(xValues, yValues, 0, (_, _) => 0, []);
+        var construction = void () => _ = new LeastSquares(xValues, yValues, 0, [], (_, _) => 0);
         construction.Should().Throw<ArgumentException>();
     }
 }
