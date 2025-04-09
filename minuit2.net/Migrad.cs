@@ -1,4 +1,6 @@
-﻿namespace minuit2.net;
+﻿using minuit2.net.wrap;
+
+namespace minuit2.net;
 
 public class Migrad
 {
@@ -8,7 +10,7 @@ public class Migrad
     //not sure if those are needed,
     //but otherwise they will be collected by the GC and and memory might be freed on the C++ side
     //having this variable here insures correct lifetime management.
-    private readonly CostFunctionWrapper wrapper;
+    private readonly CostFunctionWrap wrappedCostFunction;
     private readonly MnUserParameterState parameters;
     
     public Migrad(ICostFunction costFunction, IReadOnlyCollection<ParameterConfiguration> parameterConfigurations)
@@ -17,9 +19,9 @@ public class Migrad
         if (parameterConfigurations.AreNotMatching(costFunction.Parameters))
             throw new ArgumentException($"The {nameof(parameterConfigurations)} must correspond to the {nameof(costFunction.Parameters)} defined by the {nameof(costFunction)}");
         
-        wrapper = new CostFunctionWrapper(costFunction);
+        wrappedCostFunction = new CostFunctionWrap(costFunction);
         parameters = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
-        _migrad = new MnMigradWrap(wrapper, parameters);
+        _migrad = new MnMigradWrap(wrappedCostFunction, parameters);
     }
 
     public MinimizationResult Run()

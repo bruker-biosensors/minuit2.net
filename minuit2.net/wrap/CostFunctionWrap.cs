@@ -1,6 +1,6 @@
-﻿namespace minuit2.net;
+﻿namespace minuit2.net.wrap;
 
-internal class CostFunctionWrapper(ICostFunction function) : FCNWrap
+internal class CostFunctionWrap(ICostFunction function) : FCNWrap
 {
     public override double Cost(VectorDouble parameters) => function.ValueFor(parameters);
 
