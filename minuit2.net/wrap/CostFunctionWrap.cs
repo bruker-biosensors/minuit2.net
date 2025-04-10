@@ -2,9 +2,9 @@
 
 internal class CostFunctionWrap(ICostFunction function) : FCNWrap
 {
-    public override double Cost(VectorDouble parameters) => function.ValueFor(parameters);
+    public override double Cost(VectorDouble parameterValues) => function.ValueFor(parameterValues);
 
-    public override VectorDouble Gradient(VectorDouble parameters) => new(function.GradientFor(parameters));
+    public override VectorDouble Gradient(VectorDouble parameterValues) => new(function.GradientFor(parameterValues));
 
     public override bool HasGradient() => function.HasGradient;
 

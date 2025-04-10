@@ -18,7 +18,7 @@ public class LeastSquaresSum(ILeastSquares left, ILeastSquares right) : ILeastSq
 
     public double ValueFor(IList<double> parameterValues) => left.ValueFor(Left(parameterValues)) + right.ValueFor(Right(parameterValues));
     
-    public IList<double> GradientFor(IList<double> parameters)
+    public IList<double> GradientFor(IList<double> parameterValues)
     {
         throw new NotImplementedException();
     }
