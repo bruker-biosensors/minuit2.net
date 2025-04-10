@@ -194,14 +194,21 @@ public class MinimizationResultTests
                 { -7.976e-15, 4.309e-09, -1.476e-09, 9.18e-11 }
             });
     }
-
-    [TestCaseSource(nameof(GradientTestCases))]
-    public void global_parameters_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
+    
+    private static IEnumerable<object> MixedGradientTestCases()
     {
-        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient) + 
-                   new LeastSquares(XValues, YValues, YError, ["c0", "c1_1", "c2", "c3_1"], CubicPoly, analyticalGradient) + 
-                   new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2_2", "c3"], CubicPoly, analyticalGradient);
+        yield return new object?[] { null, false };
+        yield return new object[] { CubicPolyGrad, true };
+        yield return new object[] { CubicPolyGrad, false };
+    }
 
+    [TestCaseSource(nameof(MixedGradientTestCases))]
+    public void global_parameters_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient, bool areAllGradientsDefined)
+    {
+        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient) +
+                   new LeastSquares(XValues, YValues, YError, ["c0", "c1_1", "c2", "c3_1"], CubicPoly, analyticalGradient) +
+                   new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2_2", "c3"], CubicPoly, areAllGradientsDefined ? analyticalGradient : null);
+        
         ParameterConfiguration[] parameterConfigurations =
         [
             new("c2_2", 0.9),
