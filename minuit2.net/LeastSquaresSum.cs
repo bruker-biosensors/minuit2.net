@@ -20,7 +20,16 @@ public class LeastSquaresSum(ILeastSquares left, ILeastSquares right) : ILeastSq
     
     public IList<double> GradientFor(IList<double> parameterValues)
     {
-        throw new NotImplementedException();
+        var gradients = left.GradientFor(Left(parameterValues));
+        var rightGradients = right.GradientFor(Right(parameterValues));
+        foreach (var (g, i) in rightGradients.Zip(_rightParameterIndices))
+        {
+            if (i < left.Parameters.Count)
+                gradients[i] += g;
+            else
+                gradients.Add(g);
+        }
+        return gradients;
     }
 
     public bool HasGradient => left.HasGradient && right.HasGradient;
