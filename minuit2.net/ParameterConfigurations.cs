@@ -11,15 +11,15 @@ internal static class ParameterConfigurationExtensions
 {
     public static MnUserParameterState AsState(this IEnumerable<ParameterConfiguration> parameterConfigurations)
     {
-        var states = new MnUserParameterState();
+        var state = new MnUserParameterState();
         foreach (var parameter in parameterConfigurations)
         {
-            states.Add(parameter.Name, parameter.Value, parameter.Value * 0.01);
-            if (parameter.IsFixed) states.Fix(parameter.Name);
-            if (parameter.LowerLimit is { } lowerLimit and > double.NegativeInfinity) states.SetLowerLimit(parameter.Name, lowerLimit);
-            if (parameter.UpperLimit is { } upperLimit and < double.PositiveInfinity) states.SetUpperLimit(parameter.Name, upperLimit);
+            state.Add(parameter.Name, parameter.Value, parameter.Value * 0.01);
+            if (parameter.IsFixed) state.Fix(parameter.Name);
+            if (parameter.LowerLimit is { } lowerLimit and > double.NegativeInfinity) state.SetLowerLimit(parameter.Name, lowerLimit);
+            if (parameter.UpperLimit is { } upperLimit and < double.PositiveInfinity) state.SetUpperLimit(parameter.Name, upperLimit);
         }
-        return states;
+        return state;
     }
     
     public static bool AreNotMatching(this IReadOnlyCollection<ParameterConfiguration> parameterConfigurations, 
