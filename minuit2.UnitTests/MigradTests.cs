@@ -10,7 +10,7 @@ public class MigradTests
     {
         ParameterConfiguration[] userParameters = [new("a", 0), new("b", 0)];
         var costParameters = new[] { "a", "b", "c" };
-        var cost = new LeastSquares([0, 1, 2], [0, 1, 2], 1, (_, _) => 0, costParameters);
+        var cost = new LeastSquares([0, 1, 2], [0, 1, 2], 1, costParameters, (_, _) => 0);
 
         var construction = void () => _ = new Migrad(cost, userParameters);
         construction.Should().Throw<ArgumentException>();

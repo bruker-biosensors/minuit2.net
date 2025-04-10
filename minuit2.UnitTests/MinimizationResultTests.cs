@@ -8,17 +8,20 @@ namespace minuit2.UnitTests;
              """)]
 public class MinimizationResultTests
 {
-    private readonly Func<double, IList<double>, double> _cubicPoly = 
+    private static readonly Func<double, IList<double>, double> CubicPoly = 
         (x, c) => c[0] + c[1] * x + c[2] * x * x + c[3] * x * x * x;
     
-    private readonly List<double> _xValues = 
+    private static readonly Func<double, IList<double>, IList<double>> CubicPolyGrad = 
+        (x, _) => [1, x, x * x, x * x * x];
+    
+    private static readonly List<double> XValues = 
     [
         0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5
     ];
 
     // y-values are generated using a cubic polynomial with coefficients: c0 = 10, c1 = -2, c2 = 1, c3 = -0.1
     // and a random normal noise with a standard deviation of 0.1
-    private readonly List<double> _yValues =
+    private static readonly List<double> YValues =
     [
         9.9, 9.2, 9.03, 8.93, 9.29, 9.75, 10.24, 11.02, 11.57, 12.11, 12.51, 12.46, 12.52, 11.72, 10.8, 9.08, 6.95,
         3.77, 0.07, -4.45
@@ -27,10 +30,16 @@ public class MinimizationResultTests
     private const double YError = 0.1;  // standard deviation of noise used to generate the above y-values
 
     
-    [Test]
-    public void basic_scenario()
+    private static IEnumerable<Func<double, IList<double>, IList<double>>?> GradientTestCases()
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        yield return null;
+        yield return CubicPolyGrad;
+    }
+    
+    [TestCaseSource(nameof(GradientTestCases))]
+    public void basic_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
+    {
+        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient);
         
         ParameterConfiguration[] parameterConfigurations = 
         [
@@ -68,7 +77,7 @@ public class MinimizationResultTests
     [Description("Ensure that the minimizer handles infinite bounds the same way as if there were no bounds")]
     public void basic_scenario_with_explicitly_provided_infinite_bounds(double lowerLimit, double upperLimit)
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly);
 
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -83,11 +92,11 @@ public class MinimizationResultTests
 
         result.Should().HaveIsValid(true).And.HaveCostValue(12.49);
     }
-
-    [Test]
-    public void fixed_parameters_scenario()
+    
+    [TestCaseSource(nameof(GradientTestCases))]
+    public void fixed_parameters_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient);
 
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -121,7 +130,7 @@ public class MinimizationResultTests
     [Test]
     public void limited_parameters_scenario()
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly);
 
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -151,14 +160,55 @@ public class MinimizationResultTests
                 { -1.261e-14, 5.468e-09, -1.873e-09, 1.211e-10 }
             }, relativeTolerance: 0.003);  
     }
-
+    
     [Test]
-    public void global_parameters_scenario()
+    public void limited_parameters_scenario_with_analytical_gradient()
     {
-        var cost = new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]) + 
-                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1_1", "c2", "c3_1"]) +
-                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2_2", "c3"]);
+        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, CubicPolyGrad);
 
+        ParameterConfiguration[] parameterConfigurations =
+        [
+            new("c3", -0.11, UpperLimit: -0.105),
+            new("c2", 1.13),
+            new("c1", -1.97),
+            new("c0", 10.75, LowerLimit: 10.5)
+        ];
+        
+        var minimizer = new Migrad(cost, parameterConfigurations);
+        var result = minimizer.Run();
+
+        result.Should()
+            .HaveIsValid(true).And
+            .HaveNumberOfVariables(4).And
+            .HaveNumberOfFunctionCallsGreaterThan(10).And
+            .HaveReachedFunctionCallLimit(false).And
+            .HaveConverged(true).And
+            .HaveCostValue(62.34).And
+            .HaveParameters(["c0", "c1", "c2", "c3"]).And
+            .HaveParameterValues([10.5, -2.39, 1.082, -0.105]).And
+            .HaveParameterCovarianceMatrix(new[,]
+            {
+                { 5.482e-09, -2.933e-09, 2.507e-10, -7.976e-15 },
+                { -2.933e-09, 0.0002602, -3.343e-05, 4.309e-09 },
+                { 2.507e-10, -3.343e-05, 4.589e-06, -1.476e-09 },
+                { -7.976e-15, 4.309e-09, -1.476e-09, 9.18e-11 }
+            });
+    }
+    
+    private static IEnumerable<object> MixedGradientTestCases()
+    {
+        yield return new object?[] { null, false };
+        yield return new object[] { CubicPolyGrad, true };
+        yield return new object[] { CubicPolyGrad, false };
+    }
+
+    [TestCaseSource(nameof(MixedGradientTestCases))]
+    public void global_parameters_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient, bool areAllGradientsDefined)
+    {
+        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient) +
+                   new LeastSquares(XValues, YValues, YError, ["c0", "c1_1", "c2", "c3_1"], CubicPoly, analyticalGradient) +
+                   new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2_2", "c3"], CubicPoly, areAllGradientsDefined ? analyticalGradient : null);
+        
         ParameterConfiguration[] parameterConfigurations =
         [
             new("c2_2", 0.9),
@@ -194,10 +244,10 @@ public class MinimizationResultTests
             });
     }
 
-    [Test]
-    public void missing_data_uncertainties_scenario()
+    [TestCaseSource(nameof(GradientTestCases))]
+    public void missing_data_uncertainties_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
-        var cost = new LeastSquares(_xValues, _yValues, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        var cost = new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient);
 
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -228,14 +278,15 @@ public class MinimizationResultTests
             });
     }
 
-    [Test, Description("""
-                       When minimizing a sum of least squares, the parameter covariances should be auto-scaled when any 
-                       of the cost functions have missing data uncertainties. Our how would we do it otherwise?
-                       """)]
-    public void global_parameter_scenario_with_partly_missing_data_uncertainties()
+    [TestCaseSource(nameof(GradientTestCases)), 
+     Description("""
+                 When minimizing a sum of least squares, the parameter covariances should be auto-scaled when any 
+                 of the cost functions have missing data uncertainties. Our how would we do it otherwise?
+                 """)]
+    public void global_parameter_scenario_with_partly_missing_data_uncertainties(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
-        var cost = new LeastSquares(_xValues, _yValues, _cubicPoly, ["c0", "c1", "c2", "c3"]) + 
-                   new LeastSquares(_xValues, _yValues, YError, _cubicPoly, ["c0", "c1", "c2", "c3"]);
+        var cost = new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient) + 
+                   new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient);
 
         ParameterConfiguration[] parameterConfigurations = 
         [

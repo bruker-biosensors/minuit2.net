@@ -2,31 +2,39 @@
 
 public class LeastSquares : ILeastSquares
 {
+    // For chi-squared fits Up = 1 corresponds to standard 1-sigma parameter errors
+    // (Up = 4 would correspond to 2-sigma errors).
+    internal const double ChiSquaredUp = 1;
+    
     private readonly List<DataPoint> _data;
     private readonly Func<double, IList<double>, double> _model;
-    
+    private readonly Func<double, IList<double>, IList<double>>? _modelGradient;
+
     public LeastSquares(
         IList<double> x,
         IList<double> y,
-        Func<double, IList<double>, double> model,
-        IList<string> parameters)
-        : this(x, y, 1.0, model, parameters, shouldScaleCovariances: true) { }
+        IList<string> parameters,
+        Func<double, IList<double>, double> model, 
+        Func<double, IList<double>, IList<double>>? modelGradient = null)
+        : this(x, y, 1.0, parameters, model, modelGradient, shouldScaleCovariances: true) { }
     
     public LeastSquares(
         IList<double> x,
         IList<double> y,
         double yError,
+        IList<string> parameters,
         Func<double, IList<double>, double> model,
-        IList<string> parameters, 
+        Func<double, IList<double>, IList<double>>? modelGradient = null,
         bool shouldScaleCovariances = false)
-        : this(x, y, Enumerable.Repeat(yError, y.Count).ToList(), model, parameters, shouldScaleCovariances) { }
-
+        : this(x, y, Enumerable.Repeat(yError, y.Count).ToList(), parameters, model, modelGradient, shouldScaleCovariances) { }
+    
     private LeastSquares(
-        IList<double> x, 
-        IList<double> y, 
+        IList<double> x,
+        IList<double> y,
         IList<double> yError,
-        Func<double, IList<double>, double> model, 
-        IList<string> parameters, 
+        IList<string> parameters,
+        Func<double, IList<double>, double> model,
+        Func<double, IList<double>, IList<double>>? modelGradient,
         bool shouldScaleCovariances)
     {
         if (x.Count != y.Count || x.Count != yError.Count)
@@ -34,22 +42,45 @@ public class LeastSquares : ILeastSquares
         
         _data = x.Zip(y, yError).Select(t => new DataPoint(t.First, t.Second, t.Third)).ToList();
         _model = model;
+        _modelGradient = modelGradient;
+        
+        HasGradient = modelGradient != null;
+        Up = ChiSquaredUp;
         
         Parameters = parameters;
         NumberOfData = x.Count;
         ShouldScaleCovariances = shouldScaleCovariances;
     }
     
-    internal static LeastSquares Seed => new([], [], [], (_, _) => 0, [], false);
+    internal static LeastSquares Seed => new([], [], [], [], (_, _) => 0, null, false);
 
     public IList<string> Parameters { get; }
     public int NumberOfData { get; }
     public bool ShouldScaleCovariances { get; }
 
-    public double ValueFor(IList<double> parameterValues) => _data
-        .Select(datum => (datum.Y - _model(datum.X, parameterValues)) / datum.YError)
-        .Select(residual => residual * residual)
-        .Sum();
+    public double ValueFor(IList<double> parameterValues) => 
+        _data.Select(datum => ResidualFor(datum, parameterValues)).Select(residual => residual * residual).Sum();
+
+    public IList<double> GradientFor(IList<double> parameterValues)
+    {
+        var gradientSums = Enumerable.Repeat(0d, Parameters.Count).ToList();
+        foreach (var datum in _data)
+        {
+            var gradients = _modelGradient!(datum.X, parameterValues);
+            var factor = 2 * ResidualFor(datum, parameterValues);
+            for (var i = 0; i < Parameters.Count; i++) 
+                gradientSums[i] -= factor * gradients[i] / datum.YError;          
+        }
+
+        return gradientSums;
+    }
+
+    private double ResidualFor(DataPoint datum, IList<double> parameterValues) =>
+        (datum.Y - _model(datum.X, parameterValues)) / datum.YError;
     
+    public bool HasGradient { get; }
+
+    public double Up { get; }
+
     public static LeastSquaresSum operator +(LeastSquares left, ILeastSquares right) => new(left, right);
 }
