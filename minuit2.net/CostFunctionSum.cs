@@ -3,14 +3,16 @@ namespace minuit2.net;
 public class CostFunctionSum : ICostFunction
 {
     private readonly ICostFunction[] _components;
+    private readonly Func<MinimizationResult, double> _parameterCovarianceScaleFactor;
 
-    protected CostFunctionSum(params ICostFunction[] components)
+    public CostFunctionSum(params ICostFunction[] components)
     {
         Parameters = components.DistinctParameters();
         HasGradient = components.All(c => c.HasGradient);
         Up = 1;  // TODO: The scaling will be/needs to be performed within the components (see below), that's why it should be 1 here (to not scale errors for the cost-sum again). However, I need to think about this in more detail.
         
         _components = components.Select(AsComponentCostFunction).ToArray();
+        _parameterCovarianceScaleFactor = components.ParameterCovarianceScaleFactor();
     }
 
     private ICostFunction AsComponentCostFunction(ICostFunction costFunction) =>
@@ -35,6 +37,12 @@ public class CostFunctionSum : ICostFunction
     {
         for (var i = 0; i < Parameters.Count; i++) 
             gradients[i] += componentGradients[i];
+    }
+    
+    public MinimizationResult Adjusted(MinimizationResult minimizationResult)
+    {
+        var scaleFactor = _parameterCovarianceScaleFactor(minimizationResult);
+        return minimizationResult.WithParameterCovariancesScaledBy(scaleFactor);
     }
 }
 
@@ -71,6 +79,8 @@ file class ComponentCostFunction(ICostFunction inner, IList<string> parameters) 
         var gradients = inner.GradientFor(Belonging(parameterValues));  // TODO: These should certainly be scaled by 1/Up. Need test first.
         return Projected(gradients);
     }
+    
+    public MinimizationResult Adjusted(MinimizationResult minimizationResult) => minimizationResult;
 }
 
 file static class CostFunctionCollectionExtensions
@@ -80,4 +90,18 @@ file static class CostFunctionCollectionExtensions
 
     private static IEnumerable<string> Union(IEnumerable<string> parameters, ICostFunction cost) =>
         parameters.Union(cost.Parameters);
+
+    public static Func<MinimizationResult, double> ParameterCovarianceScaleFactor(
+        this IReadOnlyCollection<ICostFunction> costFunctions)
+    {
+        if (costFunctions.All(c => c is ILeastSquares))
+        {
+            var leastSquares = costFunctions.Cast<ILeastSquares>().ToArray();
+            if (leastSquares.Any(c => c.ShouldScaleCovariances))
+                // see LeastSquares class for more details
+                return r => r.CostValue / (leastSquares.Sum(c => c.NumberOfData) - r.NumberOfVariables);
+        }
+
+        return _ => 1;
+    }
 }

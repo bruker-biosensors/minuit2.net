@@ -7,4 +7,5 @@ public interface ICostFunction
     IList<double> GradientFor(IList<double> parameterValues);
     bool HasGradient { get; }
     double Up { get; }
+    MinimizationResult Adjusted(MinimizationResult minimizationResult);
 }

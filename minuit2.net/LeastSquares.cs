@@ -79,4 +79,16 @@ public class LeastSquares : ILeastSquares
     public bool HasGradient { get; }
 
     public double Up { get; }
+    
+    public MinimizationResult Adjusted(MinimizationResult minimizationResult)
+    {
+        if (!ShouldScaleCovariances) return minimizationResult;
+        
+        // Auto-scale the covariances to match the values that would be obtained when data uncertainties were
+        // chosen such that the reduced chi-squared becomes 1. This is the default behaviour in lmfit.
+        // source: https://lmfit.github.io/lmfit-py/fitting.html#uncertainties-in-variable-parameters-and-their-correlations
+        var degreesOfFreedom = NumberOfData - minimizationResult.NumberOfVariables;
+        var reducedChiSquared = minimizationResult.CostValue / degreesOfFreedom;
+        return minimizationResult.WithParameterCovariancesScaledBy(reducedChiSquared);
+    }
 }

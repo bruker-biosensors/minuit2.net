@@ -27,6 +27,7 @@ public class Migrad
     public MinimizationResult Run()
     {
         var minimum = _migrad.Run();
-        return new MinimizationResult(minimum, _costFunction);
+        var result = new MinimizationResult(minimum, _costFunction.Parameters);
+        return _costFunction.Adjusted(result);
     }
 }

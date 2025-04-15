@@ -2,10 +2,14 @@ namespace minuit2.net;
 
 public class MinimizationResult
 {
-    internal MinimizationResult(FunctionMinimum functionMinimum, ICostFunction costFunction)
+    internal MinimizationResult(FunctionMinimum functionMinimum, IList<string> parameters)
     {
-        var state = functionMinimum.UserState();
         CostValue = functionMinimum.Fval();
+        
+        var state = functionMinimum.UserState();
+        Parameters = parameters.ToList();
+        ParameterValues = state.Params().ToList();
+        ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
         
         // Meta information
         IsValid = functionMinimum.IsValid();
@@ -13,12 +17,6 @@ public class MinimizationResult
         NumberOfFunctionCalls = functionMinimum.NFcn();
         HasReachedFunctionCallLimit = functionMinimum.HasReachedCallLimit();
         HasConverged = !functionMinimum.IsAboveMaxEdm();
-        
-        // Parameter results
-        Parameters = costFunction.Parameters.ToList();
-        ParameterValues = state.Params().ToList();
-        var covarianceScaleFactor = CovarianceScaleFactorFor(costFunction);
-        ParameterCovarianceMatrix = CovarianceMatrixFrom(state, covarianceScaleFactor);
     }
     
     public double CostValue { get; }
@@ -40,26 +38,10 @@ public class MinimizationResult
     // The minimizer is deemed to have converged when the expected vertical distance to the minimum (EDM) falls below a
     // threshold value (computed as = 0.001 * tolerance * up).
     public bool HasConverged { get; }
-    
-    private double CovarianceScaleFactorFor(ICostFunction costFunction)
-    {
-        if (costFunction is ILeastSquares { ShouldScaleCovariances: true } leastSquares)
-        {
-            // Auto-scale the covariances to match the values that would be obtained when data uncertainties were
-            // chosen such that the reduced chi-squared becomes 1. This is the default behaviour in lmfit.
-            // source: https://lmfit.github.io/lmfit-py/fitting.html#uncertainties-in-variable-parameters-and-their-correlations
-            var degreesOfFreedom = leastSquares.NumberOfData - NumberOfVariables;
-            var reducedChiSquared = CostValue / degreesOfFreedom;
-            return reducedChiSquared;
-        }
 
-        return 1;
-    }
-
-    private static double[,] CovarianceMatrixFrom(MnUserParameterState state, double scaleFactor)
+    private static double[,] CovarianceMatrixFrom(MnUserParameterState state)
     {
         var covariance = state.Covariance();
-        covariance.Scale(scaleFactor);
         var covarianceValues = covariance.Data();
         
         var numberOfVariables = (int)state.VariableParameters();
@@ -84,5 +66,13 @@ public class MinimizationResult
 
         int ParameterIndex(int variableIndex) => (int)state.ExtOfInt((uint)variableIndex);
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
+    }
+
+    public MinimizationResult WithParameterCovariancesScaledBy(double scaleFactor)
+    {
+        for (var i = 0; i < ParameterCovarianceMatrix.GetLength(0); i++)
+        for (var j = 0; j < ParameterCovarianceMatrix.GetLength(1); j++)
+            ParameterCovarianceMatrix[i, j] *= scaleFactor;
+        return this;
     }
 }
