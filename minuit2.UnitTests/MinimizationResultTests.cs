@@ -205,9 +205,10 @@ public class MinimizationResultTests
     [TestCaseSource(nameof(MixedGradientTestCases))]
     public void global_parameters_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient, bool areAllGradientsDefined)
     {
-        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient) +
-                   new LeastSquares(XValues, YValues, YError, ["c0", "c1_1", "c2", "c3_1"], CubicPoly, analyticalGradient) +
-                   new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2_2", "c3"], CubicPoly, areAllGradientsDefined ? analyticalGradient : null);
+        var cost = new LeastSquaresSum(
+            new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient),
+            new LeastSquares(XValues, YValues, YError, ["c0", "c1_1", "c2", "c3_1"], CubicPoly, analyticalGradient),
+            new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2_2", "c3"], CubicPoly, areAllGradientsDefined ? analyticalGradient : null));
         
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -285,8 +286,9 @@ public class MinimizationResultTests
                  """)]
     public void global_parameter_scenario_with_partly_missing_data_uncertainties(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
-        var cost = new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient) + 
-                   new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient);
+        var cost = new LeastSquaresSum(
+            new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient), 
+            new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient));
 
         ParameterConfiguration[] parameterConfigurations = 
         [
