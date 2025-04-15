@@ -26,11 +26,7 @@ public class Migrad
 
     public MinimizationResult Run()
     {
-        var migradResult = _migrad.Run();
-
-        if (_costFunction is ILeastSquares leastSquares)
-            return new LeastSquaresMinimizationResult(migradResult, leastSquares);
-        
-        return new MinimizationResult(migradResult, _costFunction);
+        var minimum = _migrad.Run();
+        return new MinimizationResult(minimum, _costFunction);
     }
 }
