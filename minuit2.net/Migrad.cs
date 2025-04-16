@@ -1,27 +1,35 @@
-﻿using minuit2.net.wrap;
+﻿using System.Diagnostics.CodeAnalysis;
+using minuit2.net.wrap;
 
 namespace minuit2.net;
 
+[SuppressMessage("ReSharper", "PrivateFieldCanBeConvertedToLocalVariable", Justification = 
+    """
+    The fields for the wrapped cost and the parameter state ensure correct lifetime management of these objects. 
+    If turned into local variables, they might be collected by the GC and memory might be freed on the C++ side.
+    """)]
 public class Migrad
 {
     private readonly ICostFunction _costFunction;
     private readonly MnMigradWrap _migrad;
-
-    //not sure if those are needed,
-    //but otherwise they will be collected by the GC and and memory might be freed on the C++ side
-    //having this variable here insures correct lifetime management.
-    private readonly CostFunctionWrap wrappedCostFunction;
-    private readonly MnUserParameterState parameters;
     
-    public Migrad(ICostFunction costFunction, IReadOnlyCollection<ParameterConfiguration> parameterConfigurations)
+    private readonly CostFunctionWrap _wrappedCostFunction;
+    private readonly MnUserParameterState _parameterState;
+    
+    public Migrad(
+        ICostFunction costFunction, 
+        IReadOnlyCollection<ParameterConfiguration> parameterConfigurations, 
+        MinimizationStrategy minimizationStrategy = MinimizationStrategy.Balanced)
     {
         _costFunction = costFunction;
         if (parameterConfigurations.AreNotMatching(costFunction.Parameters))
-            throw new ArgumentException($"The {nameof(parameterConfigurations)} must correspond to the {nameof(costFunction.Parameters)} defined by the {nameof(costFunction)}");
+            throw new ArgumentException($"The {nameof(parameterConfigurations)} must correspond to the " +
+                                        $"{nameof(costFunction.Parameters)} defined by the {nameof(costFunction)}");
         
-        wrappedCostFunction = new CostFunctionWrap(costFunction);
-        parameters = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
-        _migrad = new MnMigradWrap(wrappedCostFunction, parameters);
+        _wrappedCostFunction = new CostFunctionWrap(costFunction);
+        _parameterState = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
+        var strategy = new MnStrategy((uint)minimizationStrategy);
+        _migrad = new MnMigradWrap(_wrappedCostFunction, _parameterState, strategy);
     }
 
     public MinimizationResult Run()
