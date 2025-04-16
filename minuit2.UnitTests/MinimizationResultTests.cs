@@ -1,3 +1,5 @@
+using FluentAssertions;
+using FluentAssertions.Execution;
 using minuit2.net;
 
 namespace minuit2.UnitTests;
@@ -318,4 +320,128 @@ public class MinimizationResultTests
                 { -1.829e-05, 2.656e-05, -7.172e-06, 5.033e-07 }
             });
     }
+    
+    private static IEnumerable<object> CostFunctionSumWithIndependentComponentsTestCases()
+    {
+        yield return new object?[] { null, MinimizationStrategy.Fast };
+        yield return new object?[] { null, MinimizationStrategy.Balanced };
+        yield return new object?[] { null, MinimizationStrategy.Precise };
+        yield return new object[] { CubicPolyGrad, MinimizationStrategy.Fast };
+        yield return new object[] { CubicPolyGrad, MinimizationStrategy.Balanced };
+        yield return new object[] { CubicPolyGrad, MinimizationStrategy.Precise };
+    }
+    
+    [TestCaseSource(nameof(CostFunctionSumWithIndependentComponentsTestCases))]
+    public void A_cost_function_sum_with_a_single_component_when_minimized_should_yield_a_result_equivalent_to_the_result_of_the_isolated_component(
+        Func<double, IList<double>, IList<double>>? analyticalGradient, MinimizationStrategy minimizationStrategy)
+    {
+        var component = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient).WithUp(4);
+        var sum = new CostFunctionSum(component);
+        
+        ParameterConfiguration[] parameterConfigurations = 
+        [
+            new("c0", 10.75), 
+            new("c1", -1.97),
+            new("c2", 1.13), 
+            new("c3", -0.11)
+        ];
+
+        var componentResult = new Migrad(component, parameterConfigurations, minimizationStrategy).Run();
+        var sumResult = new Migrad(sum, parameterConfigurations, minimizationStrategy).Run();
+        
+        componentResult.Should().BeEquivalentTo(sumResult, options => options
+            .Excluding(x => x.NumberOfFunctionCalls)
+            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
+            .WhenTypeIs<double>());
+    }
+
+    [TestCaseSource(nameof(CostFunctionSumWithIndependentComponentsTestCases))]
+    public void A_cost_function_sum_having_components_with_different_error_scales_not_sharing_any_parameters_when_minimized_should_yield_a_result_equivalent_to_the_results_of_the_isolated_components(
+        Func<double, IList<double>, IList<double>>? analyticalGradient, MinimizationStrategy minimizationStrategy)
+    {
+        if (minimizationStrategy == MinimizationStrategy.Fast)
+            Assert.Ignore("The fast minimization strategy currently leads to inconsistent covariances. " +
+                          "In iminuit, this oddity is resolved by calling the Hesse algorithm after minimization. " +
+                          "Once the additional Hesse call is added here, the tests should be re-enabled.");
+        
+        var component1 = new LeastSquares(XValues, YValues, YError, ["c0_1", "c1_1", "c2_1", "c3_1"], CubicPoly, analyticalGradient);
+        var component2 = new LeastSquares(XValues, YValues, YError, ["c0_2", "c1_2", "c2_2", "c3_2"], CubicPoly, analyticalGradient).WithUp(4);
+        var sum = new CostFunctionSum(component1, component2);
+
+        ParameterConfiguration[] parameterConfigurations1 =
+        [
+            new("c0_1", 10.75),
+            new("c1_1", -1.97),
+            new("c2_1", 1.13),
+            new("c3_1", -0.11)
+        ];
+        ParameterConfiguration[] parameterConfigurations2 =
+        [
+            new("c0_2", 10.75),
+            new("c1_2", -1.97),
+            new("c2_2", 1.13),
+            new("c3_2", -0.11)
+        ];
+
+        var component1Result = new Migrad(component1, parameterConfigurations1, minimizationStrategy).Run();
+        var component2Result = new Migrad(component2, parameterConfigurations2, minimizationStrategy).Run();
+        var sumResult = new Migrad(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizationStrategy).Run();
+
+        using (new AssertionScope())
+        {
+            sumResult.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue, sumResult.CostValue * 0.001);
+            sumResult.ParameterValues.Take(4).Should().BeEquivalentTo(component1Result.ParameterValues, options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
+                .WhenTypeIs<double>());
+            sumResult.ParameterValues.TakeLast(4).Should().BeEquivalentTo(component2Result.ParameterValues, options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
+                .WhenTypeIs<double>());
+            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,0,3).Should().BeEquivalentTo(component1Result.ParameterCovarianceMatrix, options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
+                .WhenTypeIs<double>());
+            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,4,7).Should().BeEquivalentTo(component2Result.ParameterCovarianceMatrix, options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
+                .WhenTypeIs<double>());
+            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,0,3).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 1e-8))
+                .WhenTypeIs<double>());
+            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,4,7).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 1e-8))
+                .WhenTypeIs<double>());
+        }
+    }
+
+    private static double[,] AllZeroMatrix(int rows, int columns) => new double[rows, columns];
+}
+
+file static class MatrixExtensions
+{
+    public static double[,] SubMatrix(this double[,] matrix, int firstRow, int lastRow, int firstColumn, int lastColumn)
+    {
+        var rows = lastRow - firstRow + 1;
+        var cols = lastColumn - firstColumn + 1;
+        var subMatrix = new double[rows, cols];
+        
+        for (var i = 0; i < rows; i++)
+        for (var j = 0; j < cols; j++)
+            subMatrix[i, j] = matrix[firstRow + i, firstColumn + j];
+
+        return subMatrix;
+    }
+}
+
+file static class CostFunctionExtensions
+{
+    public static ICostFunction WithUp(this ICostFunction costFunction, double up) => 
+        new WrappedCostWithCustomUp(costFunction, up);
+}
+
+file class WrappedCostWithCustomUp(ICostFunction wrapped, double up) : ICostFunction
+{
+    public IList<string> Parameters => wrapped.Parameters;
+    public bool HasGradient => wrapped.HasGradient;
+    public double Up { get; } = up;
+    public double ValueFor(IList<double> parameterValues) => wrapped.ValueFor(parameterValues);
+    public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
+    public MinimizationResult Adjusted(MinimizationResult minimizationResult) => wrapped.Adjusted(minimizationResult);
 }

@@ -19,7 +19,7 @@ public class MinimizationResult
         HasConverged = !functionMinimum.IsAboveMaxEdm();
     }
     
-    public double CostValue { get; }
+    public double CostValue { get; private set; }
 
     public IReadOnlyCollection<string> Parameters { get; }
     public IReadOnlyCollection<double> ParameterValues { get; }
@@ -68,11 +68,17 @@ public class MinimizationResult
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
 
-    public MinimizationResult WithParameterCovariancesScaledBy(double scaleFactor)
+    internal MinimizationResult WithParameterCovariancesScaledBy(double scaleFactor)
     {
         for (var i = 0; i < ParameterCovarianceMatrix.GetLength(0); i++)
         for (var j = 0; j < ParameterCovarianceMatrix.GetLength(1); j++)
             ParameterCovarianceMatrix[i, j] *= scaleFactor;
+        return this;
+    }
+
+    internal MinimizationResult WithCostValue(double value)
+    {
+        CostValue = value;
         return this;
     }
 }

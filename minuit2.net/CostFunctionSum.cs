@@ -2,21 +2,20 @@ namespace minuit2.net;
 
 public class CostFunctionSum : ICostFunction
 {
-    private readonly ICostFunction[] _components;
+    private readonly ComponentCostFunction[] _components;
     private readonly Func<MinimizationResult, double> _parameterCovarianceScaleFactor;
 
     public CostFunctionSum(params ICostFunction[] components)
     {
         Parameters = components.DistinctParameters();
         HasGradient = components.All(c => c.HasGradient);
-        Up = 1;  // TODO: The scaling will be/needs to be performed within the components (see below), that's why it should be 1 here (to not scale errors for the cost-sum again). However, I need to think about this in more detail.
+        Up = 1;  // Neutral element; Scaling is performed within the components because their factors might differ.
         
         _components = components.Select(AsComponentCostFunction).ToArray();
         _parameterCovarianceScaleFactor = components.ParameterCovarianceScaleFactor();
     }
 
-    private ICostFunction AsComponentCostFunction(ICostFunction costFunction) =>
-        new ComponentCostFunction(costFunction, Parameters);
+    private ComponentCostFunction AsComponentCostFunction(ICostFunction costFunction) => new(costFunction, Parameters);
 
     public IList<string> Parameters { get; }
     public bool HasGradient { get; }
@@ -41,43 +40,52 @@ public class CostFunctionSum : ICostFunction
     
     public MinimizationResult Adjusted(MinimizationResult minimizationResult)
     {
-        var scaleFactor = _parameterCovarianceScaleFactor(minimizationResult);
-        return minimizationResult.WithParameterCovariancesScaledBy(scaleFactor);
+        var unscaledCostValue = _components.Sum(c => c.UnscaledValueFor(minimizationResult.ParameterValues.ToArray()));
+        var covarianceScaleFactor = _parameterCovarianceScaleFactor(minimizationResult);
+        return minimizationResult
+            .WithCostValue(unscaledCostValue)
+            .WithParameterCovariancesScaledBy(covarianceScaleFactor);
     }
 }
 
-file class ComponentCostFunction(ICostFunction inner, IList<string> parameters) : ICostFunction
+internal class ComponentCostFunction(ICostFunction inner, IList<string> parameters) : ICostFunction
 {
     private readonly List<int> _parameterIndices = inner.Parameters.Select(parameters.IndexOf).ToList();
     
-    private double[] Belonging(IList<double> values)
+    private double[] Belonging(IList<double> parameterValues)
     {
-        var belongingValues = new double[_parameterIndices.Count];
+        var belonging = new double[_parameterIndices.Count];
         for (var i = 0; i < _parameterIndices.Count; i++) 
-            belongingValues[i] = values[_parameterIndices[i]];
+            belonging[i] = parameterValues[_parameterIndices[i]];
         
-        return belongingValues;
-    }
-
-    private double[] Projected(IList<double> values)
-    {
-        var projectedValues = new double[parameters.Count];
-        foreach (var (value, index) in values.Zip(_parameterIndices))
-            projectedValues[index] = value;
-        
-        return projectedValues;
+        return belonging;
     }
 
     public IList<string> Parameters => inner.Parameters;
     public bool HasGradient => inner.HasGradient;
-    public double Up => inner.Up;  // TODO: If I scale the gradients "manually" (see below), I probably should expose 1 here, even if nobody is listening.
+    public double Up => inner.Up;
     
-    public double ValueFor(IList<double> parameterValues) => inner.ValueFor(Belonging(parameterValues));  // TODO: Do I need to scale this by 1/Up? This is done in iminuit. Not sure if it is correct, though. Certainly need test first.
+    public double ValueFor(IList<double> parameterValues)
+    {
+        // Scaling by 1/Up is needed to ensure numerical gradients are correct.
+        // Re-scaling of final values (after minimization) is done in the parent/composite class.
+        return UnscaledValueFor(parameterValues) / Up;
+    }
+
+    public double UnscaledValueFor(IList<double> parameterValues) => inner.ValueFor(Belonging(parameterValues));
 
     public IList<double> GradientFor(IList<double> parameterValues)
     {
-        var gradients = inner.GradientFor(Belonging(parameterValues));  // TODO: These should certainly be scaled by 1/Up. Need test first.
-        return Projected(gradients);
+        var gradients = inner.GradientFor(Belonging(parameterValues));
+        
+        var expandedGradients = new double[parameters.Count];
+        foreach (var (gradient, index) in gradients.Zip(_parameterIndices))
+            // Scaling by 1/Up is needed to ensure analytical gradients are correct.
+            // In fact, since analytical gradients are trumped by numerical gradients (when different) for the default
+            // strategy(1), this only has an effect on the result for the fast strategy(0).
+            expandedGradients[index] = gradient / Up;
+        
+        return expandedGradients;
     }
     
     public MinimizationResult Adjusted(MinimizationResult minimizationResult) => minimizationResult;
@@ -98,7 +106,7 @@ file static class CostFunctionCollectionExtensions
         {
             var leastSquares = costFunctions.Cast<ILeastSquares>().ToArray();
             if (leastSquares.Any(c => c.ShouldScaleCovariances))
-                // see LeastSquares class for more details
+                // see LeastSquares class for details
                 return r => r.CostValue / (leastSquares.Sum(c => c.NumberOfData) - r.NumberOfVariables);
         }
 
