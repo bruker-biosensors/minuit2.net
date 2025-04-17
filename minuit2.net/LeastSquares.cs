@@ -44,15 +44,18 @@ public class LeastSquares : ICostFunction
         _model = model;
         _modelGradient = modelGradient;
         
+        Parameters = parameters;
         HasGradient = modelGradient != null;
         Up = ChiSquaredUp;
         
-        Parameters = parameters;
         NumberOfData = x.Count;
         ShouldScaleCovariances = shouldScaleCovariances;
     }
 
     public IList<string> Parameters { get; }
+    public bool HasGradient { get; }
+    public double Up { get; }
+    
     internal int NumberOfData { get; }
     internal bool ShouldScaleCovariances { get; }
 
@@ -75,10 +78,6 @@ public class LeastSquares : ICostFunction
 
     private double ResidualFor(DataPoint datum, IList<double> parameterValues) =>
         (datum.Y - _model(datum.X, parameterValues)) / datum.YError;
-    
-    public bool HasGradient { get; }
-
-    public double Up { get; }
     
     public MinimizationResult Adjusted(MinimizationResult minimizationResult)
     {
