@@ -102,9 +102,9 @@ file static class CostFunctionCollectionExtensions
     public static Func<MinimizationResult, double> ParameterCovarianceScaleFactor(
         this IReadOnlyCollection<ICostFunction> costFunctions)
     {
-        if (costFunctions.All(c => c is ILeastSquares))
+        if (costFunctions.All(c => c is LeastSquares))
         {
-            var leastSquares = costFunctions.Cast<ILeastSquares>().ToArray();
+            var leastSquares = costFunctions.Cast<LeastSquares>().ToArray();
             if (leastSquares.Any(c => c.ShouldScaleCovariances))
                 // see LeastSquares class for details
                 return r => r.CostValue / (leastSquares.Sum(c => c.NumberOfData) - r.NumberOfVariables);

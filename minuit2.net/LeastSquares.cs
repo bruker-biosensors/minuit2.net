@@ -1,6 +1,6 @@
 ﻿namespace minuit2.net;
 
-public class LeastSquares : ILeastSquares
+public class LeastSquares : ICostFunction
 {
     // For chi-squared fits Up = 1 corresponds to standard 1-sigma parameter errors
     // (Up = 4 would correspond to 2-sigma errors).
@@ -53,8 +53,8 @@ public class LeastSquares : ILeastSquares
     }
 
     public IList<string> Parameters { get; }
-    public int NumberOfData { get; }
-    public bool ShouldScaleCovariances { get; }
+    internal int NumberOfData { get; }
+    internal bool ShouldScaleCovariances { get; }
 
     public double ValueFor(IList<double> parameterValues) => 
         _data.Select(datum => ResidualFor(datum, parameterValues)).Select(residual => residual * residual).Sum();
