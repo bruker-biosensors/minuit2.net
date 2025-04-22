@@ -46,7 +46,7 @@ public class MinimizationResult
         
         var numberOfVariables = (int)state.VariableParameters();
         var indexMap = Enumerable.Range(0, numberOfVariables)
-            .ToDictionary(ParameterIndex, variableIndex => variableIndex);
+            .ToDictionary(state.ParameterIndexOf, variableIndex => variableIndex);
         
         var numberOfParameters = state.Params().Count;
         var covarianceMatrix = new double[numberOfParameters, numberOfParameters];
@@ -64,7 +64,6 @@ public class MinimizationResult
 
         return covarianceMatrix;
 
-        int ParameterIndex(int variableIndex) => (int)state.ExtOfInt((uint)variableIndex);
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
 
@@ -81,4 +80,11 @@ public class MinimizationResult
         CostValue = value;
         return this;
     }
+}
+
+
+file static class UserStateExtensions
+{
+    public static int ParameterIndexOf(this MnUserParameterState state, int variableIndex) =>
+        (int)state.ExtOfInt((uint)variableIndex);
 }
