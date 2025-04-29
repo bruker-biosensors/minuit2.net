@@ -60,8 +60,8 @@ internal class FCNWrap : global::System.IDisposable {
     SwigDirectorConnect();
   }
 
-  public virtual double Cost(VectorDouble v) {
-    double ret = (SwigDerivedClassHasMethod("Cost", swigMethodTypes0) ? Minuit2PINVOKE.FCNWrap_CostSwigExplicitFCNWrap(swigCPtr, VectorDouble.getCPtr(v)) : Minuit2PINVOKE.FCNWrap_Cost(swigCPtr, VectorDouble.getCPtr(v)));
+  public virtual double Cost(VectorDouble parameterValues) {
+    double ret = (SwigDerivedClassHasMethod("Cost", swigMethodTypes0) ? Minuit2PINVOKE.FCNWrap_CostSwigExplicitFCNWrap(swigCPtr, VectorDouble.getCPtr(parameterValues)) : Minuit2PINVOKE.FCNWrap_Cost(swigCPtr, VectorDouble.getCPtr(parameterValues)));
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
@@ -128,8 +128,8 @@ internal class FCNWrap : global::System.IDisposable {
     return false;
   }
 
-  private double SwigDirectorMethodCost(global::System.IntPtr v) {
-    return Cost(new VectorDouble(v, false));
+  private double SwigDirectorMethodCost(global::System.IntPtr parameterValues) {
+    return Cost(new VectorDouble(parameterValues, false));
   }
 
   private global::System.IntPtr SwigDirectorMethodGradient(global::System.IntPtr arg0) {
@@ -144,7 +144,7 @@ internal class FCNWrap : global::System.IDisposable {
     return Up();
   }
 
-  public delegate double SwigDelegateFCNWrap_0(global::System.IntPtr v);
+  public delegate double SwigDelegateFCNWrap_0(global::System.IntPtr parameterValues);
   public delegate global::System.IntPtr SwigDelegateFCNWrap_1(global::System.IntPtr arg0);
   public delegate bool SwigDelegateFCNWrap_2();
   public delegate double SwigDelegateFCNWrap_3();

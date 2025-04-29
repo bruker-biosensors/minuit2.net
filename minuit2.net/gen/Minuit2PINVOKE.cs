@@ -805,4 +805,19 @@ class Minuit2PINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_MnMigradWrap")]
   public static extern void delete_MnMigradWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnHesseWrap__SWIG_0")]
+  public static extern global::System.IntPtr new_MnHesseWrap__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_new_MnHesseWrap__SWIG_1")]
+  public static extern global::System.IntPtr new_MnHesseWrap__SWIG_1();
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnHesseWrap_Update__SWIG_0")]
+  public static extern void MnHesseWrap_Update__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, uint jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_MnHesseWrap_Update__SWIG_1")]
+  public static extern void MnHesseWrap_Update__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("minuit2.wrap", EntryPoint="CSharp_delete_MnHesseWrap")]
+  public static extern void delete_MnHesseWrap(global::System.Runtime.InteropServices.HandleRef jarg1);
 }

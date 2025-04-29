@@ -1,11 +1,11 @@
 #include "FCNWrap.h"
 
-double ROOT::Minuit2::FCNWrap::operator()(std::vector<double> const& v) const
+double ROOT::Minuit2::FCNWrap::operator()(std::vector<double> const& parameterValues) const
 {
-    return Cost(v);
+    return Cost(parameterValues);
 }
 
-double ROOT::Minuit2::FCNWrap::Cost(std::vector<double> const& v) const
+double ROOT::Minuit2::FCNWrap::Cost(std::vector<double> const& parameterValues) const
 {
     return 0;
 }

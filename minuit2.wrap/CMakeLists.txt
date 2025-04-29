@@ -17,12 +17,16 @@ SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES CPLUSPLUS ON)
 
 set(SOURCE_FILES 
 FCNWrap.cpp
- MnMigradWrap.cpp
-  Minuit2.i)
+MnMigradWrap.cpp
+MnHesseWrap.cpp
+Minuit2.i
+)
 
 set(HEADER_FILES 
 FCNWrap.h
- MnMigradWrap.h)
+MnMigradWrap.h
+MnHesseWrap.h
+)
 
 SWIG_ADD_LIBRARY(minuit2.wrap
 LANGUAGE csharp

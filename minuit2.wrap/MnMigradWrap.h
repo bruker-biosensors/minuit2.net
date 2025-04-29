@@ -1,9 +1,9 @@
-#ifndef _MIGRADWRAP_H_
-#define _MIGRADWRAP_H_
+#ifndef MIGRADWRAP_H_
+#define MIGRADWRAP_H_
 
 #include "minuit2/MnMigrad.h"
+#include "minuit2/FunctionMinimum.h"
 #include "FCNWrap.h"
-#include <iostream>
 
 namespace ROOT
 {
@@ -12,11 +12,11 @@ namespace ROOT
         class MnMigradWrap : public MnMigrad
         {
             public:
-                MnMigradWrap(const FCNWrap& fcn, const MnUserParameterState& par, const MnStrategy& str = MnStrategy(1)) : MnMigrad(fcn, par, str)
+                MnMigradWrap(const FCNWrap& function, const MnUserParameterState& parameterState, const MnStrategy& strategy = MnStrategy(1)) : MnMigrad(function, parameterState, strategy)
                 {
                 }
 
-                FunctionMinimum Run(unsigned int maxfcn = 0, double tolerance = 0.1);
+                FunctionMinimum Run(unsigned int maximumFunctionCalls = 0, double tolerance = 0.1);
         };
     }
 }

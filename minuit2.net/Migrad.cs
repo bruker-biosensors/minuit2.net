@@ -12,10 +12,11 @@ public class Migrad
 {
     private readonly ICostFunction _costFunction;
     private readonly MnMigradWrap _migrad;
+    private readonly MnHesseWrap _hesse;
     
     private readonly CostFunctionWrap _wrappedCostFunction;
     private readonly MnUserParameterState _parameterState;
-    
+
     public Migrad(
         ICostFunction costFunction, 
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations, 
@@ -30,11 +31,16 @@ public class Migrad
         _parameterState = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
         var strategy = new MnStrategy((uint)minimizationStrategy);
         _migrad = new MnMigradWrap(_wrappedCostFunction, _parameterState, strategy);
+        _hesse = new MnHesseWrap(strategy);
     }
 
-    public MinimizationResult Run()
+    public MinimizationResult Run(bool shouldRefineCovariancesAfterMinimization = false)
     {
         var minimum = _migrad.Run();
+
+        if (shouldRefineCovariancesAfterMinimization)
+            _hesse.Update(minimum, _wrappedCostFunction);
+        
         var result = new MinimizationResult(minimum, _costFunction.Parameters);
         return _costFunction.Adjusted(result);
     }
