@@ -8,5 +8,5 @@ internal class CostFunctionWrap(ICostFunction function) : FCNWrap
 
     public override bool HasGradient() => function.HasGradient;
 
-    public override double Up() => function.Up;
+    public override double Up() => function.ErrorDefinition;
 }

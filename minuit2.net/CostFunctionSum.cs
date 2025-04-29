@@ -9,7 +9,7 @@ public class CostFunctionSum : ICostFunction
     {
         Parameters = components.DistinctParameters();
         HasGradient = components.All(c => c.HasGradient);
-        Up = 1;  // Neutral element; Scaling is performed within the components because their factors might differ.
+        ErrorDefinition = 1;  // Neutral element; Scaling is performed within the components because their factors might differ.
         
         _components = components.Select(AsComponentCostFunction).ToArray();
         _parameterCovarianceScaleFactor = components.ParameterCovarianceScaleFactor();
@@ -19,7 +19,7 @@ public class CostFunctionSum : ICostFunction
 
     public IList<string> Parameters { get; }
     public bool HasGradient { get; }
-    public double Up { get; }
+    public double ErrorDefinition { get; }
 
     public double ValueFor(IList<double> parameterValues) => _components.Select(c => c.ValueFor(parameterValues)).Sum();
 
@@ -63,13 +63,13 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> paramete
 
     public IList<string> Parameters => inner.Parameters;
     public bool HasGradient => inner.HasGradient;
-    public double Up => inner.Up;
+    public double ErrorDefinition => inner.ErrorDefinition;
     
     public double ValueFor(IList<double> parameterValues)
     {
         // Scaling by 1/Up is needed to ensure numerical gradients are correct.
         // Re-scaling of final values (after minimization) is done in the parent/composite class.
-        return UnscaledValueFor(parameterValues) / Up;
+        return UnscaledValueFor(parameterValues) / ErrorDefinition;
     }
 
     public double UnscaledValueFor(IList<double> parameterValues) => inner.ValueFor(Belonging(parameterValues));
@@ -83,7 +83,7 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> paramete
             // Scaling by 1/Up is needed to ensure analytical gradients are correct.
             // In fact, since analytical gradients are trumped by numerical gradients (when different) for the default
             // strategy(1), this only has an effect on the result for the fast strategy(0).
-            expandedGradients[index] = gradient / Up;
+            expandedGradients[index] = gradient / ErrorDefinition;
         
         return expandedGradients;
     }

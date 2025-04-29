@@ -46,7 +46,7 @@ public class LeastSquares : ICostFunction
         
         Parameters = parameters;
         HasGradient = modelGradient != null;
-        Up = ChiSquaredUp;
+        ErrorDefinition = ChiSquaredUp;
         
         NumberOfData = x.Count;
         ShouldScaleCovariances = shouldScaleCovariances;
@@ -54,7 +54,7 @@ public class LeastSquares : ICostFunction
 
     public IList<string> Parameters { get; }
     public bool HasGradient { get; }
-    public double Up { get; }
+    public double ErrorDefinition { get; }
     
     internal int NumberOfData { get; }
     internal bool ShouldScaleCovariances { get; }

@@ -440,7 +440,7 @@ file class WrappedCostWithCustomUp(ICostFunction wrapped, double up) : ICostFunc
 {
     public IList<string> Parameters => wrapped.Parameters;
     public bool HasGradient => wrapped.HasGradient;
-    public double Up { get; } = up;
+    public double ErrorDefinition { get; } = up;
     public double ValueFor(IList<double> parameterValues) => wrapped.ValueFor(parameterValues);
     public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
     public MinimizationResult Adjusted(MinimizationResult minimizationResult) => wrapped.Adjusted(minimizationResult);
