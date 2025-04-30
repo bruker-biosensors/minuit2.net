@@ -27,21 +27,21 @@ public class Migrad
             throw new ArgumentException($"The {nameof(parameterConfigurations)} must correspond to the " +
                                         $"{nameof(costFunction.Parameters)} defined by the {nameof(costFunction)}");
         
-        _wrappedCostFunction = new CostFunctionWrap(costFunction);
+        _wrappedCostFunction = new CostFunctionWrap(_costFunction);
         _parameterState = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
         var strategy = new MnStrategy((uint)minimizationStrategy);
         _migrad = new MnMigradWrap(_wrappedCostFunction, _parameterState, strategy);
         _hesse = new MnHesseWrap(strategy);
     }
 
-    public MinimizationResult Run(bool shouldRefineCovariancesAfterMinimization = false)
+    public MinimizationResult Run()
     {
         var minimum = _migrad.Run();
-
-        if (shouldRefineCovariancesAfterMinimization)
-            _hesse.Update(minimum, _wrappedCostFunction);
+        var result = new MinimizationResult(minimum, _costFunction);
+        if (!_costFunction.RequiresErrorDefinitionAutoScaling) return result;
         
-        var result = new MinimizationResult(minimum, _costFunction.Parameters);
-        return _costFunction.Adjusted(result);
+        _costFunction.AutoScaleErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
+        _hesse.Update(minimum, _wrappedCostFunction);
+        return new MinimizationResult(minimum, _costFunction);
     }
 }

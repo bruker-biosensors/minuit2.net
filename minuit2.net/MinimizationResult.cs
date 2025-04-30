@@ -2,14 +2,15 @@ namespace minuit2.net;
 
 public class MinimizationResult
 {
-    internal MinimizationResult(FunctionMinimum functionMinimum, IList<string> parameters)
+    internal MinimizationResult(FunctionMinimum functionMinimum, ICostFunction costFunction)
     {
-        CostValue = functionMinimum.Fval();
-        
         var state = functionMinimum.UserState();
-        Parameters = parameters.ToList();
-        ParameterValues = state.Params().ToList();
+        Parameters = costFunction.Parameters.ToList();
+        var parameterValues = state.Params();
+        ParameterValues = parameterValues.ToList();
         ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
+        
+        CostValue = costFunction.AdjustedValueFor(parameterValues);
         
         // Meta information
         IsValid = functionMinimum.IsValid();
@@ -17,11 +18,14 @@ public class MinimizationResult
         NumberOfFunctionCalls = functionMinimum.NFcn();
         HasReachedFunctionCallLimit = functionMinimum.HasReachedCallLimit();
         HasConverged = !functionMinimum.IsAboveMaxEdm();
+
+        Variables = Enumerable.Range(0, NumberOfVariables).Select(var => Parameters.ElementAt(state.ParameterIndexOf(var))).ToList();
     }
     
     public double CostValue { get; private set; }
 
     public IReadOnlyCollection<string> Parameters { get; }
+    public IReadOnlyCollection<string> Variables { get; }
     public IReadOnlyCollection<double> ParameterValues { get; }
     public double[,] ParameterCovarianceMatrix { get; }
 
@@ -65,20 +69,6 @@ public class MinimizationResult
         return covarianceMatrix;
 
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
-    }
-
-    internal MinimizationResult WithParameterCovariancesScaledBy(double scaleFactor)
-    {
-        for (var i = 0; i < ParameterCovarianceMatrix.GetLength(0); i++)
-        for (var j = 0; j < ParameterCovarianceMatrix.GetLength(1); j++)
-            ParameterCovarianceMatrix[i, j] *= scaleFactor;
-        return this;
-    }
-
-    internal MinimizationResult WithCostValue(double value)
-    {
-        CostValue = value;
-        return this;
     }
 }
 

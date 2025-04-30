@@ -281,11 +281,8 @@ public class MinimizationResultTests
             });
     }
 
-    [TestCaseSource(nameof(GradientTestCases)), 
-     Description("""
-                 When minimizing a sum of least squares, the parameter covariances should be auto-scaled when any 
-                 of the cost functions have missing data uncertainties. Our how would we do it otherwise?
-                 """)]
+    [TestCaseSource(nameof(GradientTestCases)),
+     Description("Parameter covariances need to be auto-scaled when any of the cost functions have missing data errors.")]
     public void global_parameter_scenario_with_partly_missing_data_uncertainties(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
         var cost = new CostFunctionSum(
@@ -314,11 +311,40 @@ public class MinimizationResultTests
             .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
             .HaveParameterCovarianceMatrix(new[,]
             {
-                { 0.001951, -0.001493, 0.0003057, -1.829e-05 },
-                { -0.001493, 0.001708, -0.0004086, 2.656e-05 },
-                { 0.0003057, -0.0004086, 0.0001054, -7.172e-06 },
-                { -1.829e-05, 2.656e-05, -7.172e-06, 5.033e-07 }
+                { 0.002465, -0.001886, 0.0003862, -2.311e-05 },
+                { -0.001886, 0.002158, -0.0005162, 3.356e-05 },
+                { 0.0003862, -0.0005162, 0.0001331, -9.062e-06 },
+                { -2.311e-05, 3.356e-05, -9.062e-06, 6.359e-07 }
             });
+    }
+
+    private static IEnumerable<object> CostFunctionWithErrorDefinitionDifferentFromOneTestCases()
+    {
+        yield return new object[] { new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], CubicPoly), 4 };
+        yield return new object[] { new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly), 4 };
+        yield return new object[] { new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], CubicPoly, CubicPolyGrad), 4 };
+        yield return new object[] { new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, CubicPolyGrad), 4 };
+        yield return new object[] { new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], CubicPoly), 9 };
+    }
+    
+    [TestCaseSource(nameof(CostFunctionWithErrorDefinitionDifferentFromOneTestCases))]
+    public void The_cost_value_of_a_minimization_result_should_be_independent_of_the_value_of_the_error_definition(
+        ICostFunction referenceCost, double errorDefinition)
+    {
+        var cost = new WrappedCostWithCustomUp(referenceCost, errorDefinition);
+
+        ParameterConfiguration[] parameterConfigurations =
+        [
+            new("c3", -0.11),
+            new("c2", 1.13),
+            new("c0", 10.75),
+            new("c1", -1.97)
+        ];
+
+        var referenceResult = new Migrad(referenceCost, parameterConfigurations).Run();
+        var result = new Migrad(cost, parameterConfigurations).Run();
+        
+        result.CostValue.Should().BeApproximately(referenceResult.CostValue, 1E-10);
     }
     
     private static IEnumerable<object> CostFunctionSumWithIndependentComponentsTestCases()
@@ -441,7 +467,10 @@ file class WrappedCostWithCustomUp(ICostFunction wrapped, double up) : ICostFunc
     public IList<string> Parameters => wrapped.Parameters;
     public bool HasGradient => wrapped.HasGradient;
     public double ErrorDefinition { get; } = up;
+    public bool RequiresErrorDefinitionAutoScaling => wrapped.RequiresErrorDefinitionAutoScaling;
+    
     public double ValueFor(IList<double> parameterValues) => wrapped.ValueFor(parameterValues);
     public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
-    public MinimizationResult Adjusted(MinimizationResult minimizationResult) => wrapped.Adjusted(minimizationResult);
+    public void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) => wrapped.AutoScaleErrorDefinitionBasedOn(parameterValues, variables);
+    public double AdjustedValueFor(IList<double> parameterValues) => wrapped.AdjustedValueFor(parameterValues);
 }

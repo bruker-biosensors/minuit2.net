@@ -3,16 +3,15 @@ namespace minuit2.net;
 public class CostFunctionSum : ICostFunction
 {
     private readonly ComponentCostFunction[] _components;
-    private readonly Func<MinimizationResult, double> _parameterCovarianceScaleFactor;
 
     public CostFunctionSum(params ICostFunction[] components)
     {
         Parameters = components.DistinctParameters();
         HasGradient = components.All(c => c.HasGradient);
         ErrorDefinition = 1;  // Neutral element; Scaling is performed within the components because their factors might differ.
+        RequiresErrorDefinitionAutoScaling = components.Any(c => c.RequiresErrorDefinitionAutoScaling);
         
         _components = components.Select(AsComponentCostFunction).ToArray();
-        _parameterCovarianceScaleFactor = components.ParameterCovarianceScaleFactor();
     }
 
     private ComponentCostFunction AsComponentCostFunction(ICostFunction costFunction) => new(costFunction, Parameters);
@@ -20,7 +19,8 @@ public class CostFunctionSum : ICostFunction
     public IList<string> Parameters { get; }
     public bool HasGradient { get; }
     public double ErrorDefinition { get; }
-
+    public bool RequiresErrorDefinitionAutoScaling { get; }
+    
     public double ValueFor(IList<double> parameterValues) => _components.Select(c => c.ValueFor(parameterValues)).Sum();
 
     public IList<double> GradientFor(IList<double> parameterValues)
@@ -38,14 +38,14 @@ public class CostFunctionSum : ICostFunction
             gradients[i] += componentGradients[i];
     }
     
-    public MinimizationResult Adjusted(MinimizationResult minimizationResult)
+    public void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
     {
-        var unscaledCostValue = _components.Sum(c => c.UnscaledValueFor(minimizationResult.ParameterValues.ToArray()));
-        var covarianceScaleFactor = _parameterCovarianceScaleFactor(minimizationResult);
-        return minimizationResult
-            .WithCostValue(unscaledCostValue)
-            .WithParameterCovariancesScaledBy(covarianceScaleFactor);
+        foreach (var component in _components.Where(c => c.RequiresErrorDefinitionAutoScaling)) 
+            component.AutoScaleErrorDefinitionBasedOn(parameterValues, variables);
     }
+
+    public double AdjustedValueFor(IList<double> parameterValues) =>
+        _components.Select(c => c.AdjustedValueFor(parameterValues)).Sum();
 }
 
 internal class ComponentCostFunction(ICostFunction inner, IList<string> parameters) : ICostFunction
@@ -61,18 +61,19 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> paramete
         return belonging;
     }
 
+    private string[] Belonging(IList<string> variables) => variables.Where(var => Parameters.Contains(var)).ToArray();
+
     public IList<string> Parameters => inner.Parameters;
     public bool HasGradient => inner.HasGradient;
     public double ErrorDefinition => inner.ErrorDefinition;
+    public bool RequiresErrorDefinitionAutoScaling => inner.RequiresErrorDefinitionAutoScaling;
     
     public double ValueFor(IList<double> parameterValues)
     {
         // Scaling by 1/Up is needed to ensure numerical gradients are correct.
         // Re-scaling of final values (after minimization) is done in the parent/composite class.
-        return UnscaledValueFor(parameterValues) / ErrorDefinition;
+        return inner.ValueFor(Belonging(parameterValues)) / ErrorDefinition;
     }
-
-    public double UnscaledValueFor(IList<double> parameterValues) => inner.ValueFor(Belonging(parameterValues));
 
     public IList<double> GradientFor(IList<double> parameterValues)
     {
@@ -88,7 +89,10 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> paramete
         return expandedGradients;
     }
     
-    public MinimizationResult Adjusted(MinimizationResult minimizationResult) => minimizationResult;
+    public void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
+        inner.AutoScaleErrorDefinitionBasedOn(Belonging(parameterValues), Belonging(variables));
+
+    public double AdjustedValueFor(IList<double> parameterValues) => inner.ValueFor(Belonging(parameterValues));
 }
 
 file static class CostFunctionCollectionExtensions
@@ -98,18 +102,4 @@ file static class CostFunctionCollectionExtensions
 
     private static IEnumerable<string> Union(IEnumerable<string> parameters, ICostFunction cost) =>
         parameters.Union(cost.Parameters);
-
-    public static Func<MinimizationResult, double> ParameterCovarianceScaleFactor(
-        this IReadOnlyCollection<ICostFunction> costFunctions)
-    {
-        if (costFunctions.All(c => c is LeastSquares))
-        {
-            var leastSquares = costFunctions.Cast<LeastSquares>().ToArray();
-            if (leastSquares.Any(c => c.ShouldScaleCovariances))
-                // see LeastSquares class for details
-                return r => r.CostValue / (leastSquares.Sum(c => c.NumberOfData) - r.NumberOfVariables);
-        }
-
-        return _ => 1;
-    }
 }
