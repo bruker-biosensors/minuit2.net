@@ -405,7 +405,7 @@ public class MinimizationResultTests
     }
 
     [TestCaseSource(nameof(CostFunctionSumWithIndependentComponentsTestCases))]
-    public void A_cost_function_sum_having_components_with_different_error_scales_not_sharing_any_parameters_when_minimized_should_yield_a_result_equivalent_to_the_results_of_the_isolated_components(
+    public void A_cost_function_sum_of_independent_components_with_different_error_definitions_when_minimized_should_yield_a_result_equivalent_to_the_results_of_the_isolated_components(
         Func<double, IList<double>, IList<double>>? analyticalGradient, MinimizationStrategy minimizationStrategy)
     {
         if (minimizationStrategy == MinimizationStrategy.Fast)
@@ -456,6 +456,64 @@ public class MinimizationResultTests
                 .WhenTypeIs<double>());
             sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,4,7).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options
                 .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 1e-8))
+                .WhenTypeIs<double>());
+        }
+    }
+    
+    [TestCaseSource(nameof(CostFunctionSumWithIndependentComponentsTestCases))]
+    public void A_cost_function_sum_of_independent_components_with_at_least_one_component_missing_data_uncertainties_when_minimized_should_yield_a_result_equivalent_to_the_results_of_the_isolated_components(
+        Func<double, IList<double>, IList<double>>? analyticalGradient, MinimizationStrategy minimizationStrategy)
+    {
+        if (minimizationStrategy == MinimizationStrategy.Fast)
+            Assert.Ignore("The fast minimization strategy currently leads to inconsistent cost values, parameter values and covariances. " +
+                          "This might be solved by using a lower tolerance for the minimizer and/or by calling the Hesse algorithm after minimization. " +
+                          "Should probably be investigated and define in a separate test.");
+        
+        var component1 = new LeastSquares(XValues, YValues, ["c0_1", "c1_1", "c2_1", "c3_1"], CubicPoly, analyticalGradient);
+        var component2 = new LeastSquares(XValues, YValues, YError, ["c0_2", "c1_2", "c2_2", "c3_2"], CubicPoly, analyticalGradient);
+        var sum = new CostFunctionSum(component1, component2);
+
+        ParameterConfiguration[] parameterConfigurations1 =
+        [
+            new("c0_1", 10.75),
+            new("c1_1", -1.97),
+            new("c2_1", 1.13),
+            new("c3_1", -0.11)
+        ];
+        ParameterConfiguration[] parameterConfigurations2 =
+        [
+            new("c0_2", 10.75),
+            new("c1_2", -1.97),
+            new("c2_2", 1.13),
+            new("c3_2", -0.11)
+        ];
+
+        var component1Result = new Migrad(component1, parameterConfigurations1, minimizationStrategy).Run();
+        var component2Result = new Migrad(component2, parameterConfigurations2, minimizationStrategy).Run();
+        var sumResult = new Migrad(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizationStrategy).Run();
+
+        using (new AssertionScope())
+        {
+            const double absoluteToleranceForZeros = 1e-8;
+            const double relativeToleranceForNonZeros = 0.002;
+            sumResult.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue, sumResult.CostValue * relativeToleranceForNonZeros);
+            sumResult.ParameterValues.Take(4).Should().BeEquivalentTo(component1Result.ParameterValues, options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * relativeToleranceForNonZeros)))
+                .WhenTypeIs<double>());
+            sumResult.ParameterValues.TakeLast(4).Should().BeEquivalentTo(component2Result.ParameterValues, options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * relativeToleranceForNonZeros)))
+                .WhenTypeIs<double>());
+            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,0,3).Should().BeEquivalentTo(component1Result.ParameterCovarianceMatrix, options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * relativeToleranceForNonZeros)))
+                .WhenTypeIs<double>());
+            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,4,7).Should().BeEquivalentTo(component2Result.ParameterCovarianceMatrix, options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * relativeToleranceForNonZeros)))
+                .WhenTypeIs<double>());
+            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,0,3).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, absoluteToleranceForZeros))
+                .WhenTypeIs<double>());
+            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,4,7).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, absoluteToleranceForZeros))
                 .WhenTypeIs<double>());
         }
     }
