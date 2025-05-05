@@ -329,9 +329,9 @@ public class MinimizationResultTests
     
     [TestCaseSource(nameof(CostFunctionWithErrorDefinitionDifferentFromOneTestCases))]
     public void The_cost_value_of_a_minimization_result_should_be_independent_of_the_value_of_the_error_definition(
-        ICostFunction referenceCost, double errorDefinition)
+        LeastSquares referenceCost, double errorDefinition)
     {
-        var cost = new WrappedCostWithCustomUp(referenceCost, errorDefinition);
+        var cost = referenceCost.WithErrorDefinition(errorDefinition);
 
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -345,6 +345,29 @@ public class MinimizationResultTests
         var result = new Migrad(cost, parameterConfigurations).Run();
         
         result.CostValue.Should().BeApproximately(referenceResult.CostValue, 1E-10);
+    }
+    
+    [TestCaseSource(nameof(CostFunctionWithErrorDefinitionDifferentFromOneTestCases))]
+    public void The_parameter_covariances_of_a_minimization_result_should_scale_with_the_error_definition(
+        LeastSquares referenceCost, double errorDefinition)
+    {
+        var cost = referenceCost.WithErrorDefinition(errorDefinition);
+
+        ParameterConfiguration[] parameterConfigurations =
+        [
+            new("c3", -0.11),
+            new("c2", 1.13),
+            new("c0", 10.75),
+            new("c1", -1.97)
+        ];
+
+        var referenceResult = new Migrad(referenceCost, parameterConfigurations).Run();
+        var result = new Migrad(cost, parameterConfigurations).Run();
+        
+        result.ParameterCovarianceMatrix.Should().BeEquivalentTo(referenceResult.ParameterCovarianceMatrix.MultipliedBy(errorDefinition), 
+            options => options
+                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
+                .WhenTypeIs<double>());
     }
     
     private static IEnumerable<object> CostFunctionSumWithIndependentComponentsTestCases()
@@ -361,7 +384,7 @@ public class MinimizationResultTests
     public void A_cost_function_sum_with_a_single_component_when_minimized_should_yield_a_result_equivalent_to_the_result_of_the_isolated_component(
         Func<double, IList<double>, IList<double>>? analyticalGradient, MinimizationStrategy minimizationStrategy)
     {
-        var component = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient).WithUp(4);
+        var component = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient).WithErrorDefinition(4);
         var sum = new CostFunctionSum(component);
         
         ParameterConfiguration[] parameterConfigurations = 
@@ -391,7 +414,7 @@ public class MinimizationResultTests
                           "Once the additional Hesse call is added here, the tests should be re-enabled.");
         
         var component1 = new LeastSquares(XValues, YValues, YError, ["c0_1", "c1_1", "c2_1", "c3_1"], CubicPoly, analyticalGradient);
-        var component2 = new LeastSquares(XValues, YValues, YError, ["c0_2", "c1_2", "c2_2", "c3_2"], CubicPoly, analyticalGradient).WithUp(4);
+        var component2 = new LeastSquares(XValues, YValues, YError, ["c0_2", "c1_2", "c2_2", "c3_2"], CubicPoly, analyticalGradient).WithErrorDefinition(4);
         var sum = new CostFunctionSum(component1, component2);
 
         ParameterConfiguration[] parameterConfigurations1 =
@@ -454,23 +477,40 @@ file static class MatrixExtensions
 
         return subMatrix;
     }
+
+    public static double[,] MultipliedBy(this double[,] matrix, double factor)
+    {
+        var rows = matrix.GetLength(0);
+        var cols = matrix.GetLength(1);
+        var multipliedMatrix = new double[rows, cols];
+        for (var i = 0; i < rows; i++)
+        for (var j = 0; j < cols; j++)
+            multipliedMatrix[i, j] = matrix[i, j] * factor;
+        return multipliedMatrix;
+    }
 }
 
-file static class CostFunctionExtensions
+file static class LeastSquaresExtensions
 {
-    public static ICostFunction WithUp(this ICostFunction costFunction, double up) => 
-        new WrappedCostWithCustomUp(costFunction, up);
+    public static ICostFunction WithErrorDefinition(this LeastSquares leastSquares, double errorDefinition) =>
+        new LeastSquaresWithCustomErrorDefinition(leastSquares, errorDefinition);
 }
 
-file class WrappedCostWithCustomUp(ICostFunction wrapped, double up) : ICostFunction
+file class LeastSquaresWithCustomErrorDefinition(LeastSquares wrapped, double errorDefinition) : ICostFunction
 {
+    private readonly double _errorDefinition = errorDefinition;
+
     public IList<string> Parameters => wrapped.Parameters;
     public bool HasGradient => wrapped.HasGradient;
-    public double ErrorDefinition { get; } = up;
+    public double ErrorDefinition { get; private set; } = errorDefinition;
     public bool RequiresErrorDefinitionAutoScaling => wrapped.RequiresErrorDefinitionAutoScaling;
     
     public double ValueFor(IList<double> parameterValues) => wrapped.ValueFor(parameterValues);
     public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
-    public void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) => wrapped.AutoScaleErrorDefinitionBasedOn(parameterValues, variables);
+    public void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
+    {
+        wrapped.AutoScaleErrorDefinitionBasedOn(parameterValues, variables);
+        ErrorDefinition = _errorDefinition * wrapped.ErrorDefinition;  // Works because the wrapped (default) least squares error definition is 1 (before scaling)
+    }
     public double AdjustedValueFor(IList<double> parameterValues) => wrapped.AdjustedValueFor(parameterValues);
 }
