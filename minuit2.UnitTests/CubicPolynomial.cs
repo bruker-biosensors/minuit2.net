@@ -32,7 +32,7 @@ internal static class CubicPolynomial
     public class LeastSquaresBuilder
     {
         private Func<double, IList<double>, IList<double>>? _modelGradient;
-        private readonly string[] _parameterNames = ["c0", "c1", "c2", "c3"];
+        private string[] _parameterNames = ["c0", "c1", "c2", "c3"];
         private double? _yError = YError;
 
         public LeastSquares Build()
@@ -61,6 +61,12 @@ internal static class CubicPolynomial
             _parameterNames[3] = c3;
             return this;
         }
+        
+        public LeastSquaresBuilder WithParameterSuffix(int suffix)
+        {
+            _parameterNames = _parameterNames.Select(p => $"{p}_{suffix}").ToArray();
+            return this;
+        }
 
         public LeastSquaresBuilder WithMissingYErrors()
         {
@@ -69,14 +75,19 @@ internal static class CubicPolynomial
         }
     }
     
-    // Default parameter configurations used to initialize the test minimization;
-    // The parameter name disorder is intentional to ensure correct parameter configuration-to-model parameter mapping
-    public static readonly ParameterConfiguration[] DefaultParameterConfigurations = 
-    [
-        new("c3", -0.11),
-        new("c2", 1.13),
-        new("c0", 10.75),
-        new("c1", -1.97)
-    ];
+    public static class ParameterConfigurations
+    {
+        public static ParameterConfiguration C0 => new("c0", 10.75);
+        public static ParameterConfiguration C1 => new("c1", -1.97);
+        public static ParameterConfiguration C2 => new("c2", 1.13);
+        public static ParameterConfiguration C3 => new("c3", -0.11);
+        
+        // The following name disorder is intentional; it tests correct parameter configuration-to-model parameter mapping
+        public static ParameterConfiguration[] Defaults => [C1, C3, C0, C2];
+
+        public static ParameterConfiguration[] DefaultsWithSuffix(int suffix) => Defaults.Select(p => p with { Name = $"{p.Name}_{suffix}" }).ToArray();
+    }
 }
+
+
 

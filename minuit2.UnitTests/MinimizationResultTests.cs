@@ -20,8 +20,8 @@ public class MinimizationResultTests
     public void basic_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
         var cost = CubicPolynomial.Cost.WithGradient(analyticalGradient).Build();
-        
-        var minimizer = new Migrad(cost, CubicPolynomial.DefaultParameterConfigurations);
+
+        var minimizer = new Migrad(cost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = minimizer.Run();
 
         result.Should()
@@ -50,13 +50,13 @@ public class MinimizationResultTests
     public void basic_scenario_with_explicitly_provided_infinite_bounds(double lowerLimit, double upperLimit)
     {
         var cost = CubicPolynomial.Cost.Build();
-        
+
         ParameterConfiguration[] parameterConfigurations =
         [
-            new("c3", -0.11, LowerLimit: lowerLimit, UpperLimit: upperLimit),
-            new("c2", 1.13, LowerLimit: lowerLimit, UpperLimit: upperLimit),
-            new("c0", 10.75, LowerLimit: lowerLimit, UpperLimit: upperLimit),
-            new("c1", -1.97, LowerLimit: lowerLimit, UpperLimit: upperLimit)
+            CubicPolynomial.ParameterConfigurations.C0 with { LowerLimit = lowerLimit, UpperLimit = upperLimit },
+            CubicPolynomial.ParameterConfigurations.C1 with { LowerLimit = lowerLimit, UpperLimit = upperLimit },
+            CubicPolynomial.ParameterConfigurations.C2 with { LowerLimit = lowerLimit, UpperLimit = upperLimit },
+            CubicPolynomial.ParameterConfigurations.C3 with { LowerLimit = lowerLimit, UpperLimit = upperLimit }
         ];
         
         var minimizer = new Migrad(cost, parameterConfigurations);
@@ -72,10 +72,10 @@ public class MinimizationResultTests
         
         ParameterConfiguration[] parameterConfigurations =
         [
-            new("c3", -0.11, IsFixed: true),
-            new("c2", 1.13),
-            new("c1", -1.97, IsFixed: true),
-            new("c0", 10.75)
+            CubicPolynomial.ParameterConfigurations.C0,
+            CubicPolynomial.ParameterConfigurations.C1 with {IsFixed = true},
+            CubicPolynomial.ParameterConfigurations.C2,
+            CubicPolynomial.ParameterConfigurations.C3 with {IsFixed = true}
         ];
         
         var minimizer = new Migrad(cost, parameterConfigurations);
@@ -103,13 +103,13 @@ public class MinimizationResultTests
     public void limited_parameters_scenario()
     {
         var cost = CubicPolynomial.Cost.Build();
-        
+
         ParameterConfiguration[] parameterConfigurations =
         [
-            new("c3", -0.11, UpperLimit: -0.105),
-            new("c2", 1.13),
-            new("c1", -1.97),
-            new("c0", 10.75, LowerLimit: 10.5)
+            CubicPolynomial.ParameterConfigurations.C0 with { LowerLimit = CubicPolynomial.ParameterConfigurations.C0.Value - 0.25 },
+            CubicPolynomial.ParameterConfigurations.C1,
+            CubicPolynomial.ParameterConfigurations.C2,
+            CubicPolynomial.ParameterConfigurations.C3 with { UpperLimit = CubicPolynomial.ParameterConfigurations.C3.Value + 0.005 }
         ];
         
         var minimizer = new Migrad(cost, parameterConfigurations);
@@ -140,10 +140,10 @@ public class MinimizationResultTests
         
         ParameterConfiguration[] parameterConfigurations =
         [
-            new("c3", -0.11, UpperLimit: -0.105),
-            new("c2", 1.13),
-            new("c1", -1.97),
-            new("c0", 10.75, LowerLimit: 10.5)
+            CubicPolynomial.ParameterConfigurations.C0 with { LowerLimit = CubicPolynomial.ParameterConfigurations.C0.Value - 0.25 },
+            CubicPolynomial.ParameterConfigurations.C1,
+            CubicPolynomial.ParameterConfigurations.C2,
+            CubicPolynomial.ParameterConfigurations.C3 with { UpperLimit = CubicPolynomial.ParameterConfigurations.C3.Value + 0.005 }
         ];
         
         var minimizer = new Migrad(cost, parameterConfigurations);
@@ -182,10 +182,9 @@ public class MinimizationResultTests
             CubicPolynomial.Cost.WithGradient(analyticalGradient).WithParameterNames(c1: "c1_1", c3: "c3_1").Build(),
             CubicPolynomial.Cost.WithGradient(areAllGradientsDefined ? analyticalGradient : null).WithParameterNames(c2: "c2_2").Build()
             );
-
-        var parameterConfigurations = CubicPolynomial.DefaultParameterConfigurations.Concat(
+        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults.Concat(
         [
-            new ParameterConfiguration("c1_1", -2.1),
+            new ParameterConfiguration("c1_1", -2.1), 
             new ParameterConfiguration("c3_1", -0.15),
             new ParameterConfiguration("c2_2", 0.9)
         ]).ToArray();
@@ -219,7 +218,7 @@ public class MinimizationResultTests
     {
         var cost = CubicPolynomial.Cost.WithMissingYErrors().WithGradient(analyticalGradient).Build();
         
-        var minimizer = new Migrad(cost, CubicPolynomial.DefaultParameterConfigurations);
+        var minimizer = new Migrad(cost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = minimizer.Run();
 
         result.Should()
@@ -249,7 +248,7 @@ public class MinimizationResultTests
             CubicPolynomial.Cost.WithMissingYErrors().WithGradient(analyticalGradient).Build()
             );
         
-        var minimizer = new Migrad(cost, CubicPolynomial.DefaultParameterConfigurations);
+        var minimizer = new Migrad(cost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = minimizer.Run();
 
         result.Should()
@@ -285,8 +284,8 @@ public class MinimizationResultTests
     {
         var cost = referenceCost.WithErrorDefinition(errorDefinition);
         
-        var referenceResult = new Migrad(referenceCost, CubicPolynomial.DefaultParameterConfigurations).Run();
-        var result = new Migrad(cost, CubicPolynomial.DefaultParameterConfigurations).Run();
+        var referenceResult = new Migrad(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults).Run();
+        var result = new Migrad(cost, CubicPolynomial.ParameterConfigurations.Defaults).Run();
         
         result.CostValue.Should().BeApproximately(referenceResult.CostValue, 1E-10);
     }
@@ -297,8 +296,8 @@ public class MinimizationResultTests
     {
         var cost = referenceCost.WithErrorDefinition(errorDefinition);
         
-        var referenceResult = new Migrad(referenceCost, CubicPolynomial.DefaultParameterConfigurations).Run();
-        var result = new Migrad(cost, CubicPolynomial.DefaultParameterConfigurations).Run();
+        var referenceResult = new Migrad(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults).Run();
+        var result = new Migrad(cost, CubicPolynomial.ParameterConfigurations.Defaults).Run();
         
         result.ParameterCovarianceMatrix.Should().BeEquivalentTo(referenceResult.ParameterCovarianceMatrix.MultipliedBy(errorDefinition), 
             options => options
@@ -323,8 +322,8 @@ public class MinimizationResultTests
         var component = CubicPolynomial.Cost.WithGradient(analyticalGradient).Build().WithErrorDefinition(4);
         var sum = new CostFunctionSum(component);
 
-        var componentResult = new Migrad(component, CubicPolynomial.DefaultParameterConfigurations, minimizationStrategy).Run();
-        var sumResult = new Migrad(sum, CubicPolynomial.DefaultParameterConfigurations, minimizationStrategy).Run();
+        var componentResult = new Migrad(component, CubicPolynomial.ParameterConfigurations.Defaults, minimizationStrategy).Run();
+        var sumResult = new Migrad(sum, CubicPolynomial.ParameterConfigurations.Defaults, minimizationStrategy).Run();
         
         componentResult.Should().BeEquivalentTo(sumResult, options => options
             .Excluding(x => x.NumberOfFunctionCalls)
@@ -340,25 +339,13 @@ public class MinimizationResultTests
             Assert.Ignore("The fast minimization strategy currently leads to inconsistent covariances. " +
                           "In iminuit, this oddity is resolved by calling the Hesse algorithm after minimization. " +
                           "Once the additional Hesse call is added here, the tests should be re-enabled.");
-
-        var component1 = CubicPolynomial.Cost.WithParameterNames("c0_1", "c1_1", "c2_1", "c3_1").WithGradient(analyticalGradient).Build();
-        var component2 = CubicPolynomial.Cost.WithParameterNames("c0_2", "c1_2", "c2_2", "c3_2").WithGradient(analyticalGradient).Build().WithErrorDefinition(4);
+        
+        var component1 = CubicPolynomial.Cost.WithParameterSuffix(1).WithGradient(analyticalGradient).Build();
+        var component2 = CubicPolynomial.Cost.WithParameterSuffix(2).WithGradient(analyticalGradient).Build().WithErrorDefinition(4);
         var sum = new CostFunctionSum(component1, component2);
 
-        ParameterConfiguration[] parameterConfigurations1 =
-        [
-            new("c0_1", 10.75),
-            new("c1_1", -1.97),
-            new("c2_1", 1.13),
-            new("c3_1", -0.11)
-        ];
-        ParameterConfiguration[] parameterConfigurations2 =
-        [
-            new("c0_2", 10.75),
-            new("c1_2", -1.97),
-            new("c2_2", 1.13),
-            new("c3_2", -0.11)
-        ];
+        var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
+        var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
 
         var component1Result = new Migrad(component1, parameterConfigurations1, minimizationStrategy).Run();
         var component2Result = new Migrad(component2, parameterConfigurations2, minimizationStrategy).Run();
@@ -397,24 +384,12 @@ public class MinimizationResultTests
                           "This might be solved by using a lower tolerance for the minimizer and/or by calling the Hesse algorithm after minimization. " +
                           "Should probably be investigated and define in a separate test.");
         
-        var component1 = CubicPolynomial.Cost.WithMissingYErrors().WithParameterNames("c0_1", "c1_1", "c2_1", "c3_1").WithGradient(analyticalGradient).Build();
-        var component2 = CubicPolynomial.Cost.WithParameterNames("c0_2", "c1_2", "c2_2", "c3_2").WithGradient(analyticalGradient).Build();
+        var component1 = CubicPolynomial.Cost.WithMissingYErrors().WithParameterSuffix(1).WithGradient(analyticalGradient).Build();
+        var component2 = CubicPolynomial.Cost.WithParameterSuffix(2).WithGradient(analyticalGradient).Build();
         var sum = new CostFunctionSum(component1, component2);
 
-        ParameterConfiguration[] parameterConfigurations1 =
-        [
-            new("c0_1", 10.75),
-            new("c1_1", -1.97),
-            new("c2_1", 1.13),
-            new("c3_1", -0.11)
-        ];
-        ParameterConfiguration[] parameterConfigurations2 =
-        [
-            new("c0_2", 10.75),
-            new("c1_2", -1.97),
-            new("c2_2", 1.13),
-            new("c3_2", -0.11)
-        ];
+        var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
+        var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
 
         var component1Result = new Migrad(component1, parameterConfigurations1, minimizationStrategy).Run();
         var component2Result = new Migrad(component2, parameterConfigurations2, minimizationStrategy).Run();
