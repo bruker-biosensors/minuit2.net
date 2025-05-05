@@ -26,10 +26,9 @@ public class A_cost_function_sum
         var componentResult = new Migrad(component, CubicPolynomial.ParameterConfigurations.Defaults, strategy).Run();
         var sumResult = new Migrad(sum, CubicPolynomial.ParameterConfigurations.Defaults, strategy).Run();
         
-        componentResult.Should().BeEquivalentTo(sumResult, options => options
+        sumResult.Should().BeEquivalentTo(componentResult, options => options
             .Excluding(x => x.NumberOfFunctionCalls)
-            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
-            .WhenTypeIs<double>());
+            .WithRelativeDoubleTolerance(0.001));
     }
     
     [TestCaseSource(nameof(CostFunctionSumWithIndependentComponentsTestCases))]
@@ -54,25 +53,16 @@ public class A_cost_function_sum
 
         using (new AssertionScope())
         {
-            sumResult.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue, sumResult.CostValue * 0.001);
-            sumResult.ParameterValues.Take(4).Should().BeEquivalentTo(component1Result.ParameterValues, options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
-                .WhenTypeIs<double>());
-            sumResult.ParameterValues.TakeLast(4).Should().BeEquivalentTo(component2Result.ParameterValues, options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
-                .WhenTypeIs<double>());
-            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,0,3).Should().BeEquivalentTo(component1Result.ParameterCovarianceMatrix, options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
-                .WhenTypeIs<double>());
-            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,4,7).Should().BeEquivalentTo(component2Result.ParameterCovarianceMatrix, options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * 0.001)))
-                .WhenTypeIs<double>());
-            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,0,3).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 1e-8))
-                .WhenTypeIs<double>());
-            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,4,7).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, 1e-8))
-                .WhenTypeIs<double>());
+            sumResult.Should()
+                .HaveCostValue(component1Result.CostValue + component2Result.CostValue).And
+                .HaveParameterValues(component1Result.ParameterValues.Concat(component2Result.ParameterValues).ToArray());
+
+            const double relativeToleranceForNonZeros = 0.001;
+            const double absoluteToleranceForZeros = 1e-8;
+            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,0,3).Should().BeEquivalentTo(component1Result.ParameterCovarianceMatrix, options => options.WithRelativeDoubleTolerance(relativeToleranceForNonZeros));
+            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,4,7).Should().BeEquivalentTo(component2Result.ParameterCovarianceMatrix, options => options.WithRelativeDoubleTolerance(relativeToleranceForNonZeros));
+            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,0,3).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options.WithDoubleTolerance(absoluteToleranceForZeros));
+            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,4,7).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options.WithDoubleTolerance(absoluteToleranceForZeros));
         }
     }
     
@@ -97,28 +87,17 @@ public class A_cost_function_sum
         var sumResult = new Migrad(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), strategy).Run();
 
         using (new AssertionScope())
-        {
-            const double absoluteToleranceForZeros = 1e-8;
+        { 
+            sumResult.Should()
+                .HaveCostValue(component1Result.CostValue + component2Result.CostValue).And
+                .HaveParameterValues(component1Result.ParameterValues.Concat(component2Result.ParameterValues).ToArray());
+            
             const double relativeToleranceForNonZeros = 0.002;
-            sumResult.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue, sumResult.CostValue * relativeToleranceForNonZeros);
-            sumResult.ParameterValues.Take(4).Should().BeEquivalentTo(component1Result.ParameterValues, options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * relativeToleranceForNonZeros)))
-                .WhenTypeIs<double>());
-            sumResult.ParameterValues.TakeLast(4).Should().BeEquivalentTo(component2Result.ParameterValues, options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * relativeToleranceForNonZeros)))
-                .WhenTypeIs<double>());
-            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,0,3).Should().BeEquivalentTo(component1Result.ParameterCovarianceMatrix, options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * relativeToleranceForNonZeros)))
-                .WhenTypeIs<double>());
-            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,4,7).Should().BeEquivalentTo(component2Result.ParameterCovarianceMatrix, options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * relativeToleranceForNonZeros)))
-                .WhenTypeIs<double>());
-            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,0,3).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, absoluteToleranceForZeros))
-                .WhenTypeIs<double>());
-            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,4,7).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options
-                .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, absoluteToleranceForZeros))
-                .WhenTypeIs<double>());
+            const double absoluteToleranceForZeros = 1e-8;
+            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,0,3).Should().BeEquivalentTo(component1Result.ParameterCovarianceMatrix, options => options.WithRelativeDoubleTolerance(relativeToleranceForNonZeros));
+            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,4,7).Should().BeEquivalentTo(component2Result.ParameterCovarianceMatrix, options => options.WithRelativeDoubleTolerance(relativeToleranceForNonZeros));
+            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,0,3).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options.WithDoubleTolerance(absoluteToleranceForZeros));
+            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,4,7).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options.WithDoubleTolerance(absoluteToleranceForZeros));
         }
     }
     

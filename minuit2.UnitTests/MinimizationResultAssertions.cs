@@ -32,13 +32,13 @@ internal class MinimizationResultAssertions(MinimizationResult value)
     
     public AndConstraint<MinimizationResultAssertions> HaveParameterValues(IReadOnlyCollection<double> expectedValues)
     {
-        Subject.ParameterValues.Should().BeEquivalentTo(expectedValues, options => options.WithinRelativeTolerance(DefaultRelativeTolerance));
+        Subject.ParameterValues.Should().BeEquivalentTo(expectedValues, options => options.WithRelativeDoubleTolerance(DefaultRelativeTolerance));
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
     
     public AndConstraint<MinimizationResultAssertions> HaveParameterCovarianceMatrix(double[,] expectedValues, double? relativeTolerance = null)
     {
-        Subject.ParameterCovarianceMatrix.Should().BeEquivalentTo(expectedValues, options => options.WithinRelativeTolerance(relativeTolerance ?? DefaultRelativeTolerance));
+        Subject.ParameterCovarianceMatrix.Should().BeEquivalentTo(expectedValues, options => options.WithRelativeDoubleTolerance(relativeTolerance ?? DefaultRelativeTolerance));
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
