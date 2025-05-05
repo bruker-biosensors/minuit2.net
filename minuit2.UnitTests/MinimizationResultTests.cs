@@ -1,6 +1,7 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using minuit2.net;
+using static minuit2.UnitTests.CubicPolynomial;
 
 namespace minuit2.UnitTests;
 
@@ -10,48 +11,18 @@ namespace minuit2.UnitTests;
              """)]
 public class MinimizationResultTests
 {
-    private static readonly Func<double, IList<double>, double> CubicPoly = 
-        (x, c) => c[0] + c[1] * x + c[2] * x * x + c[3] * x * x * x;
-    
-    private static readonly Func<double, IList<double>, IList<double>> CubicPolyGrad = 
-        (x, _) => [1, x, x * x, x * x * x];
-    
-    private static readonly List<double> XValues = 
-    [
-        0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5
-    ];
-
-    // y-values are generated using a cubic polynomial with coefficients: c0 = 10, c1 = -2, c2 = 1, c3 = -0.1
-    // and a random normal noise with a standard deviation of 0.1
-    private static readonly List<double> YValues =
-    [
-        9.9, 9.2, 9.03, 8.93, 9.29, 9.75, 10.24, 11.02, 11.57, 12.11, 12.51, 12.46, 12.52, 11.72, 10.8, 9.08, 6.95,
-        3.77, 0.07, -4.45
-    ];
-
-    private const double YError = 0.1;  // standard deviation of noise used to generate the above y-values
-
-    
     private static IEnumerable<Func<double, IList<double>, IList<double>>?> GradientTestCases()
     {
         yield return null;
-        yield return CubicPolyGrad;
+        yield return ModelGradient;
     }
     
     [TestCaseSource(nameof(GradientTestCases))]
     public void basic_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
-        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient);
+        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], Model, analyticalGradient);
         
-        ParameterConfiguration[] parameterConfigurations = 
-        [
-            new("c3", -0.11), 
-            new("c2", 1.13), 
-            new("c0", 10.75), 
-            new("c1", -1.97)
-        ];
-        
-        var minimizer = new Migrad(cost, parameterConfigurations);
+        var minimizer = new Migrad(cost, DefaultParameterConfigurations);
         var result = minimizer.Run();
 
         result.Should()
@@ -79,8 +50,8 @@ public class MinimizationResultTests
     [Description("Ensure that the minimizer handles infinite bounds the same way as if there were no bounds")]
     public void basic_scenario_with_explicitly_provided_infinite_bounds(double lowerLimit, double upperLimit)
     {
-        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly);
-
+        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], Model);
+        
         ParameterConfiguration[] parameterConfigurations =
         [
             new("c3", -0.11, LowerLimit: lowerLimit, UpperLimit: upperLimit),
@@ -98,8 +69,8 @@ public class MinimizationResultTests
     [TestCaseSource(nameof(GradientTestCases))]
     public void fixed_parameters_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
-        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient);
-
+        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], Model, analyticalGradient);
+        
         ParameterConfiguration[] parameterConfigurations =
         [
             new("c3", -0.11, IsFixed: true),
@@ -132,8 +103,8 @@ public class MinimizationResultTests
     [Test]
     public void limited_parameters_scenario()
     {
-        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly);
-
+        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], Model);
+        
         ParameterConfiguration[] parameterConfigurations =
         [
             new("c3", -0.11, UpperLimit: -0.105),
@@ -166,8 +137,8 @@ public class MinimizationResultTests
     [Test]
     public void limited_parameters_scenario_with_analytical_gradient()
     {
-        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, CubicPolyGrad);
-
+        var cost = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], Model, ModelGradient);
+        
         ParameterConfiguration[] parameterConfigurations =
         [
             new("c3", -0.11, UpperLimit: -0.105),
@@ -200,28 +171,24 @@ public class MinimizationResultTests
     private static IEnumerable<object> MixedGradientTestCases()
     {
         yield return new object?[] { null, false };
-        yield return new object[] { CubicPolyGrad, true };
-        yield return new object[] { CubicPolyGrad, false };
+        yield return new object[] { ModelGradient, true };
+        yield return new object[] { ModelGradient, false };
     }
 
     [TestCaseSource(nameof(MixedGradientTestCases))]
     public void global_parameters_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient, bool areAllGradientsDefined)
     {
         var cost = new CostFunctionSum(
-            new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient),
-            new LeastSquares(XValues, YValues, YError, ["c0", "c1_1", "c2", "c3_1"], CubicPoly, analyticalGradient),
-            new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2_2", "c3"], CubicPoly, areAllGradientsDefined ? analyticalGradient : null));
-        
-        ParameterConfiguration[] parameterConfigurations =
+            new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], Model, analyticalGradient),
+            new LeastSquares(XValues, YValues, YError, ["c0", "c1_1", "c2", "c3_1"], Model, analyticalGradient),
+            new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2_2", "c3"], Model, areAllGradientsDefined ? analyticalGradient : null));
+
+        var parameterConfigurations = DefaultParameterConfigurations.Concat(
         [
-            new("c2_2", 0.9),
-            new("c3_1", -0.15),
-            new("c1_1", -2.1),
-            new("c3", -0.11),
-            new("c2", 1.13),
-            new("c1", -1.97),
-            new("c0", 10.75)
-        ];
+            new ParameterConfiguration("c1_1", -2.1),
+            new ParameterConfiguration("c3_1", -0.15),
+            new ParameterConfiguration("c2_2", 0.9)
+        ]).ToArray();
         
         var minimizer = new Migrad(cost, parameterConfigurations);
         var result = minimizer.Run();
@@ -250,17 +217,9 @@ public class MinimizationResultTests
     [TestCaseSource(nameof(GradientTestCases))]
     public void missing_data_uncertainties_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
-        var cost = new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient);
-
-        ParameterConfiguration[] parameterConfigurations =
-        [
-            new("c3", -0.11),
-            new("c2", 1.13),
-            new("c0", 10.75),
-            new("c1", -1.97)
-        ];
+        var cost = new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], Model, analyticalGradient);
         
-        var minimizer = new Migrad(cost, parameterConfigurations);
+        var minimizer = new Migrad(cost, DefaultParameterConfigurations);
         var result = minimizer.Run();
 
         result.Should()
@@ -286,18 +245,10 @@ public class MinimizationResultTests
     public void global_parameter_scenario_with_partly_missing_data_uncertainties(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
         var cost = new CostFunctionSum(
-            new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient), 
-            new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient));
-
-        ParameterConfiguration[] parameterConfigurations = 
-        [
-            new("c3", -0.11),
-            new("c2", 1.13),
-            new("c1", -1.97),
-            new("c0", 10.75)
-        ];
+            new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], Model, analyticalGradient), 
+            new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], Model, analyticalGradient));
         
-        var minimizer = new Migrad(cost, parameterConfigurations);
+        var minimizer = new Migrad(cost, DefaultParameterConfigurations);
         var result = minimizer.Run();
 
         result.Should()
@@ -320,11 +271,11 @@ public class MinimizationResultTests
 
     private static IEnumerable<object> CostFunctionWithErrorDefinitionDifferentFromOneTestCases()
     {
-        yield return new object[] { new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], CubicPoly), 4 };
-        yield return new object[] { new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly), 4 };
-        yield return new object[] { new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], CubicPoly, CubicPolyGrad), 4 };
-        yield return new object[] { new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, CubicPolyGrad), 4 };
-        yield return new object[] { new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], CubicPoly), 9 };
+        yield return new object[] { new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], Model), 4 };
+        yield return new object[] { new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], Model), 4 };
+        yield return new object[] { new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], Model, ModelGradient), 4 };
+        yield return new object[] { new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], Model, ModelGradient), 4 };
+        yield return new object[] { new LeastSquares(XValues, YValues, ["c0", "c1", "c2", "c3"], Model), 9 };
     }
     
     [TestCaseSource(nameof(CostFunctionWithErrorDefinitionDifferentFromOneTestCases))]
@@ -332,17 +283,9 @@ public class MinimizationResultTests
         LeastSquares referenceCost, double errorDefinition)
     {
         var cost = referenceCost.WithErrorDefinition(errorDefinition);
-
-        ParameterConfiguration[] parameterConfigurations =
-        [
-            new("c3", -0.11),
-            new("c2", 1.13),
-            new("c0", 10.75),
-            new("c1", -1.97)
-        ];
-
-        var referenceResult = new Migrad(referenceCost, parameterConfigurations).Run();
-        var result = new Migrad(cost, parameterConfigurations).Run();
+        
+        var referenceResult = new Migrad(referenceCost, DefaultParameterConfigurations).Run();
+        var result = new Migrad(cost, DefaultParameterConfigurations).Run();
         
         result.CostValue.Should().BeApproximately(referenceResult.CostValue, 1E-10);
     }
@@ -352,17 +295,9 @@ public class MinimizationResultTests
         LeastSquares referenceCost, double errorDefinition)
     {
         var cost = referenceCost.WithErrorDefinition(errorDefinition);
-
-        ParameterConfiguration[] parameterConfigurations =
-        [
-            new("c3", -0.11),
-            new("c2", 1.13),
-            new("c0", 10.75),
-            new("c1", -1.97)
-        ];
-
-        var referenceResult = new Migrad(referenceCost, parameterConfigurations).Run();
-        var result = new Migrad(cost, parameterConfigurations).Run();
+        
+        var referenceResult = new Migrad(referenceCost, DefaultParameterConfigurations).Run();
+        var result = new Migrad(cost, DefaultParameterConfigurations).Run();
         
         result.ParameterCovarianceMatrix.Should().BeEquivalentTo(referenceResult.ParameterCovarianceMatrix.MultipliedBy(errorDefinition), 
             options => options
@@ -375,28 +310,20 @@ public class MinimizationResultTests
         yield return new object?[] { null, MinimizationStrategy.Fast };
         yield return new object?[] { null, MinimizationStrategy.Balanced };
         yield return new object?[] { null, MinimizationStrategy.Precise };
-        yield return new object[] { CubicPolyGrad, MinimizationStrategy.Fast };
-        yield return new object[] { CubicPolyGrad, MinimizationStrategy.Balanced };
-        yield return new object[] { CubicPolyGrad, MinimizationStrategy.Precise };
+        yield return new object[] { ModelGradient, MinimizationStrategy.Fast };
+        yield return new object[] { ModelGradient, MinimizationStrategy.Balanced };
+        yield return new object[] { ModelGradient, MinimizationStrategy.Precise };
     }
     
     [TestCaseSource(nameof(CostFunctionSumWithIndependentComponentsTestCases))]
     public void A_cost_function_sum_with_a_single_component_when_minimized_should_yield_a_result_equivalent_to_the_result_of_the_isolated_component(
         Func<double, IList<double>, IList<double>>? analyticalGradient, MinimizationStrategy minimizationStrategy)
     {
-        var component = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], CubicPoly, analyticalGradient).WithErrorDefinition(4);
+        var component = new LeastSquares(XValues, YValues, YError, ["c0", "c1", "c2", "c3"], Model, analyticalGradient).WithErrorDefinition(4);
         var sum = new CostFunctionSum(component);
-        
-        ParameterConfiguration[] parameterConfigurations = 
-        [
-            new("c0", 10.75), 
-            new("c1", -1.97),
-            new("c2", 1.13), 
-            new("c3", -0.11)
-        ];
 
-        var componentResult = new Migrad(component, parameterConfigurations, minimizationStrategy).Run();
-        var sumResult = new Migrad(sum, parameterConfigurations, minimizationStrategy).Run();
+        var componentResult = new Migrad(component, DefaultParameterConfigurations, minimizationStrategy).Run();
+        var sumResult = new Migrad(sum, DefaultParameterConfigurations, minimizationStrategy).Run();
         
         componentResult.Should().BeEquivalentTo(sumResult, options => options
             .Excluding(x => x.NumberOfFunctionCalls)
@@ -413,8 +340,8 @@ public class MinimizationResultTests
                           "In iminuit, this oddity is resolved by calling the Hesse algorithm after minimization. " +
                           "Once the additional Hesse call is added here, the tests should be re-enabled.");
         
-        var component1 = new LeastSquares(XValues, YValues, YError, ["c0_1", "c1_1", "c2_1", "c3_1"], CubicPoly, analyticalGradient);
-        var component2 = new LeastSquares(XValues, YValues, YError, ["c0_2", "c1_2", "c2_2", "c3_2"], CubicPoly, analyticalGradient).WithErrorDefinition(4);
+        var component1 = new LeastSquares(XValues, YValues, YError, ["c0_1", "c1_1", "c2_1", "c3_1"], Model, analyticalGradient);
+        var component2 = new LeastSquares(XValues, YValues, YError, ["c0_2", "c1_2", "c2_2", "c3_2"], Model, analyticalGradient).WithErrorDefinition(4);
         var sum = new CostFunctionSum(component1, component2);
 
         ParameterConfiguration[] parameterConfigurations1 =
@@ -469,8 +396,8 @@ public class MinimizationResultTests
                           "This might be solved by using a lower tolerance for the minimizer and/or by calling the Hesse algorithm after minimization. " +
                           "Should probably be investigated and define in a separate test.");
         
-        var component1 = new LeastSquares(XValues, YValues, ["c0_1", "c1_1", "c2_1", "c3_1"], CubicPoly, analyticalGradient);
-        var component2 = new LeastSquares(XValues, YValues, YError, ["c0_2", "c1_2", "c2_2", "c3_2"], CubicPoly, analyticalGradient);
+        var component1 = new LeastSquares(XValues, YValues, ["c0_1", "c1_1", "c2_1", "c3_1"], Model, analyticalGradient);
+        var component2 = new LeastSquares(XValues, YValues, YError, ["c0_2", "c1_2", "c2_2", "c3_2"], Model, analyticalGradient);
         var sum = new CostFunctionSum(component1, component2);
 
         ParameterConfiguration[] parameterConfigurations1 =
