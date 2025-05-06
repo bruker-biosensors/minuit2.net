@@ -2,7 +2,7 @@ using FluentAssertions;
 using FluentAssertions.Equivalency;
 using minuit2.net;
 
-namespace minuit2.UnitTests;
+namespace minuit2.UnitTests.TestUtilities;
 
 internal static class EquivalencyAssertionOptionsExtensions
 {

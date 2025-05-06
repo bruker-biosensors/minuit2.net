@@ -1,6 +1,6 @@
 using minuit2.net;
 
-namespace minuit2.UnitTests;
+namespace minuit2.UnitTests.TestUtilities;
 
 internal static class LeastSquaresExtensions
 {

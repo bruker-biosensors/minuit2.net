@@ -1,6 +1,7 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using minuit2.net;
+using minuit2.UnitTests.TestUtilities;
 
 namespace minuit2.UnitTests;
 
