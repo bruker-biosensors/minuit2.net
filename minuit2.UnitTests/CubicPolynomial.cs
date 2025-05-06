@@ -12,8 +12,8 @@ internal static class CubicPolynomial
     
     
     // The following test data are generated using the above model with coefficients c0 = 10, c1 = -2, c2 = 1, c3 = -0.1,
-    // adding random normal noise with a standard deviation of 0.1. These data are used to evaluate minimization results
-    // against independent fit libraries.
+    // adding random normal noise with a standard deviation of 0.1. These data are used to facilitate evaluation of
+    // minimization results against independent fit libraries.
     private static readonly List<double> XValues = 
     [
         0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5
