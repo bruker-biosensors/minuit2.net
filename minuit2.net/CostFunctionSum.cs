@@ -50,6 +50,10 @@ public class CostFunctionSum : ICompositeCostFunction
 
 internal class ComponentCostFunction(ICostFunction inner, IList<string> parameters) : ICostFunction
 {
+    // To achieve proper scaling of component gradients (analytical and numerically approximated), both the function
+    // values and gradients have to be scaled by 1/ErrorDefinition in place. Yet, doing so necessitates re-scaling of
+    // the final function values (after minimization). This is done in the hosting composite class.
+    
     private readonly List<int> _parameterIndices = inner.Parameters.Select(parameters.IndexOf).ToList();
     
     private double[] Belonging(IList<double> parameterValues)
