@@ -31,25 +31,25 @@ internal static class CubicPolynomial
 
     public class LeastSquaresBuilder
     {
-        private Func<double, IList<double>, IList<double>>? _modelGradient;
         private string[] _parameterNames = ["c0", "c1", "c2", "c3"];
         private double? _yError = YError;
+        private bool _hasGradient;
 
         public LeastSquares Build()
         {
-            if (_yError != null && _modelGradient != null)
-                return new LeastSquares(XValues, YValues, _yError.Value, _parameterNames, Model, _modelGradient);
-            if (_yError != null && _modelGradient == null)
+            if (_yError != null && _hasGradient)
+                return new LeastSquares(XValues, YValues, _yError.Value, _parameterNames, Model, ModelGradient);
+            if (_yError != null && !_hasGradient)
                 return new LeastSquares(XValues, YValues, _yError.Value, _parameterNames, Model);
-            if (_yError == null && _modelGradient != null)
-                return new LeastSquares(XValues, YValues, _parameterNames, Model, _modelGradient);
+            if (_yError == null && _hasGradient)
+                return new LeastSquares(XValues, YValues, _parameterNames, Model, ModelGradient);
             
             return new LeastSquares(XValues, YValues, _parameterNames, Model);
         }
 
         public LeastSquaresBuilder WithGradient(bool hasGradient = true)
         {
-            _modelGradient = hasGradient ? ModelGradient : null;
+            _hasGradient = hasGradient;
             return this;
         }
 
