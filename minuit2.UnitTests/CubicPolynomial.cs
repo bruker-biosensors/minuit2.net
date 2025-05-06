@@ -32,16 +32,16 @@ internal static class CubicPolynomial
     public class LeastSquaresBuilder
     {
         private string[] _parameterNames = ["c0", "c1", "c2", "c3"];
-        private double? _yError = YError;
+        private bool _hasYError = true;
         private bool _hasGradient;
 
         public LeastSquares Build()
         {
-            if (_yError != null && _hasGradient)
-                return new LeastSquares(XValues, YValues, _yError.Value, _parameterNames, Model, ModelGradient);
-            if (_yError != null && !_hasGradient)
-                return new LeastSquares(XValues, YValues, _yError.Value, _parameterNames, Model);
-            if (_yError == null && _hasGradient)
+            if (_hasYError && _hasGradient)
+                return new LeastSquares(XValues, YValues, YError, _parameterNames, Model, ModelGradient);
+            if (_hasYError && !_hasGradient)
+                return new LeastSquares(XValues, YValues, YError, _parameterNames, Model);
+            if (!_hasYError && _hasGradient)
                 return new LeastSquares(XValues, YValues, _parameterNames, Model, ModelGradient);
             
             return new LeastSquares(XValues, YValues, _parameterNames, Model);
@@ -70,7 +70,7 @@ internal static class CubicPolynomial
 
         public LeastSquaresBuilder WithMissingYErrors()
         {
-            _yError = null;
+            _hasYError = false;
             return this;
         }
     }
