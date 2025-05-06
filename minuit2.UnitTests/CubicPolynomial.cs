@@ -7,7 +7,7 @@ internal static class CubicPolynomial
     private static readonly Func<double, IList<double>, double> Model = 
         (x, c) => c[0] + c[1] * x + c[2] * x * x + c[3] * x * x * x;
 
-    public static readonly Func<double, IList<double>, IList<double>> ModelGradient = 
+    private static readonly Func<double, IList<double>, IList<double>> ModelGradient = 
         (x, _) => [1, x, x * x, x * x * x];
     
     
@@ -47,13 +47,7 @@ internal static class CubicPolynomial
             return new LeastSquares(XValues, YValues, _parameterNames, Model);
         }
 
-        public LeastSquaresBuilder WithGradient(Func<double, IList<double>, IList<double>>? gradient)
-        {
-            _modelGradient = gradient;
-            return this;
-        }
-        
-        public LeastSquaresBuilder WithGradient(bool hasGradient)
+        public LeastSquaresBuilder WithGradient(bool hasGradient = true)
         {
             _modelGradient = hasGradient ? ModelGradient : null;
             return this;

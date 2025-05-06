@@ -9,16 +9,10 @@ namespace minuit2.UnitTests;
              """)]
 public class MinimizationResultTests
 {
-    private static IEnumerable<Func<double, IList<double>, IList<double>>?> GradientTestCases()
+    [Test]
+    public void basic_scenario([Values] bool hasGradient)
     {
-        yield return null;
-        yield return CubicPolynomial.ModelGradient;
-    }
-    
-    [TestCaseSource(nameof(GradientTestCases))]
-    public void basic_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
-    {
-        var cost = CubicPolynomial.LeastSquaresCost.WithGradient(analyticalGradient).Build();
+        var cost = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).Build();
 
         var minimizer = new Migrad(cost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = minimizer.Run();
@@ -64,10 +58,10 @@ public class MinimizationResultTests
         result.Should().HaveIsValid(true).And.HaveCostValue(12.49);
     }
     
-    [TestCaseSource(nameof(GradientTestCases))]
-    public void fixed_parameters_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
+    [Test]
+    public void fixed_parameters_scenario([Values] bool hasGradient)
     {
-        var cost = CubicPolynomial.LeastSquaresCost.WithGradient(analyticalGradient).Build();
+        var cost = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).Build();
         
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -135,7 +129,7 @@ public class MinimizationResultTests
     [Test]
     public void limited_parameters_scenario_with_analytical_gradient()
     {
-        var cost = CubicPolynomial.LeastSquaresCost.WithGradient(CubicPolynomial.ModelGradient).Build();
+        var cost = CubicPolynomial.LeastSquaresCost.WithGradient().Build();
         
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -166,10 +160,10 @@ public class MinimizationResultTests
             });
     }
 
-    [TestCaseSource(nameof(GradientTestCases))]
-    public void missing_data_uncertainties_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
+    [Test]
+    public void missing_data_uncertainties_scenario([Values] bool hasGradient)
     {
-        var cost = CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithGradient(analyticalGradient).Build();
+        var cost = CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithGradient(hasGradient).Build();
         
         var minimizer = new Migrad(cost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = minimizer.Run();
@@ -196,8 +190,8 @@ public class MinimizationResultTests
     {
         yield return new object[] { CubicPolynomial.LeastSquaresCost.Build(), 4 };
         yield return new object[] { CubicPolynomial.LeastSquaresCost.WithMissingYErrors().Build(), 4 };
-        yield return new object[] { CubicPolynomial.LeastSquaresCost.WithGradient(CubicPolynomial.ModelGradient).Build(), 4 };
-        yield return new object[] { CubicPolynomial.LeastSquaresCost.WithGradient(CubicPolynomial.ModelGradient).WithMissingYErrors().Build(), 4 };
+        yield return new object[] { CubicPolynomial.LeastSquaresCost.WithGradient().Build(), 4 };
+        yield return new object[] { CubicPolynomial.LeastSquaresCost.WithGradient().WithMissingYErrors().Build(), 4 };
         yield return new object[] { CubicPolynomial.LeastSquaresCost.Build(), 9 };
     }
     
