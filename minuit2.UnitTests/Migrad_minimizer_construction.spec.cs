@@ -3,10 +3,10 @@ using minuit2.net;
 
 namespace minuit2.UnitTests;
 
-public class MigradTests
+public class A_migrad_minimizer
 {
     [Test]
-    public void A_migrad_minimizer_when_constructed_with_mismatching_parameters_throws_an_exception()
+    public void when_constructed_with_parameter_configurations_that_mismatch_the_cost_function_parameters_throws_an_exception()
     {
         ParameterConfiguration[] userParameters = [new("a", 0), new("b", 0)];
         var costParameters = new[] { "a", "b", "c" };
