@@ -24,5 +24,4 @@ file class LeastSquaresWithCustomErrorDefinition(LeastSquares wrapped, double er
         wrapped.AutoScaleErrorDefinitionBasedOn(parameterValues, variables);
         ErrorDefinition = _errorDefinition * wrapped.ErrorDefinition;  // Works because the wrapped (default) least squares error definition is 1 (before scaling)
     }
-    public double AdjustedValueFor(IList<double> parameterValues) => wrapped.AdjustedValueFor(parameterValues);
 }

@@ -90,6 +90,4 @@ public class LeastSquares : ICostFunction
         var reducedChiSquared = ValueFor(parameterValues) / degreesOfFreedom;
         ErrorDefinition = ChiSquaredErrorDefinition * reducedChiSquared;
     }
-
-    public double AdjustedValueFor(IList<double> parameterValues) => ValueFor(parameterValues);
 }

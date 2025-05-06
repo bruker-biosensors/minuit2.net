@@ -1,6 +1,6 @@
 namespace minuit2.net;
 
-public class CostFunctionSum : ICostFunction
+public class CostFunctionSum : ICompositeCostFunction
 {
     private readonly ComponentCostFunction[] _components;
 
@@ -44,8 +44,8 @@ public class CostFunctionSum : ICostFunction
             component.AutoScaleErrorDefinitionBasedOn(parameterValues, variables);
     }
 
-    public double AdjustedValueFor(IList<double> parameterValues) =>
-        _components.Select(c => c.AdjustedValueFor(parameterValues)).Sum();
+    public double CompositeValueFor(IList<double> parameterValues) =>
+        _components.Select(c => c.ValueFor(parameterValues) * c.ErrorDefinition).Sum();
 }
 
 internal class ComponentCostFunction(ICostFunction inner, IList<string> parameters) : ICostFunction
@@ -67,13 +67,9 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> paramete
     public bool HasGradient => inner.HasGradient;
     public double ErrorDefinition => inner.ErrorDefinition;
     public bool RequiresErrorDefinitionAutoScaling => inner.RequiresErrorDefinitionAutoScaling;
-    
-    public double ValueFor(IList<double> parameterValues)
-    {
-        // Scaling by 1/Up is needed to ensure numerical gradients are correct.
-        // Re-scaling of final values (after minimization) is done in the parent/composite class.
-        return inner.ValueFor(Belonging(parameterValues)) / ErrorDefinition;
-    }
+
+    public double ValueFor(IList<double> parameterValues) =>
+        inner.ValueFor(Belonging(parameterValues)) / ErrorDefinition;
 
     public IList<double> GradientFor(IList<double> parameterValues)
     {
@@ -81,9 +77,6 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> paramete
         
         var expandedGradients = new double[parameters.Count];
         foreach (var (gradient, index) in gradients.Zip(_parameterIndices))
-            // Scaling by 1/Up is needed to ensure analytical gradients are correct.
-            // In fact, since analytical gradients are trumped by numerical gradients (when different) for the default
-            // strategy(1), this only has an effect on the result for the fast strategy(0).
             expandedGradients[index] = gradient / ErrorDefinition;
         
         return expandedGradients;
@@ -91,8 +84,6 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> paramete
     
     public void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
         inner.AutoScaleErrorDefinitionBasedOn(Belonging(parameterValues), Belonging(variables));
-
-    public double AdjustedValueFor(IList<double> parameterValues) => inner.ValueFor(Belonging(parameterValues));
 }
 
 file static class CostFunctionCollectionExtensions

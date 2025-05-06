@@ -11,6 +11,4 @@ public interface ICostFunction
     double ErrorDefinition { get; }
     bool RequiresErrorDefinitionAutoScaling { get; }
     void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables);
-    
-    double AdjustedValueFor(IList<double> parameterValues);
 }

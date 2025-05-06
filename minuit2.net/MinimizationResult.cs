@@ -9,9 +9,11 @@ public class MinimizationResult
         var parameterValues = state.Params();
         ParameterValues = parameterValues.ToList();
         ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
-        
-        CostValue = costFunction.AdjustedValueFor(parameterValues);
-        
+
+        CostValue = costFunction is ICompositeCostFunction compositeCostFunction
+            ? compositeCostFunction.CompositeValueFor(parameterValues)
+            : costFunction.ValueFor(parameterValues);
+
         // Meta information
         IsValid = functionMinimum.IsValid();
         NumberOfVariables = (int)state.VariableParameters();
