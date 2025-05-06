@@ -21,7 +21,7 @@ public class A_cost_function_sum
     public void with_a_single_component_when_minimized_should_yield_a_result_equivalent_to_the_result_for_the_isolated_component(
         Func<double, IList<double>, IList<double>>? gradient, MinimizationStrategy strategy)
     {
-        var component = CubicPolynomial.Cost.WithGradient(gradient).Build().WithErrorDefinition(4);
+        var component = CubicPolynomial.LeastSquaresCost.WithGradient(gradient).Build().WithErrorDefinition(4);
         var sum = new CostFunctionSum(component);
 
         var componentResult = new Migrad(component, CubicPolynomial.ParameterConfigurations.Defaults, strategy).Run();
@@ -41,8 +41,8 @@ public class A_cost_function_sum
                           "In iminuit, this is resolved by calling the Hesse algorithm after minimization. " +
                           "Once the additional Hesse call is added here, the skipped tests could be re-enabled.");
         
-        var component1 = CubicPolynomial.Cost.WithParameterSuffix(1).WithGradient(gradient).Build();
-        var component2 = CubicPolynomial.Cost.WithParameterSuffix(2).WithGradient(gradient).Build().WithErrorDefinition(4);
+        var component1 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(1).WithGradient(gradient).Build();
+        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(gradient).Build().WithErrorDefinition(4);
         var sum = new CostFunctionSum(component1, component2);
 
         var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
@@ -76,8 +76,8 @@ public class A_cost_function_sum
                           "This might be solved by using a lower tolerance for the minimizer and/or by calling the Hesse algorithm after minimization. " +
                           "This should be investigated, and if solvable should probably asserted in a separate test.");
         
-        var component1 = CubicPolynomial.Cost.WithMissingYErrors().WithParameterSuffix(1).WithGradient(gradient).Build();
-        var component2 = CubicPolynomial.Cost.WithParameterSuffix(2).WithGradient(gradient).Build();
+        var component1 = CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithParameterSuffix(1).WithGradient(gradient).Build();
+        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(gradient).Build();
         var sum = new CostFunctionSum(component1, component2);
 
         var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
@@ -117,8 +117,8 @@ public class A_cost_function_sum
         Func<double, IList<double>, IList<double>>? firstGradient, Func<double, IList<double>, IList<double>>? lastGradient)
     {
         var cost = new CostFunctionSum(
-            CubicPolynomial.Cost.WithGradient(firstGradient).Build(),
-            CubicPolynomial.Cost.WithParameterNames(c1: "c1_1", c3: "c3_1").WithGradient(lastGradient).Build());
+            CubicPolynomial.LeastSquaresCost.WithGradient(firstGradient).Build(),
+            CubicPolynomial.LeastSquaresCost.WithParameterNames(c1: "c1_1", c3: "c3_1").WithGradient(lastGradient).Build());
 
         var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults
             .Concat([new ParameterConfiguration("c1_1", -2.1), new ParameterConfiguration("c3_1", -0.15)]).ToArray();
@@ -153,8 +153,8 @@ public class A_cost_function_sum
         Func<double, IList<double>, IList<double>>? firstGradient, Func<double, IList<double>, IList<double>>? lastGradient)
     {
         var cost = new CostFunctionSum(
-            CubicPolynomial.Cost.WithGradient(firstGradient).Build(),
-            CubicPolynomial.Cost.WithMissingYErrors().WithGradient(lastGradient).Build());
+            CubicPolynomial.LeastSquaresCost.WithGradient(firstGradient).Build(),
+            CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithGradient(lastGradient).Build());
         
         var minimizer = new Migrad(cost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = minimizer.Run();

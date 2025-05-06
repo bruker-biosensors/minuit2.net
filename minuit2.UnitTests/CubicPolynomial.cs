@@ -27,7 +27,7 @@ internal static class CubicPolynomial
 
     private const double YError = 0.1;  // standard deviation of noise used to generate the above y-values
     
-    public static LeastSquaresBuilder Cost => new();
+    public static LeastSquaresBuilder LeastSquaresCost => new();
 
     public class LeastSquaresBuilder
     {

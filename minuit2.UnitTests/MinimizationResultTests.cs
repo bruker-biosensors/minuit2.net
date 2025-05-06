@@ -18,7 +18,7 @@ public class MinimizationResultTests
     [TestCaseSource(nameof(GradientTestCases))]
     public void basic_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
-        var cost = CubicPolynomial.Cost.WithGradient(analyticalGradient).Build();
+        var cost = CubicPolynomial.LeastSquaresCost.WithGradient(analyticalGradient).Build();
 
         var minimizer = new Migrad(cost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = minimizer.Run();
@@ -48,7 +48,7 @@ public class MinimizationResultTests
     [Description("Ensure that the minimizer handles infinite bounds the same way as if there were no bounds")]
     public void basic_scenario_with_explicitly_provided_infinite_bounds(double lowerLimit, double upperLimit)
     {
-        var cost = CubicPolynomial.Cost.Build();
+        var cost = CubicPolynomial.LeastSquaresCost.Build();
 
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -67,7 +67,7 @@ public class MinimizationResultTests
     [TestCaseSource(nameof(GradientTestCases))]
     public void fixed_parameters_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
-        var cost = CubicPolynomial.Cost.WithGradient(analyticalGradient).Build();
+        var cost = CubicPolynomial.LeastSquaresCost.WithGradient(analyticalGradient).Build();
         
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -101,7 +101,7 @@ public class MinimizationResultTests
     [Test]
     public void limited_parameters_scenario()
     {
-        var cost = CubicPolynomial.Cost.Build();
+        var cost = CubicPolynomial.LeastSquaresCost.Build();
 
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -135,7 +135,7 @@ public class MinimizationResultTests
     [Test]
     public void limited_parameters_scenario_with_analytical_gradient()
     {
-        var cost = CubicPolynomial.Cost.WithGradient(CubicPolynomial.ModelGradient).Build();
+        var cost = CubicPolynomial.LeastSquaresCost.WithGradient(CubicPolynomial.ModelGradient).Build();
         
         ParameterConfiguration[] parameterConfigurations =
         [
@@ -169,7 +169,7 @@ public class MinimizationResultTests
     [TestCaseSource(nameof(GradientTestCases))]
     public void missing_data_uncertainties_scenario(Func<double, IList<double>, IList<double>>? analyticalGradient)
     {
-        var cost = CubicPolynomial.Cost.WithMissingYErrors().WithGradient(analyticalGradient).Build();
+        var cost = CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithGradient(analyticalGradient).Build();
         
         var minimizer = new Migrad(cost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = minimizer.Run();
@@ -194,11 +194,11 @@ public class MinimizationResultTests
     
     private static IEnumerable<object> CostFunctionWithErrorDefinitionDifferentFromOneTestCases()
     {
-        yield return new object[] { CubicPolynomial.Cost.Build(), 4 };
-        yield return new object[] { CubicPolynomial.Cost.WithMissingYErrors().Build(), 4 };
-        yield return new object[] { CubicPolynomial.Cost.WithGradient(CubicPolynomial.ModelGradient).Build(), 4 };
-        yield return new object[] { CubicPolynomial.Cost.WithGradient(CubicPolynomial.ModelGradient).WithMissingYErrors().Build(), 4 };
-        yield return new object[] { CubicPolynomial.Cost.Build(), 9 };
+        yield return new object[] { CubicPolynomial.LeastSquaresCost.Build(), 4 };
+        yield return new object[] { CubicPolynomial.LeastSquaresCost.WithMissingYErrors().Build(), 4 };
+        yield return new object[] { CubicPolynomial.LeastSquaresCost.WithGradient(CubicPolynomial.ModelGradient).Build(), 4 };
+        yield return new object[] { CubicPolynomial.LeastSquaresCost.WithGradient(CubicPolynomial.ModelGradient).WithMissingYErrors().Build(), 4 };
+        yield return new object[] { CubicPolynomial.LeastSquaresCost.Build(), 9 };
     }
     
     [TestCaseSource(nameof(CostFunctionWithErrorDefinitionDifferentFromOneTestCases))]
