@@ -60,9 +60,10 @@ internal class MinimizationResultAssertions(MinimizationResult value)
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
-    public AndConstraint<MinimizationResultAssertions> HaveNumberOfFunctionCallsGreaterThan(int expectedValue)
+    public AndConstraint<MinimizationResultAssertions> HaveNumberOfFunctionCallsCloseTo(int expectedValue)
     {
-        Subject.NumberOfFunctionCalls.Should().BeGreaterThan(expectedValue);
+        const int tolerance = 6;
+        Subject.NumberOfFunctionCalls.Should().BeInRange(expectedValue - tolerance, expectedValue + tolerance);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
