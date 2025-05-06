@@ -35,17 +35,13 @@ internal static class CubicPolynomial
         private bool _hasYError = true;
         private bool _hasGradient;
 
-        public LeastSquares Build()
+        public LeastSquares Build() => _hasYError switch
         {
-            if (_hasYError && _hasGradient)
-                return new LeastSquares(XValues, YValues, YError, _parameterNames, Model, ModelGradient);
-            if (_hasYError && !_hasGradient)
-                return new LeastSquares(XValues, YValues, YError, _parameterNames, Model);
-            if (!_hasYError && _hasGradient)
-                return new LeastSquares(XValues, YValues, _parameterNames, Model, ModelGradient);
-            
-            return new LeastSquares(XValues, YValues, _parameterNames, Model);
-        }
+            true when _hasGradient => new LeastSquares(XValues, YValues, YError, _parameterNames, Model, ModelGradient),
+            true when !_hasGradient => new LeastSquares(XValues, YValues, YError, _parameterNames, Model),
+            false when _hasGradient => new LeastSquares(XValues, YValues, _parameterNames, Model, ModelGradient),
+            _ => new LeastSquares(XValues, YValues, _parameterNames, Model)
+        };
 
         public LeastSquaresBuilder WithGradient(bool hasGradient = true)
         {
