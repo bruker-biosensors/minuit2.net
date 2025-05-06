@@ -16,7 +16,8 @@ public class A_cost_function_sum
         yield return new object[] { CubicPolynomial.ModelGradient, MinimizationStrategy.Precise };
     }
     
-    [TestCaseSource(nameof(CostFunctionSumWithIndependentComponentsTestCases))]
+    [TestCaseSource(nameof(CostFunctionSumWithIndependentComponentsTestCases)), 
+     Description("Ensures that the inner scaling of gradients by the error definition and the final rescaling works.")]
     public void with_a_single_component_when_minimized_should_yield_a_result_equivalent_to_the_result_for_the_isolated_component(
         Func<double, IList<double>, IList<double>>? gradient, MinimizationStrategy strategy)
     {
