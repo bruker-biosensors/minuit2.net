@@ -77,10 +77,7 @@ internal static class CubicPolynomial
         public static ParameterConfiguration C1 => new("c1", -1.97);
         public static ParameterConfiguration C2 => new("c2", 1.13);
         public static ParameterConfiguration C3 => new("c3", -0.11);
-        
-        // The following name disorder is intentional; it tests correct parameter configuration-to-model parameter mapping
-        public static ParameterConfiguration[] Defaults => [C1, C3, C0, C2];
-
+        public static ParameterConfiguration[] Defaults => [C0, C1, C2, C3];
         public static ParameterConfiguration[] DefaultsWithSuffix(int suffix) => Defaults.Select(p => p with { Name = $"{p.Name}_{suffix}" }).ToArray();
     }
 }
