@@ -233,4 +233,17 @@ public class A_cost_function
                 { -4.115e-05, 5.977e-05, -1.614e-05, 1.132e-06 }
             });
     }
+    
+    [Test]
+    public void when_minimized_forwards_exceptions_thrown_by_the_model_function()
+    {
+        var cost = new LeastSquares([0], [0], 0, [], ModelFunctionThrowing<TestException>());
+        var minimizer = new Migrad(cost, []);
+        minimizer.Invoking(m => m.Run()).Should().ThrowExactly<TestException>();
+    }
+
+    private static Func<double, IList<double>, double> ModelFunctionThrowing<T>() where T : Exception, new()
+        => (_, _) => throw new T();
+    
+    private class TestException : Exception;
 }
