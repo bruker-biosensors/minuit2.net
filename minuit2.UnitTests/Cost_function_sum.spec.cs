@@ -21,7 +21,7 @@ public class A_cost_function_sum
             .WithRelativeDoubleTolerance(0.001));
     }
     
-    [Test]
+    [Test, Description("Ensures that scaling and rescaling by the error definition works on a per-cost basis.")]
     public void of_independent_components_with_different_error_definitions_when_minimized_should_yield_a_result_equivalent_to_the_results_for_the_isolated_components(
         [Values] bool hasGradient, [Values] MinimizationStrategy strategy)
     {
@@ -56,7 +56,8 @@ public class A_cost_function_sum
         }
     }
     
-    [Test]
+    [Test, Description("Ensures that auto-scaling of the error definition for cost functions with missing y-errors " +
+                       "and, hence, parameter covariances works (on a per-cost basis).")]
     public void of_independent_components_where_some_components_have_missing_data_uncertainties_when_minimized_should_yield_a_result_equivalent_to_the_results_for_the_isolated_components(
         [Values] bool hasGradient, [Values] MinimizationStrategy strategy)
     {
