@@ -52,6 +52,12 @@ internal static class CubicPolynomial
             _modelGradient = gradient;
             return this;
         }
+        
+        public LeastSquaresBuilder WithGradient(bool hasGradient)
+        {
+            _modelGradient = hasGradient ? ModelGradient : null;
+            return this;
+        }
 
         public LeastSquaresBuilder WithParameterNames(string c0 = "c0", string c1 = "c1", string c2 = "c2", string c3 = "c3")
         {

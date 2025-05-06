@@ -6,22 +6,11 @@ namespace minuit2.UnitTests;
 
 public class A_cost_function_sum
 {
-    private static IEnumerable<object> CostFunctionSumWithIndependentComponentsTestCases()
-    {
-        yield return new object?[] { null, MinimizationStrategy.Fast };
-        yield return new object?[] { null, MinimizationStrategy.Balanced };
-        yield return new object?[] { null, MinimizationStrategy.Precise };
-        yield return new object[] { CubicPolynomial.ModelGradient, MinimizationStrategy.Fast };
-        yield return new object[] { CubicPolynomial.ModelGradient, MinimizationStrategy.Balanced };
-        yield return new object[] { CubicPolynomial.ModelGradient, MinimizationStrategy.Precise };
-    }
-    
-    [TestCaseSource(nameof(CostFunctionSumWithIndependentComponentsTestCases)), 
-     Description("Ensures that the inner scaling of gradients by the error definition and the final rescaling works.")]
+    [Test, Description("Ensures that the inner scaling of gradients by the error definition and the final rescaling works.")]
     public void with_a_single_component_when_minimized_should_yield_a_result_equivalent_to_the_result_for_the_isolated_component(
-        Func<double, IList<double>, IList<double>>? gradient, MinimizationStrategy strategy)
+        [Values] bool hasGradient, [Values] MinimizationStrategy strategy)
     {
-        var component = CubicPolynomial.LeastSquaresCost.WithGradient(gradient).Build().WithErrorDefinition(4);
+        var component = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).Build().WithErrorDefinition(4);
         var sum = new CostFunctionSum(component);
 
         var componentResult = new Migrad(component, CubicPolynomial.ParameterConfigurations.Defaults, strategy).Run();
@@ -32,17 +21,17 @@ public class A_cost_function_sum
             .WithRelativeDoubleTolerance(0.001));
     }
     
-    [TestCaseSource(nameof(CostFunctionSumWithIndependentComponentsTestCases))]
+    [Test]
     public void of_independent_components_with_different_error_definitions_when_minimized_should_yield_a_result_equivalent_to_the_results_for_the_isolated_components(
-        Func<double, IList<double>, IList<double>>? gradient, MinimizationStrategy strategy)
+        [Values] bool hasGradient, [Values] MinimizationStrategy strategy)
     {
         if (strategy == MinimizationStrategy.Fast)
             Assert.Ignore("The fast minimization strategy currently leads to inconsistent covariances. " +
                           "In iminuit, this is resolved by calling the Hesse algorithm after minimization. " +
                           "Once the additional Hesse call is added here, the skipped tests could be re-enabled.");
         
-        var component1 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(1).WithGradient(gradient).Build();
-        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(gradient).Build().WithErrorDefinition(4);
+        var component1 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(1).WithGradient(hasGradient).Build();
+        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).Build().WithErrorDefinition(4);
         var sum = new CostFunctionSum(component1, component2);
 
         var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
@@ -67,17 +56,17 @@ public class A_cost_function_sum
         }
     }
     
-    [TestCaseSource(nameof(CostFunctionSumWithIndependentComponentsTestCases))]
+    [Test]
     public void of_independent_components_where_some_components_have_missing_data_uncertainties_when_minimized_should_yield_a_result_equivalent_to_the_results_for_the_isolated_components(
-        Func<double, IList<double>, IList<double>>? gradient, MinimizationStrategy strategy)
+        [Values] bool hasGradient, [Values] MinimizationStrategy strategy)
     {
         if (strategy == MinimizationStrategy.Fast)
             Assert.Ignore("The fast minimization strategy currently leads to inconsistent cost values, parameter values and covariances. " +
                           "This might be solved by using a lower tolerance for the minimizer and/or by calling the Hesse algorithm after minimization. " +
                           "This should be investigated, and if solvable should probably asserted in a separate test.");
         
-        var component1 = CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithParameterSuffix(1).WithGradient(gradient).Build();
-        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(gradient).Build();
+        var component1 = CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithParameterSuffix(1).WithGradient(hasGradient).Build();
+        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).Build();
         var sum = new CostFunctionSum(component1, component2);
 
         var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
