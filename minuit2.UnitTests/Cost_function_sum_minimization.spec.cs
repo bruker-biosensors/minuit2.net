@@ -14,8 +14,9 @@ public class A_cost_function_sum
         var component = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).Build().WithErrorDefinition(4);
         var sum = new CostFunctionSum(component);
 
-        var componentResult = new Migrad(component, CubicPolynomial.ParameterConfigurations.Defaults, strategy).Run();
-        var sumResult = new Migrad(sum, CubicPolynomial.ParameterConfigurations.Defaults, strategy).Run();
+        var minimizerConfiguration = new MigradMinimizerConfiguration(strategy);
+        var componentResult = MigradMinimizer.Minimize(component, CubicPolynomial.ParameterConfigurations.Defaults, minimizerConfiguration);
+        var sumResult = MigradMinimizer.Minimize(sum, CubicPolynomial.ParameterConfigurations.Defaults, minimizerConfiguration);
         
         sumResult.Should().BeEquivalentTo(componentResult, options => options
             .Excluding(x => x.NumberOfFunctionCalls)
@@ -38,9 +39,10 @@ public class A_cost_function_sum
         var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
         var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
 
-        var component1Result = new Migrad(component1, parameterConfigurations1, strategy).Run();
-        var component2Result = new Migrad(component2, parameterConfigurations2, strategy).Run();
-        var sumResult = new Migrad(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), strategy).Run();
+        var minimizerConfiguration = new MigradMinimizerConfiguration(strategy);
+        var component1Result = MigradMinimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
+        var component2Result = MigradMinimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
+        var sumResult = MigradMinimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
         using (new AssertionScope())
         {
@@ -74,9 +76,10 @@ public class A_cost_function_sum
         var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
         var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
 
-        var component1Result = new Migrad(component1, parameterConfigurations1, strategy).Run();
-        var component2Result = new Migrad(component2, parameterConfigurations2, strategy).Run();
-        var sumResult = new Migrad(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), strategy).Run();
+        var minimizerConfiguration = new MigradMinimizerConfiguration(strategy);
+        var component1Result = MigradMinimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
+        var component2Result = MigradMinimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
+        var sumResult = MigradMinimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
         using (new AssertionScope())
         { 
@@ -108,9 +111,8 @@ public class A_cost_function_sum
 
         var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults
             .Concat([new ParameterConfiguration("c1_1", -2.1), new ParameterConfiguration("c3_1", -0.15)]).ToArray();
-        
-        var minimizer = new Migrad(cost, parameterConfigurations);
-        var result = minimizer.Run();
+
+        var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
         result.Should()
             .HaveIsValid(true).And
@@ -140,9 +142,8 @@ public class A_cost_function_sum
         var cost = new CostFunctionSum(
             CubicPolynomial.LeastSquaresCost.WithGradient(hasFirstGradient).Build(),
             CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithGradient(hasLastGradient).Build());
-        
-        var minimizer = new Migrad(cost, CubicPolynomial.ParameterConfigurations.Defaults);
-        var result = minimizer.Run();
+
+        var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
 
         result.Should()
             .HaveIsValid(true).And

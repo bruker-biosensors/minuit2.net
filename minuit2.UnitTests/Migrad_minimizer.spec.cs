@@ -6,13 +6,13 @@ namespace minuit2.UnitTests;
 public class A_migrad_minimizer
 {
     [Test]
-    public void when_constructed_with_parameter_configurations_that_mismatch_the_cost_function_parameters_throws_an_exception()
+    public void when_called_with_parameter_configurations_that_mismatch_the_cost_function_parameters_throws_an_exception()
     {
         ParameterConfiguration[] userParameters = [new("a", 0), new("b", 0)];
         var costParameters = new[] { "a", "b", "c" };
         var cost = new LeastSquares([0, 1, 2], [0, 1, 2], 1, costParameters, (_, _) => 0);
 
-        var construction = void () => _ = new Migrad(cost, userParameters);
-        construction.Should().Throw<ArgumentException>();
+        Action action = () => _ = MigradMinimizer.Minimize(cost, userParameters);
+        action.Should().Throw<ArgumentException>();
     }
 }
