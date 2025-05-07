@@ -4,7 +4,7 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> paramete
 {
     // To achieve proper scaling of component gradients (analytical and numerically approximated), both the function
     // values and gradients have to be scaled by 1/ErrorDefinition in place. Yet, doing so necessitates re-scaling of
-    // the final function values (after minimization). This is done in the hosting composite class.
+    // the final function values (after minimization). This must be done in the hosting composite class.
     
     private readonly List<int> _parameterIndices = inner.Parameters.Select(parameters.IndexOf).ToList();
     
