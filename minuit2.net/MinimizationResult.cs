@@ -4,6 +4,8 @@ public class MinimizationResult
 {
     internal MinimizationResult(FunctionMinimum functionMinimum, ICostFunction costFunction)
     {
+        FunctionMinimum = functionMinimum;
+        
         var state = functionMinimum.UserState();
         Parameters = costFunction.Parameters.ToList();
         var parameterValues = state.Params();
@@ -72,6 +74,8 @@ public class MinimizationResult
 
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
+    
+    internal FunctionMinimum FunctionMinimum { get; }
 }
 
 

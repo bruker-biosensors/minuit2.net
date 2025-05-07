@@ -16,15 +16,13 @@ public static class MigradMinimizer
         var parameterState = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
         var strategy = new MnStrategy((uint)configuration.Strategy);
         var migrad = new MnMigradWrap(wrappedCostFunction, parameterState, strategy);
-        var hesse = new MnHesseWrap(strategy);
-        
+
         var minimum = migrad.Run(configuration.MaximumFunctionCalls, configuration.Tolerance);
         var result = new MinimizationResult(minimum, costFunction);
         if (!costFunction.RequiresErrorDefinitionAutoScaling) return result;
         
         costFunction.AutoScaleErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
-        hesse.Update(minimum, wrappedCostFunction);
-        return new MinimizationResult(minimum, costFunction);
+        return HesseErrorCalculator.Update(result, costFunction);
     }
 
     private static void ThrowIfParametersAreNotMatchingBetween(ICostFunction costFunction,
