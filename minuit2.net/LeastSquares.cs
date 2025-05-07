@@ -79,9 +79,9 @@ public class LeastSquares : ICostFunction
     {
         // Auto-scale the error definition such that a re-evaluation -- e.g. by a subsequent minimization or accurate
         // covariance computation (Hesse algorithm) -- yields the same parameter covariances that would be obtained
-        // from a minimization using data y-errors corresponding to a reduced chi-squared value of 1.
+        // from a minimization using data y-errors resulting in a reduced chi-squared value of 1.
         // Yet, in contrast to scaling the y-errors, by scaling the error definition the cost value (chi-squared value)
-        // itself won't be adjusted. This means that for missing y-errors, the reduced chi-squared should approximate
+        // itself won't be affected. This means that for missing y-errors, the reduced chi-squared should approximate
         // the variance of the noise overlying the data.
         // This is equivalent to the default behaviour in lmfit:
         // https://lmfit.github.io/lmfit-py/fitting.html#uncertainties-in-variable-parameters-and-their-correlations
