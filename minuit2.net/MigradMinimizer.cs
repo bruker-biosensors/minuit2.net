@@ -9,9 +9,7 @@ public static class MigradMinimizer
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
         MigradMinimizerConfiguration? configuration = null)
     {
-        if (parameterConfigurations.AreNotMatching(costFunction.Parameters))
-            throw new ArgumentException($"The {nameof(parameterConfigurations)} must correspond to the " +
-                                        $"{nameof(costFunction.Parameters)} defined by the {nameof(costFunction)}");
+        ThrowIfParametersAreNotMatchingBetween(costFunction, parameterConfigurations);
         
         configuration ??= new MigradMinimizerConfiguration();
         var wrappedCostFunction = new CostFunctionWrap(costFunction);
@@ -27,5 +25,13 @@ public static class MigradMinimizer
         costFunction.AutoScaleErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
         hesse.Update(minimum, wrappedCostFunction);
         return new MinimizationResult(minimum, costFunction);
+    }
+
+    private static void ThrowIfParametersAreNotMatchingBetween(ICostFunction costFunction,
+        IReadOnlyCollection<ParameterConfiguration> parameterConfigurations)
+    {
+        if (parameterConfigurations.AreNotMatching(costFunction.Parameters))
+            throw new ArgumentException("The given parameter configurations do not match the parameter names defined " +
+                                        $"by the cost function: {costFunction.Parameters}");
     }
 }
