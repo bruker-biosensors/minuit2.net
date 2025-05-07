@@ -4,26 +4,34 @@ public class MinimizationResult
 {
     internal MinimizationResult(FunctionMinimum functionMinimum, ICostFunction costFunction)
     {
-        CostValue = functionMinimum.Fval();
+        FunctionMinimum = functionMinimum;
         
         var state = functionMinimum.UserState();
         Parameters = costFunction.Parameters.ToList();
-        ParameterValues = state.Params().ToList();
+        var parameterValues = state.Params();
+        ParameterValues = parameterValues.ToList();
         ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
 
-        // Meta information about the result
+        CostValue = costFunction is ICompositeCostFunction compositeCostFunction
+            ? compositeCostFunction.CompositeValueFor(parameterValues)
+            : costFunction.ValueFor(parameterValues);
+
+        // Meta information
         IsValid = functionMinimum.IsValid();
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = functionMinimum.NFcn();
         HasReachedFunctionCallLimit = functionMinimum.HasReachedCallLimit();
         HasConverged = !functionMinimum.IsAboveMaxEdm();
+
+        Variables = Enumerable.Range(0, NumberOfVariables).Select(var => Parameters.ElementAt(state.ParameterIndexOf(var))).ToList();
     }
     
-    public double CostValue { get; }
+    public double CostValue { get; private set; }
 
     public IReadOnlyCollection<string> Parameters { get; }
+    public IReadOnlyCollection<string> Variables { get; }
     public IReadOnlyCollection<double> ParameterValues { get; }
-    public double[,] ParameterCovarianceMatrix { get; protected init; }
+    public double[,] ParameterCovarianceMatrix { get; }
 
     // The result is considered valid if the minimizer did not run into any troubles. Reasons for an invalid result are: 
     // - the number of allowed function calls has been exhausted
@@ -39,15 +47,14 @@ public class MinimizationResult
     // threshold value (computed as = 0.001 * tolerance * up).
     public bool HasConverged { get; }
 
-    private protected static double[,] CovarianceMatrixFrom(MnUserParameterState state, double scaleFactor = 1)
+    private static double[,] CovarianceMatrixFrom(MnUserParameterState state)
     {
         var covariance = state.Covariance();
-        covariance.Scale(scaleFactor);
         var covarianceValues = covariance.Data();
         
         var numberOfVariables = (int)state.VariableParameters();
         var indexMap = Enumerable.Range(0, numberOfVariables)
-            .ToDictionary(ParameterIndex, variableIndex => variableIndex);
+            .ToDictionary(state.ParameterIndexOf, variableIndex => variableIndex);
         
         var numberOfParameters = state.Params().Count;
         var covarianceMatrix = new double[numberOfParameters, numberOfParameters];
@@ -65,7 +72,15 @@ public class MinimizationResult
 
         return covarianceMatrix;
 
-        int ParameterIndex(int variableIndex) => (int)state.ExtOfInt((uint)variableIndex);
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
+    
+    internal FunctionMinimum FunctionMinimum { get; }
+}
+
+
+file static class UserStateExtensions
+{
+    public static int ParameterIndexOf(this MnUserParameterState state, int variableIndex) =>
+        (int)state.ExtOfInt((uint)variableIndex);
 }

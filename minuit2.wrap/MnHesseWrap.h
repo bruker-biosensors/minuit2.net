@@ -1,0 +1,23 @@
+#ifndef HESSEWRAP_H_
+#define HESSEWRAP_H_
+
+#include "minuit2/MnHesse.h"
+#include "FCNWrap.h"
+
+namespace ROOT
+{
+    namespace Minuit2
+    {
+        class MnHesseWrap : public MnHesse
+        {
+            public:
+                MnHesseWrap(const MnStrategy& strategy = MnStrategy(1)) : MnHesse(strategy)
+                {
+                }
+
+                void Update(FunctionMinimum& minimum, const FCNWrap& function, unsigned int maximumFunctionCalls = 0) const;
+        };
+    }
+}
+
+#endif

@@ -13,7 +13,7 @@ class SwigDirector_FCNWrap : public ROOT::Minuit2::FCNWrap, public Swig::Directo
 
 public:
     SwigDirector_FCNWrap();
-    virtual double Cost(std::vector< double > const &v) const;
+    virtual double Cost(std::vector< double > const &parameterValues) const;
     virtual std::vector< double > Gradient(std::vector< double > const &arg0) const;
     virtual bool HasGradient() const;
     virtual double Up() const;

@@ -4,7 +4,7 @@ using FluentAssertions;
 using FluentAssertions.Primitives;
 using minuit2.net;
 
-namespace minuit2.UnitTests;
+namespace minuit2.UnitTests.TestUtilities;
 
 internal static class MinimizationResultAssertionExtensions
 {
@@ -32,17 +32,13 @@ internal class MinimizationResultAssertions(MinimizationResult value)
     
     public AndConstraint<MinimizationResultAssertions> HaveParameterValues(IReadOnlyCollection<double> expectedValues)
     {
-        Subject.ParameterValues.Should().BeEquivalentTo(expectedValues, options => options
-            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * DefaultRelativeTolerance)))
-            .WhenTypeIs<double>());
+        Subject.ParameterValues.Should().BeEquivalentTo(expectedValues, options => options.WithRelativeDoubleTolerance(DefaultRelativeTolerance));
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
-
+    
     public AndConstraint<MinimizationResultAssertions> HaveParameterCovarianceMatrix(double[,] expectedValues, double? relativeTolerance = null)
     {
-        Subject.ParameterCovarianceMatrix.Should().BeEquivalentTo(expectedValues, options => options
-            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * (relativeTolerance ?? DefaultRelativeTolerance))))
-            .WhenTypeIs<double>());
+        Subject.ParameterCovarianceMatrix.Should().BeEquivalentTo(expectedValues, options => options.WithRelativeDoubleTolerance(relativeTolerance ?? DefaultRelativeTolerance));
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
@@ -64,9 +60,10 @@ internal class MinimizationResultAssertions(MinimizationResult value)
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
-    public AndConstraint<MinimizationResultAssertions> HaveNumberOfFunctionCallsGreaterThan(int expectedValue)
+    public AndConstraint<MinimizationResultAssertions> HaveNumberOfFunctionCallsCloseTo(int expectedValue)
     {
-        Subject.NumberOfFunctionCalls.Should().BeGreaterThan(expectedValue);
+        const int tolerance = 6;
+        Subject.NumberOfFunctionCalls.Should().BeInRange(expectedValue - tolerance, expectedValue + tolerance);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 

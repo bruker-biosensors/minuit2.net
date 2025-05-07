@@ -9,20 +9,20 @@
 //------------------------------------------------------------------------------
 
 
-internal class MnMigradWrap : global::System.IDisposable {
+internal class MnHesseWrap : global::System.IDisposable {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
   protected bool swigCMemOwn;
 
-  internal MnMigradWrap(global::System.IntPtr cPtr, bool cMemoryOwn) {
+  internal MnHesseWrap(global::System.IntPtr cPtr, bool cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
     swigCPtr = new global::System.Runtime.InteropServices.HandleRef(this, cPtr);
   }
 
-  internal static global::System.Runtime.InteropServices.HandleRef getCPtr(MnMigradWrap obj) {
+  internal static global::System.Runtime.InteropServices.HandleRef getCPtr(MnHesseWrap obj) {
     return (obj == null) ? new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero) : obj.swigCPtr;
   }
 
-  internal static global::System.Runtime.InteropServices.HandleRef swigRelease(MnMigradWrap obj) {
+  internal static global::System.Runtime.InteropServices.HandleRef swigRelease(MnHesseWrap obj) {
     if (obj != null) {
       if (!obj.swigCMemOwn)
         throw new global::System.ApplicationException("Cannot release ownership as memory is not owned");
@@ -35,7 +35,7 @@ internal class MnMigradWrap : global::System.IDisposable {
     }
   }
 
-  ~MnMigradWrap() {
+  ~MnHesseWrap() {
     Dispose(false);
   }
 
@@ -49,34 +49,28 @@ internal class MnMigradWrap : global::System.IDisposable {
       if (swigCPtr.Handle != global::System.IntPtr.Zero) {
         if (swigCMemOwn) {
           swigCMemOwn = false;
-          Minuit2PINVOKE.delete_MnMigradWrap(swigCPtr);
+          Minuit2PINVOKE.delete_MnHesseWrap(swigCPtr);
         }
         swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
       }
     }
   }
 
-  public MnMigradWrap(FCNWrap function, MnUserParameterState parameterState, MnStrategy strategy) : this(Minuit2PINVOKE.new_MnMigradWrap__SWIG_0(FCNWrap.getCPtr(function), MnUserParameterState.getCPtr(parameterState), MnStrategy.getCPtr(strategy)), true) {
+  public MnHesseWrap(MnStrategy strategy) : this(Minuit2PINVOKE.new_MnHesseWrap__SWIG_0(MnStrategy.getCPtr(strategy)), true) {
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public MnMigradWrap(FCNWrap function, MnUserParameterState parameterState) : this(Minuit2PINVOKE.new_MnMigradWrap__SWIG_1(FCNWrap.getCPtr(function), MnUserParameterState.getCPtr(parameterState)), true) {
+  public MnHesseWrap() : this(Minuit2PINVOKE.new_MnHesseWrap__SWIG_1(), true) {
+  }
+
+  public void Update(FunctionMinimum minimum, FCNWrap function, uint maximumFunctionCalls) {
+    Minuit2PINVOKE.MnHesseWrap_Update__SWIG_0(swigCPtr, FunctionMinimum.getCPtr(minimum), FCNWrap.getCPtr(function), maximumFunctionCalls);
     if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
-  public FunctionMinimum Run(uint maximumFunctionCalls, double tolerance) {
-    FunctionMinimum ret = new FunctionMinimum(Minuit2PINVOKE.MnMigradWrap_Run__SWIG_0(swigCPtr, maximumFunctionCalls, tolerance), true);
-    return ret;
-  }
-
-  public FunctionMinimum Run(uint maximumFunctionCalls) {
-    FunctionMinimum ret = new FunctionMinimum(Minuit2PINVOKE.MnMigradWrap_Run__SWIG_1(swigCPtr, maximumFunctionCalls), true);
-    return ret;
-  }
-
-  public FunctionMinimum Run() {
-    FunctionMinimum ret = new FunctionMinimum(Minuit2PINVOKE.MnMigradWrap_Run__SWIG_2(swigCPtr), true);
-    return ret;
+  public void Update(FunctionMinimum minimum, FCNWrap function) {
+    Minuit2PINVOKE.MnHesseWrap_Update__SWIG_1(swigCPtr, FunctionMinimum.getCPtr(minimum), FCNWrap.getCPtr(function));
+    if (Minuit2PINVOKE.SWIGPendingException.Pending) throw Minuit2PINVOKE.SWIGPendingException.Retrieve();
   }
 
 }

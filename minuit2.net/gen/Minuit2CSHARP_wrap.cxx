@@ -643,6 +643,7 @@ SWIGINTERN bool std_vector_Sl_double_Sg__Remove(std::vector< double > *self,doub
     #include "Minuit2/MnStrategy.h"
     #include "Minuit2/MnUserParameterState.h"
     #include "MnMigradWrap.h"
+    #include "MnHesseWrap.h"
 
     using namespace ROOT::Minuit2;
 
@@ -658,16 +659,16 @@ SwigDirector_FCNWrap::SwigDirector_FCNWrap() : ROOT::Minuit2::FCNWrap(), Swig::D
   swig_init_callbacks();
 }
 
-double SwigDirector_FCNWrap::Cost(std::vector< double > const &v) const {
+double SwigDirector_FCNWrap::Cost(std::vector< double > const &parameterValues) const {
   double c_result = SwigValueInit< double >() ;
   double jresult = 0 ;
-  void * jv = 0 ;
+  void * jparameterValues = 0 ;
   
   if (!swig_callbackCost) {
-    return ROOT::Minuit2::FCNWrap::Cost(v);
+    return ROOT::Minuit2::FCNWrap::Cost(parameterValues);
   } else {
-    jv = (std::vector< double > *) &v; 
-    jresult = (double) swig_callbackCost(jv);
+    jparameterValues = (std::vector< double > *) &parameterValues; 
+    jresult = (double) swig_callbackCost(jparameterValues);
     c_result = (double)jresult; 
   }
   return c_result;
@@ -3382,6 +3383,82 @@ SWIGEXPORT void SWIGSTDCALL CSharp_delete_MnMigradWrap(void * jarg1) {
   ROOT::Minuit2::MnMigradWrap *arg1 = (ROOT::Minuit2::MnMigradWrap *) 0 ;
   
   arg1 = (ROOT::Minuit2::MnMigradWrap *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnHesseWrap__SWIG_0(void * jarg1) {
+  void * jresult ;
+  ROOT::Minuit2::MnStrategy *arg1 = 0 ;
+  ROOT::Minuit2::MnHesseWrap *result = 0 ;
+  
+  arg1 = (ROOT::Minuit2::MnStrategy *)jarg1;
+  if (!arg1) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ROOT::Minuit2::MnStrategy const & is null", 0);
+    return 0;
+  } 
+  result = (ROOT::Minuit2::MnHesseWrap *)new ROOT::Minuit2::MnHesseWrap((ROOT::Minuit2::MnStrategy const &)*arg1);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_new_MnHesseWrap__SWIG_1() {
+  void * jresult ;
+  ROOT::Minuit2::MnHesseWrap *result = 0 ;
+  
+  result = (ROOT::Minuit2::MnHesseWrap *)new ROOT::Minuit2::MnHesseWrap();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_MnHesseWrap_Update__SWIG_0(void * jarg1, void * jarg2, void * jarg3, unsigned int jarg4) {
+  ROOT::Minuit2::MnHesseWrap *arg1 = (ROOT::Minuit2::MnHesseWrap *) 0 ;
+  ROOT::Minuit2::FunctionMinimum *arg2 = 0 ;
+  ROOT::Minuit2::FCNWrap *arg3 = 0 ;
+  unsigned int arg4 ;
+  
+  arg1 = (ROOT::Minuit2::MnHesseWrap *)jarg1; 
+  arg2 = (ROOT::Minuit2::FunctionMinimum *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ROOT::Minuit2::FunctionMinimum & is null", 0);
+    return ;
+  } 
+  arg3 = (ROOT::Minuit2::FCNWrap *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ROOT::Minuit2::FCNWrap const & is null", 0);
+    return ;
+  } 
+  arg4 = (unsigned int)jarg4; 
+  ((ROOT::Minuit2::MnHesseWrap const *)arg1)->Update(*arg2,(ROOT::Minuit2::FCNWrap const &)*arg3,arg4);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_MnHesseWrap_Update__SWIG_1(void * jarg1, void * jarg2, void * jarg3) {
+  ROOT::Minuit2::MnHesseWrap *arg1 = (ROOT::Minuit2::MnHesseWrap *) 0 ;
+  ROOT::Minuit2::FunctionMinimum *arg2 = 0 ;
+  ROOT::Minuit2::FCNWrap *arg3 = 0 ;
+  
+  arg1 = (ROOT::Minuit2::MnHesseWrap *)jarg1; 
+  arg2 = (ROOT::Minuit2::FunctionMinimum *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ROOT::Minuit2::FunctionMinimum & is null", 0);
+    return ;
+  } 
+  arg3 = (ROOT::Minuit2::FCNWrap *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "ROOT::Minuit2::FCNWrap const & is null", 0);
+    return ;
+  } 
+  ((ROOT::Minuit2::MnHesseWrap const *)arg1)->Update(*arg2,(ROOT::Minuit2::FCNWrap const &)*arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_delete_MnHesseWrap(void * jarg1) {
+  ROOT::Minuit2::MnHesseWrap *arg1 = (ROOT::Minuit2::MnHesseWrap *) 0 ;
+  
+  arg1 = (ROOT::Minuit2::MnHesseWrap *)jarg1; 
   delete arg1;
 }
 

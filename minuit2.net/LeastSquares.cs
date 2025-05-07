@@ -1,10 +1,10 @@
 ﻿namespace minuit2.net;
 
-public class LeastSquares : ILeastSquares
+public class LeastSquares : ICostFunction
 {
-    // For chi-squared fits Up = 1 corresponds to standard 1-sigma parameter errors
-    // (Up = 4 would correspond to 2-sigma errors).
-    internal const double ChiSquaredUp = 1;
+    // For chi-squared fits, ErrorDefinition = 1 corresponds to standard 1-sigma parameter errors
+    // (ErrorDefinition = 4 would correspond to 2-sigma errors etc.)
+    private const double ChiSquaredErrorDefinition = 1;
     
     private readonly List<DataPoint> _data;
     private readonly Func<double, IList<double>, double> _model;
@@ -16,7 +16,7 @@ public class LeastSquares : ILeastSquares
         IList<string> parameters,
         Func<double, IList<double>, double> model, 
         Func<double, IList<double>, IList<double>>? modelGradient = null)
-        : this(x, y, 1.0, parameters, model, modelGradient, shouldScaleCovariances: true) { }
+        : this(x, y, 1.0, parameters, model, modelGradient, requiresErrorDefinitionAutoScaling: true) { }
     
     public LeastSquares(
         IList<double> x,
@@ -25,8 +25,8 @@ public class LeastSquares : ILeastSquares
         IList<string> parameters,
         Func<double, IList<double>, double> model,
         Func<double, IList<double>, IList<double>>? modelGradient = null,
-        bool shouldScaleCovariances = false)
-        : this(x, y, Enumerable.Repeat(yError, y.Count).ToList(), parameters, model, modelGradient, shouldScaleCovariances) { }
+        bool requiresErrorDefinitionAutoScaling = false)
+        : this(x, y, Enumerable.Repeat(yError, y.Count).ToList(), parameters, model, modelGradient, requiresErrorDefinitionAutoScaling) { }
     
     private LeastSquares(
         IList<double> x,
@@ -35,7 +35,7 @@ public class LeastSquares : ILeastSquares
         IList<string> parameters,
         Func<double, IList<double>, double> model,
         Func<double, IList<double>, IList<double>>? modelGradient,
-        bool shouldScaleCovariances)
+        bool requiresErrorDefinitionAutoScaling)
     {
         if (x.Count != y.Count || x.Count != yError.Count)
             throw new ArgumentException($"{nameof(x)}, {nameof(y)} and {nameof(yError)} must have the same length");
@@ -44,19 +44,16 @@ public class LeastSquares : ILeastSquares
         _model = model;
         _modelGradient = modelGradient;
         
-        HasGradient = modelGradient != null;
-        Up = ChiSquaredUp;
-        
         Parameters = parameters;
-        NumberOfData = x.Count;
-        ShouldScaleCovariances = shouldScaleCovariances;
+        HasGradient = modelGradient != null;
+        ErrorDefinition = ChiSquaredErrorDefinition;
+        RequiresErrorDefinitionAutoScaling = requiresErrorDefinitionAutoScaling;
     }
-    
-    internal static LeastSquares Seed => new([], [], [], [], (_, _) => 0, null, false);
 
     public IList<string> Parameters { get; }
-    public int NumberOfData { get; }
-    public bool ShouldScaleCovariances { get; }
+    public bool HasGradient { get; }
+    public double ErrorDefinition { get; private set; }
+    public bool RequiresErrorDefinitionAutoScaling { get; }
 
     public double ValueFor(IList<double> parameterValues) => 
         _data.Select(datum => ResidualFor(datum, parameterValues)).Select(residual => residual * residual).Sum();
@@ -78,9 +75,19 @@ public class LeastSquares : ILeastSquares
     private double ResidualFor(DataPoint datum, IList<double> parameterValues) =>
         (datum.Y - _model(datum.X, parameterValues)) / datum.YError;
     
-    public bool HasGradient { get; }
+    public void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
+    {
+        // Auto-scale the error definition such that a re-evaluation -- e.g. by a subsequent minimization or accurate
+        // covariance computation (Hesse algorithm) -- yields the same parameter covariances that would be obtained
+        // from a minimization using data y-errors resulting in a reduced chi-squared value of 1.
+        // Yet, in contrast to scaling the y-errors, by scaling the error definition the cost value (chi-squared value)
+        // itself won't be affected. This means that for missing y-errors, the reduced chi-squared should approximate
+        // the variance of the noise overlying the data.
+        // This is equivalent to the default behaviour in lmfit:
+        // https://lmfit.github.io/lmfit-py/fitting.html#uncertainties-in-variable-parameters-and-their-correlations
 
-    public double Up { get; }
-
-    public static LeastSquaresSum operator +(LeastSquares left, ILeastSquares right) => new(left, right);
+        var degreesOfFreedom = _data.Count - variables.Count;
+        var reducedChiSquared = ValueFor(parameterValues) / degreesOfFreedom;
+        ErrorDefinition = ChiSquaredErrorDefinition * reducedChiSquared;
+    }
 }

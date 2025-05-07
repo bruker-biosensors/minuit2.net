@@ -1,8 +1,8 @@
-#ifndef _FCNWRAP_H_
-#define _FCNWRAP_H_
+#ifndef FCNWRAP_H_
+#define FCNWRAP_H_
 
 #include "minuit2/FCNBase.h"
-#include <iostream>
+
 namespace ROOT
 {
     namespace Minuit2
@@ -15,7 +15,7 @@ namespace ROOT
             {
             }
 
-            virtual double Cost(std::vector<double> const& v) const;
+            virtual double Cost(std::vector<double> const& parameterValues) const;
 
             virtual std::vector<double> Gradient(std::vector<double> const&) const override;
 
@@ -23,7 +23,7 @@ namespace ROOT
 
             virtual double Up() const;
 
-            double operator()(std::vector<double> const& v) const;
+            double operator()(std::vector<double> const& parameterValues) const;
         };
     }
 }
