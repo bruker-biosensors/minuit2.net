@@ -9,7 +9,7 @@ public class A_cost_function_sum
 {
     [Test, Description("Ensures that the inner scaling of gradients by the error definition and the final rescaling works.")]
     public void with_a_single_component_when_minimized_yields_a_result_equivalent_to_the_result_for_the_isolated_component(
-        [Values] bool hasGradient, [Values] MinimizationStrategy strategy)
+        [Values] bool hasGradient, [Values] Strategy strategy)
     {
         var component = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).Build().WithErrorDefinition(4);
         var sum = new CostFunctionSum(component);
@@ -25,9 +25,9 @@ public class A_cost_function_sum
     
     [Test, Description("Ensures that scaling and rescaling by the error definition works on a per-cost basis.")]
     public void of_independent_components_with_different_error_definitions_when_minimized_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
-        [Values] bool hasGradient, [Values] MinimizationStrategy strategy)
+        [Values] bool hasGradient, [Values] Strategy strategy)
     {
-        if (strategy == MinimizationStrategy.Fast)
+        if (strategy == Strategy.Fast)
             Assert.Ignore("The fast minimization strategy currently leads to inconsistent covariances. " +
                           "In iminuit, this is resolved by calling the Hesse algorithm after minimization. " +
                           "Once the additional Hesse call is added here, the skipped tests could be re-enabled.");
@@ -62,9 +62,9 @@ public class A_cost_function_sum
     [Test, Description("Ensures that auto-scaling of the error definition for cost functions with missing y-errors " +
                        "and, hence, parameter covariances works (on a per-cost basis).")]
     public void of_independent_components_with_some_components_missing_data_uncertainties_when_minimized_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
-        [Values] bool hasGradient, [Values] MinimizationStrategy strategy)
+        [Values] bool hasGradient, [Values] Strategy strategy)
     {
-        if (strategy == MinimizationStrategy.Fast)
+        if (strategy == Strategy.Fast)
             Assert.Ignore("The fast minimization strategy currently leads to inconsistent cost values, parameter values and covariances. " +
                           "This might be solved by using a lower tolerance for the minimizer and/or by calling the Hesse algorithm after minimization. " +
                           "This should be investigated, and if solvable should probably asserted in a separate test.");
