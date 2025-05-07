@@ -7,16 +7,16 @@ public static class MigradMinimizer
     public static MinimizationResult Minimize(
         ICostFunction costFunction, 
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
-        MigradMinimizerConfiguration? configuration = null)
+        MigradMinimizerConfiguration? minimizerConfiguration = null)
     {
         ThrowIfParametersAreNotMatchingBetween(costFunction, parameterConfigurations);
         
-        configuration ??= new MigradMinimizerConfiguration();
-        var result = CoreMinimize(costFunction, parameterConfigurations, configuration);
+        minimizerConfiguration ??= new MigradMinimizerConfiguration();
+        var result = CoreMinimize(costFunction, parameterConfigurations, minimizerConfiguration);
         if (!costFunction.RequiresErrorDefinitionAutoScaling) return result;
         
         costFunction.AutoScaleErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
-        return HesseErrorCalculator.Update(result, costFunction, configuration.Strategy);
+        return HesseErrorCalculator.Update(result, costFunction, minimizerConfiguration.Strategy);
     }
     
     private static void ThrowIfParametersAreNotMatchingBetween(ICostFunction costFunction,
@@ -30,13 +30,13 @@ public static class MigradMinimizer
     private static MinimizationResult CoreMinimize(
         ICostFunction costFunction,
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations, 
-        MigradMinimizerConfiguration configuration)
+        MigradMinimizerConfiguration minimizerConfiguration)
     {
         var cost = new CostFunctionWrap(costFunction);
         var parameterState = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
-        var migrad = new MnMigradWrap(cost, parameterState, configuration.Strategy.AsMnStrategy());
+        var migrad = new MnMigradWrap(cost, parameterState, minimizerConfiguration.Strategy.AsMnStrategy());
 
-        var minimum = migrad.Run(configuration.MaximumFunctionCalls, configuration.Tolerance);
+        var minimum = migrad.Run(minimizerConfiguration.MaximumFunctionCalls, minimizerConfiguration.Tolerance);
         return new MinimizationResult(minimum, costFunction);
     }
 }
