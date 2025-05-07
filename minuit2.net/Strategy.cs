@@ -9,5 +9,5 @@ public enum Strategy
 
 internal static class StrategyExtensions
 {
-    public static MnStrategy ToMnStrategy(this Strategy strategy) => new((uint)strategy);
+    public static MnStrategy AsMnStrategy(this Strategy strategy) => new((uint)strategy);
 }
