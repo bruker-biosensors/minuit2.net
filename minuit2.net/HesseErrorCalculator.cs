@@ -17,8 +17,7 @@ public static class HesseErrorCalculator
     private static void Update(FunctionMinimum minimum, ICostFunction costFunction, MinimizationStrategy strategy)
     {
         var cost = new CostFunctionWrap(costFunction);
-        var mnStrategy = new MnStrategy((uint)strategy);
-        var hesse = new MnHesseWrap(mnStrategy);
+        var hesse = new MnHesseWrap(strategy.ToMnStrategy());
         hesse.Update(minimum, cost);
     }
 }

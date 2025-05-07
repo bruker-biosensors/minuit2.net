@@ -34,8 +34,7 @@ public static class MigradMinimizer
     {
         var cost = new CostFunctionWrap(costFunction);
         var parameterState = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
-        var strategy = new MnStrategy((uint)configuration.Strategy);
-        var migrad = new MnMigradWrap(cost, parameterState, strategy);
+        var migrad = new MnMigradWrap(cost, parameterState, configuration.Strategy.ToMnStrategy());
 
         var minimum = migrad.Run(configuration.MaximumFunctionCalls, configuration.Tolerance);
         return new MinimizationResult(minimum, costFunction);
