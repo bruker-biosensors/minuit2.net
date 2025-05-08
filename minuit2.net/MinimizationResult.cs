@@ -4,10 +4,8 @@ namespace minuit2.net;
 
 internal class MinimizationResult : IMinimizationResult
 {
-    internal MinimizationResult(FunctionMinimum functionMinimum, ICostFunction costFunction)
+    internal MinimizationResult(FunctionMinimum functionMinimum, ICostFunction costFunction, double tolerance)
     {
-        FunctionMinimum = functionMinimum;
-        
         var state = functionMinimum.UserState();
         Parameters = costFunction.Parameters.ToList();
         var parameterValues = state.Params();
@@ -22,9 +20,12 @@ internal class MinimizationResult : IMinimizationResult
         IsValid = functionMinimum.IsValid();
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = functionMinimum.NFcn();
-        ExitCondition = ExitConditionFrom(functionMinimum);
+        ExitCondition = ExitConditionFrom(functionMinimum, tolerance);
 
         Variables = Enumerable.Range(0, NumberOfVariables).Select(var => Parameters.ElementAt(state.ParameterIndexOf(var))).ToList();
+        
+        FunctionMinimum = functionMinimum;
+        Tolerance = tolerance;
     }
     
     public double CostValue { get; }
@@ -72,21 +73,35 @@ internal class MinimizationResult : IMinimizationResult
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
     
-    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum functionMinimum)
+    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum functionMinimum, double tolerance)
     {
+        if (functionMinimum.HasConvergedFor(tolerance))
+            return Converged;
         if (functionMinimum.HasReachedCallLimit())
             return FunctionCallsExhausted;
-        if (!functionMinimum.IsAboveMaxEdm())  // IsAboveMaxEdm seems to return false always even if the minimization is aborted early / far from the edm threshold?!
-            return Converged;
         
         return None;
     }
     
     internal FunctionMinimum FunctionMinimum { get; }
+    internal double Tolerance { get; }
 }
 
 file static class UserStateExtensions
 {
     public static int ParameterIndexOf(this MnUserParameterState state, int variableIndex) =>
         (int)state.ExtOfInt((uint)variableIndex);
+}
+
+file static class FunctionMinimumExtensions
+{
+    public static bool HasConvergedFor(this FunctionMinimum minimum, double tolerance)
+    {
+        // TODO: Add detailed comment
+        // - formula: reference to manual
+        // - additional factor of 2: reference to posting in official channel
+        // - ignoring IsAboveMaxEdm: obviously not a convergence indicator although iminuit docs say it should be
+        var edmThreshold = 0.002 * tolerance * minimum.Up();
+        return minimum.Edm() < edmThreshold;
+    }
 }

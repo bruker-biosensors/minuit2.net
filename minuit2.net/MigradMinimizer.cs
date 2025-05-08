@@ -43,7 +43,7 @@ public static class MigradMinimizer
         try
         {
             var minimum = migrad.Run(minimizerConfiguration.MaximumFunctionCalls, minimizerConfiguration.Tolerance);
-            return new MinimizationResult(minimum, costFunction);
+            return new MinimizationResult(minimum, costFunction, minimizerConfiguration.Tolerance);
         }
         catch (OperationCanceledException)
         {
