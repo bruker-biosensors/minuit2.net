@@ -1,13 +1,14 @@
+using static minuit2.net.MinimizationExitCondition;
+
 namespace minuit2.net;
 
-public class MinimizationResult
+internal class MinimizationResult : IMinimizationResult
 {
-    internal MinimizationResult(FunctionMinimum functionMinimum, ICostFunction costFunction)
+    internal MinimizationResult(FunctionMinimum minimum, ICostFunction costFunction, double edmThreshold)
     {
-        FunctionMinimum = functionMinimum;
-        
-        var state = functionMinimum.UserState();
+        var state = minimum.UserState();
         Parameters = costFunction.Parameters.ToList();
+        Variables = VariablesFrom(Parameters, state);
         var parameterValues = state.Params();
         ParameterValues = parameterValues.ToList();
         ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
@@ -17,16 +18,17 @@ public class MinimizationResult
             : costFunction.ValueFor(parameterValues);
 
         // Meta information
-        IsValid = functionMinimum.IsValid();
+        IsValid = minimum.IsValid();
         NumberOfVariables = (int)state.VariableParameters();
-        NumberOfFunctionCalls = functionMinimum.NFcn();
-        HasReachedFunctionCallLimit = functionMinimum.HasReachedCallLimit();
-        HasConverged = !functionMinimum.IsAboveMaxEdm();
-
-        Variables = Enumerable.Range(0, NumberOfVariables).Select(var => Parameters.ElementAt(state.ParameterIndexOf(var))).ToList();
+        NumberOfFunctionCalls = minimum.NFcn();
+        ExitCondition = ExitConditionFrom(minimum, edmThreshold);
+        
+        // Internals
+        Minimum = minimum;
+        EdmThreshold = edmThreshold;
     }
     
-    public double CostValue { get; private set; }
+    public double CostValue { get; }
 
     public IReadOnlyCollection<string> Parameters { get; }
     public IReadOnlyCollection<string> Variables { get; }
@@ -41,12 +43,17 @@ public class MinimizationResult
     public bool IsValid { get; }
     public int NumberOfVariables { get; }
     public int NumberOfFunctionCalls { get; }
-    public bool HasReachedFunctionCallLimit { get; }
-    
-    // The minimizer is deemed to have converged when the expected vertical distance to the minimum (EDM) falls below a
-    // threshold value (computed as = 0.001 * tolerance * up).
-    public bool HasConverged { get; }
+    public MinimizationExitCondition ExitCondition { get; }
 
+    
+    private static List<string> VariablesFrom(IReadOnlyCollection<string> parameters, MnUserParameterState state)
+    {
+        var numberOfVariables = (int)state.VariableParameters();
+        return Enumerable.Range(0, numberOfVariables).Select(VariableName).ToList();
+
+        string VariableName(int variableIndex) => parameters.ElementAt(state.ParameterIndexOf(variableIndex));
+    }
+    
     private static double[,] CovarianceMatrixFrom(MnUserParameterState state)
     {
         var covariance = state.Covariance();
@@ -75,9 +82,19 @@ public class MinimizationResult
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
     
-    internal FunctionMinimum FunctionMinimum { get; }
+    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum functionMinimum, double edmThreshold)
+    {
+        if (functionMinimum.Edm() < edmThreshold)
+            return Converged;
+        if (functionMinimum.HasReachedCallLimit())
+            return FunctionCallsExhausted;
+        
+        return None;
+    }
+    
+    internal FunctionMinimum Minimum { get; }
+    internal double EdmThreshold { get; }
 }
-
 
 file static class UserStateExtensions
 {

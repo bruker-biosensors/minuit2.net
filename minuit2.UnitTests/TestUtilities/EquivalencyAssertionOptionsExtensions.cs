@@ -18,10 +18,10 @@ internal static class EquivalencyAssertionOptionsExtensions
         return options.WithRelativeDoubleTolerance<double[,]>(relativeTolerance);
     }
     
-    public static EquivalencyAssertionOptions<MinimizationResult> WithRelativeDoubleTolerance(
-        this EquivalencyAssertionOptions<MinimizationResult> options, double relativeTolerance)
+    public static EquivalencyAssertionOptions<IMinimizationResult> WithRelativeDoubleTolerance(
+        this EquivalencyAssertionOptions<IMinimizationResult> options, double relativeTolerance)
     {
-        return options.WithRelativeDoubleTolerance<MinimizationResult>(relativeTolerance);
+        return options.WithRelativeDoubleTolerance<IMinimizationResult>(relativeTolerance);
     }
 
     private static EquivalencyAssertionOptions<T> WithRelativeDoubleTolerance<T>(this EquivalencyAssertionOptions<T> options, double relativeTolerance)

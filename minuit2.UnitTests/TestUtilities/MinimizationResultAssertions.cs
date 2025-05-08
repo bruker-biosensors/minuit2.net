@@ -8,13 +8,13 @@ namespace minuit2.UnitTests.TestUtilities;
 
 internal static class MinimizationResultAssertionExtensions
 {
-    public static MinimizationResultAssertions Should(this MinimizationResult actualValue) => new(actualValue);
+    public static MinimizationResultAssertions Should(this IMinimizationResult actualValue) => new(actualValue);
 }
 
 [DebuggerStepThrough]
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global", Justification = "Adhere to convention")]
-internal class MinimizationResultAssertions(MinimizationResult value)
-    : ObjectAssertions<MinimizationResult, MinimizationResultAssertions>(value)
+internal class MinimizationResultAssertions(IMinimizationResult value)
+    : ObjectAssertions<IMinimizationResult, MinimizationResultAssertions>(value)
 {
     private const double DefaultRelativeTolerance = 0.001;
     
@@ -54,22 +54,16 @@ internal class MinimizationResultAssertions(MinimizationResult value)
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
-    public AndConstraint<MinimizationResultAssertions> HaveReachedFunctionCallLimit(bool expectedValue)
-    {
-        Subject.HasReachedFunctionCallLimit.Should().Be(expectedValue);
-        return new AndConstraint<MinimizationResultAssertions>(this);
-    }
-
     public AndConstraint<MinimizationResultAssertions> HaveNumberOfFunctionCallsCloseTo(int expectedValue)
     {
         const int tolerance = 6;
         Subject.NumberOfFunctionCalls.Should().BeInRange(expectedValue - tolerance, expectedValue + tolerance);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
-
-    public AndConstraint<MinimizationResultAssertions> HaveConverged(bool expectedValue)
+    
+    public AndConstraint<MinimizationResultAssertions> HaveExitCondition(MinimizationExitCondition exitCondition)
     {
-        Subject.HasConverged.Should().Be(expectedValue);
+        Subject.ExitCondition.Should().Be(exitCondition);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 }
