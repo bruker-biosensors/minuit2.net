@@ -4,9 +4,9 @@ namespace minuit2.net;
 
 internal class MinimizationResult : IMinimizationResult
 {
-    internal MinimizationResult(FunctionMinimum functionMinimum, ICostFunction costFunction, double tolerance)
+    internal MinimizationResult(FunctionMinimum minimum, ICostFunction costFunction, double tolerance)
     {
-        var state = functionMinimum.UserState();
+        var state = minimum.UserState();
         Parameters = costFunction.Parameters.ToList();
         var parameterValues = state.Params();
         ParameterValues = parameterValues.ToList();
@@ -17,14 +17,14 @@ internal class MinimizationResult : IMinimizationResult
             : costFunction.ValueFor(parameterValues);
 
         // Meta information
-        IsValid = functionMinimum.IsValid();
+        IsValid = minimum.IsValid();
         NumberOfVariables = (int)state.VariableParameters();
-        NumberOfFunctionCalls = functionMinimum.NFcn();
-        ExitCondition = ExitConditionFrom(functionMinimum, tolerance);
+        NumberOfFunctionCalls = minimum.NFcn();
+        ExitCondition = ExitConditionFrom(minimum, tolerance);
 
         Variables = Enumerable.Range(0, NumberOfVariables).Select(var => Parameters.ElementAt(state.ParameterIndexOf(var))).ToList();
         
-        FunctionMinimum = functionMinimum;
+        Minimum = minimum;
         Tolerance = tolerance;
     }
     
@@ -83,7 +83,7 @@ internal class MinimizationResult : IMinimizationResult
         return None;
     }
     
-    internal FunctionMinimum FunctionMinimum { get; }
+    internal FunctionMinimum Minimum { get; }
     internal double Tolerance { get; }
 }
 

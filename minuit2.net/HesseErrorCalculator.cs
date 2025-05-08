@@ -11,7 +11,7 @@ public static class HesseErrorCalculator
     {
         if (result is not MinimizationResult minimizationResult) return result;
         
-        var minimum = minimizationResult.FunctionMinimum;
+        var minimum = minimizationResult.Minimum;
         Update(minimum, costFunction, strategy);
         return new MinimizationResult(minimum, costFunction, minimizationResult.Tolerance);
     }
