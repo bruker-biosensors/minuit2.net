@@ -4,7 +4,7 @@ namespace minuit2.net;
 
 public static class HesseErrorCalculator
 {
-    public static IMinimizationResult Update(
+    public static IMinimizationResult UpdateParameterCovariances(
         IMinimizationResult result, 
         ICostFunction costFunction, 
         Strategy strategy = Strategy.Balanced)
@@ -12,11 +12,11 @@ public static class HesseErrorCalculator
         if (result is not MinimizationResult minimizationResult) return result;
         
         var minimum = minimizationResult.Minimum;
-        Update(minimum, costFunction, strategy);
+        UpdateParameterCovariances(minimum, costFunction, strategy);
         return new MinimizationResult(minimum, costFunction, minimizationResult.EdmThreshold);
     }
 
-    private static void Update(FunctionMinimum minimum, ICostFunction costFunction, Strategy strategy)
+    private static void UpdateParameterCovariances(FunctionMinimum minimum, ICostFunction costFunction, Strategy strategy)
     {
         var cost = new CostFunctionWrap(costFunction);
         var hesse = new MnHesseWrap(strategy.AsMnStrategy());
