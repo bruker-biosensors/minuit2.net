@@ -8,6 +8,7 @@ internal class MinimizationResult : IMinimizationResult
     {
         var state = minimum.UserState();
         Parameters = costFunction.Parameters.ToList();
+        Variables = VariablesFrom(Parameters, state);
         var parameterValues = state.Params();
         ParameterValues = parameterValues.ToList();
         ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
@@ -21,9 +22,8 @@ internal class MinimizationResult : IMinimizationResult
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = minimum.NFcn();
         ExitCondition = ExitConditionFrom(minimum, edmThreshold);
-
-        Variables = Enumerable.Range(0, NumberOfVariables).Select(var => Parameters.ElementAt(state.ParameterIndexOf(var))).ToList();
         
+        // Internals
         Minimum = minimum;
         EdmThreshold = edmThreshold;
     }
@@ -45,6 +45,15 @@ internal class MinimizationResult : IMinimizationResult
     public int NumberOfFunctionCalls { get; }
     public MinimizationExitCondition ExitCondition { get; }
 
+    
+    private static List<string> VariablesFrom(IReadOnlyCollection<string> parameters, MnUserParameterState state)
+    {
+        var numberOfVariables = (int)state.VariableParameters();
+        return Enumerable.Range(0, numberOfVariables).Select(VariableName).ToList();
+
+        string VariableName(int variableIndex) => parameters.ElementAt(state.ParameterIndexOf(variableIndex));
+    }
+    
     private static double[,] CovarianceMatrixFrom(MnUserParameterState state)
     {
         var covariance = state.Covariance();
