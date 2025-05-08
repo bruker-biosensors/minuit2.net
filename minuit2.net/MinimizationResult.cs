@@ -4,7 +4,7 @@ namespace minuit2.net;
 
 internal class MinimizationResult : IMinimizationResult
 {
-    internal MinimizationResult(FunctionMinimum minimum, ICostFunction costFunction, double tolerance)
+    internal MinimizationResult(FunctionMinimum minimum, ICostFunction costFunction, double edmThreshold)
     {
         var state = minimum.UserState();
         Parameters = costFunction.Parameters.ToList();
@@ -20,12 +20,12 @@ internal class MinimizationResult : IMinimizationResult
         IsValid = minimum.IsValid();
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = minimum.NFcn();
-        ExitCondition = ExitConditionFrom(minimum, tolerance);
+        ExitCondition = ExitConditionFrom(minimum, edmThreshold);
 
         Variables = Enumerable.Range(0, NumberOfVariables).Select(var => Parameters.ElementAt(state.ParameterIndexOf(var))).ToList();
         
         Minimum = minimum;
-        Tolerance = tolerance;
+        EdmThreshold = edmThreshold;
     }
     
     public double CostValue { get; }
@@ -73,9 +73,9 @@ internal class MinimizationResult : IMinimizationResult
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
     
-    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum functionMinimum, double tolerance)
+    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum functionMinimum, double edmThreshold)
     {
-        if (functionMinimum.HasConvergedFor(tolerance))
+        if (functionMinimum.Edm() < edmThreshold)
             return Converged;
         if (functionMinimum.HasReachedCallLimit())
             return FunctionCallsExhausted;
@@ -84,24 +84,11 @@ internal class MinimizationResult : IMinimizationResult
     }
     
     internal FunctionMinimum Minimum { get; }
-    internal double Tolerance { get; }
+    internal double EdmThreshold { get; }
 }
 
 file static class UserStateExtensions
 {
     public static int ParameterIndexOf(this MnUserParameterState state, int variableIndex) =>
         (int)state.ExtOfInt((uint)variableIndex);
-}
-
-file static class FunctionMinimumExtensions
-{
-    public static bool HasConvergedFor(this FunctionMinimum minimum, double tolerance)
-    {
-        // TODO: Add detailed comment
-        // - formula: reference to manual
-        // - additional factor of 2: reference to posting in official channel
-        // - ignoring IsAboveMaxEdm: obviously not a convergence indicator although iminuit docs say it should be
-        var edmThreshold = 0.002 * tolerance * minimum.Up();
-        return minimum.Edm() < edmThreshold;
-    }
 }

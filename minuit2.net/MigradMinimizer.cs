@@ -43,11 +43,29 @@ public static class MigradMinimizer
         try
         {
             var minimum = migrad.Run(minimizerConfiguration.MaximumFunctionCalls, minimizerConfiguration.Tolerance);
-            return new MinimizationResult(minimum, costFunction, minimizerConfiguration.Tolerance);
+            var edmThreshold = EdmThresholdFor(minimum, minimizerConfiguration.Tolerance);
+            return new MinimizationResult(minimum, costFunction, edmThreshold);
         }
         catch (OperationCanceledException)
         {
             return new StoppedMinimizationResult();
         }
+    }
+
+    private static double EdmThresholdFor(FunctionMinimum minimum, double tolerance)
+    {
+        // According to the Minuit2 documentation (https://root.cern.ch/doc/master/Minuit2Page.html),
+        // the Migrad minimization stops by convergence when the estimated vertical distance to the minimum (EDM) gets
+        // smaller than `0.001 * tolerance * up`.
+        
+        // According to a discussion in the ROOT forum (https://root-forum.cern.ch/t/minuit1-vs-minuit2-tolerance-and-edm/54421), 
+        // there is an additional factor of 2 applied to the threshold to maintain compatibility between Minuit1 and 2.
+        
+        // The manual re-computation of the EDM threshold should not be necessary because the minimum property
+        // IsAboveMaxEdm should report on convergence (according to the iminuit documentation). However, one can easily 
+        // show that this is not the case (by forcing a minimization to abort early). For unknown reasons, the value of
+        // this flag appears to be always false.
+        
+        return 0.002 * tolerance * minimum.Up();
     }
 }
