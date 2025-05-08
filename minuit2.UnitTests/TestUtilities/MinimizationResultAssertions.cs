@@ -8,13 +8,13 @@ namespace minuit2.UnitTests.TestUtilities;
 
 internal static class MinimizationResultAssertionExtensions
 {
-    public static MinimizationResultAssertions Should(this MinimizationResult actualValue) => new(actualValue);
+    public static MinimizationResultAssertions Should(this IMinimizationResult actualValue) => new(actualValue);
 }
 
 [DebuggerStepThrough]
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global", Justification = "Adhere to convention")]
-internal class MinimizationResultAssertions(MinimizationResult value)
-    : ObjectAssertions<MinimizationResult, MinimizationResultAssertions>(value)
+internal class MinimizationResultAssertions(IMinimizationResult value)
+    : ObjectAssertions<IMinimizationResult, MinimizationResultAssertions>(value)
 {
     private const double DefaultRelativeTolerance = 0.001;
     

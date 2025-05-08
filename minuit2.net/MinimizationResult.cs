@@ -1,6 +1,8 @@
+using static minuit2.net.MinimizationExitCondition;
+
 namespace minuit2.net;
 
-public class MinimizationResult
+internal class MinimizationResult : IMinimizationResult
 {
     internal MinimizationResult(FunctionMinimum functionMinimum, ICostFunction costFunction)
     {
@@ -25,17 +27,7 @@ public class MinimizationResult
         Variables = Enumerable.Range(0, NumberOfVariables).Select(var => Parameters.ElementAt(state.ParameterIndexOf(var))).ToList();
     }
     
-    internal static MinimizationResult None => new();
-
-    private MinimizationResult()
-    {
-        Parameters = [];
-        Variables = [];
-        ParameterValues = [];
-        ParameterCovarianceMatrix = new double[,] { };
-    }
-    
-    public double CostValue { get; private set; }
+    public double CostValue { get; }
 
     public IReadOnlyCollection<string> Parameters { get; }
     public IReadOnlyCollection<string> Variables { get; }
@@ -83,14 +75,14 @@ public class MinimizationResult
     private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum functionMinimum)
     {
         if (functionMinimum.HasReachedCallLimit())
-            return MinimizationExitCondition.FunctionCallsExhausted;
+            return FunctionCallsExhausted;
         if (!functionMinimum.IsAboveMaxEdm())
-            return MinimizationExitCondition.Converged;
+            return Converged;
         
-        return MinimizationExitCondition.None;
+        return None;
     }
     
-    internal FunctionMinimum? FunctionMinimum { get; }
+    internal FunctionMinimum FunctionMinimum { get; }
 }
 
 file static class UserStateExtensions

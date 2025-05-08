@@ -4,12 +4,14 @@ namespace minuit2.net;
 
 public static class HesseErrorCalculator
 {
-    public static MinimizationResult Update(
-        MinimizationResult result, 
+    public static IMinimizationResult Update(
+        IMinimizationResult result, 
         ICostFunction costFunction, 
         Strategy strategy = Strategy.Balanced)
     {
-        var minimum = result.FunctionMinimum;
+        if (result is not MinimizationResult minimizationResult) return result;
+        
+        var minimum = minimizationResult.FunctionMinimum;
         Update(minimum, costFunction, strategy);
         return new MinimizationResult(minimum, costFunction);
     }

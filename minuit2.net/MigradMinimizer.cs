@@ -1,10 +1,11 @@
 using minuit2.net.wrap;
+using static minuit2.net.MinimizationExitCondition;
 
 namespace minuit2.net;
 
 public static class MigradMinimizer
 {
-    public static MinimizationResult Minimize(
+    public static IMinimizationResult Minimize(
         ICostFunction costFunction, 
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
         MigradMinimizerConfiguration? minimizerConfiguration = null, 
@@ -14,7 +15,7 @@ public static class MigradMinimizer
         
         minimizerConfiguration ??= new MigradMinimizerConfiguration();
         var result = CoreMinimize(costFunction, parameterConfigurations, minimizerConfiguration, cancellationToken);
-        if (!costFunction.RequiresErrorDefinitionAutoScaling || result.CostValue == 0) return result;
+        if (!costFunction.RequiresErrorDefinitionAutoScaling || result.ExitCondition == ManuallyStopped) return result;
         
         costFunction.AutoScaleErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
         return HesseErrorCalculator.Update(result, costFunction, minimizerConfiguration.Strategy);
@@ -29,7 +30,7 @@ public static class MigradMinimizer
                                         $"by the cost function: {costFunction.Parameters}");
     }
 
-    private static MinimizationResult CoreMinimize(
+    private static IMinimizationResult CoreMinimize(
         ICostFunction costFunction,
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
         MigradMinimizerConfiguration minimizerConfiguration, 
@@ -46,7 +47,7 @@ public static class MigradMinimizer
         }
         catch (OperationCanceledException)
         {
-            return MinimizationResult.None;
+            return new StoppedMinimizationResult();
         }
     }
 }
