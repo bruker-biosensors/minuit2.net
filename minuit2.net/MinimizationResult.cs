@@ -26,6 +26,16 @@ public class MinimizationResult
         Variables = Enumerable.Range(0, NumberOfVariables).Select(var => Parameters.ElementAt(state.ParameterIndexOf(var))).ToList();
     }
     
+    internal static MinimizationResult None => new();
+
+    private MinimizationResult()
+    {
+        Parameters = [];
+        Variables = [];
+        ParameterValues = [];
+        ParameterCovarianceMatrix = new double[,] { };
+    }
+    
     public double CostValue { get; private set; }
 
     public IReadOnlyCollection<string> Parameters { get; }
@@ -75,7 +85,7 @@ public class MinimizationResult
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
     
-    internal FunctionMinimum FunctionMinimum { get; }
+    internal FunctionMinimum? FunctionMinimum { get; }
 }
 
 

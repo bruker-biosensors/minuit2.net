@@ -7,19 +7,21 @@ public static class MigradMinimizer
     public static MinimizationResult Minimize(
         ICostFunction costFunction, 
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
-        MigradMinimizerConfiguration? minimizerConfiguration = null)
+        MigradMinimizerConfiguration? minimizerConfiguration = null, 
+        CancellationToken cancellationToken = default)
     {
         ThrowIfParametersAreNotMatchingBetween(costFunction, parameterConfigurations);
         
         minimizerConfiguration ??= new MigradMinimizerConfiguration();
-        var result = CoreMinimize(costFunction, parameterConfigurations, minimizerConfiguration);
-        if (!costFunction.RequiresErrorDefinitionAutoScaling) return result;
+        var result = CoreMinimize(costFunction, parameterConfigurations, minimizerConfiguration, cancellationToken);
+        if (!costFunction.RequiresErrorDefinitionAutoScaling || result.CostValue == 0) return result;
         
         costFunction.AutoScaleErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
         return HesseErrorCalculator.Update(result, costFunction, minimizerConfiguration.Strategy);
     }
     
-    private static void ThrowIfParametersAreNotMatchingBetween(ICostFunction costFunction,
+    private static void ThrowIfParametersAreNotMatchingBetween(
+        ICostFunction costFunction,
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations)
     {
         if (parameterConfigurations.AreNotMatching(costFunction.Parameters))
@@ -29,14 +31,22 @@ public static class MigradMinimizer
 
     private static MinimizationResult CoreMinimize(
         ICostFunction costFunction,
-        IReadOnlyCollection<ParameterConfiguration> parameterConfigurations, 
-        MigradMinimizerConfiguration minimizerConfiguration)
+        IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
+        MigradMinimizerConfiguration minimizerConfiguration, 
+        CancellationToken cancellationToken)
     {
-        var cost = new CostFunctionWrap(costFunction);
+        var cost = new CostFunctionWrap(costFunction, cancellationToken);
         var parameterState = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
         var migrad = new MnMigradWrap(cost, parameterState, minimizerConfiguration.Strategy.AsMnStrategy());
-
-        var minimum = migrad.Run(minimizerConfiguration.MaximumFunctionCalls, minimizerConfiguration.Tolerance);
-        return new MinimizationResult(minimum, costFunction);
+        
+        try
+        {
+            var minimum = migrad.Run(minimizerConfiguration.MaximumFunctionCalls, minimizerConfiguration.Tolerance);
+            return new MinimizationResult(minimum, costFunction);
+        }
+        catch (OperationCanceledException)
+        {
+            return MinimizationResult.None;
+        }
     }
 }
