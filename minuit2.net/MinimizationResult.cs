@@ -20,8 +20,7 @@ public class MinimizationResult
         IsValid = functionMinimum.IsValid();
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = functionMinimum.NFcn();
-        HasReachedFunctionCallLimit = functionMinimum.HasReachedCallLimit();
-        HasConverged = !functionMinimum.IsAboveMaxEdm();
+        ExitCondition = ExitConditionFrom(functionMinimum);
 
         Variables = Enumerable.Range(0, NumberOfVariables).Select(var => Parameters.ElementAt(state.ParameterIndexOf(var))).ToList();
     }
@@ -51,11 +50,7 @@ public class MinimizationResult
     public bool IsValid { get; }
     public int NumberOfVariables { get; }
     public int NumberOfFunctionCalls { get; }
-    public bool HasReachedFunctionCallLimit { get; }
-    
-    // The minimizer is deemed to have converged when the expected vertical distance to the minimum (EDM) falls below a
-    // threshold value (computed as = 0.001 * tolerance * up).
-    public bool HasConverged { get; }
+    public MinimizationExitCondition ExitCondition { get; }
 
     private static double[,] CovarianceMatrixFrom(MnUserParameterState state)
     {
@@ -85,9 +80,18 @@ public class MinimizationResult
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
     
+    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum functionMinimum)
+    {
+        if (!functionMinimum.IsAboveMaxEdm())
+            return MinimizationExitCondition.Converged;
+        if (functionMinimum.HasReachedCallLimit())
+            return MinimizationExitCondition.CallLimitExceeded;
+        
+        return MinimizationExitCondition.None;
+    }
+    
     internal FunctionMinimum? FunctionMinimum { get; }
 }
-
 
 file static class UserStateExtensions
 {

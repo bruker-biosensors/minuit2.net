@@ -54,22 +54,16 @@ internal class MinimizationResultAssertions(MinimizationResult value)
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
-    public AndConstraint<MinimizationResultAssertions> HaveReachedFunctionCallLimit(bool expectedValue)
-    {
-        Subject.HasReachedFunctionCallLimit.Should().Be(expectedValue);
-        return new AndConstraint<MinimizationResultAssertions>(this);
-    }
-
     public AndConstraint<MinimizationResultAssertions> HaveNumberOfFunctionCallsCloseTo(int expectedValue)
     {
         const int tolerance = 6;
         Subject.NumberOfFunctionCalls.Should().BeInRange(expectedValue - tolerance, expectedValue + tolerance);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
-
-    public AndConstraint<MinimizationResultAssertions> HaveConverged(bool expectedValue)
+    
+    public AndConstraint<MinimizationResultAssertions> HaveExitCondition(MinimizationExitCondition exitCondition)
     {
-        Subject.HasConverged.Should().Be(expectedValue);
+        Subject.ExitCondition.Should().Be(exitCondition);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 }

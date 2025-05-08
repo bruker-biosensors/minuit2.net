@@ -1,6 +1,7 @@
 using FluentAssertions;
 using minuit2.net;
 using minuit2.UnitTests.TestUtilities;
+using static minuit2.net.MinimizationExitCondition;
 
 namespace minuit2.UnitTests;
 
@@ -107,11 +108,10 @@ public class A_cost_function
         var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
 
         result.Should()
+            .HaveExitCondition(Converged).And
             .HaveIsValid(true).And
             .HaveNumberOfVariables(4).And
             .HaveNumberOfFunctionCallsCloseTo(expectedFunctionCalls).And
-            .HaveReachedFunctionCallLimit(false).And
-            .HaveConverged(true).And
             .HaveCostValue(12.49).And
             .HaveParameters(["c0", "c1", "c2", "c3"]).And
             .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
@@ -142,11 +142,10 @@ public class A_cost_function
         var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
         result.Should()
+            .HaveExitCondition(Converged).And
             .HaveIsValid(true).And
             .HaveNumberOfVariables(2).And
             .HaveNumberOfFunctionCallsCloseTo(expectedFunctionCalls).And
-            .HaveReachedFunctionCallLimit(false).And
-            .HaveConverged(true).And
             .HaveCostValue(437.7).And
             .HaveParameters(["c0", "c1", "c2", "c3"]).And
             .HaveParameterValues([9.411, -1.97, 1.088, -0.11]).And
@@ -175,11 +174,10 @@ public class A_cost_function
         var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
         result.Should()
+            .HaveExitCondition(Converged).And
             .HaveIsValid(true).And
             .HaveNumberOfVariables(4).And
             .HaveNumberOfFunctionCallsCloseTo(444).And
-            .HaveReachedFunctionCallLimit(false).And
-            .HaveConverged(true).And
             .HaveCostValue(62.34).And
             .HaveParameters(["c0", "c1", "c2", "c3"]).And
             .HaveParameterValues([10.5, -2.39, 1.082, -0.105]).And
@@ -210,11 +208,10 @@ public class A_cost_function
         var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
         result.Should()
+            .HaveExitCondition(Converged).And
             .HaveIsValid(true).And
             .HaveNumberOfVariables(4).And
             .HaveNumberOfFunctionCallsCloseTo(156).And
-            .HaveReachedFunctionCallLimit(false).And
-            .HaveConverged(true).And
             .HaveCostValue(62.34).And
             .HaveParameters(["c0", "c1", "c2", "c3"]).And
             .HaveParameterValues([10.5, -2.39, 1.082, -0.105]).And
@@ -235,10 +232,9 @@ public class A_cost_function
         var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
 
         result.Should()
+            .HaveExitCondition(Converged).And
             .HaveIsValid(true).And
             .HaveNumberOfVariables(4).And
-            .HaveReachedFunctionCallLimit(false).And
-            .HaveConverged(true).And
             .HaveCostValue(0.1249).And
             .HaveParameters(["c0", "c1", "c2", "c3"]).And
             .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And

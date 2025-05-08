@@ -2,6 +2,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using minuit2.net;
 using minuit2.UnitTests.TestUtilities;
+using static minuit2.net.MinimizationExitCondition;
 
 namespace minuit2.UnitTests;
 
@@ -115,11 +116,10 @@ public class A_cost_function_sum
         var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
         result.Should()
+            .HaveExitCondition(Converged).And
             .HaveIsValid(true).And
             .HaveNumberOfVariables(6).And
             .HaveNumberOfFunctionCallsCloseTo(expectedFunctionCalls).And
-            .HaveReachedFunctionCallLimit(false).And
-            .HaveConverged(true).And
             .HaveCostValue(24.99).And
             .HaveParameters(["c0", "c1", "c2", "c3", "c1_1", "c3_1"]).And
             .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931, -1.959, -0.09931]).And
@@ -146,10 +146,9 @@ public class A_cost_function_sum
         var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
 
         result.Should()
+            .HaveExitCondition(Converged).And
             .HaveIsValid(true).And
             .HaveNumberOfVariables(4).And
-            .HaveReachedFunctionCallLimit(false).And
-            .HaveConverged(true).And
             .HaveCostValue(12.62).And
             .HaveParameters(["c0", "c1", "c2", "c3"]).And
             .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
