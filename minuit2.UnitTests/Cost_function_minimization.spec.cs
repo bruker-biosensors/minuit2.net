@@ -99,7 +99,7 @@ public class A_cost_function
     }
 
     [Test]
-    public void when_minimized_with_a_function_call_limit_lower_than_the_number_of_required_calls_yields_a_result_with_a_call_limit_exceeded_exit_condition()
+    public void when_minimized_with_a_function_call_limit_lower_than_the_number_of_required_calls_yields_a_result_with_a_corresponding_exit_condition()
     {
         var cost = CubicPolynomial.LeastSquaresCost.Build();
         var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
@@ -107,7 +107,7 @@ public class A_cost_function
         
         var result = MigradMinimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
 
-        result.Should().HaveExitCondition(CallLimitExceeded);
+        result.Should().HaveExitCondition(FunctionCallsExhausted);
     }
     
     [TestCase(false, 100),
