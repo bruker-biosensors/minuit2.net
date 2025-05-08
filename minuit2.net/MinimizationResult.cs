@@ -23,9 +23,7 @@ internal class MinimizationResult : IMinimizationResult
         NumberOfFunctionCalls = minimum.NFcn();
         ExitCondition = ExitConditionFrom(minimum, edmThreshold);
         
-        // Internals
         Minimum = minimum;
-        EdmThreshold = edmThreshold;
     }
     
     public double CostValue { get; }
@@ -33,7 +31,7 @@ internal class MinimizationResult : IMinimizationResult
     public IReadOnlyCollection<string> Parameters { get; }
     public IReadOnlyCollection<string> Variables { get; }
     public IReadOnlyCollection<double> ParameterValues { get; }
-    public double[,] ParameterCovarianceMatrix { get; }
+    public double[,] ParameterCovarianceMatrix { get; private set; }
 
     // The result is considered valid if the minimizer did not run into any troubles. Reasons for an invalid result are: 
     // - the number of allowed function calls has been exhausted
@@ -44,7 +42,6 @@ internal class MinimizationResult : IMinimizationResult
     public int NumberOfVariables { get; }
     public int NumberOfFunctionCalls { get; }
     public MinimizationExitCondition ExitCondition { get; }
-
     
     private static List<string> VariablesFrom(IReadOnlyCollection<string> parameters, MnUserParameterState state)
     {
@@ -82,18 +79,20 @@ internal class MinimizationResult : IMinimizationResult
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
     
-    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum functionMinimum, double edmThreshold)
+    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum minimum, double edmThreshold)
     {
-        if (functionMinimum.Edm() < edmThreshold)
+        if (minimum.Edm() < edmThreshold)
             return Converged;
-        if (functionMinimum.HasReachedCallLimit())
+        if (minimum.HasReachedCallLimit())
             return FunctionCallsExhausted;
         
         return None;
     }
     
     internal FunctionMinimum Minimum { get; }
-    internal double EdmThreshold { get; }
+
+    internal void UpdateParameterCovariancesWith(FunctionMinimum minimum) =>
+        ParameterCovarianceMatrix = CovarianceMatrixFrom(minimum.UserState());
 }
 
 file static class UserStateExtensions
