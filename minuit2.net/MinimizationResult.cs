@@ -76,7 +76,7 @@ internal class MinimizationResult : IMinimizationResult
     {
         if (functionMinimum.HasReachedCallLimit())
             return FunctionCallsExhausted;
-        if (!functionMinimum.IsAboveMaxEdm())
+        if (!functionMinimum.IsAboveMaxEdm())  // IsAboveMaxEdm seems to return false always even if the minimization is aborted early / far from the edm threshold?!
             return Converged;
         
         return None;
