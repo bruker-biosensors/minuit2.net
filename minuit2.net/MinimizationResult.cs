@@ -82,10 +82,10 @@ public class MinimizationResult
     
     private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum functionMinimum)
     {
-        if (!functionMinimum.IsAboveMaxEdm())
-            return MinimizationExitCondition.Converged;
         if (functionMinimum.HasReachedCallLimit())
             return MinimizationExitCondition.CallLimitExceeded;
+        if (!functionMinimum.IsAboveMaxEdm())
+            return MinimizationExitCondition.Converged;
         
         return MinimizationExitCondition.None;
     }

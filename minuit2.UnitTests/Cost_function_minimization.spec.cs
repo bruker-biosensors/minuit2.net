@@ -97,6 +97,18 @@ public class A_cost_function
         var result = await task;
         result.Should().HaveCostValue(0);
     }
+
+    [Test]
+    public void when_minimized_with_a_function_call_limit_lower_than_the_number_of_required_calls_yields_a_result_with_a_call_limit_exceeded_exit_condition()
+    {
+        var cost = CubicPolynomial.LeastSquaresCost.Build();
+        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+        var minimizerConfiguration = new MigradMinimizerConfiguration(MaximumFunctionCalls: 1);
+        
+        var result = MigradMinimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
+
+        result.Should().HaveExitCondition(CallLimitExceeded);
+    }
     
     [TestCase(false, 100),
      TestCase(true, 78),
