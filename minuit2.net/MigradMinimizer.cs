@@ -18,7 +18,8 @@ public static class MigradMinimizer
         if (!costFunction.RequiresErrorDefinitionAutoScaling || result.ExitCondition == ManuallyStopped) return result;
         
         costFunction.AutoScaleErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
-        return HesseErrorCalculator.UpdateParameterCovariances(result, costFunction, minimizerConfiguration.Strategy);
+        HesseErrorCalculator.UpdateParameterCovariances(result, costFunction, minimizerConfiguration.Strategy);
+        return result;
     }
     
     private static void ThrowIfParametersAreNotMatchingBetween(
