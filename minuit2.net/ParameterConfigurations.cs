@@ -1,11 +1,68 @@
 ﻿namespace minuit2.net;
 
-public record ParameterConfiguration(
-    string Name,
-    double Value,
-    bool IsFixed = false,
-    double? LowerLimit = null,
-    double? UpperLimit = null);
+public record ParameterConfiguration
+{
+    private readonly double _value;
+    private readonly double? _lowerLimit;
+    private readonly double? _upperLimit;
+
+    public ParameterConfiguration(
+        string Name,
+        double Value,
+        bool IsFixed = false,
+        double? LowerLimit = null,
+        double? UpperLimit = null)
+    {
+        this.Name = Name;
+        this.Value = Value;
+        this.IsFixed = IsFixed;
+        this.LowerLimit = LowerLimit;
+        this.UpperLimit = UpperLimit;
+    }
+
+    public string Name { get; init; }
+
+    public double Value
+    {
+        get => _value;
+        init
+        {
+            _value = value;
+            ValidateValueComplianceWithLimits();
+        }
+    }
+
+    public bool IsFixed { get; init; }
+
+    public double? LowerLimit
+    {
+        get => _lowerLimit;
+        init
+        {
+            _lowerLimit = value;
+            ValidateValueComplianceWithLimits();
+        }
+    }
+
+    public double? UpperLimit
+    {
+        get => _upperLimit;
+        init
+        {
+            _upperLimit = value;
+            ValidateValueComplianceWithLimits();
+        }
+    }
+
+    private void ValidateValueComplianceWithLimits()
+    {
+        if (_lowerLimit is { } lower && lower >= _value)
+            throw new InvalidParameterConfiguration($"Lower limit for '{Name}' must be smaller than its value, but {lower} >= {_value}");
+        
+        if (_upperLimit is { } upper && upper <= _value)
+            throw new InvalidParameterConfiguration($"Upper limit for '{Name}' must be greater than its value, but {upper} <= {_value}");
+    }
+}
 
 internal static class ParameterConfigurationExtensions
 {
