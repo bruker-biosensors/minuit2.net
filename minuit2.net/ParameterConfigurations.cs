@@ -53,7 +53,11 @@ public record ParameterConfiguration
             ValidateValueComplianceWithLimits();
         }
     }
+    
+    public bool HasLowerLimit => _lowerLimit is > double.NegativeInfinity;
 
+    public bool HasUpperLimit => _upperLimit is < double.PositiveInfinity;
+    
     private void ValidateValueComplianceWithLimits()
     {
         if (_lowerLimit is { } lower && lower >= _value)
@@ -72,12 +76,17 @@ internal static class ParameterConfigurationExtensions
         foreach (var parameter in parameterConfigurations)
         {
             state.Add(parameter.Name, parameter.Value, parameter.Value * 0.01);
+            
             if (parameter.IsFixed) state.Fix(parameter.Name);
-            if(parameter.LowerLimit is { } lower and > double.NegativeInfinity && parameter.UpperLimit is { } upper and < double.PositiveInfinity)
-                state.SetLimits(parameter.Name, lower, upper);
-            else if (parameter.LowerLimit is { } lowerLimit and > double.NegativeInfinity) state.SetLowerLimit(parameter.Name, lowerLimit);
-            else if (parameter.UpperLimit is { } upperLimit and < double.PositiveInfinity) state.SetUpperLimit(parameter.Name, upperLimit);
+            
+            if(parameter.HasLowerLimit && parameter.HasUpperLimit) 
+                state.SetLimits(parameter.Name, parameter.LowerLimit!.Value, parameter.UpperLimit!.Value);
+            else if (parameter.HasLowerLimit) 
+                state.SetLowerLimit(parameter.Name, parameter.LowerLimit!.Value);
+            else if (parameter.HasUpperLimit) 
+                state.SetUpperLimit(parameter.Name, parameter.UpperLimit!.Value);
         }
+        
         return state;
     }
     
