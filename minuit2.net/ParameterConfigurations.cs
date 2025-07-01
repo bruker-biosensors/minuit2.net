@@ -73,8 +73,10 @@ internal static class ParameterConfigurationExtensions
         {
             state.Add(parameter.Name, parameter.Value, parameter.Value * 0.01);
             if (parameter.IsFixed) state.Fix(parameter.Name);
-            if (parameter.LowerLimit is { } lowerLimit and > double.NegativeInfinity) state.SetLowerLimit(parameter.Name, lowerLimit);
-            if (parameter.UpperLimit is { } upperLimit and < double.PositiveInfinity) state.SetUpperLimit(parameter.Name, upperLimit);
+            if(parameter.LowerLimit is { } lower and > double.NegativeInfinity && parameter.UpperLimit is { } upper and < double.PositiveInfinity)
+                state.SetLimits(parameter.Name, lower, upper);
+            else if (parameter.LowerLimit is { } lowerLimit and > double.NegativeInfinity) state.SetLowerLimit(parameter.Name, lowerLimit);
+            else if (parameter.UpperLimit is { } upperLimit and < double.PositiveInfinity) state.SetUpperLimit(parameter.Name, upperLimit);
         }
         return state;
     }
