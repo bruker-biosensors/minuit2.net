@@ -53,9 +53,7 @@ internal class MinimizationResult : IMinimizationResult
     
     private static double[,] CovarianceMatrixFrom(MnUserParameterState state)
     {
-        var covariance = state.Covariance();
-        var covarianceValues = covariance.Data();
-        
+        var covariancesOfVariables = state.Covariance().Data();  // can be empty (when covariance calculation fails)
         var numberOfVariables = (int)state.VariableParameters();
         var indexMap = Enumerable.Range(0, numberOfVariables)
             .ToDictionary(state.ParameterIndexOf, variableIndex => variableIndex);
@@ -69,8 +67,8 @@ internal class MinimizationResult : IMinimizationResult
             {
                 if (!indexMap.TryGetValue(j, out var columnVariableIndex)) continue;
                 var flatIndex = FlatIndex(rowVariableIndex, columnVariableIndex);
-                covarianceMatrix[i, j] = covarianceValues[flatIndex];
-                covarianceMatrix[j, i] = covarianceValues[flatIndex];
+                covarianceMatrix[i, j] = covariancesOfVariables.ElementAtOrDefault(flatIndex, double.NaN);
+                covarianceMatrix[j, i] = covariancesOfVariables.ElementAtOrDefault(flatIndex, double.NaN);
             }
         }
 

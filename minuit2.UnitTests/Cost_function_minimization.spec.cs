@@ -42,6 +42,24 @@ public class A_cost_function
         result.Should().HaveIsValid(true);
     }
     
+    [Test]
+    public void when_minimized_and_the_minimizer_fails_to_calculate_covariances_returns_NaN_covariances_for_the_variables()
+    {
+        var cost = CubicPolynomial.LeastSquaresCost.Build();
+        ParameterConfiguration[] parameterConfigurations =
+        [
+            CubicPolynomial.ParameterConfigurations.C0 with { LowerLimit = -1E100, UpperLimit = 1E100 },
+            CubicPolynomial.ParameterConfigurations.C1,
+            CubicPolynomial.ParameterConfigurations.C2,
+            CubicPolynomial.ParameterConfigurations.C3 with { IsFixed = true }
+        ];
+        
+        var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+        
+        result.ParameterCovarianceMatrix.SubMatrix(0,2,0,2).Cast<double>().Should().AllBeEquivalentTo(double.NaN);
+        result.ParameterCovarianceMatrix[3, 3].Should().Be(0);
+    }
+    
        private static IEnumerable<object> CostFunctionWithErrorDefinitionDifferentFromOneTestCases()
     {
         yield return new object[] { CubicPolynomial.LeastSquaresCost.Build(), 4 };
