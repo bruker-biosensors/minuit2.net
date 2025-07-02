@@ -7,6 +7,9 @@ public class A_least_squares_cost_function
 {
     private static List<double> SomeValues(int count) => Enumerable.Range(0, count).Select(i => (double)i).ToList();
     
+    private static List<double> SequenceMatching(IList<double> values) =>
+        Enumerable.Range(0, values.Count).Select(i => (double)i).ToList();
+    
     [TestCase(0,1)]
     [TestCase(1,10)]
     [TestCase(10,9)]
@@ -28,9 +31,8 @@ public class A_least_squares_cost_function
     {
         var yValues = SomeValues(yValueCount);
         var yErrors = SomeValues(yErrorCount);
-        var xValues = Enumerable.Range(0, yValueCount).Select(i => (double)i).ToList();
-        
-        var construction = void () => _ = new LeastSquares(xValues, yValues, yErrors, [], (_, _) => 0);
+
+        var construction = void () => _ = new LeastSquares(SequenceMatching(yValues), yValues, yErrors, [], (_, _) => 0);
         construction.Should().Throw<ArgumentException>();
     }
     
@@ -40,7 +42,7 @@ public class A_least_squares_cost_function
     {
         IList<double> yValues = [1, -2, 3, -4, 5];
         const double yError = 0.1;
-        var cost = new LeastSquares([0, 1, 2, 3, 4], yValues, yError, ["level"], (_, p) => p[0]);
+        var cost = new LeastSquares(SequenceMatching(yValues), yValues, yError, ["level"], (_, p) => p[0]);
         
         var expectedValue = yValues
             .Select(y => (y - constantModelLevel) / yError)
@@ -55,7 +57,7 @@ public class A_least_squares_cost_function
     {
         IList<double> yValues = [1, -2, 3, -4, 5];
         IList<double> yErrors = [0.1, 0.2, 0.3, 0.4, 0.5];
-        var cost = new LeastSquares([0, 1, 2, 3, 4], yValues, yErrors, ["level"], (_, p) => p[0]);
+        var cost = new LeastSquares(SequenceMatching(yValues), yValues, yErrors, ["level"], (_, p) => p[0]);
         
         var expectedValue = yValues
                 .Zip(yErrors, (y, yError) => (y - constantModelLevel) / yError)
@@ -69,7 +71,7 @@ public class A_least_squares_cost_function
         [Values(-2, 0, 1)] double constantModelLevel)
     {
         IList<double> yValues = [1, -2, 3, -4, 5];
-        var cost = new LeastSquares([0, 1, 2, 3, 4], yValues, ["level"], (_, p) => p[0]);
+        var cost = new LeastSquares(SequenceMatching(yValues), yValues, ["level"], (_, p) => p[0]);
         
         var expectedValue = yValues
             .Select(y => y - constantModelLevel)
