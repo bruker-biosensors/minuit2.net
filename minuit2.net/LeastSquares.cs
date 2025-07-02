@@ -28,14 +28,14 @@ public class LeastSquares : ICostFunction
         bool requiresErrorDefinitionAutoScaling = false)
         : this(x, y, Enumerable.Repeat(yError, y.Count).ToList(), parameters, model, modelGradient, requiresErrorDefinitionAutoScaling) { }
     
-    private LeastSquares(
+    public LeastSquares(
         IList<double> x,
         IList<double> y,
         IList<double> yError,
         IList<string> parameters,
         Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient,
-        bool requiresErrorDefinitionAutoScaling)
+        Func<double, IList<double>, IList<double>>? modelGradient = null,
+        bool requiresErrorDefinitionAutoScaling = false)
     {
         if (x.Count != y.Count || x.Count != yError.Count)
             throw new ArgumentException($"{nameof(x)}, {nameof(y)} and {nameof(yError)} must have the same length");
