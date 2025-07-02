@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_STANDARD 17)
 project(minuit2.wrap CXX C)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/minuit2.net)
+
 set(CMAKE_SWIG_FLAGS)
 FIND_PACKAGE(SWIG REQUIRED)
 include(UseSWIG)

@@ -11,8 +11,10 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
         
-#      - name: SWIG
-#        uses: mmomtchev/setup-swig@v3
+      - name: Install SWIG
+        run: choco install swig
       
       - name: Build Project
         uses: threeal/cmake-action@v2.1.0
+        with:
+          args: -DCMAKE_BUILD_TYPE=Release
