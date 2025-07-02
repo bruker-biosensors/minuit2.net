@@ -11,8 +11,8 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
         
-      - name: SWIG
-        uses: mmomtchev/setup-swig@v3
+#      - name: SWIG
+#        uses: mmomtchev/setup-swig@v3
       
       - name: Build Project
         uses: threeal/cmake-action@v2.1.0
