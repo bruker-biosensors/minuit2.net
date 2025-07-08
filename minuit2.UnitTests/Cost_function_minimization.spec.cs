@@ -28,13 +28,12 @@ public class A_cost_function
     public void can_be_minimized_with_infinite_parameter_limits(double lowerLimit, double upperLimit)
     {
         var cost = CubicPolynomial.LeastSquaresCost.Build();
-
         ParameterConfiguration[] parameterConfigurations =
         [
-            CubicPolynomial.ParameterConfigurations.C0 with { LowerLimit = lowerLimit, UpperLimit = upperLimit },
-            CubicPolynomial.ParameterConfigurations.C1 with { LowerLimit = lowerLimit, UpperLimit = upperLimit },
-            CubicPolynomial.ParameterConfigurations.C2 with { LowerLimit = lowerLimit, UpperLimit = upperLimit },
-            CubicPolynomial.ParameterConfigurations.C3 with { LowerLimit = lowerLimit, UpperLimit = upperLimit }
+            CubicPolynomial.ParameterConfigurations.C0.WithLimits(lowerLimit, upperLimit),
+            CubicPolynomial.ParameterConfigurations.C1.WithLimits(lowerLimit, upperLimit),
+            CubicPolynomial.ParameterConfigurations.C2.WithLimits(lowerLimit, upperLimit),
+            CubicPolynomial.ParameterConfigurations.C3.WithLimits(lowerLimit, upperLimit),
         ];
 
         var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
@@ -54,7 +53,7 @@ public class A_cost_function
         var cost = CubicPolynomial.LeastSquaresCost.Build();
         ParameterConfiguration[] parameterConfigurations =
         [
-            CubicPolynomial.ParameterConfigurations.C0 with { LowerLimit = lowerLimit, UpperLimit = upperLimit },
+            CubicPolynomial.ParameterConfigurations.C0.WithLimits(lowerLimit, upperLimit),
             CubicPolynomial.ParameterConfigurations.C1,
             CubicPolynomial.ParameterConfigurations.C2,
             CubicPolynomial.ParameterConfigurations.C3
@@ -165,13 +164,12 @@ public class A_cost_function
     public void when_minimized_with_fixed_parameters_yields_the_expected_result(bool hasGradient, int expectedFunctionCalls)
     {
         var cost = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).Build();
-        
         ParameterConfiguration[] parameterConfigurations =
         [
             CubicPolynomial.ParameterConfigurations.C0,
-            CubicPolynomial.ParameterConfigurations.C1 with {IsFixed = true},
+            CubicPolynomial.ParameterConfigurations.C1.Fixed(),
             CubicPolynomial.ParameterConfigurations.C2,
-            CubicPolynomial.ParameterConfigurations.C3 with {IsFixed = true}
+            CubicPolynomial.ParameterConfigurations.C3.Fixed()
         ];
 
         var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
@@ -196,10 +194,10 @@ public class A_cost_function
     private static IEnumerable<TestCaseData> BestValueOutsideLimitsParameterConfigurations()
     {
         // best/true value for parameter c0 is 10 (see CubicPolynomial.cs)
-        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0 with { Value = 11, LowerLimit = 10.5, UpperLimit = 12 }, 10.5);
-        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0 with { Value = 11, LowerLimit = 10.5, UpperLimit = null }, 10.5);
-        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0 with { Value = 9, LowerLimit = 8, UpperLimit = 9.5 }, 9.5);
-        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0 with { Value = 9, LowerLimit = null, UpperLimit = 9.5 }, 9.5);
+        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0.WithValue(11).WithLimits(10.5, 12), 10.5);
+        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0.WithValue(11).WithLimits(10.5, null), 10.5);
+        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0.WithValue(9).WithLimits(8, 9.5), 9.5);
+        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0.WithValue(9).WithLimits(null, 9.5), 9.5);
     }
 
     [TestCaseSource(nameof(BestValueOutsideLimitsParameterConfigurations))]
@@ -224,13 +222,12 @@ public class A_cost_function
     public void when_minimized_with_limited_parameters_yields_the_expected_result()
     {
         var cost = CubicPolynomial.LeastSquaresCost.Build();
-
         ParameterConfiguration[] parameterConfigurations =
         [
-            CubicPolynomial.ParameterConfigurations.C0 with { LowerLimit = CubicPolynomial.ParameterConfigurations.C0.Value - 0.25 },
+            CubicPolynomial.ParameterConfigurations.C0.WithLimits(CubicPolynomial.ParameterConfigurations.C0.Value - 0.25, null),
             CubicPolynomial.ParameterConfigurations.C1,
             CubicPolynomial.ParameterConfigurations.C2,
-            CubicPolynomial.ParameterConfigurations.C3 with { UpperLimit = CubicPolynomial.ParameterConfigurations.C3.Value + 0.005 }
+            CubicPolynomial.ParameterConfigurations.C3.WithLimits(null, CubicPolynomial.ParameterConfigurations.C3.Value + 0.005)
         ];
 
         var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
@@ -258,13 +255,12 @@ public class A_cost_function
     public void with_an_analytical_gradient_when_minimized_with_limited_parameters_yields_the_expected_result()
     {
         var cost = CubicPolynomial.LeastSquaresCost.WithGradient().Build();
-        
         ParameterConfiguration[] parameterConfigurations =
         [
-            CubicPolynomial.ParameterConfigurations.C0 with { LowerLimit = CubicPolynomial.ParameterConfigurations.C0.Value - 0.25 },
+            CubicPolynomial.ParameterConfigurations.C0.WithLimits(CubicPolynomial.ParameterConfigurations.C0.Value - 0.25, null),
             CubicPolynomial.ParameterConfigurations.C1,
             CubicPolynomial.ParameterConfigurations.C2,
-            CubicPolynomial.ParameterConfigurations.C3 with { UpperLimit = CubicPolynomial.ParameterConfigurations.C3.Value + 0.005 }
+            CubicPolynomial.ParameterConfigurations.C3.WithLimits(null, CubicPolynomial.ParameterConfigurations.C3.Value + 0.005)
         ];
 
         var result = MigradMinimizer.Minimize(cost, parameterConfigurations);

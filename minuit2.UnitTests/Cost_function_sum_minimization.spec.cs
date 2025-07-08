@@ -3,6 +3,7 @@ using FluentAssertions.Execution;
 using minuit2.net;
 using minuit2.UnitTests.TestUtilities;
 using static minuit2.net.MinimizationExitCondition;
+using static minuit2.net.ParameterConfiguration;
 
 namespace minuit2.UnitTests;
 
@@ -109,9 +110,8 @@ public class A_cost_function_sum
         var cost = new CostFunctionSum(
             CubicPolynomial.LeastSquaresCost.WithGradient(hasFirstGradient).Build(),
             CubicPolynomial.LeastSquaresCost.WithParameterNames(c1: "c1_1", c3: "c3_1").WithGradient(hasLastGradient).Build());
-
         var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults
-            .Concat([new ParameterConfiguration("c1_1", -2.1), new ParameterConfiguration("c3_1", -0.15)]).ToArray();
+            .Concat([Variable("c1_1", -2.1), Variable("c3_1", -0.15)]).ToArray();
 
         var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 

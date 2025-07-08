@@ -1,70 +1,39 @@
 ﻿namespace minuit2.net;
 
-public record ParameterConfiguration
+public class ParameterConfiguration
 {
-    private readonly double _value;
-    private readonly double? _lowerLimit;
-    private readonly double? _upperLimit;
-
-    public ParameterConfiguration(
-        string Name,
-        double Value,
-        bool IsFixed = false,
-        double? LowerLimit = null,
-        double? UpperLimit = null)
+    private ParameterConfiguration(string name, double value, bool isFixed, double? lowerLimit, double? upperLimit)
     {
-        this.Name = Name;
-        this.Value = Value;
-        this.IsFixed = IsFixed;
-        this.LowerLimit = LowerLimit;
-        this.UpperLimit = UpperLimit;
-    }
-
-    public string Name { get; init; }
-
-    public double Value
-    {
-        get => _value;
-        init
-        {
-            _value = value;
-            ValidateValueComplianceWithLimits();
-        }
-    }
-
-    public bool IsFixed { get; init; }
-
-    public double? LowerLimit
-    {
-        get => _lowerLimit;
-        init
-        {
-            _lowerLimit = value;
-            ValidateValueComplianceWithLimits();
-        }
-    }
-
-    public double? UpperLimit
-    {
-        get => _upperLimit;
-        init
-        {
-            _upperLimit = value;
-            ValidateValueComplianceWithLimits();
-        }
-    }
+        Name = name;
+        Value = value;
+        IsFixed = isFixed;
+        LowerLimit = lowerLimit;
+        UpperLimit = upperLimit; 
+        
+        ValidateValueComplianceWithLimits();
+    } 
     
-    public bool HasLowerLimit => _lowerLimit is > double.NegativeInfinity;
-
-    public bool HasUpperLimit => _upperLimit is < double.PositiveInfinity;
+    public static ParameterConfiguration Fixed(string name, double value) => 
+        new(name, value, true, null, null);
+    
+    public static ParameterConfiguration Variable(string name, double value, double? lowerLimit = null, double? upperLimit = null) => 
+        new(name, value, false, lowerLimit, upperLimit);
+    
+    public string Name { get; }
+    public double Value { get; }
+    public bool IsFixed { get; }
+    public double? LowerLimit { get; }
+    public double? UpperLimit { get; }
+    public bool HasLowerLimit => LowerLimit is > double.NegativeInfinity;
+    public bool HasUpperLimit => UpperLimit is < double.PositiveInfinity;
     
     private void ValidateValueComplianceWithLimits()
     {
-        if (_lowerLimit is { } lower && lower >= _value)
-            throw new InvalidParameterConfiguration($"Lower limit for '{Name}' must be smaller than its value, but {lower} >= {_value}");
+        if (LowerLimit is { } lower && lower >= Value)
+            throw new InvalidParameterConfiguration($"Lower limit for '{Name}' must be smaller than its value, but {lower} >= {Value}");
         
-        if (_upperLimit is { } upper && upper <= _value)
-            throw new InvalidParameterConfiguration($"Upper limit for '{Name}' must be greater than its value, but {upper} <= {_value}");
+        if (UpperLimit is { } upper && upper <= Value)
+            throw new InvalidParameterConfiguration($"Upper limit for '{Name}' must be greater than its value, but {upper} <= {Value}");
     }
 }
 
