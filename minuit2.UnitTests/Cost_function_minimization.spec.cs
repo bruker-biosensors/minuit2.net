@@ -64,19 +64,19 @@ public class A_cost_function
         result.Should().HaveIsValid(false);
     }
     
-    private static IEnumerable<object> CostFunctionWithErrorDefinitionDifferentFromOneTestCases()
+    private static IEnumerable<LeastSquares> CostFunctionWithVaryingErrorDefinitionTestCases()
     {
-        yield return new object[] { CubicPolynomial.LeastSquaresCost.Build(), 4 };
-        yield return new object[] { CubicPolynomial.LeastSquaresCost.WithMissingYErrors().Build(), 4 };
-        yield return new object[] { CubicPolynomial.LeastSquaresCost.WithGradient().Build(), 4 };
-        yield return new object[] { CubicPolynomial.LeastSquaresCost.WithGradient().WithMissingYErrors().Build(), 4 };
-        yield return new object[] { CubicPolynomial.LeastSquaresCost.Build(), 9 };
+        yield return CubicPolynomial.LeastSquaresCost.Build();
+        yield return CubicPolynomial.LeastSquaresCost.WithMissingYErrors().Build();
+        yield return CubicPolynomial.LeastSquaresCost.WithGradient().Build();
+        yield return CubicPolynomial.LeastSquaresCost.WithGradient().WithMissingYErrors().Build();
     }
     
-    [TestCaseSource(nameof(CostFunctionWithErrorDefinitionDifferentFromOneTestCases))]
+    [TestCaseSource(nameof(CostFunctionWithVaryingErrorDefinitionTestCases))]
     public void when_minimized_yields_the_same_cost_value_independent_of_its_error_definition(
-        LeastSquares referenceCost, double errorDefinition)
+        LeastSquares referenceCost)
     {
+        var errorDefinition = Any.Double().Between(2, 10);
         var cost = referenceCost.WithErrorDefinition(errorDefinition);
         
         var referenceResult = MigradMinimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
@@ -85,10 +85,11 @@ public class A_cost_function
         result.CostValue.Should().BeApproximately(referenceResult.CostValue, 1E-10);
     }
     
-    [TestCaseSource(nameof(CostFunctionWithErrorDefinitionDifferentFromOneTestCases))]
+    [TestCaseSource(nameof(CostFunctionWithVaryingErrorDefinitionTestCases))]
     public void when_minimized_yields_parameter_covariances_that_directly_scale_with_the_error_definition(
-        LeastSquares referenceCost, double errorDefinition)
+        LeastSquares referenceCost)
     {
+        var errorDefinition = Any.Double().Between(2, 10);
         var cost = referenceCost.WithErrorDefinition(errorDefinition);
         
         var referenceResult = MigradMinimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
