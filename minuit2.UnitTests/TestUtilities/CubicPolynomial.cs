@@ -1,4 +1,5 @@
 using minuit2.net;
+using static minuit2.net.ParameterConfiguration;
 
 namespace minuit2.UnitTests.TestUtilities;
 
@@ -79,14 +80,11 @@ internal static class CubicPolynomial
     
     public static class ParameterConfigurations
     {
-        public static ParameterConfiguration C0 => new("c0", 10.75);
-        public static ParameterConfiguration C1 => new("c1", -1.97);
-        public static ParameterConfiguration C2 => new("c2", 1.13);
-        public static ParameterConfiguration C3 => new("c3", -0.11);
+        public static ParameterConfiguration C0 => Variable("c0", 10.75);
+        public static ParameterConfiguration C1 => Variable("c1", -1.97);
+        public static ParameterConfiguration C2 => Variable("c2", 1.13);
+        public static ParameterConfiguration C3 => Variable("c3", -0.11);
         public static ParameterConfiguration[] Defaults => [C0, C1, C2, C3];
-        public static ParameterConfiguration[] DefaultsWithSuffix(int suffix) => Defaults.Select(p => p with { Name = $"{p.Name}_{suffix}" }).ToArray();
+        public static ParameterConfiguration[] DefaultsWithSuffix(int suffix) => Defaults.Select(p => p.WithSuffix($"{suffix}")).ToArray();
     }
 }
-
-
-
