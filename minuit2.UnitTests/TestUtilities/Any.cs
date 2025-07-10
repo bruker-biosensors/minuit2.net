@@ -9,6 +9,8 @@ internal static class Any
     
     public static AnyNumber<double> Double() => new(Fixture);
     
+    public static AnyNumber<uint> UnsignedInteger() => new(Fixture);
+    
     public static string String() => Fixture.Create<string>();
     
     public static T? OrNull<T>(this T any) where T : struct
