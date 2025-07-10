@@ -13,24 +13,32 @@ internal static class Any
     
     public static T? OrNull<T>(this T any) where T : struct
     {
-        var randomBool = new Random().NextDouble() >= 0.5;
+        var randomBool = new Random().NextDouble() > 0.5;
         return randomBool ? any : null;
     }
 }
 
-internal class AnyNumber<T>(Fixture fixture) where T : struct, INumber<T>
+internal class AnyNumber<T>(Fixture fixture) where T : INumber<T>, IMinMaxValue<T>
 {
-    private readonly T[] _orderedNumbers = fixture.CreateMany<T>(3).Order().ToArray();
+    private readonly T[] _ascendingNumbers = fixture.CreateMany<T>(3).Order().ToArray();
+    private T LowNumber => _ascendingNumbers[0];
+    private T MidNumber => _ascendingNumbers[1];
+    private T HighNumber => _ascendingNumbers[2];
+    
+    public static implicit operator T(AnyNumber<T> number) => number.MidNumber;
+    
+    // The following MinValue and MaxValue checks ensure that overflow errors are prevented
+    public T GreaterThan(T min) => T.Abs(LowNumber) < T.MaxValue - min 
+        ? min + T.Abs(LowNumber) 
+        : Between(min, T.MaxValue);
 
-    public static implicit operator T(AnyNumber<T> number) => number._orderedNumbers.First();
+    public T SmallerThan(T max) => T.Abs(LowNumber) < max - T.MinValue 
+        ? max - T.Abs(LowNumber) 
+        : Between(T.MinValue, max);
+    
+    // Keep the following evaluation order of terms as is;
+    // Evaluating `(Mid - Low) / (High - Low)` first would, for instance, lead to unwanted roundoff for integers
+    public T Between(T min, T max) => min + (max - min) * (MidNumber - LowNumber) / (HighNumber - LowNumber);
 
-    public T GreaterThan(T min) => min + T.Abs(_orderedNumbers.First());
-
-    public T SmallerThan(T max) => max - T.Abs(_orderedNumbers.First());
-
-    public T Between(T min, T max)
-    {
-        var unitIntervalNumber = (_orderedNumbers[1] - _orderedNumbers[0]) / (_orderedNumbers[2] - _orderedNumbers[0]);
-        return min + unitIntervalNumber * (max - min);
-    }
+    public T OtherThan(T value) => _ascendingNumbers.FirstOrDefault(x => x != value, GreaterThan(value));
 }
