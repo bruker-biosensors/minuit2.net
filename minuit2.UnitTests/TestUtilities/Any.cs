@@ -9,7 +9,7 @@ internal static class Any
     
     public static AnyNumber<double> Double() => new(Fixture);
     
-    public static AnyNumber<uint> UnsignedInteger() => new(Fixture);
+    public static AnyNumber<int> Integer() => new(Fixture);
     
     public static string String() => Fixture.Create<string>();
     
@@ -41,6 +41,4 @@ internal class AnyNumber<T>(Fixture fixture) where T : INumber<T>, IMinMaxValue<
     // Keep the following evaluation order of terms as is;
     // Evaluating `(Mid - Low) / (High - Low)` first would, for instance, lead to unwanted roundoff for integers
     public T Between(T min, T max) => min + (max - min) * (MidNumber - LowNumber) / (HighNumber - LowNumber);
-
-    public T OtherThan(T value) => _ascendingNumbers.FirstOrDefault(x => x != value, GreaterThan(value));
 }
