@@ -23,22 +23,24 @@ internal static class Any
 internal class AnyNumber<T>(Fixture fixture) where T : INumber<T>, IMinMaxValue<T>
 {
     private readonly T[] _ascendingNumbers = fixture.CreateMany<T>(3).Order().ToArray();
-    private T LowNumber => _ascendingNumbers[0];
-    private T MidNumber => _ascendingNumbers[1];
-    private T HighNumber => _ascendingNumbers[2];
     
-    public static implicit operator T(AnyNumber<T> number) => number.MidNumber;
+    private T Number => _ascendingNumbers[0];
+    
+    // The inverse is used to prevent unwanted roundoff, e.g. for integers
+    private T InverseUnitIntervalNumber => _ascendingNumbers[1] > _ascendingNumbers[0]
+        ? (_ascendingNumbers[2] - _ascendingNumbers[0]) / (_ascendingNumbers[1] - _ascendingNumbers[0])
+        : _ascendingNumbers[2] - _ascendingNumbers[0];
+    
+    public static implicit operator T(AnyNumber<T> number) => number.Number;
     
     // The following MinValue and MaxValue checks ensure that overflow errors are prevented
-    public T GreaterThan(T min) => T.Abs(LowNumber) < T.MaxValue - min 
-        ? min + T.Abs(LowNumber) 
+    public T GreaterThan(T min) => T.Abs(Number) < T.MaxValue - min 
+        ? min + T.Abs(Number) 
         : Between(min, T.MaxValue);
 
-    public T SmallerThan(T max) => T.Abs(LowNumber) < max - T.MinValue 
-        ? max - T.Abs(LowNumber) 
+    public T SmallerThan(T max) => T.Abs(Number) < max - T.MinValue 
+        ? max - T.Abs(Number) 
         : Between(T.MinValue, max);
     
-    // Keep the following evaluation order of terms as is;
-    // Evaluating `(Mid - Low) / (High - Low)` first would, for instance, lead to unwanted roundoff for integers
-    public T Between(T min, T max) => min + (max - min) * (MidNumber - LowNumber) / (HighNumber - LowNumber);
+    public T Between(T min, T max) => min + (max - min) / InverseUnitIntervalNumber;
 }
