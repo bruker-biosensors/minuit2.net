@@ -4,7 +4,7 @@ if (POLICY CMP0122)
 endif()
 set(CMAKE_CXX_STANDARD 17)
 
-project(minuite2.net)
+project(minuit2.net)
 
 include(FetchContent)
 
@@ -21,4 +21,3 @@ FetchContent_MakeAvailable(root_minuit2)
 
 add_subdirectory("minuit2.net")
 add_subdirectory("minuit2.wrap")
-
