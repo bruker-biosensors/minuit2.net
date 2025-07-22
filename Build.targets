@@ -11,14 +11,19 @@
     <PackageReference Include="swigwintools" Version="4.2.0" />
   </ItemGroup>
 
+  <Target Name="CheckPlatformConfiguration" BeforeTargets="PrepareForBuild">
+    <Error Text="AnyCPU platform is not supported for this project. Please use x64 or x86 platform configuration instead."
+           Condition="'$(Platform)' == 'AnyCPU' OR '$(PlatformTarget)' == 'AnyCPU'" />
+  </Target>
+
   <Target Name="FindSwigExecutable" BeforeTargets="CreateBuildDirectories">
     <ItemGroup>
       <!-- Try common NuGet package locations -->
-      <PossibleSwigPaths Include="$(MSBuildProjectDirectory)/packages/swigwintools.*/tools/swigwin-*/swig.exe" />
-      <PossibleSwigPaths Include="$(MSBuildThisFileDirectory)/packages/swigwintools.*/tools/swigwin-*/swig.exe" />
-      <PossibleSwigPaths Include="$(NuGetPackageRoot)/swigwintools/*/tools/swigwin-*/swig.exe" />
-      <PossibleSwigPaths Include="$(USERPROFILE)/.nuget/packages/swigwintools/*/tools/swigwin-*/swig.exe" />
-      <PossibleSwigPaths Include="$(MSBuildProjectDirectory)/../packages/swigwintools.*/tools/swigwin-*/swig.exe" />
+      <PossibleSwigPaths Include="$(MSBuildProjectDirectory)\packages/swigwintools.*/tools/swigwin-*/swig.exe" />
+      <PossibleSwigPaths Include="$(MSBuildThisFileDirectory)\packages/swigwintools.*/tools/swigwin-*/swig.exe" />
+      <PossibleSwigPaths Include="$(NuGetPackageRoot)\swigwintools/*/tools/swigwin-*/swig.exe" />
+      <PossibleSwigPaths Include="$(USERPROFILE)\.nuget/packages/swigwintools/*/tools/swigwin-*/swig.exe" />
+      <PossibleSwigPaths Include="$(MSBuildProjectDirectory)\../packages/swigwintools.*/tools/swigwin-*/swig.exe" />
     </ItemGroup>
 
 
@@ -69,16 +74,16 @@
   </Target>
 
   <!-- Include generated C# files in the project -->
-<!--  <ItemGroup>-->
-<!--    <Compile Include="$(SwigOutputDir)\**\*.cs" />-->
-<!--  </ItemGroup>-->
+  <ItemGroup>
+    <Compile Include="$(SwigOutputDir)\**\*.cs" />
+  </ItemGroup>
 
-  <!-- Copy native DLL to output directory -->
-<!--  <Target Name="CopyNativeDlls" AfterTargets="Build">-->
-<!--    <ItemGroup>-->
-<!--      <NativeDlls Include="$(CmakeBuildDir)\**\*.dll" />-->
-<!--    </ItemGroup>-->
-<!--    <Copy SourceFiles="@(NativeDlls)" DestinationFolder="$(OutputPath)" />-->
-<!--  </Target>-->
+   Copy native DLL to output directory
+  <Target Name="CopyWrapperDll" AfterTargets="Build">
+    <ItemGroup>
+      <NativeDlls Include="$(CmakeBuildDir)\**\*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(NativeDlls)" DestinationFolder="$(OutDir)" />
+  </Target>
 
 </Project>
