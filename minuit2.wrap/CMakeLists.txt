@@ -10,14 +10,14 @@ include(UseSWIG)
 
 SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES CPLUSPLUS ON)
 
-set(SOURCE_FILES 
+set(SOURCE_FILES
   FCNWrap.cpp
   MnMigradWrap.cpp
   MnHesseWrap.cpp
   Minuit2.i
 )
 
-set(HEADER_FILES 
+set(HEADER_FILES
   FCNWrap.h
   MnMigradWrap.h
   MnHesseWrap.h
@@ -36,6 +36,3 @@ set_target_properties(minuit2.wrap PROPERTIES
 target_include_directories(minuit2.wrap PRIVATE ${root_minuit2_SOURCE_DIR}/Core/Foundation/inc)
 
 TARGET_LINK_LIBRARIES(minuit2.wrap PRIVATE Minuit2::Minuit2)
-add_custom_command(TARGET minuit2.wrap POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:minuit2.wrap> ${MINUIT2NET_PATH}
-)
