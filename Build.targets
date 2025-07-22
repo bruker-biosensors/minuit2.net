@@ -11,7 +11,7 @@
     <PackageReference Include="swigwintools" Version="4.2.0" />
   </ItemGroup>
 
-  <Target Name="CheckPlatformConfiguration" BeforeTargets="PrepareForBuild">
+  <Target Name="CheckPlatformConfiguration" BeforeTargets="BeforeBuild">
     <Error Text="AnyCPU platform is not supported for this project. Please use x64 or x86 platform configuration instead."
            Condition="'$(Platform)' == 'AnyCPU' OR '$(PlatformTarget)' == 'AnyCPU'" />
   </Target>
@@ -47,12 +47,12 @@
 
 
   <!-- Ensure build directory exists -->
-  <Target Name="CreateBuildDirectories" BeforeTargets="PrepareForBuild">
+  <Target Name="CreateBuildDirectories" BeforeTargets="BeforeBuild">
     <MakeDir Directories="$(BuildDir);$(SwigOutputDir);$(CmakeBuildDir)" />
   </Target>
 
   <!-- Run CMake Configure -->
-  <Target Name="CmakeConfigure" BeforeTargets="PrepareForBuild" DependsOnTargets="CreateBuildDirectories">
+  <Target Name="CmakeConfigure" BeforeTargets="BeforeBuild" DependsOnTargets="CreateBuildDirectories">
     <PropertyGroup>
       <CmakeBuildCommand>cmake -S "$(Minuit2Wrapper)" -B "$(CmakeBuildDir)" -DMINUIT2NET_PATH="$(SwigOutputDir)" -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
     </PropertyGroup>
@@ -63,7 +63,7 @@
   </Target>
 
   <!-- Build C++ Library and Generate SWIG Wrappers -->
-  <Target Name="BuildNativeLibrary" BeforeTargets="PrepareForBuild" DependsOnTargets="CmakeConfigure">
+  <Target Name="BuildNativeLibrary" BeforeTargets="BeforeBuild" DependsOnTargets="CmakeConfigure">
     <PropertyGroup>
       <CmakeBuildCommand>cmake --build "$(CmakeBuildDir)" --config $(Configuration)</CmakeBuildCommand>
     </PropertyGroup>
@@ -78,7 +78,7 @@
     <Compile Include="$(SwigOutputDir)\**\*.cs" />
   </ItemGroup>
 
-   Copy native DLL to output directory
+<!--   Copy native DLL to output directory-->
   <Target Name="CopyWrapperDll" AfterTargets="Build">
     <ItemGroup>
       <NativeDlls Include="$(CmakeBuildDir)\**\*.dll" />
