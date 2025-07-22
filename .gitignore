@@ -1,5 +1,6 @@
 build
 # Build results
+[Bb]uild/
 [Dd]ebug/
 [Rr]elease/
 [Rr]eleases/
