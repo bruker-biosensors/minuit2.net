@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 17)
 project(minuit2.wrap CXX C)
 
@@ -23,9 +23,13 @@ set(HEADER_FILES
   MnHesseWrap.h
 )
 
+cmake_path(ABSOLUTE_PATH MINUIT2NET_PATH NORMALIZE)
+cmake_path(ABSOLUTE_PATH CMAKE_CURRENT_SOURCE_DIR NORMALIZE)
+cmake_path(ABSOLUTE_PATH root_minuit2_SOURCE_DIR NORMALIZE)
+
 SWIG_ADD_LIBRARY(minuit2.wrap
   LANGUAGE csharp
-  OUTPUT_DIR ${MINUIT2NET_PATH}/gen
+  OUTPUT_DIR ${MINUIT2NET_PATH}
   SOURCES ${SOURCE_FILES} ${HEADER_FILES})
 
 target_include_directories(minuit2.wrap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
