@@ -1,0 +1,84 @@
+﻿<Project>
+  <PropertyGroup>
+    <Minuit2Wrapper>./</Minuit2Wrapper>
+    <SwigOutputDir>$(IntermediateOutputPath)/gen</SwigOutputDir>
+    <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/cmake_build</CmakeBuildDir>
+    <SwigToolsPath>$(MSBuildThisFileDirectory)minuit2.net/packages/swigwintools.4.2.0/tools</SwigToolsPath>
+    <SwigToolsPathAlt>$(USERPROFILE)/.nuget/packages/swigwintools/4.2.0/tools</SwigToolsPathAlt>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="swigwintools" Version="4.2.0" />
+  </ItemGroup>
+
+  <Target Name="FindSwigExecutable" BeforeTargets="CreateBuildDirectories">
+    <ItemGroup>
+      <!-- Try common NuGet package locations -->
+      <PossibleSwigPaths Include="$(MSBuildProjectDirectory)/packages/swigwintools.*/tools/swigwin-*/swig.exe" />
+      <PossibleSwigPaths Include="$(MSBuildThisFileDirectory)/packages/swigwintools.*/tools/swigwin-*/swig.exe" />
+      <PossibleSwigPaths Include="$(NuGetPackageRoot)/swigwintools/*/tools/swigwin-*/swig.exe" />
+      <PossibleSwigPaths Include="$(USERPROFILE)/.nuget/packages/swigwintools/*/tools/swigwin-*/swig.exe" />
+      <PossibleSwigPaths Include="$(MSBuildProjectDirectory)/../packages/swigwintools.*/tools/swigwin-*/swig.exe" />
+    </ItemGroup>
+
+
+    <!-- Find first existing SWIG executable -->
+    <ItemGroup>
+      <FoundSwigExe Include="@(PossibleSwigPaths)" Condition="Exists('%(Identity)')" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <SwigExecutable>%(FoundSwigExe.Identity)
+      </SwigExecutable>
+    </PropertyGroup>
+
+    <!-- Debug output -->
+    <Message Text="Searching for SWIG in these locations:" Importance="high" />
+    <Message Text="  - %(PossibleSwigPaths.Identity)" Importance="high" />
+    <Message Text="Found SWIG executable: $(SwigExecutable)" Importance="high" Condition="'$(SwigExecutable)' != ''" />
+    <Error Text="SWIG executable not found. Please ensure swigwintools NuGet package is restored." Condition="'$(SwigExecutable)' == ''" />
+  </Target>
+
+
+
+  <!-- Ensure build directory exists -->
+  <Target Name="CreateBuildDirectories" BeforeTargets="PrepareForBuild">
+    <MakeDir Directories="$(BuildDir);$(SwigOutputDir);$(CmakeBuildDir)" />
+  </Target>
+
+  <!-- Run CMake Configure -->
+  <Target Name="CmakeConfigure" BeforeTargets="PrepareForBuild" DependsOnTargets="CreateBuildDirectories">
+    <PropertyGroup>
+      <CmakeBuildCommand>cmake -S "$(Minuit2Wrapper)" -B "$(CmakeBuildDir)" -DMINUIT2NET_PATH="$(SwigOutputDir)" -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
+    </PropertyGroup>
+
+    <Exec Command="$(CmakeBuildCommand)"
+          WorkingDirectory="$(MSBuildThisFileDirectory)"
+          ContinueOnError="false" />
+  </Target>
+
+  <!-- Build C++ Library and Generate SWIG Wrappers -->
+  <Target Name="BuildNativeLibrary" BeforeTargets="PrepareForBuild" DependsOnTargets="CmakeConfigure">
+    <PropertyGroup>
+      <CmakeBuildCommand>cmake --build "$(CmakeBuildDir)" --config $(Configuration)</CmakeBuildCommand>
+    </PropertyGroup>
+
+    <Exec Command="$(CmakeBuildCommand)"
+          WorkingDirectory="$(MSBuildThisFileDirectory)"
+          ContinueOnError="false" />
+  </Target>
+
+  <!-- Include generated C# files in the project -->
+<!--  <ItemGroup>-->
+<!--    <Compile Include="$(SwigOutputDir)\**\*.cs" />-->
+<!--  </ItemGroup>-->
+
+  <!-- Copy native DLL to output directory -->
+<!--  <Target Name="CopyNativeDlls" AfterTargets="Build">-->
+<!--    <ItemGroup>-->
+<!--      <NativeDlls Include="$(CmakeBuildDir)\**\*.dll" />-->
+<!--    </ItemGroup>-->
+<!--    <Copy SourceFiles="@(NativeDlls)" DestinationFolder="$(OutputPath)" />-->
+<!--  </Target>-->
+
+</Project>
