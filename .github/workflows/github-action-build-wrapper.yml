@@ -57,7 +57,6 @@ jobs:
             -p:AssemblyInformationalVersion=${{ needs.determine-version.outputs.assembly-informational-version }} `
             --disable-build-servers `
             --configuration Release `
-            --no-incremental `
             --output ./bin `
             --warnaserror `
             --nologo `
