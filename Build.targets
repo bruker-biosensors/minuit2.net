@@ -33,12 +33,9 @@
 
     <PropertyGroup>
       <SwigOutputDir>$(MSBuildThisFileDirectory)/minuit2.net/$(IntermediateOutputPath)/gen</SwigOutputDir>
-      <SwigExecutable>%(FoundSwigExe.Identity)
-      </SwigExecutable>
+      <SwigExecutable>%(FoundSwigExe.Identity)</SwigExecutable>
     </PropertyGroup>
   </Target>
-
-
 
   <!-- Ensure build directory exists -->
   <Target Name="CreateBuildDirectories" BeforeTargets="BeforeBuild">
