@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <Minuit2Wrapper>./</Minuit2Wrapper>
+    <Minuit2Wrapper>$(MSBuildThisFileDirectory)</Minuit2Wrapper>
 
     <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build</CmakeBuildDir>
     <SwigToolsPath>$(MSBuildThisFileDirectory)minuit2.net/packages/swigwintools.4.2.0/tools</SwigToolsPath>
@@ -29,11 +29,11 @@
 
     <!-- Find first existing SWIG executable -->
     <ItemGroup>
-      <FoundSwigExe Include="@(PossibleSwigPaths)" Condition="Exists('%(Identity)')" />
+      <FoundSwigExe Include="@(PossibleSwigPaths)"/>
     </ItemGroup>
 
     <PropertyGroup>
-      <SwigOutputDir>$(MSBuildThisFileDirectory)/minuit2.net/$(IntermediateOutputPath)/gen</SwigOutputDir>
+      <SwigOutputDir>$(MSBuildThisFileDirectory)/minuit2.net/$(IntermediateOutputPath)/SwigOutputDir>
       <SwigExecutable>%(FoundSwigExe.Identity)
       </SwigExecutable>
     </PropertyGroup>
@@ -49,7 +49,7 @@
   <!-- Run CMake Configure -->
   <Target Name="CmakeConfigure" BeforeTargets="BeforeBuild" DependsOnTargets="CreateBuildDirectories">
     <PropertyGroup>
-      <CmakeBuildCommand>cmake -S "$(Minuit2Wrapper)" -B "$(CmakeBuildDir)" -DMINUIT2NET_PATH="$(SwigOutputDir)" -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
+      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B "$(CmakeBuildDir)" -DMINUIT2NET_PATH="$(SwigOutputDir)" -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
@@ -74,16 +74,16 @@
 
 
   <!-- Include generated C# files in the project -->
-  <ItemGroup>
-    <Compile Include="$(SwigOutputDir)\**\*.cs" />
-  </ItemGroup>
+<!--  <ItemGroup>-->
+<!--    <Compile Include="$(SwigOutputDir)\**\*.cs" />-->
+<!--  </ItemGroup>-->
 
 <!--   Copy native DLL to output directory-->
-  <Target Name="CopyWrapperDll" AfterTargets="Build">
-    <ItemGroup>
-      <NativeDlls Include="$(CmakeBuildDir)\**\*.dll" />
-    </ItemGroup>
-    <Copy SourceFiles="@(NativeDlls)" DestinationFolder="$(OutDir)" />
-  </Target>
+<!--  <Target Name="CopyWrapperDll" AfterTargets="Build">-->
+<!--    <ItemGroup>-->
+<!--      <NativeDlls Include="$(CmakeBuildDir)\**\*.dll" />-->
+<!--    </ItemGroup>-->
+<!--    <Copy SourceFiles="@(NativeDlls)" DestinationFolder="$(OutDir)" />-->
+<!--  </Target>-->
 
 </Project>
