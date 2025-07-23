@@ -1,7 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
     <Minuit2Wrapper>$(MSBuildThisFileDirectory)</Minuit2Wrapper>
-
     <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build</CmakeBuildDir>
     <SwigToolsPath>$(MSBuildThisFileDirectory)minuit2.net/packages/swigwintools.4.2.0/tools</SwigToolsPath>
     <SwigToolsPathAlt>$(USERPROFILE)/.nuget/packages/swigwintools/4.2.0/tools</SwigToolsPathAlt>
@@ -79,12 +78,20 @@
     <Compile Include="$(MSBuildThisFileDirectory)/minuit2.net/$(IntermediateOutputPath)/gen/*.cs" />
   </ItemGroup>
 
-   Copy native DLL to output directory
-  <Target Name="CopyWrapperDll" AfterTargets="Build">
+  <!-- Copy native DLL to output directory -->
+  <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary">
     <ItemGroup>
       <NativeDlls Include="$(CmakeBuildDir)\**\*.dll" />
     </ItemGroup>
-    <Copy SourceFiles="@(NativeDlls)" DestinationFolder="$(OutDir)" />
+    <ItemGroup>
+      <Content Include="@(NativeDlls)">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <Visible>false</Visible>
+      </Content>
+    </ItemGroup>
+
   </Target>
+
 
 </Project>
