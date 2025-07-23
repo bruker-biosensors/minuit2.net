@@ -33,7 +33,7 @@
     </ItemGroup>
 
     <PropertyGroup>
-      <SwigOutputDir>$(MSBuildThisFileDirectory)/minuit2.net/$(IntermediateOutputPath)/SwigOutputDir>
+      <SwigOutputDir>$(MSBuildThisFileDirectory)/minuit2.net/$(IntermediateOutputPath)/gen</SwigOutputDir>
       <SwigExecutable>%(FoundSwigExe.Identity)
       </SwigExecutable>
     </PropertyGroup>
@@ -49,12 +49,13 @@
   <!-- Run CMake Configure -->
   <Target Name="CmakeConfigure" BeforeTargets="BeforeBuild" DependsOnTargets="CreateBuildDirectories">
     <PropertyGroup>
-      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B "$(CmakeBuildDir)" -DMINUIT2NET_PATH="$(SwigOutputDir)" -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
+      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -DMINUIT2NET_PATH=$(SwigOutputDir) -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
           WorkingDirectory="$(MSBuildThisFileDirectory)"
-          ContinueOnError="false" />
+          ContinueOnError="false"
+          IgnoreExitCode="true"/>
   </Target>
 
   <!-- Build C++ Library and Generate SWIG Wrappers -->
@@ -74,16 +75,16 @@
 
 
   <!-- Include generated C# files in the project -->
-<!--  <ItemGroup>-->
-<!--    <Compile Include="$(SwigOutputDir)\**\*.cs" />-->
-<!--  </ItemGroup>-->
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)/minuit2.net/$(IntermediateOutputPath)/gen/*.cs" />
+  </ItemGroup>
 
-<!--   Copy native DLL to output directory-->
-<!--  <Target Name="CopyWrapperDll" AfterTargets="Build">-->
-<!--    <ItemGroup>-->
-<!--      <NativeDlls Include="$(CmakeBuildDir)\**\*.dll" />-->
-<!--    </ItemGroup>-->
-<!--    <Copy SourceFiles="@(NativeDlls)" DestinationFolder="$(OutDir)" />-->
-<!--  </Target>-->
+   Copy native DLL to output directory
+  <Target Name="CopyWrapperDll" AfterTargets="Build">
+    <ItemGroup>
+      <NativeDlls Include="$(CmakeBuildDir)\**\*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(NativeDlls)" DestinationFolder="$(OutDir)" />
+  </Target>
 
 </Project>
