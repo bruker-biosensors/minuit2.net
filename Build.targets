@@ -1,7 +1,7 @@
 ﻿<Project>
   <PropertyGroup>
     <Minuit2Wrapper>$(MSBuildThisFileDirectory)</Minuit2Wrapper>
-    <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build</CmakeBuildDir>
+    <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
     <SwigToolsPath>$(MSBuildThisFileDirectory)minuit2.net/packages/swigwintools.4.2.0/tools</SwigToolsPath>
     <SwigToolsPathAlt>$(USERPROFILE)/.nuget/packages/swigwintools/4.2.0/tools</SwigToolsPathAlt>
   </PropertyGroup>
@@ -48,7 +48,11 @@
   <!-- Run CMake Configure -->
   <Target Name="CmakeConfigure" BeforeTargets="BeforeBuild" DependsOnTargets="CreateBuildDirectories">
     <PropertyGroup>
-      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -DMINUIT2NET_PATH=$(SwigOutputDir) -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
+      <CmakeArchitecture Condition="'$(Platform)' == 'x64'">x64</CmakeArchitecture>
+      <CmakeArchitecture Condition="'$(Platform)' == 'x86'">Win32</CmakeArchitecture>
+      <CmakeArchitecture Condition="'$(Platform)' == 'ARM64'">ARM64</CmakeArchitecture>
+
+      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputDir) -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
