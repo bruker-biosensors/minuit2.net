@@ -10,11 +10,20 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-        
-      - name: Install SWIG
-        run: choco install swig
-      
-      - name: Build Project
+
+      - name: Config cmake
         uses: threeal/cmake-action@v2.1.0
         with:
-          build-args: --config Release
+          run-build: false
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8'
+
+      - name: Build
+        run: dotnet build -c Release
+
+      - name: Test with the dotnet CLI
+        run: dotnet test --no-build -c Release
+
