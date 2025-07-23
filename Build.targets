@@ -1,8 +1,8 @@
 ﻿<Project>
   <PropertyGroup>
     <Minuit2Wrapper>./</Minuit2Wrapper>
-    <SwigOutputDir>$(IntermediateOutputPath)/gen</SwigOutputDir>
-    <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/cmake_build</CmakeBuildDir>
+
+    <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build</CmakeBuildDir>
     <SwigToolsPath>$(MSBuildThisFileDirectory)minuit2.net/packages/swigwintools.4.2.0/tools</SwigToolsPath>
     <SwigToolsPathAlt>$(USERPROFILE)/.nuget/packages/swigwintools/4.2.0/tools</SwigToolsPathAlt>
   </PropertyGroup>
@@ -33,15 +33,10 @@
     </ItemGroup>
 
     <PropertyGroup>
+      <SwigOutputDir>$(MSBuildThisFileDirectory)/minuit2.net/$(IntermediateOutputPath)/gen</SwigOutputDir>
       <SwigExecutable>%(FoundSwigExe.Identity)
       </SwigExecutable>
     </PropertyGroup>
-
-    <!-- Debug output -->
-    <Message Text="Searching for SWIG in these locations:" Importance="high" />
-    <Message Text="  - %(PossibleSwigPaths.Identity)" Importance="high" />
-    <Message Text="Found SWIG executable: $(SwigExecutable)" Importance="high" Condition="'$(SwigExecutable)' != ''" />
-    <Error Text="SWIG executable not found. Please ensure swigwintools NuGet package is restored." Condition="'$(SwigExecutable)' == ''" />
   </Target>
 
 
@@ -72,6 +67,11 @@
           WorkingDirectory="$(MSBuildThisFileDirectory)"
           ContinueOnError="false" />
   </Target>
+
+  <Target Name="CleanGeneratedDirectories" BeforeTargets="Clean">
+    <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputDir)" />
+  </Target>
+
 
   <!-- Include generated C# files in the project -->
   <ItemGroup>
