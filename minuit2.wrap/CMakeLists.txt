@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 17)
 project(minuit2.wrap CXX C)
 
@@ -10,22 +10,25 @@ include(UseSWIG)
 
 SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES CPLUSPLUS ON)
 
-set(SOURCE_FILES 
+set(SOURCE_FILES
   FCNWrap.cpp
   MnMigradWrap.cpp
   MnHesseWrap.cpp
   Minuit2.i
 )
 
-set(HEADER_FILES 
+set(HEADER_FILES
   FCNWrap.h
   MnMigradWrap.h
   MnHesseWrap.h
 )
 
+cmake_path(ABSOLUTE_PATH MINUIT2NET_PATH NORMALIZE)
+cmake_path(ABSOLUTE_PATH CMAKE_CURRENT_SOURCE_DIR NORMALIZE)
+
 SWIG_ADD_LIBRARY(minuit2.wrap
   LANGUAGE csharp
-  OUTPUT_DIR ${MINUIT2NET_PATH}/gen
+  OUTPUT_DIR ${MINUIT2NET_PATH}
   SOURCES ${SOURCE_FILES} ${HEADER_FILES})
 
 target_include_directories(minuit2.wrap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
@@ -36,6 +39,3 @@ set_target_properties(minuit2.wrap PROPERTIES
 target_include_directories(minuit2.wrap PRIVATE ${root_minuit2_SOURCE_DIR}/Core/Foundation/inc)
 
 TARGET_LINK_LIBRARIES(minuit2.wrap PRIVATE Minuit2::Minuit2)
-add_custom_command(TARGET minuit2.wrap POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:minuit2.wrap> ${MINUIT2NET_PATH}
-)

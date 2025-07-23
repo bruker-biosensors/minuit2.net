@@ -18,6 +18,4 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(root_minuit2)
 
-
-add_subdirectory("minuit2.net")
 add_subdirectory("minuit2.wrap")
