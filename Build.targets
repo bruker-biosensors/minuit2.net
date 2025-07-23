@@ -72,11 +72,14 @@
     <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputDir)" />
   </Target>
 
+  <Target Name="IncludeGeneratedCSharpFiles" AfterTargets="BuildNativeLibrary" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <GeneratedCSharpFiles Include="$(MSBuildThisFileDirectory)/minuit2.net/$(IntermediateOutputPath)/gen/*.cs" />
+      <Compile Include="@(GeneratedCSharpFiles)" />
+    </ItemGroup>
 
-  <!-- Include generated C# files in the project -->
-  <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)/minuit2.net/$(IntermediateOutputPath)/gen/*.cs" />
-  </ItemGroup>
+  </Target>
+
 
   <!-- Copy native DLL to output directory -->
   <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary">
