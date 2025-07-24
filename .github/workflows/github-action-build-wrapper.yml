@@ -86,4 +86,4 @@ jobs:
         if: github.ref_type == 'tag'
         run: |
           dotnet nuget add source --username bruker-biosensors --password ${{ github.token }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/bruker-biosensors/index.json"
-          dotnet nuget push "bin/Release/*.nupkg" --api-key ${{ github.token }} --source "github"
+          dotnet nuget push "**/bin/minuit2.net.*.nupkg" --api-key ${{ github.token }} --source "github"
