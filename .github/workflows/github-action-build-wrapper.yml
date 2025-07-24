@@ -74,3 +74,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           prerelease: ${{ needs.determine-version.outputs.pre-release-label != '' }}
+
+      - name: Publish NuGet Package
+        run: |
+          dotnet nuget add source --username bruker-biosensors --password ${{ secrets.PUBLISH_PACKAGE_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/bruker-biosensors/index.json"
+          dotnet nuget push "bin/Release/*.nupkg" --api-key ${{ secrets.PUBLISH_PACKAGE_TOKEN }} --source "github"
