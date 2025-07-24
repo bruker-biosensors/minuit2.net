@@ -88,11 +88,13 @@
       <NativeDlls Include="$(CmakeBuildDir)\**\*.dll" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="@(NativeDlls)">
+      <None Include="@(NativeDlls)">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         <Visible>false</Visible>
-      </Content>
+        <Pack>True</Pack>
+        <PackagePath>lib\$(TargetFramework)</PackagePath>
+      </None>
     </ItemGroup>
 
   </Target>

@@ -3,9 +3,40 @@ run-name: ${{ github.actor }} is creating a new wrapper 🚀
 
 on:
   push:
+    tags: ["v*.*.*"]
+    branches: ['**']
 
 jobs:
-  Explore-GitHub-Actions:
+  determine-version:
+    name: Determine Version
+    runs-on: ubuntu-latest
+    outputs:
+      sem-ver: ${{ steps.determine-version.outputs.GitVersion_SemVer }}
+      assembly-sem-ver: ${{ steps.determine-version.outputs.GitVersion_AssemblySemVer }}
+      assembly-sem-file-ver: ${{ steps.determine-version.outputs.GitVersion_AssemblySemFileVer }}
+      assembly-informational-version: ${{ steps.determine-version.outputs.GitVersion_InformationalVersion }}
+      pre-release-label: ${{ steps.determine-version.outputs.PreReleaseLabel }}
+    steps:
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3.1.1
+        with:
+          versionSpec: '6.0.x'
+          preferLatestVersion: true
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine Version
+        id: determine-version
+        uses: gittools/actions/gitversion/execute@v3.1.1
+        with:
+          useConfigFile: true
+          
+  build:
+    name: Build Project
+    needs: determine-version
     runs-on: windows-latest
     steps:
       - name: Check out repository code
@@ -13,12 +44,43 @@ jobs:
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
+        
+      - name: Test
+        run: dotnet test ./minuit2.net/ --configuration Release
+
+      - name: Build NuGet Package
+        shell: pwsh
+        # Overview of the different versions: https://gist.github.com/jonlabelle/34993ee032c26420a0943b1c9d106cdc
+        run: |
+          dotnet pack `
+            -p:Version=${{ needs.determine-version.outputs.sem-ver }} `
+            -p:FileVersion=${{ needs.determine-version.outputs.assembly-sem-file-ver }} `
+            -p:AssemblyVersion=${{ needs.determine-version.outputs.assembly-sem-ver }} `
+            -p:AssemblyInformationalVersion=${{ needs.determine-version.outputs.assembly-informational-version }} `
+            --disable-build-servers `
+            --configuration Release `
+            --output ./bin `
+            --warnaserror `
+            --nologo `
+            ./minuit2.net/
+
+      - name: Upload Artifacts
+        if: github.ref_type != 'tag'
+        uses: actions/upload-artifact@v4
         with:
-          dotnet-version: '8'
+          name: library
+          path: ./bin/
+          if-no-files-found: error
 
-      - name: Build
-        run: dotnet build .\minuit2.net\ -v detailed -c Release
+      - name: Create a Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          name: "${{ steps.determine-version.outputs.sem-ver }}"
+          prerelease: ${{ needs.determine-version.outputs.pre-release-label != '' }}
 
-      - name: Test with the dotnet CLI
-        run: dotnet test .\minuit2.net\ --no-build -c Release
-
+      - name: Publish NuGet Package
+        if: github.ref_type == 'tag'
+        run: |
+          dotnet nuget add source --username bruker-biosensors --password ${{ secrets.PUBLISH_PACKAGE_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/bruker-biosensors/index.json"
+          dotnet nuget push "bin/Release/*.nupkg" --api-key ${{ secrets.PUBLISH_PACKAGE_TOKEN }} --source "github"
