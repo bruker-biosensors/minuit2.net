@@ -3,6 +3,8 @@ run-name: ${{ github.actor }} is creating a new wrapper 🚀
 
 on:
   push:
+    tags: ["v*.*.*"]
+    branches: ['**']
 
 jobs:
   determine-version:
@@ -63,6 +65,7 @@ jobs:
             ./minuit2.net/
 
       - name: Upload Artifacts
+        if: github.ref_type != 'tag'
         uses: actions/upload-artifact@v4
         with:
           name: library
@@ -71,10 +74,13 @@ jobs:
 
       - name: Create a Release
         uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
         with:
+          name: "${{ steps.determine-version.outputs.sem-ver }}"
           prerelease: ${{ needs.determine-version.outputs.pre-release-label != '' }}
 
       - name: Publish NuGet Package
+        if: github.ref_type == 'tag'
         run: |
           dotnet nuget add source --username bruker-biosensors --password ${{ secrets.PUBLISH_PACKAGE_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/bruker-biosensors/index.json"
           dotnet nuget push "bin/Release/*.nupkg" --api-key ${{ secrets.PUBLISH_PACKAGE_TOKEN }} --source "github"
