@@ -70,7 +70,6 @@ jobs:
           if-no-files-found: error
 
       - name: Create a Release
-        if: false
         uses: softprops/action-gh-release@v2
         with:
           prerelease: ${{ needs.determine-version.outputs.pre-release-label != '' }}
