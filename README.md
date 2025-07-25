@@ -90,25 +90,24 @@ In Visual Studio/Rider:
 
 ## Usage
 
-The library provides a high-level C# API for function minimization:
+The following basic example shows how to fit a sine model to observed data:
 
 ```csharp
-// Create a cost function
-var costFunction = new MyCostFunction();
+// Define the cost function
+var cost = new LeastSquares( 
+    x: ...,
+    y: ...,
+    parameters: ["amp", "freq", "offset"],
+    model: (x, p) => p[0] * Math.Sin(p[1] * x) + p[2]);
 
-// Configure parameters
-var parameters = new ParameterConfiguration()
-    .AddParameter("param1", initialValue: 1.0, error: 0.1)
-    .AddParameter("param2", initialValue: 2.0, error: 0.1);
-
-// Create and configure minimizer
-var minimizer = new MigradMinimizer();
-var result = minimizer.Minimize(costFunction, parameters);
-
-// Check results
-if (result.IsValid)
+// Configure parameters with initial values and constraints
+var parameterConfigurations = new[]
 {
-    Console.WriteLine($"Minimum found at: {result.UserState}");
-    Console.WriteLine($"Function value: {result.Fval}");
-}
+    ParameterConfiguration.Variable("amp", 1),
+    ParameterConfiguration.Variable("freq", 1, lowerLimit: 0),
+    ParameterConfiguration.Fixed("offset", 1)
+};
+
+// Minimize the cost function for the given configuration
+var minimum = MigradMinimizer.Minimize(cost, parameterConfigurations);
 ```
