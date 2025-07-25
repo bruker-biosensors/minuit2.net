@@ -1,10 +1,10 @@
 # Minuit2.NET
 
-A .NET wrapper for the Minuit2 library from CERN's [ROOT project](https://root.cern/), enhanced with practical extensions.
+A .NET wrapper for the [Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library from CERN's [ROOT project](https://root.cern/), enhanced with practical extensions.
 
 ## Overview
 
-Minuit2 is a well-established nonlinear minimization C++ library that has been used in high-energy physics for decades. 
+[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) is a well-established nonlinear minimization C++ library that has been used in high-energy physics for decades. 
 It is conceived as a tool to minimize multi-parameter cost functions and analyze their behavior near the minimum to 
 compute optimum parameter values and associated uncertainties — efficiently and with statistical rigor. Minuit2.NET 
 brings this powerful tool to the .NET ecosystem.
@@ -47,13 +47,13 @@ It extends the original library with:
 ### Runtime Requirements
 
 - .NET 8.0 runtime
-- Visual C++ Redistributable (for the native Minuit2 library)
+- Visual C++ Redistributable (for the native [Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library)
 
 ## Building the Project
 
 The build process is automated through MSBuild targets and will:
 
-1. Download ROOT/Minuit2 source code (v6.34.04) via CMake FetchContent
+1. Download [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) source code (v6.34.04) via CMake FetchContent
 2. Configure and build the C++ Minuit2 library
 3. Generate C# wrapper code using SWIG
 4. Compile the .NET library with the generated bindings
@@ -67,7 +67,7 @@ The build process is automated through MSBuild targets and will:
    ```
 3. The build system will automatically:
    - Install SWIG tools via NuGet
-   - Download and compile Minuit2 from ROOT
+   - Download and compile Minuit2 from [ROOT](https://github.com/root-project/root)
    - Generate C# bindings
    - Build the complete .NET library
 
@@ -86,7 +86,7 @@ In Visual Studio/Rider:
 - `swigwintools` (4.2.0) - SWIG interface generator
 
 ### External Dependencies (automatically handled)
-- ROOT/Minuit2 library (v6.34.04) - downloaded and built during compilation
+- [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library (v6.34.04) - downloaded and built during compilation
 
 ## Usage
 
