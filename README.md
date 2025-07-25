@@ -1,26 +1,24 @@
-# minuit2.net
+# Minuit2.NET
 
-A .NET wrapper for the MINUIT2 minimization library from CERN's ROOT project. This project provides C# bindings for the powerful MINUIT2 numerical minimization and error analysis library, enabling .NET developers to perform sophisticated mathematical optimization tasks.
+A .NET wrapper for the Minuit2 library from CERN's [ROOT project](https://root.cern/), enhanced with practical extensions.
 
 ## Overview
 
-minuit2.net is a C# wrapper around the MINUIT2 library, which is a widely-used tool for function minimization and error analysis in scientific computing. MINUIT2 is part of the ROOT data analysis framework developed at CERN and is commonly used in high-energy physics for fitting experimental data.
+Minuit2 is a well-established nonlinear minimization C++ library that has been used in high-energy physics for decades. 
+It is conceived as a tool to minimize multi-parameter cost functions and analyze their behavior near the minimum to 
+compute optimum parameter values and associated uncertainties — efficiently and with statistical rigor. Minuit2.NET 
+brings this powerful tool to the .NET ecosystem.
 
-This wrapper provides:
-- **Function Minimization**: Advanced algorithms for finding function minima
-- **Error Analysis**: Sophisticated error calculation and parameter uncertainty estimation
-- **Multiple Minimization Strategies**: Support for different optimization algorithms including MIGRAD
-- **Composite Cost Functions**: Ability to combine multiple cost functions for complex optimization problems
-- **Parameter Management**: Flexible parameter configuration with bounds and constraints
+The library provides:
+- **Flexible Problem Setup**: Define cost functions with ease (for least squares problems and beyond)
+- **Reliable Minimization**: Find cost function minima using robust algorithms like MIGRAD
+- **Accurate Error Analysis**: Obtain sound parameter uncertainty estimates
+- **Simple Parameter Control**: Configure parameter bounds and constraints intuitively
 
-## Key Features
-
-- **MIGRAD Minimizer**: Implementation of the robust MIGRAD minimization algorithm
-- **Hesse Error Calculator**: Precise error analysis using the Hesse matrix
-- **Least Squares Fitting**: Built-in support for least squares optimization
-- **Cost Function Composition**: Combine multiple cost functions for complex scenarios
-- **Flexible Parameter Configuration**: Set bounds, fix parameters, and configure optimization strategies
-- **Cross-Platform**: Supports x64, x86, and ARM64 architectures
+It extends the original library with:
+- Composite cost functions combining parameter-sharing individual cost functions into one
+- Support for data with unknown uncertainties 
+- Support for cancelling active minimization processes
 
 ## Project Structure
 
@@ -49,14 +47,14 @@ This wrapper provides:
 ### Runtime Requirements
 
 - .NET 8.0 runtime
-- Visual C++ Redistributable (for the native MINUIT2 library)
+- Visual C++ Redistributable (for the native Minuit2 library)
 
 ## Building the Project
 
 The build process is automated through MSBuild targets and will:
 
-1. Download ROOT/MINUIT2 source code (v6.34.04) via CMake FetchContent
-2. Configure and build the C++ MINUIT2 library
+1. Download ROOT/Minuit2 source code (v6.34.04) via CMake FetchContent
+2. Configure and build the C++ Minuit2 library
 3. Generate C# wrapper code using SWIG
 4. Compile the .NET library with the generated bindings
 
@@ -69,13 +67,14 @@ The build process is automated through MSBuild targets and will:
    ```
 3. The build system will automatically:
    - Install SWIG tools via NuGet
-   - Download and compile MINUIT2 from ROOT
+   - Download and compile Minuit2 from ROOT
    - Generate C# bindings
    - Build the complete .NET library
 
 ### Platform Configuration
 
-**Important**: You must specify a platform target (x64, x86, or ARM64). AnyCPU is not supported due to the native library dependencies.
+**Important**: You must specify a platform target (x64, x86, or ARM64). AnyCPU is not supported due to the native 
+library dependencies.
 
 In Visual Studio/Rider:
 - Select x64, x86, or ARM64 from the platform dropdown
@@ -87,7 +86,7 @@ In Visual Studio/Rider:
 - `swigwintools` (4.2.0) - SWIG interface generator
 
 ### External Dependencies (automatically handled)
-- ROOT/MINUIT2 library (v6.34.04) - downloaded and built during compilation
+- ROOT/Minuit2 library (v6.34.04) - downloaded and built during compilation
 
 ## Usage
 
