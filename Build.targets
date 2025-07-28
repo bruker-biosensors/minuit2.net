@@ -103,7 +103,9 @@
       DestinationFiles="@(NativeDlls->'$(ProjectDir)runtimes\win-$(Platform)\native\minuit2.wrap.dll')"
       SkipUnchangedFiles="true"
       Condition="Exists('%(NativeDlls.Identity)')" />
+  </Target>
 
+  <Target Name="AddMinuitLicenseToNuget" AfterTargets="CopyNativeBinariesForNuGet">
     <ItemGroup>
       <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LICENSE" Pack="true"
             PackagePath="licenses/"/>

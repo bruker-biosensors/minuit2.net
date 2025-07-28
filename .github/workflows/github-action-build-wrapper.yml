@@ -49,7 +49,7 @@ jobs:
         uses: actions/setup-dotnet@v4
 
       - name: Build x86 library
-        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x64
+        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x86
 
       - name: Build x64 library
         run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x64
