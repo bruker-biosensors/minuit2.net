@@ -8,7 +8,7 @@
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <Configurations>Release;Debug</Configurations>
-        <Platforms>x64;x86</Platforms>
+        <Platforms>x64;x86;AnyCPU</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

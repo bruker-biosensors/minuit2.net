@@ -8,17 +8,19 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <Configurations>Debug;Release</Configurations>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <Platforms>x64;x86</Platforms>
-        <Title>Minuit2 .net wrapper</Title>
-        <Authors>Adamek, Markus; Kroener, Felix, Walser, Adrian</Authors>
-        <Description>A convenient .NET wrapper for the Minuit2 library from CERN's ROOT project.</Description>
+        <Platforms>x64;x86;AnyCPU</Platforms>
     </PropertyGroup>
 
-  <Import Project="../Build.targets" />
+  <Import Project="../Build.targets"/>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
     <None Include="../README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="runtimes\win-x64\native\minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x64/native/" />
+    <None Include="runtimes\win-x86\native\minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x86/native/" />
   </ItemGroup>
 
 </Project>

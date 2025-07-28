@@ -1,7 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
     <Minuit2Wrapper>$(MSBuildThisFileDirectory)</Minuit2Wrapper>
-    <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
     <SwigToolsPath>$(MSBuildThisFileDirectory)minuit2.net/packages/swigwintools.4.2.0/tools</SwigToolsPath>
     <SwigToolsPathAlt>$(USERPROFILE)/.nuget/packages/swigwintools/4.2.0/tools</SwigToolsPathAlt>
   </PropertyGroup>
@@ -9,11 +8,6 @@
   <ItemGroup>
     <PackageReference Include="swigwintools" Version="4.2.0" PrivateAssets="all"/>
   </ItemGroup>
-
-  <Target Name="CheckPlatformConfiguration" BeforeTargets="BeforeBuild">
-    <Error Text="AnyCPU platform is not supported for this project. Please use x64 or x86 platform configuration instead."
-           Condition="'$(Platform)' == 'AnyCPU' OR '$(PlatformTarget)' == 'AnyCPU'" />
-  </Target>
 
   <Target Name="FindSwigExecutable" BeforeTargets="CreateBuildDirectories">
     <ItemGroup>
@@ -39,6 +33,7 @@
 
   <!-- Ensure build directory exists -->
   <Target Name="CreateBuildDirectories" BeforeTargets="BeforeBuild">
+
     <MakeDir Directories="$(BuildDir);$(SwigOutputDir);$(CmakeBuildDir)" />
   </Target>
 
@@ -48,7 +43,8 @@
       <CmakeArchitecture Condition="'$(Platform)' == 'x64'">x64</CmakeArchitecture>
       <CmakeArchitecture Condition="'$(Platform)' == 'x86'">Win32</CmakeArchitecture>
       <CmakeArchitecture Condition="'$(Platform)' == 'ARM64'">ARM64</CmakeArchitecture>
-
+      <CmakeArchitecture Condition="'$(Platform)' == 'AnyCPU'">x64</CmakeArchitecture>
+      <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
       <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputDir) -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
     </PropertyGroup>
 
@@ -83,7 +79,7 @@
 
 
   <!-- Copy native DLL to output directory -->
-  <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary">
+  <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary" Condition="'$(Platform)' != 'AnyCPU' AND '$(PlatformTarget)'!= 'AnyCPU'">
     <ItemGroup>
       <NativeDlls Include="$(CmakeBuildDir)\minuit2.wrap\Release\minuit2.wrap.dll" />
     </ItemGroup>
@@ -92,16 +88,21 @@
             PackagePath="licenses/"/>
       <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LGPL2_1.txt" Pack="true"
             PackagePath="licenses/"/>
-      <None Include="@(NativeDlls)">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        <Visible>false</Visible>
-        <Pack>True</Pack>
-        <PackagePath>runtimes/win-$(Platform)/native</PackagePath>
-      </None>
     </ItemGroup>
-
   </Target>
+
+  <Target Name="CopyNativeBinariesForNuGet" AfterTargets="CopyWrapperDll" Condition="'$(Platform)' != 'AnyCPU' AND '$(PlatformTarget)'!= 'AnyCPU'">
+    <ItemGroup>
+      <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'x64'" />
+      <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'x86'" />
+    </ItemGroup>
+    <Copy
+      SourceFiles="@(NativeDlls)"
+      DestinationFiles="@(NativeDlls->'$(ProjectDir)runtimes\win-$(Platform)\native\minuit2.wrap.dll')"
+      SkipUnchangedFiles="true"
+      Condition="Exists('%(NativeDlls.Identity)')" />
+  </Target>
+
 
 
 </Project>
