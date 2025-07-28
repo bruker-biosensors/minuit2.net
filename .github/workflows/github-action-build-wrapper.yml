@@ -88,6 +88,12 @@ jobs:
           name: "${{ steps.determine-version.outputs.sem-ver }}"
           prerelease: ${{ needs.determine-version.outputs.pre-release-label != '' }}
 
+      - name: Install dotnet-validate
+        run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.304
+
+      - name: Validate NuGet package
+        run: dotnet-validate package local **/bin/minuit2.net.*.nupkg
+
       - name: Publish NuGet Package
         if: github.ref_type == 'tag'
         run: |

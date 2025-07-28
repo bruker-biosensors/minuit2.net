@@ -13,6 +13,8 @@
         <Authors>Markus Adamek, Felix Kroener, Adrian Walser</Authors>
         <Description>A convenient .NET wrapper for the Minuit2 library from CERN's ROOT project.</Description>
         <Company />
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <DebugType>embedded</DebugType>
     </PropertyGroup>
 
   <Import Project="../Build.targets"/>
@@ -21,6 +23,10 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
     <None Include="../README.md" Pack="true" PackagePath=""/>
   </ItemGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
 
   <ItemGroup>
     <None Include="runtimes\win-x64\native\minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x64/native/" />
