@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="swigwintools" Version="4.2.0" />
+    <PackageReference Include="swigwintools" Version="4.2.0" PrivateAssets="all"/>
   </ItemGroup>
 
   <Target Name="CheckPlatformConfiguration" BeforeTargets="BeforeBuild">
@@ -88,6 +88,10 @@
       <NativeDlls Include="$(CmakeBuildDir)\**\*.dll" />
     </ItemGroup>
     <ItemGroup>
+      <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LICENSE" Pack="true"
+            PackagePath="licenses/"/>
+      <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LGPL2_1.txt" Pack="true"
+            PackagePath="licenses/"/>
       <None Include="@(NativeDlls)">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
