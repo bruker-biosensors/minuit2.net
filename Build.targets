@@ -79,7 +79,7 @@
 
 
   <!-- Copy native DLL to output directory -->
-  <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary" Condition="'$(Platform)' != 'AnyCPU' AND '$(PlatformTarget)'!= 'AnyCPU'">
+  <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary">
     <ItemGroup>
       <NativeDlls Include="$(CmakeBuildDir)\minuit2.wrap\Release\minuit2.wrap.dll" />
     </ItemGroup>
