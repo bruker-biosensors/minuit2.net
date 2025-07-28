@@ -4,9 +4,9 @@ A .NET wrapper for the [Minuit2](https://root.cern.ch/doc/master/Minuit2Page.htm
 
 ## Overview
 
-[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) is a well-established nonlinear minimization C++ library that has been used in high-energy physics for decades. 
-It is conceived as a tool to minimize multi-parameter cost functions and analyze their behavior near the minimum to 
-compute optimum parameter values and associated uncertainties — efficiently and with statistical rigor. Minuit2.NET 
+[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) is a well-established nonlinear minimization C++ library that has been used in high-energy physics for decades.
+It is conceived as a tool to minimize multi-parameter cost functions and analyze their behavior near the minimum to
+compute optimum parameter values and associated uncertainties — efficiently and with statistical rigor. Minuit2.NET
 brings this powerful tool to the .NET ecosystem.
 
 The library provides:
@@ -17,7 +17,7 @@ The library provides:
 
 It extends the original library with:
 - Composite cost functions combining parameter-sharing individual cost functions into one
-- Support for data with unknown uncertainties 
+- Support for data with unknown uncertainties
 - Support for cancelling active minimization processes
 
 ## Project Structure
@@ -41,8 +41,7 @@ It extends the original library with:
    - **SWIG** (version 4.2.0) - automatically installed via NuGet package `swigwintools`
 
 3. **Platform Requirements**:
-   - Windows (x64, x86, or ARM64)
-   - AnyCPU configuration is **not supported** - you must use a specific platform target
+   - Windows (x64, x86)
 
 ### Runtime Requirements
 
@@ -61,11 +60,7 @@ The build process is automated through MSBuild targets and will:
 ### Build Steps
 
 1. Clone the repository
-2. Open the solution in your IDE or use command line:
-   ```bash
-   dotnet build --configuration Release --arch x64
-   ```
-3. The build system will automatically:
+2. The build system will automatically:
    - Install SWIG tools via NuGet
    - Download and compile Minuit2 from [ROOT](https://github.com/root-project/root)
    - Generate C# bindings
@@ -73,12 +68,7 @@ The build process is automated through MSBuild targets and will:
 
 ### Platform Configuration
 
-**Important**: You must specify a platform target (x64, x86, or ARM64). AnyCPU is not supported due to the native 
-library dependencies.
-
-In Visual Studio/Rider:
-- Select x64, x86, or ARM64 from the platform dropdown
-- AnyCPU will produce a build error
+**Important**: You must specify a platform target (x64, x86). AnyCPU will default to the x64 version of the C++ dll.
 
 ## Dependencies
 
@@ -94,7 +84,7 @@ The following basic example shows how to fit a sine model to observed data:
 
 ```csharp
 // Define the cost function
-var cost = new LeastSquares( 
+var cost = new LeastSquares(
     x: ...,
     y: ...,
     parameters: ["amp", "freq", "offset"],
