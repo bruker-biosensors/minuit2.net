@@ -51,13 +51,13 @@
     <Exec Command="$(CmakeBuildCommand)"
           WorkingDirectory="$(MSBuildThisFileDirectory)"
           ContinueOnError="false"
-          IgnoreExitCode="true"/>
+          IgnoreExitCode="false"/>
   </Target>
 
   <!-- Build C++ Library and Generate SWIG Wrappers -->
   <Target Name="BuildNativeLibrary" BeforeTargets="BeforeBuild" DependsOnTargets="CmakeConfigure">
     <PropertyGroup>
-      <CmakeBuildCommand>cmake --build "$(CmakeBuildDir)" --config $(Configuration)</CmakeBuildCommand>
+      <CmakeBuildCommand>cmake --build "$(CmakeBuildDir)" --config Release</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
