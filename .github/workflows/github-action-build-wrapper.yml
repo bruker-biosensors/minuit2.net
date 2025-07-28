@@ -33,12 +33,12 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3.1.1
         with:
           useConfigFile: true
-          
+
   build:
     name: Build Project
     needs: determine-version
     runs-on: windows-latest
-    permissions: 
+    permissions:
       packages: write
       contents: write
     steps:
@@ -47,7 +47,13 @@ jobs:
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
-        
+
+      - name: Build x86 library
+        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x64
+
+      - name: Build x64 library
+        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x64
+
       - name: Test
         run: dotnet test ./minuit2.net/ --configuration Release
 
