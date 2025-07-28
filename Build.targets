@@ -66,7 +66,7 @@
   </Target>
 
   <Target Name="CleanGeneratedDirectories" BeforeTargets="Clean">
-    <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputDir)" />
+    <RemoveDir Directories="$(MSBuildThisFileDirectory)/minuit2.wrap/build;$(SwigOutputDir)" />
   </Target>
 
   <Target Name="IncludeGeneratedCSharpFiles" AfterTargets="BuildNativeLibrary" BeforeTargets="CoreCompile">
