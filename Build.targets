@@ -85,7 +85,7 @@
   <!-- Copy native DLL to output directory -->
   <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary">
     <ItemGroup>
-      <NativeDlls Include="$(CmakeBuildDir)\**\*.dll" />
+      <NativeDlls Include="$(CmakeBuildDir)\minuit2.wrap\Release\minuit2.wrap.dll" />
     </ItemGroup>
     <ItemGroup>
       <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LICENSE" Pack="true"
@@ -97,7 +97,7 @@
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         <Visible>false</Visible>
         <Pack>True</Pack>
-        <PackagePath>lib\$(TargetFramework)</PackagePath>
+        <PackagePath>runtimes/win-$(Platform)/native</PackagePath>
       </None>
     </ItemGroup>
 
