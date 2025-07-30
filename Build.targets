@@ -13,11 +13,11 @@
     <Target Name="FindSwigExecutable" BeforeTargets="CreateBuildDirectories">
         <ItemGroup>
             <!-- Try common NuGet package locations -->
-            <PossibleSwigPaths Include="$(MSBuildProjectDirectory)\packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
-            <PossibleSwigPaths Include="$(MSBuildThisFileDirectory)\packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
-            <PossibleSwigPaths Include="$(NuGetPackageRoot)\swigwintools/*/tools/swigwin-*/swig.exe"/>
-            <PossibleSwigPaths Include="$(USERPROFILE)\.nuget/packages/swigwintools/*/tools/swigwin-*/swig.exe"/>
-            <PossibleSwigPaths Include="$(MSBuildProjectDirectory)\../packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
+            <PossibleSwigPaths Include="$(MSBuildProjectDirectory)/packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
+            <PossibleSwigPaths Include="$(MSBuildThisFileDirectory)/packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
+            <PossibleSwigPaths Include="$(NuGetPackageRoot)/swigwintools/*/tools/swigwin-*/swig.exe"/>
+            <PossibleSwigPaths Include="$(USERPROFILE)/.nuget/packages/swigwintools/*/tools/swigwin-*/swig.exe"/>
+            <PossibleSwigPaths Include="$(MSBuildProjectDirectory)/../packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
         </ItemGroup>
 
         <!-- Find first existing SWIG executable -->
@@ -81,7 +81,7 @@
     <!-- Copy native DLL to output directory -->
     <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary">
         <ItemGroup>
-            <NativeDlls Include="$(CmakeBuildDir)\minuit2.wrap\Release\minuit2.wrap.dll"/>
+            <NativeDlls Include="$(CmakeBuildDir)/minuit2.wrap/Release/minuit2.wrap.dll"/>
         </ItemGroup>
 
         <ItemGroup>
@@ -100,17 +100,17 @@
         </ItemGroup>
         <Copy
                 SourceFiles="@(NativeDlls)"
-                DestinationFiles="@(NativeDlls->'$(ProjectDir)runtimes\win-$(Platform)\native\minuit2.wrap.dll')"
+                DestinationFiles="@(NativeDlls->'$(ProjectDir)runtimes/win-$(Platform)/native/minuit2.wrap.dll')"
                 SkipUnchangedFiles="true"
                 Condition="Exists('%(NativeDlls.Identity)')"/>
     </Target>
 
     <Target Name="AddROOTLicenseToNuget" AfterTargets="CopyNativeBinariesForNuGet">
         <ItemGroup>
-            <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LICENSE"
+            <None Include="$(CmakeBuildDir)/_deps/root_minuit2-src/LICENSE"
                   Pack="true"
                   PackagePath="third-party-licenses/ROOT-LICENSE"/>
-            <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LGPL2_1.txt"
+            <None Include="$(CmakeBuildDir)/_deps/root_minuit2-src/LGPL2_1.txt"
                   Pack="true"
                   PackagePath="third-party-licenses/"/>
         </ItemGroup>
