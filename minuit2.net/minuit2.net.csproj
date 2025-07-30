@@ -5,8 +5,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Configurations>Debug;Release</Configurations>
+        <RepositoryUrl>https://github.com/bruker-biosensors/minuit2.net</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <Platforms>x64;x86;AnyCPU</Platforms>
         <Title>Minuit2 .net wrapper</Title>
@@ -22,7 +24,6 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
         <None Include="../README.md" Pack="true" PackagePath=""/>
-        <None Include="../LICENSE" Pack="true" PackagePath=""/>
     </ItemGroup>
 
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
