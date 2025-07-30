@@ -30,8 +30,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="runtimes\win-x64\native\minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x64/native/"/>
-        <None Include="runtimes\win-x86\native\minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x86/native/"/>
+        <None Include="runtimes/win-x64/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x64/native/"/>
+        <None Include="runtimes/win-x86/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x86/native/"/>
     </ItemGroup>
 
 </Project>
