@@ -107,9 +107,11 @@
 
   <Target Name="AddMinuitLicenseToNuget" AfterTargets="CopyNativeBinariesForNuGet">
     <ItemGroup>
-      <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LICENSE" Pack="true"
+      <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LICENSE" 
+            Pack="true"
             PackagePath="third-party-licenses/"/>
-      <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LGPL2_1.txt" Pack="true"
+      <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LGPL2_1.txt" 
+            Pack="true"
             PackagePath="third-party-licenses/"/>
     </ItemGroup>
   </Target>
