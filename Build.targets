@@ -105,11 +105,12 @@
       Condition="Exists('%(NativeDlls.Identity)')" />
   </Target>
 
-  <Target Name="AddMinuitLicenseToNuget" AfterTargets="CopyNativeBinariesForNuGet">
+  <Target Name="AddROOTLicenseToNuget" AfterTargets="CopyNativeBinariesForNuGet">
     <ItemGroup>
       <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LICENSE" 
             Pack="true"
-            PackagePath="third-party-licenses/"/>
+            PackagePath="third-party-licenses/"
+            Link="ROOT-LICENSE"/>
       <None Include="$(CmakeBuildDir)\_deps\root_minuit2-src\LGPL2_1.txt" 
             Pack="true"
             PackagePath="third-party-licenses/"/>
