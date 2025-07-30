@@ -2,6 +2,10 @@
 
 A .NET wrapper for the [Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library from CERN's [ROOT project](https://root.cern/), enhanced with practical extensions.
 
+> [!NOTE]
+> ROOT is licensed under the GNU Lesser General Public License v2.1 (LGPL v2.1).
+> Use or distribution of this library in combination with Minuit2 requires adherence to the LGPL terms.
+
 ## Overview
 
 [Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) is a well-established nonlinear minimization C++ library that has been used in high-energy physics for decades.

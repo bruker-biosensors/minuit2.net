@@ -4,33 +4,34 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <Configurations>Debug;Release</Configurations>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <Platforms>x64;x86;AnyCPU</Platforms>
         <Title>Minuit2 .net wrapper</Title>
         <Authors>Markus Adamek, Felix Kroener, Adrian Walser</Authors>
-        <Description>A convenient .NET wrapper for the Minuit2 library from CERN's ROOT project.</Description>
-        <Company />
+        <Description>A .NET wrapper for the Minuit2 library from CERN's ROOT project, enhanced with practical extensions.</Description>
+        <Company/>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <DebugType>embedded</DebugType>
     </PropertyGroup>
 
-  <Import Project="../Build.targets"/>
+    <Import Project="../Build.targets"/>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
-    <None Include="../README.md" Pack="true" PackagePath=""/>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+        <None Include="../README.md" Pack="true" PackagePath=""/>
+        <None Include="../LICENSE" Pack="true" PackagePath=""/>
+    </ItemGroup>
 
-  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="runtimes\win-x64\native\minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x64/native/" />
-    <None Include="runtimes\win-x86\native\minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x86/native/" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Include="runtimes/win-x64/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x64/native/"/>
+        <None Include="runtimes/win-x86/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x86/native/"/>
+    </ItemGroup>
 
 </Project>
