@@ -9,7 +9,7 @@
         <Configurations>Debug;Release</Configurations>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <Platforms>x64;x86;AnyCPU</Platforms>
-        <Title>Minuit2 .net wrapper</Title>
+        <Title>.NET wrapper for Minuit2</Title>
         <Authors>Markus Adamek, Felix Kroener, Adrian Walser</Authors>
         <Description>A .NET wrapper for the Minuit2 library from CERN's ROOT project, enhanced with practical extensions.</Description>
         <Company/>
