@@ -7,11 +7,9 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Configurations>Debug;Release</Configurations>
-        <RepositoryUrl>https://github.com/bruker-biosensors/minuit2.net</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <Platforms>x64;x86;AnyCPU</Platforms>
-        <Title>Minuit2 .net wrapper</Title>
+        <Title>.NET wrapper for Minuit2</Title>
         <Authors>Markus Adamek, Felix Kroener, Adrian Walser</Authors>
         <Description>A .NET wrapper for the Minuit2 library from CERN's ROOT project, enhanced with practical extensions.</Description>
         <Company/>

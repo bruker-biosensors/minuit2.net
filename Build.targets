@@ -105,12 +105,12 @@
                 Condition="Exists('%(NativeDlls.Identity)')"/>
     </Target>
 
-    <Target Name="RenameROOTLicense" BeforeTargets="Pack">
+    <Target Name="RenameROOTLicense" AfterTargets="CopyNativeBinariesForNuGet">
         <Copy SourceFiles="$(CmakeBuildDir)/_deps/root_minuit2-src/LICENSE"
               DestinationFiles="$(IntermediateOutputPath)/ROOT-LICENSE"/>
     </Target>
 
-    <Target Name="AddROOTLicenseToNuget" AfterTargets="CopyNativeBinariesForNuGet">
+    <Target Name="AddROOTLicenseToNuget" AfterTargets="CopyNativeBinariesForNuGet; RenameROOTLicense">
         <ItemGroup>
             <None Include="$(IntermediateOutputPath)/ROOT-LICENSE"
                   Pack="true"
