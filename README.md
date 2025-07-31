@@ -1,5 +1,7 @@
 # Minuit2.NET
 
+[![NuGet Version](https://img.shields.io/nuget/v/minuit2.net.svg)](https://www.nuget.org/packages/minuit2.net/)
+
 A .NET wrapper for the [Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library from CERN's [ROOT project](https://root.cern/), enhanced with practical extensions.
 
 > [!NOTE]
