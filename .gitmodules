@@ -1,0 +1,4 @@
+[submodule "root"]
+	path = root
+	url = https://github.com/root-project/root.git
+	branch = latest-stable
