@@ -106,7 +106,7 @@
     </Target>
 
     <Target Name="RenameROOTLicense" AfterTargets="CopyNativeBinariesForNuGet">
-        <Copy SourceFiles="$(CmakeBuildDir)/_deps/root_minuit2-src/LICENSE"
+        <Copy SourceFiles="$(MSBuildThisFileDirectory)/root/LICENSE"
               DestinationFiles="$(IntermediateOutputPath)/ROOT-LICENSE"/>
     </Target>
 
@@ -115,7 +115,7 @@
             <None Include="$(IntermediateOutputPath)/ROOT-LICENSE"
                   Pack="true"
                   PackagePath="third-party-licenses/"/>
-            <None Include="$(CmakeBuildDir)/_deps/root_minuit2-src/LGPL2_1.txt"
+            <None Include="$(MSBuildThisFileDirectory)/root/LGPL2_1.txt"
                   Pack="true"
                   PackagePath="third-party-licenses/"/>
         </ItemGroup>

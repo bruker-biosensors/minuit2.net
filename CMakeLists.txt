@@ -9,6 +9,7 @@ project(minuit2.net)
 include(FetchContent)
 
 SET(minuit2_standalone ON CACHE BOOL "minuit2_standalone Option" FORCE)
-SET(root_minuit2 "root")
+SET(root_minuit2 "root/math/minuit2")
 
+add_subdirectory(${root_minuit2})
 add_subdirectory("minuit2.wrap")
