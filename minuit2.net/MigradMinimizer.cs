@@ -37,9 +37,9 @@ public static class MigradMinimizer
         MigradMinimizerConfiguration minimizerConfiguration, 
         CancellationToken cancellationToken)
     {
-        var cost = new CostFunctionWrap(costFunction, cancellationToken);
-        var parameterState = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
-        var migrad = new MnMigradWrap(cost, parameterState, minimizerConfiguration.Strategy.AsMnStrategy());
+        using var cost = new CostFunctionWrap(costFunction, cancellationToken);
+        using var parameterState = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
+        using var migrad = new MnMigradWrap(cost, parameterState, minimizerConfiguration.Strategy.AsMnStrategy());
         
         try
         {
