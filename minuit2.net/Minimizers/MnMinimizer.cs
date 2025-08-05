@@ -41,7 +41,7 @@ internal abstract class MnMinimizer : IMinimizer
     }
     
     protected abstract FunctionMinimum MnMinimize(
-        FCNWrap function, 
+        FCNWrap costFunction, 
         MnUserParameterState parameterState, 
         MnStrategy strategy, 
         uint maximumFunctionCalls, 
