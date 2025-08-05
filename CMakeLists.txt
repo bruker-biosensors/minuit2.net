@@ -9,15 +9,7 @@ project(minuit2.net)
 include(FetchContent)
 
 SET(minuit2_standalone ON CACHE BOOL "minuit2_standalone Option" FORCE)
+SET(root_minuit2 "root/math/minuit2")
 
-FetchContent_Declare(
-    root_minuit2
-    GIT_REPOSITORY https://github.com/root-project/root.git
-    GIT_TAG v6-34-04
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
-    SOURCE_SUBDIR math/minuit2
-)
-FetchContent_MakeAvailable(root_minuit2)
-
+add_subdirectory(${root_minuit2})
 add_subdirectory("minuit2.wrap")
