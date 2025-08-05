@@ -24,6 +24,8 @@ namespace ROOT
             virtual double Up() const;
 
             double operator()(std::vector<double> const& parameterValues) const;
+
+            virtual ~FCNWrap() {}
         };
     }
 }
