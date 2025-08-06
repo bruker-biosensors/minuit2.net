@@ -4,7 +4,7 @@ public enum Strategy
 {
     Fast,
     Balanced,
-    Precise
+    Rigorous
 }
 
 internal static class StrategyExtensions
