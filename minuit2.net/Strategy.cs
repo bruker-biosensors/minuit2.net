@@ -4,7 +4,8 @@ public enum Strategy
 {
     Fast,
     Balanced,
-    Rigorous
+    Rigorous, 
+    VeryRigorous
 }
 
 internal static class StrategyExtensions
