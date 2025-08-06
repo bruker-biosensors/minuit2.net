@@ -1,5 +1,3 @@
-using minuit2.net.wrap;
-
 namespace minuit2.net;
 
 public static class HesseErrorCalculator
@@ -18,7 +16,7 @@ public static class HesseErrorCalculator
 
     private static void Update(FunctionMinimum minimum, ICostFunction costFunction, Strategy strategy)
     {
-        using var cost = new CostFunctionWrap(costFunction);
+        using var cost = new CostFunctionAdapter(costFunction);
         using var hesse = new MnHesseWrap(strategy.AsMnStrategy());
         hesse.Update(minimum, cost);
     }

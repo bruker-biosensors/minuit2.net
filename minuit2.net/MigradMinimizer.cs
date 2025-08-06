@@ -1,4 +1,3 @@
-using minuit2.net.wrap;
 using static minuit2.net.MinimizationExitCondition;
 
 namespace minuit2.net;
@@ -37,7 +36,7 @@ public static class MigradMinimizer
         MigradMinimizerConfiguration minimizerConfiguration, 
         CancellationToken cancellationToken)
     {
-        using var cost = new CostFunctionWrap(costFunction, cancellationToken);
+        using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
         using var parameterState = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
         using var migrad = new MnMigradWrap(cost, parameterState, minimizerConfiguration.Strategy.AsMnStrategy());
         
