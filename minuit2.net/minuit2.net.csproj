@@ -23,15 +23,12 @@
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
         <None Include="../README.md" Pack="true" PackagePath=""/>
         <None Include="../LICENSE" Pack="true" PackagePath=""/>
+        <Compile Include="./obj/gen/*.cs" Visible="false"/>
+        <None Remove="runtimes/**/*" Visible="false" />
     </ItemGroup>
 
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>
-
-    <ItemGroup>
-        <None Include="runtimes/win-x64/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x64/native/"/>
-        <None Include="runtimes/win-x86/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x86/native/"/>
-    </ItemGroup>
 
 </Project>

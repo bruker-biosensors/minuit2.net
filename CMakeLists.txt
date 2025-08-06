@@ -9,7 +9,8 @@ project(minuit2.net)
 include(FetchContent)
 
 SET(minuit2_standalone ON CACHE BOOL "minuit2_standalone Option" FORCE)
-SET(root_minuit2 "root/math/minuit2")
+cmake_path(ABSOLUTE_PATH ROOT_PATH NORMALIZE)
+SET(root_minuit2 ${ROOT_PATH}/math/minuit2)
 
 add_subdirectory(${root_minuit2})
 add_subdirectory("minuit2.wrap")
