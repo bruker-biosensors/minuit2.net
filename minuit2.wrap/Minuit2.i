@@ -29,6 +29,8 @@ namespace std {
     #include "Minuit2/MnStrategy.h"
     #include "Minuit2/MnUserParameterState.h"
     #include "MnMigradWrap.h"
+    #include "MnSimplexWrap.h"
+    #include "MnMinimizeWrap.h"
     #include "MnHesseWrap.h"
 
     using namespace ROOT::Minuit2;
@@ -41,4 +43,6 @@ namespace std {
 %include "Minuit2/FCNBase.h"
 %include "Minuit2/FunctionMinimum.h"
 %include "MnMigradWrap.h"
+%include "MnSimplexWrap.h"
+%include "MnMinimizeWrap.h"
 %include "MnHesseWrap.h"

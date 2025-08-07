@@ -13,6 +13,8 @@ SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES CPLUSPLUS ON)
 set(SOURCE_FILES
   FCNWrap.cpp
   MnMigradWrap.cpp
+  MnSimplexWrap.cpp
+  MnMinimizeWrap.cpp
   MnHesseWrap.cpp
   Minuit2.i
 )
@@ -20,6 +22,8 @@ set(SOURCE_FILES
 set(HEADER_FILES
   FCNWrap.h
   MnMigradWrap.h
+  MnSimplexWrap.h
+  MnMinimizeWrap.h
   MnHesseWrap.h
 )
 
