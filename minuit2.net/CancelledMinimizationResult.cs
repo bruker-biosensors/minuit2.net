@@ -2,7 +2,7 @@ using static minuit2.net.MinimizationExitCondition;
 
 namespace minuit2.net;
 
-internal class StoppedMinimizationResult : IMinimizationResult
+internal class CancelledMinimizationResult : IMinimizationResult
 {
     public double CostValue => 0;
     public IReadOnlyCollection<string> Parameters => [];

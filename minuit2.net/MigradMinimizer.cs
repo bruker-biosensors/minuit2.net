@@ -48,7 +48,7 @@ public static class MigradMinimizer
         }
         catch (OperationCanceledException)
         {
-            return new StoppedMinimizationResult();
+            return new CancelledMinimizationResult();
         }
     }
 
