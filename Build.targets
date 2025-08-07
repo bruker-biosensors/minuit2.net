@@ -1,124 +1,174 @@
 ﻿<Project>
 
+  <PropertyGroup>
+    <Minuit2Wrapper>$(MSBuildThisFileDirectory)</Minuit2Wrapper>
+    <SwigToolsPath>$(MSBuildThisFileDirectory)minuit2.net/packages/swigwintools.4.2.0/tools</SwigToolsPath>
+    <SwigToolsPathAlt>$(USERPROFILE)/.nuget/packages/swigwintools/4.2.0/tools</SwigToolsPathAlt>
+    <RootGitPath>$(MSBuildThisFileDirectory)minuit2.net/obj/root</RootGitPath>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="swigwintools" Version="4.2.0" PrivateAssets="all"/>
+  </ItemGroup>
+
+  <Target Name="CleanGeneratedDirectories" BeforeTargets="Clean">
+    <RemoveDir Directories="$(MSBuildThisFileDirectory)/minuit2.wrap/build;$(SwigOutputDir)"/>
+    <Exec Command="git clean -fdx"
+      WorkingDirectory="$(RootGitPath)"
+      ContinueOnError="false"/>
+  </Target>
+
+  <Target Name="FindSwigExecutable" BeforeTargets="CreateBuildDirectories">
+    <ItemGroup>
+      <!-- Try common NuGet package locations -->
+      <PossibleSwigPaths Include="$(MSBuildProjectDirectory)/packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
+      <PossibleSwigPaths Include="$(MSBuildThisFileDirectory)/packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
+      <PossibleSwigPaths Include="$(NuGetPackageRoot)/swigwintools/*/tools/swigwin-*/swig.exe"/>
+      <PossibleSwigPaths Include="$(USERPROFILE)/.nuget/packages/swigwintools/*/tools/swigwin-*/swig.exe"/>
+      <PossibleSwigPaths Include="$(MSBuildProjectDirectory)/../packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
+    </ItemGroup>
+
+    <!-- Find first existing SWIG executable -->
+    <ItemGroup>
+      <FoundSwigExe Include="@(PossibleSwigPaths)"/>
+    </ItemGroup>
+
     <PropertyGroup>
-        <Minuit2Wrapper>$(MSBuildThisFileDirectory)</Minuit2Wrapper>
-        <SwigToolsPath>$(MSBuildThisFileDirectory)minuit2.net/packages/swigwintools.4.2.0/tools</SwigToolsPath>
-        <SwigToolsPathAlt>$(USERPROFILE)/.nuget/packages/swigwintools/4.2.0/tools</SwigToolsPathAlt>
+      <SwigOutputDir>$(MSBuildThisFileDirectory)/minuit2.net/obj/gen/</SwigOutputDir>
+      <SwigExecutable>%(FoundSwigExe.Identity)</SwigExecutable>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="Fetch Minuit" BeforeTargets="BeforeBuild" Condition="!Exists('$(RootGitPath)')">
+
+    <MakeDir Directories="$(RootGitPath)"/>
+    <Exec Command="git init"
+          WorkingDirectory="$(RootGitPath)"
+          ContinueOnError="false"/>
+
+    <!-- Add remote origin -->
+    <Exec Command="git remote add origin https://github.com/root-project/root.git"
+          WorkingDirectory="$(RootGitPath)"
+          ContinueOnError="false"/>
+
+    <!-- Fetch only the specific commit without history -->
+    <Exec Command="git fetch --depth 1 --no-tags origin 33baee86336174a3e5bf675fc2c4c39662cbc243"
+          WorkingDirectory="$(RootGitPath)"
+          ContinueOnError="false"/>
+
+    <!-- Checkout the fetched commit -->
+    <Exec Command="git checkout 33baee86336174a3e5bf675fc2c4c39662cbc243"
+          WorkingDirectory="$(RootGitPath)"
+          ContinueOnError="false"/>
+  </Target>
+
+  <!-- Ensure build directory exists -->
+  <Target Name="CreateBuildDirectories" BeforeTargets="BeforeBuild">
+    <MakeDir Directories="$(BuildDir);$(SwigOutputDir);$(CmakeBuildDir)"/>
+  </Target>
+
+  <!-- Run CMake Configure -->
+  <Target Name="CmakeConfigure" BeforeTargets="BeforeBuild" DependsOnTargets="CreateBuildDirectories">
+    <PropertyGroup>
+      <CmakeArchitecture Condition="'$(Platform)' == 'x64'">x64</CmakeArchitecture>
+      <CmakeArchitecture Condition="'$(Platform)' == 'x86'">Win32</CmakeArchitecture>
+      <CmakeArchitecture Condition="'$(Platform)' == 'ARM64'">ARM64</CmakeArchitecture>
+      <CmakeArchitecture Condition="'$(Platform)' == 'AnyCPU'">x64</CmakeArchitecture>
+      <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(CmakeArchitecture)</CmakeBuildDir>
+      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputDir) -DROOT_PATH=$(RootGitPath) -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
+    </PropertyGroup>
+
+    <Exec Command="$(CmakeBuildCommand)"
+          WorkingDirectory="$(MSBuildThisFileDirectory)"
+          ContinueOnError="false"
+          IgnoreExitCode="false"/>
+  </Target>
+
+  <!-- Build C++ Library and Generate SWIG Wrappers -->
+  <Target Name="BuildNativeLibrary" BeforeTargets="BeforeBuild" DependsOnTargets="CmakeConfigure">
+    <PropertyGroup>
+      <CmakeBuildCommand>cmake --build "$(CmakeBuildDir)" --config Release</CmakeBuildCommand>
+    </PropertyGroup>
+
+    <Exec Command="$(CmakeBuildCommand)"
+          WorkingDirectory="$(MSBuildThisFileDirectory)"
+          ContinueOnError="false"/>
+  </Target>
+
+  <Target Name="IncludeGeneratedCSharpFiles" AfterTargets="BuildNativeLibrary" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <GeneratedCSharpFiles Include="$(MSBuildThisFileDirectory)/minuit2.net/obj/gen/*.cs"/>
+      <Compile Include="@(GeneratedCSharpFiles)"/>
+    </ItemGroup>
+  </Target>
+
+  <!-- Copy native DLL to output directory -->
+  <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary">
+    <ItemGroup>
+      <NativeDlls Include="$(CmakeBuildDir)/minuit2.wrap/Release/minuit2.wrap.dll" Visible="false"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="@(NativeDlls)" Visible="false">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <Visible>false</Visible>
+      </None>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CopyNativeBinariesForNuGet" AfterTargets="CopyWrapperDll" Condition="'$(Platform)' != 'AnyCPU' AND '$(PlatformTarget)'!= 'AnyCPU'">
+    <ItemGroup>
+      <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'x64'" Visible="false"/>
+      <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'ARM64'" Visible="false"/>
+      <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'x86'" Visible="false"/>
+    </ItemGroup>
+    <Copy
+      SourceFiles="@(NativeDlls)"
+      DestinationFiles="@(NativeDlls->'$(ProjectDir)runtimes/win-$(Platform)/native/minuit2.wrap.dll')"
+      SkipUnchangedFiles="true"
+      Condition="Exists('%(NativeDlls.Identity)')"/>
+
+  </Target>
+
+  <Target Name="CheckAvailableDlls" BeforeTargets="GenerateNuspec">
+    <PropertyGroup>
+      <RequiredPlatforms>x64;x86;ARM64</RequiredPlatforms>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="swigwintools" Version="4.2.0" PrivateAssets="all"/>
+      <!-- Check for native DLLs for each required platform -->
+      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x64/native/minuit2.wrap.dll"/>
+      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x86/native/minuit2.wrap.dll"/>
+      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-ARM64/native/minuit2.wrap.dll"/>
     </ItemGroup>
 
-    <Target Name="FindSwigExecutable" BeforeTargets="CreateBuildDirectories">
-        <ItemGroup>
-            <!-- Try common NuGet package locations -->
-            <PossibleSwigPaths Include="$(MSBuildProjectDirectory)/packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
-            <PossibleSwigPaths Include="$(MSBuildThisFileDirectory)/packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
-            <PossibleSwigPaths Include="$(NuGetPackageRoot)/swigwintools/*/tools/swigwin-*/swig.exe"/>
-            <PossibleSwigPaths Include="$(USERPROFILE)/.nuget/packages/swigwintools/*/tools/swigwin-*/swig.exe"/>
-            <PossibleSwigPaths Include="$(MSBuildProjectDirectory)/../packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
-        </ItemGroup>
+    <!-- Check each required native DLL exists -->
+    <ItemGroup>
+      <MissingNativeDlls Include="@(RequiredNativeDlls)" Condition="!Exists('%(RequiredNativeDlls.Identity)')"/>
+    </ItemGroup>
 
-        <!-- Find first existing SWIG executable -->
-        <ItemGroup>
-            <FoundSwigExe Include="@(PossibleSwigPaths)"/>
-        </ItemGroup>
+    <Error Text="Cannot pack: Missing native DLL for platform. Missing files: @(MissingNativeDlls, ', '). Please build all platforms (x64, x86, ARM64) before packing."
+           Condition="'@(MissingNativeDlls)' != ''"/>
 
-        <PropertyGroup>
-            <SwigOutputDir>$(MSBuildThisFileDirectory)/minuit2.net/$(IntermediateOutputPath)/gen</SwigOutputDir>
-            <SwigExecutable>%(FoundSwigExe.Identity)</SwigExecutable>
-        </PropertyGroup>
-    </Target>
-
-    <!-- Ensure build directory exists -->
-    <Target Name="CreateBuildDirectories" BeforeTargets="BeforeBuild">
-
-        <MakeDir Directories="$(BuildDir);$(SwigOutputDir);$(CmakeBuildDir)"/>
-    </Target>
-
-    <!-- Run CMake Configure -->
-    <Target Name="CmakeConfigure" BeforeTargets="BeforeBuild" DependsOnTargets="CreateBuildDirectories">
-        <PropertyGroup>
-            <CmakeArchitecture Condition="'$(Platform)' == 'x64'">x64</CmakeArchitecture>
-            <CmakeArchitecture Condition="'$(Platform)' == 'x86'">Win32</CmakeArchitecture>
-            <CmakeArchitecture Condition="'$(Platform)' == 'ARM64'">ARM64</CmakeArchitecture>
-            <CmakeArchitecture Condition="'$(Platform)' == 'AnyCPU'">x64</CmakeArchitecture>
-            <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
-            <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputDir) -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
-        </PropertyGroup>
-
-        <Exec Command="$(CmakeBuildCommand)"
-              WorkingDirectory="$(MSBuildThisFileDirectory)"
-              ContinueOnError="false"
-              IgnoreExitCode="false"/>
-    </Target>
-
-    <!-- Build C++ Library and Generate SWIG Wrappers -->
-    <Target Name="BuildNativeLibrary" BeforeTargets="BeforeBuild" DependsOnTargets="CmakeConfigure">
-        <PropertyGroup>
-            <CmakeBuildCommand>cmake --build "$(CmakeBuildDir)" --config Release</CmakeBuildCommand>
-        </PropertyGroup>
-
-        <Exec Command="$(CmakeBuildCommand)"
-              WorkingDirectory="$(MSBuildThisFileDirectory)"
-              ContinueOnError="false"/>
-    </Target>
-
-    <Target Name="CleanGeneratedDirectories" BeforeTargets="Clean">
-        <RemoveDir Directories="$(MSBuildThisFileDirectory)/minuit2.wrap/build;$(SwigOutputDir)"/>
-    </Target>
-
-    <Target Name="IncludeGeneratedCSharpFiles" AfterTargets="BuildNativeLibrary" BeforeTargets="CoreCompile">
-        <ItemGroup>
-            <GeneratedCSharpFiles Include="$(MSBuildThisFileDirectory)/minuit2.net/$(IntermediateOutputPath)/gen/*.cs"/>
-            <Compile Include="@(GeneratedCSharpFiles)"/>
-        </ItemGroup>
-
-    </Target>
+  </Target>
 
 
-    <!-- Copy native DLL to output directory -->
-    <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary">
-        <ItemGroup>
-            <NativeDlls Include="$(CmakeBuildDir)/minuit2.wrap/Release/minuit2.wrap.dll"/>
-        </ItemGroup>
+  <Target Name="RenameROOTLicense" AfterTargets="CopyNativeBinariesForNuGet">
+    <Copy SourceFiles="$(RootGitPath)/LICENSE"
+          DestinationFiles="$(IntermediateOutputPath)/ROOT-LICENSE"/>
+  </Target>
 
-        <ItemGroup>
-            <None Include="@(NativeDlls)">
-                <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-                <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-                <Visible>false</Visible>
-            </None>
-        </ItemGroup>
-    </Target>
-
-    <Target Name="CopyNativeBinariesForNuGet" AfterTargets="CopyWrapperDll" Condition="'$(Platform)' != 'AnyCPU' AND '$(PlatformTarget)'!= 'AnyCPU'">
-        <ItemGroup>
-            <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'x64'"/>
-            <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'x86'"/>
-        </ItemGroup>
-        <Copy
-                SourceFiles="@(NativeDlls)"
-                DestinationFiles="@(NativeDlls->'$(ProjectDir)runtimes/win-$(Platform)/native/minuit2.wrap.dll')"
-                SkipUnchangedFiles="true"
-                Condition="Exists('%(NativeDlls.Identity)')"/>
-    </Target>
-
-    <Target Name="RenameROOTLicense" AfterTargets="CopyNativeBinariesForNuGet">
-        <Copy SourceFiles="$(MSBuildThisFileDirectory)/root/LICENSE"
-              DestinationFiles="$(IntermediateOutputPath)/ROOT-LICENSE"/>
-    </Target>
-
-    <Target Name="AddROOTLicenseToNuget" AfterTargets="CopyNativeBinariesForNuGet; RenameROOTLicense">
-        <ItemGroup>
-            <None Include="$(IntermediateOutputPath)/ROOT-LICENSE"
-                  Pack="true"
-                  PackagePath="third-party-licenses/"/>
-            <None Include="$(MSBuildThisFileDirectory)/root/LGPL2_1.txt"
-                  Pack="true"
-                  PackagePath="third-party-licenses/"/>
-        </ItemGroup>
-    </Target>
+  <Target Name="AddROOTLicenseToNuget" AfterTargets="CopyNativeBinariesForNuGet; RenameROOTLicense">
+    <ItemGroup>
+      <None Include="$(IntermediateOutputPath)/ROOT-LICENSE"
+            Pack="true"
+            PackagePath="third-party-licenses/"/>
+      <None Include="$(RootGitPath)/LGPL2_1.txt"
+            Pack="true"
+            PackagePath="third-party-licenses/"/>
+    </ItemGroup>
+  </Target>
 
 </Project>

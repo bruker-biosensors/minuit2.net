@@ -8,7 +8,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Configurations>Debug;Release</Configurations>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <Platforms>x64;x86;AnyCPU</Platforms>
+        <Platforms>x64;x86;AnyCPU;ARM64</Platforms>
         <Title>.NET wrapper for Minuit2</Title>
         <Authors>Markus Adamek, Felix Kroener, Adrian Walser</Authors>
         <Description>A .NET wrapper for the Minuit2 library from CERN's ROOT project, enhanced with practical extensions.</Description>
@@ -25,13 +25,14 @@
         <None Include="../LICENSE" Pack="true" PackagePath=""/>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="runtimes/win-x64/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x64/native/" Visible="false"/>
+      <None Include="runtimes/win-x86/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x86/native/" Visible="false"/>
+      <None Include="runtimes/win-ARM64/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-ARM64/native/" Visible="false"/>
+    </ItemGroup>
+
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>
-
-    <ItemGroup>
-        <None Include="runtimes/win-x64/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x64/native/"/>
-        <None Include="runtimes/win-x86/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x86/native/"/>
-    </ItemGroup>
 
 </Project>
