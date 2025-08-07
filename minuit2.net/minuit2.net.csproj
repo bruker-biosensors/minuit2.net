@@ -8,7 +8,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Configurations>Debug;Release</Configurations>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <Platforms>x64;x86;AnyCPU</Platforms>
+        <Platforms>x64;x86;AnyCPU;ARM64</Platforms>
         <Title>.NET wrapper for Minuit2</Title>
         <Authors>Markus Adamek, Felix Kroener, Adrian Walser</Authors>
         <Description>A .NET wrapper for the Minuit2 library from CERN's ROOT project, enhanced with practical extensions.</Description>
