@@ -75,7 +75,7 @@
       <CmakeArchitecture Condition="'$(Platform)' == 'x86'">Win32</CmakeArchitecture>
       <CmakeArchitecture Condition="'$(Platform)' == 'ARM64'">ARM64</CmakeArchitecture>
       <CmakeArchitecture Condition="'$(Platform)' == 'AnyCPU'">x64</CmakeArchitecture>
-      <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
+      <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(CmakeArchitecture)</CmakeBuildDir>
       <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputDir) -DROOT_PATH=$(RootGitPath) -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
     </PropertyGroup>
 
@@ -96,13 +96,12 @@
           ContinueOnError="false"/>
   </Target>
 
-  <Target Name="IncludeGeneratedCSharpFiles" AfterTargets="BuildNativeLibrary" BeforeTargets="CoreCompile">
-    <ItemGroup>
-      <GeneratedCSharpFiles Include="$(MSBuildThisFileDirectory)/minuit2.net/obj/gen/*.cs"/>
-      <Compile Include="@(GeneratedCSharpFiles)"/>
-    </ItemGroup>
-
-  </Target>
+<!--  <Target Name="IncludeGeneratedCSharpFiles" AfterTargets="BuildNativeLibrary" BeforeTargets="CoreCompile">-->
+<!--    <ItemGroup>-->
+<!--      <GeneratedCSharpFiles Include="$(MSBuildThisFileDirectory)/minuit2.net/obj/gen/*.cs"/>-->
+<!--      <Compile Include="@(GeneratedCSharpFiles)"/>-->
+<!--    </ItemGroup>-->
+<!--  </Target>-->
 
   <!-- Copy native DLL to output directory -->
   <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary">
@@ -122,6 +121,7 @@
   <Target Name="CopyNativeBinariesForNuGet" AfterTargets="CopyWrapperDll" Condition="'$(Platform)' != 'AnyCPU' AND '$(PlatformTarget)'!= 'AnyCPU'">
     <ItemGroup>
       <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'x64'" Visible="false"/>
+      <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'ARM64'" Visible="false"/>
       <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'x86'" Visible="false"/>
     </ItemGroup>
     <Copy

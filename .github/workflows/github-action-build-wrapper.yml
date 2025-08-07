@@ -57,6 +57,9 @@ jobs:
       - name: Build x64 library
         run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x64
 
+      - name: Build ARM64 library
+        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=ARM64
+
       - name: Test
         run: dotnet test ./minuit2.net/ --configuration Release
 
