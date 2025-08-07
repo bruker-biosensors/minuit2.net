@@ -45,9 +45,10 @@ It extends the original library with:
 2. **Build Tools**:
    - **CMake** (version 3.18 or later) - for building the C++ layer
    - **SWIG** (version 4.2.0) - automatically installed via NuGet package `swigwintools`
+   - **GIT** - will be called from Build.targets
 
 3. **Platform Requirements**:
-   - Windows (x64, x86)
+   - Windows (x64, x86, ARM64)
 
 ### Runtime Requirements
 
@@ -58,7 +59,7 @@ It extends the original library with:
 
 The build process is automated through MSBuild targets and will:
 
-1. Download [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) source code (v6.34.04) via CMake FetchContent
+1. Download [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) source code (v6.34.04) via git
 2. Configure and build the C++ Minuit2 library
 3. Generate C# wrapper code using SWIG
 4. Compile the .NET library with the generated bindings
@@ -74,7 +75,7 @@ The build process is automated through MSBuild targets and will:
 
 ### Platform Configuration
 
-**Important**: You must specify a platform target (x64, x86). AnyCPU will default to the x64 version of the C++ dll.
+**Important**: You must specify a platform target (x64, x86, ARM64). AnyCPU will default to the x64 version of the C++ dll.
 
 ## Dependencies
 
