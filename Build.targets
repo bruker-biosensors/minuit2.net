@@ -15,8 +15,9 @@
   <Target Name="CleanGeneratedDirectories" BeforeTargets="Clean">
     <RemoveDir Directories="$(MSBuildThisFileDirectory)/minuit2.wrap/build;$(SwigOutputDir)"/>
     <Exec Command="git clean -fdx"
-      WorkingDirectory="$(RootGitPath)"
-      ContinueOnError="false"/>
+          WorkingDirectory="$(RootGitPath)"
+          ContinueOnError="false"
+          Condition="Exists('$(RootGitPath)')"/>
   </Target>
 
   <Target Name="FindSwigExecutable" BeforeTargets="CreateBuildDirectories">
