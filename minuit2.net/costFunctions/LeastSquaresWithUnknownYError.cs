@@ -26,13 +26,11 @@ public class LeastSquaresWithUnknownYError : ICostFunctionRequiringErrorDefiniti
         Parameters = parameters;
         HasGradient = modelGradient != null;
         ErrorDefinition = 1 * errorDefinitionScaling;  // TODO: Reuse constant
-        RequiresErrorDefinitionAutoScaling = true;
     }
     
     public IList<string> Parameters { get; }
     public bool HasGradient { get; }
     public double ErrorDefinition { get; }
-    public bool RequiresErrorDefinitionAutoScaling { get; }
     
     public double ValueFor(IList<double> parameterValues)
     {

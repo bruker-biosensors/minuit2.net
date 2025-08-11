@@ -2,6 +2,38 @@ namespace minuit2.net.costFunctions;
 
 public static class CostFunction
 {
+    public static ICostFunction LeastSquares(
+        IList<double> x,
+        IList<double> y,
+        IList<string> parameters,
+        Func<double, IList<double>, double> model,
+        Func<double, IList<double>, IList<double>>? modelGradient = null)
+    {
+        return new LeastSquaresWithUnknownYError(x, y, parameters, model, modelGradient);
+    }
+    
+    public static ICostFunction LeastSquares(
+        IList<double> x,
+        IList<double> y,
+        double yError,
+        IList<string> parameters,
+        Func<double, IList<double>, double> model,
+        Func<double, IList<double>, IList<double>>? modelGradient = null)
+    {
+        return new LeastSquaresWithUniformYError(x, y, yError, parameters, model, modelGradient);
+    }
+    
+    public static ICostFunction LeastSquares(
+        IList<double> x,
+        IList<double> y,
+        IList<double> yErrors,
+        IList<string> parameters,
+        Func<double, IList<double>, double> model,
+        Func<double, IList<double>, IList<double>>? modelGradient = null)
+    {
+        return new LeastSquaresWithIndividualYError(x, y, yErrors, parameters, model, modelGradient);
+    }
+    
     public static ICostFunction Sum(params ICostFunction[] components)
     {
         if (components.Any(c => c is ICostFunctionRequiringErrorDefinitionAdjustment))

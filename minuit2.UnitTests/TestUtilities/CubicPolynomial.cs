@@ -39,10 +39,10 @@ internal static class CubicPolynomial
 
         public ICostFunction Build() => _hasYErrors switch
         {
-            true when _hasGradient => new LeastSquaresWithUniformYError(XValues, YValues, YError, _parameterNames, Model, ModelGradient),
-            true when !_hasGradient => new LeastSquaresWithUniformYError(XValues, YValues, YError, _parameterNames, Model),
-            false when _hasGradient => new LeastSquaresWithUnknownYError(XValues, YValues, _parameterNames, Model, ModelGradient),
-            _ => new LeastSquaresWithUnknownYError(XValues, YValues, _parameterNames, Model)
+            true when _hasGradient => CostFunction.LeastSquares(XValues, YValues, YError, _parameterNames, Model, ModelGradient),
+            true when !_hasGradient => CostFunction.LeastSquares(XValues, YValues, YError, _parameterNames, Model),
+            false when _hasGradient => CostFunction.LeastSquares(XValues, YValues, _parameterNames, Model, ModelGradient),
+            _ => CostFunction.LeastSquares(XValues, YValues, _parameterNames, Model)
         };
 
         public LeastSquaresBuilder WithGradient(bool hasGradient = true)

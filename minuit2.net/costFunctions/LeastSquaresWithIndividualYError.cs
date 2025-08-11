@@ -1,6 +1,6 @@
 ﻿namespace minuit2.net.costFunctions;
 
-public class LeastSquares : ICostFunction
+public class LeastSquaresWithIndividualYError : ICostFunction
 {
     // For chi-squared fits, ErrorDefinition = 1 corresponds to standard 1-sigma parameter errors
     // (ErrorDefinition = 4 would correspond to 2-sigma errors etc.)
@@ -10,7 +10,7 @@ public class LeastSquares : ICostFunction
     private readonly Func<double, IList<double>, double> _model;
     private readonly Func<double, IList<double>, IList<double>>? _modelGradient;
     
-    public LeastSquares(
+    public LeastSquaresWithIndividualYError(
         IList<double> x,
         IList<double> y,
         IList<double> yError,

@@ -1,4 +1,3 @@
-using minuit2.net;
 using minuit2.net.costFunctions;
 
 namespace minuit2.UnitTests.TestUtilities;

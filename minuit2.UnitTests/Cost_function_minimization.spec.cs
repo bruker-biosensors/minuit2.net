@@ -310,7 +310,7 @@ public class A_cost_function
     [Test]
     public void when_minimized_forwards_exceptions_thrown_by_the_model_function()
     {
-        var cost = new LeastSquaresWithUnknownYError([0], [0], [], ModelFunctionThrowing<TestException>());
+        var cost = CostFunction.LeastSquares([0], [0], [], ModelFunctionThrowing<TestException>());
         Action action = () => MigradMinimizer.Minimize(cost, []);
         action.Should().ThrowExactly<TestException>();
     }
