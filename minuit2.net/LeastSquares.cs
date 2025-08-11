@@ -6,6 +6,9 @@ public class LeastSquares : ICostFunction
     // (ErrorDefinition = 4 would correspond to 2-sigma errors etc.)
     private const double ChiSquaredErrorDefinition = 1;
     
+    private readonly IList<double> _x;
+    private readonly IList<double> _y;
+    private readonly IList<double> _yError;
     private readonly List<DataPoint> _data;
     private readonly Func<double, IList<double>, double> _model;
     private readonly Func<double, IList<double>, IList<double>>? _modelGradient;
@@ -16,7 +19,7 @@ public class LeastSquares : ICostFunction
         IList<string> parameters,
         Func<double, IList<double>, double> model, 
         Func<double, IList<double>, IList<double>>? modelGradient = null)
-        : this(x, y, 1.0, parameters, model, modelGradient, requiresErrorDefinitionAutoScaling: true) { }
+        : this(x, y, Enumerable.Repeat(1.0, y.Count).ToList(), parameters, model, modelGradient, true, 1) { }
     
     public LeastSquares(
         IList<double> x,
@@ -24,9 +27,8 @@ public class LeastSquares : ICostFunction
         double yError,
         IList<string> parameters,
         Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null,
-        bool requiresErrorDefinitionAutoScaling = false)
-        : this(x, y, Enumerable.Repeat(yError, y.Count).ToList(), parameters, model, modelGradient, requiresErrorDefinitionAutoScaling) { }
+        Func<double, IList<double>, IList<double>>? modelGradient = null)
+        : this(x, y, Enumerable.Repeat(yError, y.Count).ToList(), parameters, model, modelGradient, false, 1) { }
     
     public LeastSquares(
         IList<double> x,
@@ -34,25 +36,38 @@ public class LeastSquares : ICostFunction
         IList<double> yError,
         IList<string> parameters,
         Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null,
-        bool requiresErrorDefinitionAutoScaling = false)
+        Func<double, IList<double>, IList<double>>? modelGradient = null)
+        : this(x, y, yError, parameters, model, modelGradient, false, 1) { }
+    
+    private LeastSquares(
+        IList<double> x,
+        IList<double> y,
+        IList<double> yError,
+        IList<string> parameters,
+        Func<double, IList<double>, double> model,
+        Func<double, IList<double>, IList<double>>? modelGradient,
+        bool requiresErrorDefinitionAutoScaling,
+        double errorDefinitionScaling)
     {
         if (x.Count != y.Count || x.Count != yError.Count)
             throw new ArgumentException($"{nameof(x)}, {nameof(y)} and {nameof(yError)} must have the same length");
         
+        _x = x;
+        _y = y;
+        _yError = yError;
         _data = x.Zip(y, yError).Select(t => new DataPoint(t.First, t.Second, t.Third)).ToList();
         _model = model;
         _modelGradient = modelGradient;
         
         Parameters = parameters;
         HasGradient = modelGradient != null;
-        ErrorDefinition = ChiSquaredErrorDefinition;
+        ErrorDefinition = ChiSquaredErrorDefinition * errorDefinitionScaling;
         RequiresErrorDefinitionAutoScaling = requiresErrorDefinitionAutoScaling;
     }
 
     public IList<string> Parameters { get; }
     public bool HasGradient { get; }
-    public double ErrorDefinition { get; private set; }
+    public double ErrorDefinition { get; }
     public bool RequiresErrorDefinitionAutoScaling { get; }
 
     public double ValueFor(IList<double> parameterValues) => 
@@ -74,8 +89,8 @@ public class LeastSquares : ICostFunction
 
     private double ResidualFor(DataPoint datum, IList<double> parameterValues) =>
         (datum.Y - _model(datum.X, parameterValues)) / datum.YError;
-    
-    public void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
+
+    public ICostFunction WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
     {
         // Auto-scale the error definition such that a re-evaluation -- e.g. by a subsequent minimization or accurate
         // covariance computation (Hesse algorithm) -- yields the same parameter covariances that would be obtained
@@ -85,9 +100,9 @@ public class LeastSquares : ICostFunction
         // the variance of the noise overlying the data.
         // This is equivalent to the default behaviour in lmfit:
         // https://lmfit.github.io/lmfit-py/fitting.html#uncertainties-in-variable-parameters-and-their-correlations
-
+        
         var degreesOfFreedom = _data.Count - variables.Count;
         var reducedChiSquared = ValueFor(parameterValues) / degreesOfFreedom;
-        ErrorDefinition = ChiSquaredErrorDefinition * reducedChiSquared;
+        return new LeastSquares(_x, _y, _yError, Parameters, _model, _modelGradient, RequiresErrorDefinitionAutoScaling, reducedChiSquared);
     }
 }

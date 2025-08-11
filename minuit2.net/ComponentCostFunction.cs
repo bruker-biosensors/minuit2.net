@@ -37,7 +37,7 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> paramete
         
         return expandedGradients;
     }
-    
-    public void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
-        inner.AutoScaleErrorDefinitionBasedOn(Belonging(parameterValues), Belonging(variables));
+
+    public ICostFunction WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
+        new ComponentCostFunction(inner.WithAutoScaledErrorDefinitionBasedOn(Belonging(parameterValues), Belonging(variables)), parameters);
 }

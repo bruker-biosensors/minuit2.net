@@ -22,10 +22,11 @@ file class LeastSquaresWithCustomErrorDefinition(LeastSquares wrapped, double er
     
     public double ValueFor(IList<double> parameterValues) => wrapped.ValueFor(parameterValues);
     public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
-    public void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
+    public ICostFunction WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
     {
-        wrapped.AutoScaleErrorDefinitionBasedOn(parameterValues, variables);
-        ErrorDefinition = _errorDefinition * wrapped.ErrorDefinition;  // Works because the wrapped (default) least squares error definition is 1 (before scaling)
+        var wrappedCopy = (LeastSquares)wrapped.WithAutoScaledErrorDefinitionBasedOn(parameterValues, variables);
+        var errorDefinitionScaling = wrappedCopy.ErrorDefinition / wrapped.ErrorDefinition;
+        return new LeastSquaresWithCustomErrorDefinition(wrappedCopy, ErrorDefinition * errorDefinitionScaling);
     }
 }
 
@@ -44,6 +45,6 @@ internal class CostFunctionListeningToResetEvent(ICostFunction wrapped, ManualRe
 
     public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
 
-    public void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
-        wrapped.AutoScaleErrorDefinitionBasedOn(parameterValues, variables);
+    public ICostFunction WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
+        new CostFunctionListeningToResetEvent(wrapped.WithAutoScaledErrorDefinitionBasedOn(parameterValues, variables), resetEvent);
 }

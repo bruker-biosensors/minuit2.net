@@ -14,7 +14,8 @@ public class CostFunctionSum : ICompositeCostFunction
         _components = components.Select(AsComponentCostFunction).ToArray();
     }
 
-    private ComponentCostFunction AsComponentCostFunction(ICostFunction costFunction) => new(costFunction, Parameters);
+    private ComponentCostFunction AsComponentCostFunction(ICostFunction costFunction) =>
+        costFunction as ComponentCostFunction ?? new ComponentCostFunction(costFunction, Parameters);
 
     public IList<string> Parameters { get; }
     public bool HasGradient { get; }
@@ -37,12 +38,11 @@ public class CostFunctionSum : ICompositeCostFunction
         for (var i = 0; i < Parameters.Count; i++) 
             gradients[i] += componentGradients[i];
     }
-    
-    public void AutoScaleErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
-    {
-        foreach (var component in _components.Where(c => c.RequiresErrorDefinitionAutoScaling)) 
-            component.AutoScaleErrorDefinitionBasedOn(parameterValues, variables);
-    }
+
+    public ICostFunction WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
+        new CostFunctionSum(_components.Select(c => c.RequiresErrorDefinitionAutoScaling
+            ? c.WithAutoScaledErrorDefinitionBasedOn(parameterValues, variables)
+            : c).ToArray());
 
     public double CompositeValueFor(IList<double> parameterValues) =>
         _components.Select(c => c.ValueFor(parameterValues) * c.ErrorDefinition).Sum();

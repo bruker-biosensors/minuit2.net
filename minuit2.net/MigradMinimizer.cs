@@ -16,8 +16,8 @@ public static class MigradMinimizer
         var result = CoreMinimize(costFunction, parameterConfigurations, minimizerConfiguration, cancellationToken);
         if (!costFunction.RequiresErrorDefinitionAutoScaling || result.ExitCondition == ManuallyStopped) return result;
         
-        costFunction.AutoScaleErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
-        HesseErrorCalculator.UpdateParameterCovariances(result, costFunction, minimizerConfiguration.Strategy);
+        var adjustedCostFunction = costFunction.WithAutoScaledErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
+        HesseErrorCalculator.UpdateParameterCovariances(result, adjustedCostFunction, minimizerConfiguration.Strategy);
         return result;
     }
     

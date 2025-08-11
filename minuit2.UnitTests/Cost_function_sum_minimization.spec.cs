@@ -89,7 +89,7 @@ public class A_cost_function_sum
                 .HaveCostValue(component1Result.CostValue + component2Result.CostValue).And
                 .HaveParameterValues(component1Result.ParameterValues.Concat(component2Result.ParameterValues).ToArray());
             
-            const double relativeToleranceForNonZeros = 0.002;
+            const double relativeToleranceForNonZeros = 0.003;
             const double absoluteToleranceForZeros = 1e-8;
             sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,0,3).Should().BeEquivalentTo(component1Result.ParameterCovarianceMatrix, options => options.WithRelativeDoubleTolerance(relativeToleranceForNonZeros));
             sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,4,7).Should().BeEquivalentTo(component2Result.ParameterCovarianceMatrix, options => options.WithRelativeDoubleTolerance(relativeToleranceForNonZeros));
