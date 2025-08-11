@@ -2,10 +2,6 @@
 
 public class LeastSquaresWithIndividualYError : ICostFunction
 {
-    // For chi-squared fits, ErrorDefinition = 1 corresponds to standard 1-sigma parameter errors
-    // (ErrorDefinition = 4 would correspond to 2-sigma errors etc.)
-    private const double ChiSquaredErrorDefinition = 1;
-
     private readonly List<DataPoint> _data;
     private readonly Func<double, IList<double>, double> _model;
     private readonly Func<double, IList<double>, IList<double>>? _modelGradient;
@@ -27,7 +23,7 @@ public class LeastSquaresWithIndividualYError : ICostFunction
         
         Parameters = parameters;
         HasGradient = modelGradient != null;
-        ErrorDefinition = ChiSquaredErrorDefinition;
+        ErrorDefinition = LeastSquares.OneSigmaErrorDefinition;
     }
 
     public IList<string> Parameters { get; }

@@ -25,7 +25,7 @@ public class LeastSquaresWithUnknownYError : ICostFunctionRequiringErrorDefiniti
         
         Parameters = parameters;
         HasGradient = modelGradient != null;
-        ErrorDefinition = 1 * errorDefinitionScaling;  // TODO: Reuse constant
+        ErrorDefinition = LeastSquares.OneSigmaErrorDefinition * errorDefinitionScaling;
     }
     
     public IList<string> Parameters { get; }
@@ -44,7 +44,7 @@ public class LeastSquaresWithUnknownYError : ICostFunctionRequiringErrorDefiniti
         return sum;
     }
 
-    private double Residual(int i, IList<double> parameterValues) => (_y[i] - _model(_x[i], parameterValues));
+    private double Residual(int i, IList<double> parameterValues) => _y[i] - _model(_x[i], parameterValues);
 
     public IList<double> GradientFor(IList<double> parameterValues)
     {

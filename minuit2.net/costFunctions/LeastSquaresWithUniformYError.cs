@@ -27,7 +27,7 @@ public class LeastSquaresWithUniformYError : ICostFunction
         
         Parameters = parameters;
         HasGradient = modelGradient != null;
-        ErrorDefinition = 1;  // TODO: Reuse constant
+        ErrorDefinition = LeastSquares.OneSigmaErrorDefinition;
     }
     
     public IList<string> Parameters { get; }
