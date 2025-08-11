@@ -2,7 +2,7 @@ namespace minuit2.net.costFunctions;
 
 internal class CostFunctionSum : ICostFunction, ICompositeCostFunction
 {
-    private readonly ComponentCostFunction[] _components;
+    protected readonly ICostFunction[] Components;
 
     public CostFunctionSum(params ICostFunction[] components)
     {
@@ -10,22 +10,26 @@ internal class CostFunctionSum : ICostFunction, ICompositeCostFunction
         HasGradient = components.All(c => c.HasGradient);
         ErrorDefinition = 1;  // Neutral element; Scaling is performed within the components since factors may differ.
         
-        _components = components.Select(AsComponentCostFunction).ToArray();
+        Components = components.Select(AsComponentCostFunction).ToArray();
     }
 
-    private ComponentCostFunction AsComponentCostFunction(ICostFunction costFunction) =>
-        costFunction as ComponentCostFunction ?? new ComponentCostFunction(costFunction, Parameters);
+    private ICostFunction AsComponentCostFunction(ICostFunction costFunction)
+    {
+        return costFunction is ComponentCostFunction
+            ? costFunction
+            : CostFunction.Component(costFunction, Parameters);
+    }
 
     public IList<string> Parameters { get; }
     public bool HasGradient { get; }
     public double ErrorDefinition { get; }
     
-    public double ValueFor(IList<double> parameterValues) => _components.Select(c => c.ValueFor(parameterValues)).Sum();
+    public double ValueFor(IList<double> parameterValues) => Components.Select(c => c.ValueFor(parameterValues)).Sum();
 
     public IList<double> GradientFor(IList<double> parameterValues)
     {
         var gradients = new double[Parameters.Count];
-        foreach (var componentGradients in _components.Select(c => c.GradientFor(parameterValues))) 
+        foreach (var componentGradients in Components.Select(c => c.GradientFor(parameterValues))) 
             Add(componentGradients, gradients);
 
         return gradients;
@@ -38,7 +42,7 @@ internal class CostFunctionSum : ICostFunction, ICompositeCostFunction
     }
 
     public double CompositeValueFor(IList<double> parameterValues) =>
-        _components.Select(c => c.ValueFor(parameterValues) * c.ErrorDefinition).Sum();
+        Components.Select(c => c.ValueFor(parameterValues) * c.ErrorDefinition).Sum();
 }
 
 file static class CostFunctionCollectionExtensions
