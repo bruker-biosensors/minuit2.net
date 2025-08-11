@@ -64,7 +64,7 @@ public class A_cost_function
         result.Should().HaveIsValid(false);
     }
 
-    private static IEnumerable<LeastSquaresWithUniformYError> CostFunctionWithVaryingErrorDefinitionTestCases()
+    private static IEnumerable<ICostFunctionRequiringErrorDefinitionAdjustment> CostFunctionWithVaryingErrorDefinitionTestCases()
     {
         yield return CubicPolynomial.LeastSquaresCost.Build();
         yield return CubicPolynomial.LeastSquaresCost.WithMissingYErrors().Build();
@@ -74,7 +74,7 @@ public class A_cost_function
 
     [TestCaseSource(nameof(CostFunctionWithVaryingErrorDefinitionTestCases))]
     public void when_minimized_yields_the_same_cost_value_independent_of_its_error_definition(
-        LeastSquaresWithUniformYError referenceCost)
+        ICostFunctionRequiringErrorDefinitionAdjustment referenceCost)
     {
         var errorDefinition = Any.Double().Between(2, 10);
         var cost = referenceCost.WithErrorDefinition(errorDefinition);
@@ -87,7 +87,7 @@ public class A_cost_function
 
     [TestCaseSource(nameof(CostFunctionWithVaryingErrorDefinitionTestCases))]
     public void when_minimized_yields_parameter_covariances_that_directly_scale_with_the_error_definition(
-        LeastSquaresWithUniformYError referenceCost)
+        ICostFunctionRequiringErrorDefinitionAdjustment referenceCost)
     {
         var errorDefinition = Any.Double().Between(2, 10);
         var cost = referenceCost.WithErrorDefinition(errorDefinition);
@@ -309,7 +309,7 @@ public class A_cost_function
     [Test]
     public void when_minimized_forwards_exceptions_thrown_by_the_model_function()
     {
-        var cost = new LeastSquaresWithUniformYError([0], [0], 0, [], ModelFunctionThrowing<TestException>());
+        var cost = new LeastSquaresWithUnknownYError([0], [0], [], ModelFunctionThrowing<TestException>());
         Action action = () => MigradMinimizer.Minimize(cost, []);
         action.Should().ThrowExactly<TestException>();
     }

@@ -36,12 +36,12 @@ internal static class CubicPolynomial
         private bool _hasYErrors = true;
         private bool _hasGradient;
 
-        public LeastSquaresWithUniformYError Build() => _hasYErrors switch
+        public ICostFunctionRequiringErrorDefinitionAdjustment Build() => _hasYErrors switch
         {
             true when _hasGradient => new LeastSquaresWithUniformYError(XValues, YValues, YError, _parameterNames, Model, ModelGradient),
             true when !_hasGradient => new LeastSquaresWithUniformYError(XValues, YValues, YError, _parameterNames, Model),
-            false when _hasGradient => new LeastSquaresWithUniformYError(XValues, YValues, 1, _parameterNames, Model, ModelGradient, requiresErrorDefinitionAutoScaling: true),
-            _ => new LeastSquaresWithUniformYError(XValues, YValues, 1, _parameterNames, Model, requiresErrorDefinitionAutoScaling: true)
+            false when _hasGradient => new LeastSquaresWithUnknownYError(XValues, YValues, _parameterNames, Model, ModelGradient),
+            _ => new LeastSquaresWithUnknownYError(XValues, YValues, _parameterNames, Model)
         };
 
         public LeastSquaresBuilder WithGradient(bool hasGradient = true)

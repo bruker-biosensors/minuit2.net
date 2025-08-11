@@ -4,14 +4,14 @@ namespace minuit2.UnitTests.TestUtilities;
 
 internal static class CostFunctionExtensions
 {
-    public static ICostFunctionRequiringErrorDefinitionAdjustment WithErrorDefinition(this LeastSquaresWithUniformYError cost, double errorDefinition) =>
+    public static ICostFunctionRequiringErrorDefinitionAdjustment WithErrorDefinition(this ICostFunctionRequiringErrorDefinitionAdjustment cost, double errorDefinition) =>
         new LeastSquaresWithCustomErrorDefinition(cost, errorDefinition);
 
     public static ICostFunctionRequiringErrorDefinitionAdjustment ListeningToResetEvent(this ICostFunctionRequiringErrorDefinitionAdjustment cost, ManualResetEvent resetEvent) =>
         new CostFunctionListeningToResetEvent(cost, resetEvent);
 }
 
-file class LeastSquaresWithCustomErrorDefinition(LeastSquaresWithUniformYError wrapped, double errorDefinition) : ICostFunctionRequiringErrorDefinitionAdjustment
+file class LeastSquaresWithCustomErrorDefinition(ICostFunctionRequiringErrorDefinitionAdjustment wrapped, double errorDefinition) : ICostFunctionRequiringErrorDefinitionAdjustment
 {
     private readonly double _errorDefinition = errorDefinition;
 
@@ -24,7 +24,7 @@ file class LeastSquaresWithCustomErrorDefinition(LeastSquaresWithUniformYError w
     public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
     public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
     {
-        var wrappedCopy = (LeastSquaresWithUniformYError)wrapped.WithAutoScaledErrorDefinitionBasedOn(parameterValues, variables);
+        var wrappedCopy = wrapped.WithAutoScaledErrorDefinitionBasedOn(parameterValues, variables);
         var errorDefinitionScaling = wrappedCopy.ErrorDefinition / wrapped.ErrorDefinition;
         return new LeastSquaresWithCustomErrorDefinition(wrappedCopy, ErrorDefinition * errorDefinitionScaling);
     }
