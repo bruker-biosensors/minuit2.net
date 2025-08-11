@@ -22,7 +22,7 @@ public static class MigradMinimizer
     }
     
     private static void ThrowIfParametersAreNotMatchingBetween(
-        ICostFunctionRequiringErrorDefinitionAdjustment costFunction,
+        ICostFunction costFunction,
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations)
     {
         if (parameterConfigurations.AreNotMatching(costFunction.Parameters))
