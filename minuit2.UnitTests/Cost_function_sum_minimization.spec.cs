@@ -14,7 +14,7 @@ public class A_cost_function_sum
     public void with_a_single_component_when_minimized_yields_a_result_equivalent_to_the_result_for_the_isolated_component(
         [Values] bool hasGradient, [Values] Strategy strategy)
     {
-        var component = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).Build().WithScaledErrorDefinition(4);
+        var component = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component);
 
         var minimizerConfiguration = new MigradMinimizerConfiguration(strategy);
@@ -36,7 +36,7 @@ public class A_cost_function_sum
                           "Once the additional Hesse call is added here, the skipped tests could be re-enabled.");
         
         var component1 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(1).WithGradient(hasGradient).Build();
-        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).Build().WithScaledErrorDefinition(4);
+        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component1, component2);
 
         var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);

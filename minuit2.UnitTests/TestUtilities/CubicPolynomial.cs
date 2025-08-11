@@ -4,7 +4,7 @@ using static minuit2.net.ParameterConfiguration;
 
 namespace minuit2.UnitTests.TestUtilities;
 
-internal static class CubicPolynomial
+public static class CubicPolynomial
 {
     private static readonly Func<double, IList<double>, double> Model = 
         (x, c) => c[0] + c[1] * x + c[2] * x * x + c[3] * x * x * x;
@@ -36,13 +36,14 @@ internal static class CubicPolynomial
         private string[] _parameterNames = ["c0", "c1", "c2", "c3"];
         private bool _hasYErrors = true;
         private bool _hasGradient;
+        private double _errorDefinitionInSigma = 1;
 
         public ICostFunction Build() => _hasYErrors switch
         {
-            true when _hasGradient => CostFunction.LeastSquares(XValues, YValues, YError, _parameterNames, Model, ModelGradient),
-            true when !_hasGradient => CostFunction.LeastSquares(XValues, YValues, YError, _parameterNames, Model),
-            false when _hasGradient => CostFunction.LeastSquares(XValues, YValues, _parameterNames, Model, ModelGradient),
-            _ => CostFunction.LeastSquares(XValues, YValues, _parameterNames, Model)
+            true when _hasGradient => CostFunction.LeastSquares(XValues, YValues, YError, _parameterNames, Model, ModelGradient, _errorDefinitionInSigma),
+            true when !_hasGradient => CostFunction.LeastSquares(XValues, YValues, YError, _parameterNames, Model, errorDefinitionInSigma: _errorDefinitionInSigma),
+            false when _hasGradient => CostFunction.LeastSquares(XValues, YValues, _parameterNames, Model, ModelGradient, _errorDefinitionInSigma),
+            _ => CostFunction.LeastSquares(XValues, YValues, _parameterNames, Model, errorDefinitionInSigma: _errorDefinitionInSigma)
         };
 
         public LeastSquaresBuilder WithGradient(bool hasGradient = true)
@@ -75,6 +76,18 @@ internal static class CubicPolynomial
         public LeastSquaresBuilder WithMissingYErrors()
         {
             _hasYErrors = false;
+            return this;
+        }
+        
+        public LeastSquaresBuilder WithErrorDefinition(double sigma)
+        {
+            _errorDefinitionInSigma = sigma;
+            return this;
+        }
+        
+        public LeastSquaresBuilder WithAnyErrorDefinitionBetween(double lowSigma, double highSigma)
+        {
+            _errorDefinitionInSigma = Any.Double().Between(lowSigma, highSigma);
             return this;
         }
     }

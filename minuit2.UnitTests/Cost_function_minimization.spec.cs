@@ -65,20 +65,20 @@ public class A_cost_function
         result.Should().HaveIsValid(false);
     }
 
-    private static IEnumerable<ICostFunction> CostFunctionWithVaryingErrorDefinitionTestCases()
+    private static IEnumerable<CubicPolynomial.LeastSquaresBuilder> CostFunctionWithVaryingErrorDefinitionTestCases()
     {
-        yield return CubicPolynomial.LeastSquaresCost.Build();
-        yield return CubicPolynomial.LeastSquaresCost.WithMissingYErrors().Build();
-        yield return CubicPolynomial.LeastSquaresCost.WithGradient().Build();
-        yield return CubicPolynomial.LeastSquaresCost.WithGradient().WithMissingYErrors().Build();
+        yield return CubicPolynomial.LeastSquaresCost;
+        yield return CubicPolynomial.LeastSquaresCost.WithMissingYErrors();
+        yield return CubicPolynomial.LeastSquaresCost.WithGradient();
+        yield return CubicPolynomial.LeastSquaresCost.WithGradient().WithMissingYErrors();
     }
 
     [TestCaseSource(nameof(CostFunctionWithVaryingErrorDefinitionTestCases))]
     public void when_minimized_yields_the_same_cost_value_independent_of_its_error_definition(
-        ICostFunction referenceCost)
+        CubicPolynomial.LeastSquaresBuilder costBuilder)
     {
-        var errorDefinitionScaling = Any.Double().Between(2, 10);
-        var cost = referenceCost.WithScaledErrorDefinition(errorDefinitionScaling);
+        var referenceCost = costBuilder.WithErrorDefinition(1).Build();
+        var cost = costBuilder.WithAnyErrorDefinitionBetween(2, 10).Build();
 
         var referenceResult = MigradMinimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
@@ -88,15 +88,15 @@ public class A_cost_function
 
     [TestCaseSource(nameof(CostFunctionWithVaryingErrorDefinitionTestCases))]
     public void when_minimized_yields_parameter_covariances_that_directly_scale_with_the_error_definition(
-        ICostFunction referenceCost)
+        CubicPolynomial.LeastSquaresBuilder costBuilder)
     {
-        var errorDefinition = Any.Double().Between(2, 10);
-        var cost = referenceCost.WithScaledErrorDefinition(errorDefinition);
+        var referenceCost = costBuilder.WithErrorDefinition(1).Build();
+        var cost = costBuilder.WithAnyErrorDefinitionBetween(2, 10).Build();
 
         var referenceResult = MigradMinimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
 
-        result.ParameterCovarianceMatrix.Should().BeEquivalentTo(referenceResult.ParameterCovarianceMatrix.MultipliedBy(errorDefinition),
+        result.ParameterCovarianceMatrix.Should().BeEquivalentTo(referenceResult.ParameterCovarianceMatrix.MultipliedBy(cost.ErrorDefinition), 
             options => options.WithRelativeDoubleTolerance(0.001));
     }
 
