@@ -1,6 +1,6 @@
 namespace minuit2.net.costFunctions;
 
-public interface IComposite
+public interface ICompositeCostFunction
 {
     double CompositeValueFor(IList<double> parameterValues);
 }

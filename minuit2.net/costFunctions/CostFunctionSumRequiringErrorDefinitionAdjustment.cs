@@ -1,6 +1,6 @@
 namespace minuit2.net.costFunctions;
 
-internal class CostFunctionSumRequiringErrorDefinitionAdjustment : ICostFunctionRequiringErrorDefinitionAdjustment, IComposite
+internal class CostFunctionSumRequiringErrorDefinitionAdjustment : ICostFunctionRequiringErrorDefinitionAdjustment, ICompositeCostFunction
 {
     private readonly ICostFunction[] _components;
 
