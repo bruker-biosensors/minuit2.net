@@ -1,6 +1,6 @@
 ﻿namespace minuit2.net.costFunctions;
 
-public class LeastSquares : ICostFunction
+internal class LeastSquares : ICostFunction
 {
     private readonly IList<double> _x;
     private readonly IList<double> _y;

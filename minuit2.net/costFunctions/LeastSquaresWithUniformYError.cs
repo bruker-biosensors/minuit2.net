@@ -1,6 +1,6 @@
 namespace minuit2.net.costFunctions;
 
-public class LeastSquaresWithUniformYError : ICostFunction
+internal class LeastSquaresWithUniformYError : ICostFunction
 {
     protected readonly IList<double> X;
     protected readonly IList<double> Y;

@@ -1,6 +1,6 @@
 namespace minuit2.net.costFunctions;
 
-public class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError, ICostFunctionRequiringErrorDefinitionAdjustment
+internal class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError, ICostFunctionRequiringErrorDefinitionAdjustment
 {
     private readonly double _errorDefinitionInSigma;
 
