@@ -78,7 +78,7 @@ public class A_cost_function
         CubicPolynomial.LeastSquaresBuilder costBuilder)
     {
         var referenceCost = costBuilder.WithErrorDefinition(1).Build();
-        var cost = costBuilder.WithAnyErrorDefinitionBetween(2, 10).Build();
+        var cost = costBuilder.WithAnyErrorDefinitionBetween(2, 5).Build();
 
         var referenceResult = MigradMinimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
@@ -91,7 +91,7 @@ public class A_cost_function
         CubicPolynomial.LeastSquaresBuilder costBuilder)
     {
         var referenceCost = costBuilder.WithErrorDefinition(1).Build();
-        var cost = costBuilder.WithAnyErrorDefinitionBetween(2, 10).Build();
+        var cost = costBuilder.WithAnyErrorDefinitionBetween(2, 5).Build();
 
         var referenceResult = MigradMinimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
