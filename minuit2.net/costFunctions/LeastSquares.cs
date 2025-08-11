@@ -2,10 +2,6 @@
 
 public class LeastSquares : ICostFunction
 {
-    // For least squares fits, an error definition of 1 corresponds to 1-sigma parameter errors
-    // (4 would correspond to 2-sigma errors, 9 would correspond to 3-sigma errors etc.)
-    public const double OneSigmaErrorDefinition = 1;
-    
     private readonly IList<double> _x;
     private readonly IList<double> _y;
     private readonly IList<double> _yError;
@@ -18,7 +14,8 @@ public class LeastSquares : ICostFunction
         IList<double> yError,
         IList<string> parameters,
         Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null)
+        Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        double errorDefinitionInSigma = 1)
     {
         if (x.Count != y.Count || x.Count != yError.Count)
             throw new ArgumentException($"{nameof(x)}, {nameof(y)} and {nameof(yError)} must have the same length");
@@ -31,7 +28,7 @@ public class LeastSquares : ICostFunction
         
         Parameters = parameters;
         HasGradient = modelGradient != null;
-        ErrorDefinition = OneSigmaErrorDefinition;
+        ErrorDefinition = ErrorDefinitionFor(errorDefinitionInSigma);
     }
 
     public IList<string> Parameters { get; }
@@ -66,4 +63,9 @@ public class LeastSquares : ICostFunction
 
     private double ResidualFor(int i, IList<double> parameterValues) =>
         (_y[i] - _model(_x[i], parameterValues)) / _yError[i];
+    
+    // For least squares fits, an error definition of 1 corresponds to 1-sigma parameter errors
+    // (4 would correspond to 2-sigma errors, 9 would correspond to 3-sigma errors etc.)
+    internal static double ErrorDefinitionFor(double errorDefinitionInSigma) =>
+        errorDefinitionInSigma * errorDefinitionInSigma;
 }

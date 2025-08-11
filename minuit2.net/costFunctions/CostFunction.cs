@@ -7,9 +7,10 @@ public static class CostFunction
         IList<double> y,
         IList<string> parameters,
         Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null)
+        Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        double errorDefinitionInSigma = 1)
     {
-        return new LeastSquaresWithUnknownYError(x, y, parameters, model, modelGradient);
+        return new LeastSquaresWithUnknownYError(x, y, parameters, model, modelGradient, errorDefinitionInSigma);
     }
     
     public static ICostFunction LeastSquares(
@@ -18,9 +19,10 @@ public static class CostFunction
         double yError,
         IList<string> parameters,
         Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null)
+        Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        double errorDefinitionInSigma = 1)
     {
-        return new LeastSquaresWithUniformYError(x, y, yError, parameters, model, modelGradient);
+        return new LeastSquaresWithUniformYError(x, y, yError, parameters, model, modelGradient, errorDefinitionInSigma);
     }
     
     public static ICostFunction LeastSquares(
@@ -29,9 +31,10 @@ public static class CostFunction
         IList<double> yErrors,
         IList<string> parameters,
         Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null)
+        Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        double errorDefinitionInSigma = 1)
     {
-        return new LeastSquares(x, y, yErrors, parameters, model, modelGradient);
+        return new LeastSquares(x, y, yErrors, parameters, model, modelGradient, errorDefinitionInSigma);
     }
     
     public static ICostFunction Sum(params ICostFunction[] components)

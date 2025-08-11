@@ -14,7 +14,8 @@ public class LeastSquaresWithUniformYError : ICostFunction
         double yError,
         IList<string> parameters,
         Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null)
+        Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        double errorDefinitionInSigma = 1)
     {
         if (x.Count != y.Count)
             throw new ArgumentException($"{nameof(x)} and {nameof(y)} must have the same length");
@@ -27,7 +28,7 @@ public class LeastSquaresWithUniformYError : ICostFunction
         
         Parameters = parameters;
         HasGradient = modelGradient != null;
-        ErrorDefinition = LeastSquares.OneSigmaErrorDefinition;
+        ErrorDefinition = LeastSquares.ErrorDefinitionFor(errorDefinitionInSigma);
     }
     
     public IList<string> Parameters { get; }

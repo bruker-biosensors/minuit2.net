@@ -2,16 +2,20 @@ namespace minuit2.net.costFunctions;
 
 public class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError, ICostFunctionRequiringErrorDefinitionAdjustment
 {
+    private readonly double _errorDefinitionInSigma;
+
     public LeastSquaresWithUnknownYError(
         IList<double> x,
         IList<double> y,
         IList<string> parameters,
         Func<double, IList<double>, double> model,
         Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        double errorDefinitionInSigma = 1,
         double errorDefinitionScaling = 1) 
-        : base(x, y, 1, parameters, model, modelGradient)
+        : base(x, y, 1, parameters, model, modelGradient, errorDefinitionInSigma)
     {
-        ErrorDefinition = LeastSquares.OneSigmaErrorDefinition * errorDefinitionScaling;
+        _errorDefinitionInSigma = errorDefinitionInSigma;
+        ErrorDefinition = LeastSquares.ErrorDefinitionFor(errorDefinitionInSigma) * errorDefinitionScaling;
     }
     
     public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
@@ -27,6 +31,6 @@ public class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError, ICos
         
         var degreesOfFreedom = X.Count - variables.Count;
         var reducedChiSquared = ValueFor(parameterValues) / degreesOfFreedom;
-        return new LeastSquaresWithUnknownYError(X, Y, Parameters, Model, ModelGradient, reducedChiSquared);
+        return new LeastSquaresWithUnknownYError(X, Y, Parameters, Model, ModelGradient, _errorDefinitionInSigma, reducedChiSquared);
     }
 }
