@@ -1,6 +1,6 @@
 namespace minuit2.net;
 
-public class LeastSquaresWithUniformYError : ICostFunctionRequiringErrorDefinitionAdjustment
+public class LeastSquaresWithUniformYError : ICostFunction
 {
     private readonly IList<double> _x;
     private readonly IList<double> _y;
@@ -14,8 +14,7 @@ public class LeastSquaresWithUniformYError : ICostFunctionRequiringErrorDefiniti
         double yError,
         IList<string> parameters,
         Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null, 
-        double errorDefinitionScaling = 1)
+        Func<double, IList<double>, IList<double>>? modelGradient = null)
     {
         if (x.Count != y.Count)
             throw new ArgumentException($"{nameof(x)} and {nameof(y)} must have the same length");
@@ -28,14 +27,12 @@ public class LeastSquaresWithUniformYError : ICostFunctionRequiringErrorDefiniti
         
         Parameters = parameters;
         HasGradient = modelGradient != null;
-        ErrorDefinition = 1 * errorDefinitionScaling;  // TODO: Reuse constant
-        RequiresErrorDefinitionAutoScaling = false;
+        ErrorDefinition = 1;  // TODO: Reuse constant
     }
     
     public IList<string> Parameters { get; }
     public bool HasGradient { get; }
     public double ErrorDefinition { get; }
-    public bool RequiresErrorDefinitionAutoScaling { get; }
     
     public double ValueFor(IList<double> parameterValues)
     {
@@ -63,10 +60,5 @@ public class LeastSquaresWithUniformYError : ICostFunctionRequiringErrorDefiniti
         }
         
         return gradientSums;
-    }
-    
-    public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
-    {
-        throw new NotImplementedException();
     }
 }

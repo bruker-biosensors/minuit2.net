@@ -5,7 +5,7 @@ namespace minuit2.net;
 public static class MigradMinimizer
 {
     public static IMinimizationResult Minimize(
-        ICostFunctionRequiringErrorDefinitionAdjustment costFunction, 
+        ICostFunction costFunction, 
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
         MigradMinimizerConfiguration? minimizerConfiguration = null, 
         CancellationToken cancellationToken = default)
@@ -14,9 +14,11 @@ public static class MigradMinimizer
         
         minimizerConfiguration ??= new MigradMinimizerConfiguration();
         var result = CoreMinimize(costFunction, parameterConfigurations, minimizerConfiguration, cancellationToken);
-        if (!costFunction.RequiresErrorDefinitionAutoScaling || result.ExitCondition == ManuallyStopped) return result;
         
-        var adjustedCostFunction = costFunction.WithAutoScaledErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
+        if (result.ExitCondition == ManuallyStopped) return result;
+        if (costFunction is not ICostFunctionRequiringErrorDefinitionAdjustment cost) return result;
+
+        var adjustedCostFunction = cost.WithAutoScaledErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
         HesseErrorCalculator.UpdateParameterCovariances(result, adjustedCostFunction, minimizerConfiguration.Strategy);
         return result;
     }
@@ -31,7 +33,7 @@ public static class MigradMinimizer
     }
 
     private static IMinimizationResult CoreMinimize(
-        ICostFunctionRequiringErrorDefinitionAdjustment costFunction,
+        ICostFunction costFunction,
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
         MigradMinimizerConfiguration minimizerConfiguration, 
         CancellationToken cancellationToken)

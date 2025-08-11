@@ -64,7 +64,7 @@ public class A_cost_function
         result.Should().HaveIsValid(false);
     }
 
-    private static IEnumerable<ICostFunctionRequiringErrorDefinitionAdjustment> CostFunctionWithVaryingErrorDefinitionTestCases()
+    private static IEnumerable<ICostFunction> CostFunctionWithVaryingErrorDefinitionTestCases()
     {
         yield return CubicPolynomial.LeastSquaresCost.Build();
         yield return CubicPolynomial.LeastSquaresCost.WithMissingYErrors().Build();
@@ -74,10 +74,10 @@ public class A_cost_function
 
     [TestCaseSource(nameof(CostFunctionWithVaryingErrorDefinitionTestCases))]
     public void when_minimized_yields_the_same_cost_value_independent_of_its_error_definition(
-        ICostFunctionRequiringErrorDefinitionAdjustment referenceCost)
+        ICostFunction referenceCost)
     {
-        var errorDefinition = Any.Double().Between(2, 10);
-        var cost = referenceCost.WithErrorDefinition(errorDefinition);
+        var errorDefinitionScaling = Any.Double().Between(2, 10);
+        var cost = referenceCost.WithScaledErrorDefinition(errorDefinitionScaling);
 
         var referenceResult = MigradMinimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
@@ -87,10 +87,10 @@ public class A_cost_function
 
     [TestCaseSource(nameof(CostFunctionWithVaryingErrorDefinitionTestCases))]
     public void when_minimized_yields_parameter_covariances_that_directly_scale_with_the_error_definition(
-        ICostFunctionRequiringErrorDefinitionAdjustment referenceCost)
+        ICostFunction referenceCost)
     {
         var errorDefinition = Any.Double().Between(2, 10);
-        var cost = referenceCost.WithErrorDefinition(errorDefinition);
+        var cost = referenceCost.WithScaledErrorDefinition(errorDefinition);
 
         var referenceResult = MigradMinimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
         var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);

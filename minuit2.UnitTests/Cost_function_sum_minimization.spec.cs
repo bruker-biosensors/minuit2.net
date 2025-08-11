@@ -13,8 +13,8 @@ public class A_cost_function_sum
     public void with_a_single_component_when_minimized_yields_a_result_equivalent_to_the_result_for_the_isolated_component(
         [Values] bool hasGradient, [Values] Strategy strategy)
     {
-        var component = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).Build().WithErrorDefinition(4);
-        var sum = new CostFunctionSum(component);
+        var component = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).Build().WithScaledErrorDefinition(4);
+        var sum = CostFunction.Sum(component);
 
         var minimizerConfiguration = new MigradMinimizerConfiguration(strategy);
         var componentResult = MigradMinimizer.Minimize(component, CubicPolynomial.ParameterConfigurations.Defaults, minimizerConfiguration);
@@ -35,8 +35,8 @@ public class A_cost_function_sum
                           "Once the additional Hesse call is added here, the skipped tests could be re-enabled.");
         
         var component1 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(1).WithGradient(hasGradient).Build();
-        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).Build().WithErrorDefinition(4);
-        var sum = new CostFunctionSum(component1, component2);
+        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).Build().WithScaledErrorDefinition(4);
+        var sum = CostFunction.Sum(component1, component2);
 
         var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
         var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
@@ -73,7 +73,7 @@ public class A_cost_function_sum
         
         var component1 = CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithParameterSuffix(1).WithGradient(hasGradient).Build();
         var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).Build();
-        var sum = new CostFunctionSum(component1, component2);
+        var sum = CostFunction.Sum(component1, component2);
 
         var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
         var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
@@ -107,7 +107,7 @@ public class A_cost_function_sum
     public void with_all_components_having_defined_data_uncertainties_when_minimized_yields_the_expected_result(
         bool hasFirstGradient, bool hasLastGradient, int expectedFunctionCalls)
     {
-        var cost = new CostFunctionSum(
+        var cost = CostFunction.Sum(
             CubicPolynomial.LeastSquaresCost.WithGradient(hasFirstGradient).Build(),
             CubicPolynomial.LeastSquaresCost.WithParameterNames(c1: "c1_1", c3: "c3_1").WithGradient(hasLastGradient).Build());
         var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults
@@ -139,7 +139,7 @@ public class A_cost_function_sum
     public void with_some_components_missing_data_uncertainties_when_minimized_yields_the_expected_result(
         [Values] bool hasFirstGradient, [Values] bool hasLastGradient)
     {
-        var cost = new CostFunctionSum(
+        var cost = CostFunction.Sum(
             CubicPolynomial.LeastSquaresCost.WithGradient(hasFirstGradient).Build(),
             CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithGradient(hasLastGradient).Build());
 

@@ -4,38 +4,51 @@ namespace minuit2.UnitTests.TestUtilities;
 
 internal static class CostFunctionExtensions
 {
-    public static ICostFunctionRequiringErrorDefinitionAdjustment WithErrorDefinition(this ICostFunctionRequiringErrorDefinitionAdjustment cost, double errorDefinition) =>
-        new LeastSquaresWithCustomErrorDefinition(cost, errorDefinition);
+    public static ICostFunction WithScaledErrorDefinition(this ICostFunction costFunction, double errorDefinition)
+    {
+        if(costFunction is LeastSquaresWithUnknownYError leastSquares)
+            return new LeastSquaresWithCustomErrorDefinitionRequiringErrorDefinitionAdjustment(leastSquares, errorDefinition);
+        return new LeastSquaresWithCustomErrorDefinition(costFunction, errorDefinition);
+    }
 
-    public static ICostFunctionRequiringErrorDefinitionAdjustment ListeningToResetEvent(this ICostFunctionRequiringErrorDefinitionAdjustment cost, ManualResetEvent resetEvent) =>
-        new CostFunctionListeningToResetEvent(cost, resetEvent);
+    public static ICostFunction ListeningToResetEvent(this ICostFunction costFunction, ManualResetEvent resetEvent) =>
+        new CostFunctionListeningToResetEvent(costFunction, resetEvent);
 }
 
-file class LeastSquaresWithCustomErrorDefinition(ICostFunctionRequiringErrorDefinitionAdjustment wrapped, double errorDefinition) : ICostFunctionRequiringErrorDefinitionAdjustment
+file class LeastSquaresWithCustomErrorDefinitionRequiringErrorDefinitionAdjustment(
+    LeastSquaresWithUnknownYError wrapped,
+    double errorDefinitionScaling)
+    : ICostFunctionRequiringErrorDefinitionAdjustment
 {
-    private readonly double _errorDefinition = errorDefinition;
-
     public IList<string> Parameters => wrapped.Parameters;
     public bool HasGradient => wrapped.HasGradient;
-    public double ErrorDefinition { get; private set; } = errorDefinition;
-    public bool RequiresErrorDefinitionAutoScaling => wrapped.RequiresErrorDefinitionAutoScaling;
+    public double ErrorDefinition { get; } = wrapped.ErrorDefinition * errorDefinitionScaling;
     
     public double ValueFor(IList<double> parameterValues) => wrapped.ValueFor(parameterValues);
     public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
+
     public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
     {
-        var wrappedCopy = wrapped.WithAutoScaledErrorDefinitionBasedOn(parameterValues, variables);
-        var errorDefinitionScaling = wrappedCopy.ErrorDefinition / wrapped.ErrorDefinition;
-        return new LeastSquaresWithCustomErrorDefinition(wrappedCopy, ErrorDefinition * errorDefinitionScaling);
+        var adjustedWrapped = (LeastSquaresWithUnknownYError)wrapped.WithAutoScaledErrorDefinitionBasedOn(parameterValues, variables);
+        return new LeastSquaresWithCustomErrorDefinitionRequiringErrorDefinitionAdjustment(adjustedWrapped, errorDefinitionScaling);
     }
 }
 
-internal class CostFunctionListeningToResetEvent(ICostFunctionRequiringErrorDefinitionAdjustment wrapped, ManualResetEvent resetEvent) : ICostFunctionRequiringErrorDefinitionAdjustment
+file class LeastSquaresWithCustomErrorDefinition(ICostFunction wrapped, double errorDefinitionScaling) : ICostFunction
+{
+    public IList<string> Parameters => wrapped.Parameters;
+    public bool HasGradient => wrapped.HasGradient;
+    public double ErrorDefinition { get; } = wrapped.ErrorDefinition * errorDefinitionScaling;
+    
+    public double ValueFor(IList<double> parameterValues) => wrapped.ValueFor(parameterValues);
+    public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
+}
+
+internal class CostFunctionListeningToResetEvent(ICostFunction wrapped, ManualResetEvent resetEvent) : ICostFunction
 {
     public IList<string> Parameters => wrapped.Parameters;
     public bool HasGradient => wrapped.HasGradient;
     public double ErrorDefinition => wrapped.ErrorDefinition;
-    public bool RequiresErrorDefinitionAutoScaling => wrapped.RequiresErrorDefinitionAutoScaling;
 
     public double ValueFor(IList<double> parameterValues)
     {
@@ -44,7 +57,4 @@ internal class CostFunctionListeningToResetEvent(ICostFunctionRequiringErrorDefi
     }
 
     public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
-
-    public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
-        new CostFunctionListeningToResetEvent(wrapped.WithAutoScaledErrorDefinitionBasedOn(parameterValues, variables), resetEvent);
 }

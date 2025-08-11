@@ -15,7 +15,9 @@ internal class MinimizationResult : IMinimizationResult
 
         CostValue = costFunction is ICompositeCostFunction compositeCostFunction
             ? compositeCostFunction.CompositeValueFor(parameterValues)
-            : costFunction.ValueFor(parameterValues);
+            : costFunction is ICompositeCostFunctionRequiringErrorDefinitionAdjustment compositeCostFunction2 
+                ? compositeCostFunction2.CompositeValueFor(parameterValues) 
+                : costFunction.ValueFor(parameterValues);
 
         // Meta information
         IsValid = minimum.IsValid();

@@ -1,20 +1,25 @@
 namespace minuit2.net;
 
-public class CostFunctionSum : ICompositeCostFunction
+internal class CostFunctionSumRequiringErrorDefinitionAdjustment : ICompositeCostFunctionRequiringErrorDefinitionAdjustment
 {
-    private readonly ComponentCostFunction[] _components;
+    private readonly ICostFunction[] _components;
 
-    public CostFunctionSum(params ICostFunction[] components)
+    public CostFunctionSumRequiringErrorDefinitionAdjustment(params ICostFunction[] components)
     {
         Parameters = components.DistinctParameters();
         HasGradient = components.All(c => c.HasGradient);
         ErrorDefinition = 1;  // Neutral element; Scaling is performed within the components since factors may differ.
+        RequiresErrorDefinitionAutoScaling = true;
         
         _components = components.Select(AsComponentCostFunction).ToArray();
     }
 
-    private ComponentCostFunction AsComponentCostFunction(ICostFunction costFunction) =>
-        costFunction as ComponentCostFunction ?? new ComponentCostFunction(costFunction, Parameters);
+    private ICostFunction AsComponentCostFunction(ICostFunction costFunction)
+    {
+        return costFunction is ComponentCostFunction or ComponentCostFunctionRequiringErrorDefinitionAdjustment
+            ? costFunction
+            : CostFunction.Component(costFunction, Parameters);
+    }
 
     public IList<string> Parameters { get; }
     public bool HasGradient { get; }
@@ -36,6 +41,14 @@ public class CostFunctionSum : ICompositeCostFunction
         for (var i = 0; i < Parameters.Count; i++) 
             gradients[i] += componentGradients[i];
     }
+
+    public bool RequiresErrorDefinitionAutoScaling { get; }
+
+    public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
+        new CostFunctionSumRequiringErrorDefinitionAdjustment(
+            _components.Select(c => c is ComponentCostFunctionRequiringErrorDefinitionAdjustment c2
+                ? c2.WithAutoScaledErrorDefinitionBasedOn(parameterValues, variables) 
+                : c).ToArray());
 
     public double CompositeValueFor(IList<double> parameterValues) =>
         _components.Select(c => c.ValueFor(parameterValues) * c.ErrorDefinition).Sum();

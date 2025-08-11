@@ -36,7 +36,7 @@ internal static class CubicPolynomial
         private bool _hasYErrors = true;
         private bool _hasGradient;
 
-        public ICostFunctionRequiringErrorDefinitionAdjustment Build() => _hasYErrors switch
+        public ICostFunction Build() => _hasYErrors switch
         {
             true when _hasGradient => new LeastSquaresWithUniformYError(XValues, YValues, YError, _parameterNames, Model, ModelGradient),
             true when !_hasGradient => new LeastSquaresWithUniformYError(XValues, YValues, YError, _parameterNames, Model),

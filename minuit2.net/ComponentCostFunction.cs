@@ -1,15 +1,16 @@
 namespace minuit2.net;
 
-internal class ComponentCostFunction(ICostFunctionRequiringErrorDefinitionAdjustment inner, IList<string> parameters) 
-    : ICostFunctionRequiringErrorDefinitionAdjustment
+internal class ComponentCostFunction(ICostFunction inner, IList<string> compositeParameters) : ICostFunction
 {
-    // To achieve proper scaling of component gradients (analytical and numerically approximated), both the function
+    // To achieve proper scaling of component gradients (both analytical and numerically approximated), the function
     // values and gradients have to be scaled by 1/ErrorDefinition in place. Yet, doing so necessitates re-scaling of
     // the final function values (after minimization). This must be done in the hosting composite class.
     
-    private readonly List<int> _parameterIndices = inner.Parameters.Select(parameters.IndexOf).ToList();
+    private readonly List<int> _parameterIndices = inner.Parameters.Select(compositeParameters.IndexOf).ToList();
     
-    private double[] Belonging(IList<double> parameterValues)
+    protected readonly IList<string> CompositeParameters = compositeParameters;
+    
+    protected double[] Belonging(IList<double> parameterValues)
     {
         var belonging = new double[_parameterIndices.Count];
         for (var i = 0; i < _parameterIndices.Count; i++) 
@@ -18,27 +19,20 @@ internal class ComponentCostFunction(ICostFunctionRequiringErrorDefinitionAdjust
         return belonging;
     }
 
-    private string[] Belonging(IList<string> variables) => variables.Where(var => Parameters.Contains(var)).ToArray();
-
     public IList<string> Parameters => inner.Parameters;
     public bool HasGradient => inner.HasGradient;
     public double ErrorDefinition => inner.ErrorDefinition;
-    public bool RequiresErrorDefinitionAutoScaling => inner.RequiresErrorDefinitionAutoScaling;
 
-    public double ValueFor(IList<double> parameterValues) =>
-        inner.ValueFor(Belonging(parameterValues)) / ErrorDefinition;
+    public double ValueFor(IList<double> compositeParameterValues) =>
+        inner.ValueFor(Belonging(compositeParameterValues)) / ErrorDefinition;
 
-    public IList<double> GradientFor(IList<double> parameterValues)
+    public IList<double> GradientFor(IList<double> compositeParameterValues)
     {
-        var gradients = inner.GradientFor(Belonging(parameterValues));
-        
-        var expandedGradients = new double[parameters.Count];
-        foreach (var (gradient, index) in gradients.Zip(_parameterIndices))
-            expandedGradients[index] = gradient / ErrorDefinition;
+        var gradients = inner.GradientFor(Belonging(compositeParameterValues));
+        var expandedGradients = new double[CompositeParameters.Count];
+        for (var i = 0; i < gradients.Count; i++)
+            expandedGradients[_parameterIndices[i]] = gradients[i] / ErrorDefinition;
         
         return expandedGradients;
     }
-
-    public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
-        new ComponentCostFunction(inner.WithAutoScaledErrorDefinitionBasedOn(Belonging(parameterValues), Belonging(variables)), parameters);
 }
