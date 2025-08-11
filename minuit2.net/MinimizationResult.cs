@@ -5,7 +5,7 @@ namespace minuit2.net;
 
 internal class MinimizationResult : IMinimizationResult
 {
-    internal MinimizationResult(FunctionMinimum minimum, ICostFunction costFunction, double edmThreshold)
+    internal MinimizationResult(FunctionMinimum minimum, ICostFunction costFunction)
     {
         var state = minimum.UserState();
         Parameters = costFunction.Parameters.ToList();
@@ -22,7 +22,7 @@ internal class MinimizationResult : IMinimizationResult
         IsValid = minimum.IsValid();
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = minimum.NFcn();
-        ExitCondition = ExitConditionFrom(minimum, edmThreshold);
+        ExitCondition = ExitConditionFrom(minimum);
         
         Minimum = minimum;
     }
@@ -78,12 +78,12 @@ internal class MinimizationResult : IMinimizationResult
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
     
-    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum minimum, double edmThreshold)
+    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum minimum)
     {
-        if (minimum.Edm() < edmThreshold)
-            return Converged;
         if (minimum.HasReachedCallLimit())
             return FunctionCallsExhausted;
+        if (!minimum.IsAboveMaxEdm())
+            return Converged;
         
         return None;
     }
