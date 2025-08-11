@@ -1,4 +1,4 @@
-namespace minuit2.net;
+namespace minuit2.net.costFunctions;
 
 public class CostFunctionSum : ICostFunction, IComposite
 {

@@ -1,3 +1,5 @@
+using minuit2.net.costFunctions;
+
 namespace minuit2.net;
 
 public static class HesseErrorCalculator

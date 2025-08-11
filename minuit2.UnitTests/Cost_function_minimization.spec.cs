@@ -1,5 +1,6 @@
 using FluentAssertions;
 using minuit2.net;
+using minuit2.net.costFunctions;
 using minuit2.UnitTests.TestUtilities;
 using static minuit2.net.MinimizationExitCondition;
 

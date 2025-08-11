@@ -1,4 +1,5 @@
 using minuit2.net;
+using minuit2.net.costFunctions;
 using static minuit2.net.ParameterConfiguration;
 
 namespace minuit2.UnitTests.TestUtilities;
