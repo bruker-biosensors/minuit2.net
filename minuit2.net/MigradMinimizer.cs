@@ -5,7 +5,7 @@ namespace minuit2.net;
 public static class MigradMinimizer
 {
     public static IMinimizationResult Minimize(
-        ICostFunction costFunction, 
+        ICostFunctionRequiringErrorDefinitionAdjustment costFunction, 
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
         MigradMinimizerConfiguration? minimizerConfiguration = null, 
         CancellationToken cancellationToken = default)
@@ -22,7 +22,7 @@ public static class MigradMinimizer
     }
     
     private static void ThrowIfParametersAreNotMatchingBetween(
-        ICostFunction costFunction,
+        ICostFunctionRequiringErrorDefinitionAdjustment costFunction,
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations)
     {
         if (parameterConfigurations.AreNotMatching(costFunction.Parameters))
@@ -31,7 +31,7 @@ public static class MigradMinimizer
     }
 
     private static IMinimizationResult CoreMinimize(
-        ICostFunction costFunction,
+        ICostFunctionRequiringErrorDefinitionAdjustment costFunction,
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
         MigradMinimizerConfiguration minimizerConfiguration, 
         CancellationToken cancellationToken)

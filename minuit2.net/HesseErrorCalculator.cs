@@ -4,7 +4,7 @@ public static class HesseErrorCalculator
 {
     public static void UpdateParameterCovariances(
         IMinimizationResult result, 
-        ICostFunction costFunction, 
+        ICostFunctionRequiringErrorDefinitionAdjustment costFunction, 
         Strategy strategy = Strategy.Balanced)
     {
         if (result is not MinimizationResult minimizationResult) return;
@@ -14,7 +14,7 @@ public static class HesseErrorCalculator
         minimizationResult.UpdateParameterCovariancesWith(minimum);
     }
 
-    private static void Update(FunctionMinimum minimum, ICostFunction costFunction, Strategy strategy)
+    private static void Update(FunctionMinimum minimum, ICostFunctionRequiringErrorDefinitionAdjustment costFunction, Strategy strategy)
     {
         using var cost = new CostFunctionAdapter(costFunction);
         using var hesse = new MnHesseWrap(strategy.AsMnStrategy());

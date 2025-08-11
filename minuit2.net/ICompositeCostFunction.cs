@@ -1,6 +1,6 @@
 namespace minuit2.net;
 
-public interface ICompositeCostFunction : ICostFunction
+public interface ICompositeCostFunction : ICostFunctionRequiringErrorDefinitionAdjustment
 {
     double CompositeValueFor(IList<double> parameterValues);
 }

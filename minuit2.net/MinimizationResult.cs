@@ -4,7 +4,7 @@ namespace minuit2.net;
 
 internal class MinimizationResult : IMinimizationResult
 {
-    internal MinimizationResult(FunctionMinimum minimum, ICostFunction costFunction, double edmThreshold)
+    internal MinimizationResult(FunctionMinimum minimum, ICostFunctionRequiringErrorDefinitionAdjustment costFunction, double edmThreshold)
     {
         var state = minimum.UserState();
         Parameters = costFunction.Parameters.ToList();

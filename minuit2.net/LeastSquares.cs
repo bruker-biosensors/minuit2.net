@@ -1,6 +1,6 @@
 ﻿namespace minuit2.net;
 
-public class LeastSquares : ICostFunction
+public class LeastSquares : ICostFunctionRequiringErrorDefinitionAdjustment
 {
     // For chi-squared fits, ErrorDefinition = 1 corresponds to standard 1-sigma parameter errors
     // (ErrorDefinition = 4 would correspond to 2-sigma errors etc.)
@@ -90,7 +90,7 @@ public class LeastSquares : ICostFunction
     private double ResidualFor(DataPoint datum, IList<double> parameterValues) =>
         (datum.Y - _model(datum.X, parameterValues)) / datum.YError;
 
-    public ICostFunction WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
+    public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
     {
         // Auto-scale the error definition such that a re-evaluation -- e.g. by a subsequent minimization or accurate
         // covariance computation (Hesse algorithm) -- yields the same parameter covariances that would be obtained

@@ -1,6 +1,6 @@
 ﻿namespace minuit2.net;
 
-internal sealed class CostFunctionAdapter(ICostFunction function, CancellationToken cancellationToken = default)
+internal sealed class CostFunctionAdapter(ICostFunctionRequiringErrorDefinitionAdjustment function, CancellationToken cancellationToken = default)
     : FCNWrap
 {
     // We always forward a neutral error definition (Up) of 1 to the C++ code. Instead, we scale the output values of

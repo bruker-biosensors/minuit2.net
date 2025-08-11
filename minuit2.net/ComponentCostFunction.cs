@@ -1,6 +1,6 @@
 namespace minuit2.net;
 
-internal class ComponentCostFunction(ICostFunction inner, IList<string> parameters) : ICostFunction
+internal class ComponentCostFunction(ICostFunctionRequiringErrorDefinitionAdjustment inner, IList<string> parameters) : ICostFunctionRequiringErrorDefinitionAdjustment
 {
     // To achieve proper scaling of component gradients (analytical and numerically approximated), both the function
     // values and gradients have to be scaled by 1/ErrorDefinition in place. Yet, doing so necessitates re-scaling of
@@ -38,6 +38,6 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> paramete
         return expandedGradients;
     }
 
-    public ICostFunction WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
+    public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
         new ComponentCostFunction(inner.WithAutoScaledErrorDefinitionBasedOn(Belonging(parameterValues), Belonging(variables)), parameters);
 }

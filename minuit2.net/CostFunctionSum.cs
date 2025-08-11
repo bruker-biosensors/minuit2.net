@@ -4,7 +4,7 @@ public class CostFunctionSum : ICompositeCostFunction
 {
     private readonly ComponentCostFunction[] _components;
 
-    public CostFunctionSum(params ICostFunction[] components)
+    public CostFunctionSum(params ICostFunctionRequiringErrorDefinitionAdjustment[] components)
     {
         Parameters = components.DistinctParameters();
         HasGradient = components.All(c => c.HasGradient);
@@ -14,7 +14,7 @@ public class CostFunctionSum : ICompositeCostFunction
         _components = components.Select(AsComponentCostFunction).ToArray();
     }
 
-    private ComponentCostFunction AsComponentCostFunction(ICostFunction costFunction) =>
+    private ComponentCostFunction AsComponentCostFunction(ICostFunctionRequiringErrorDefinitionAdjustment costFunction) =>
         costFunction as ComponentCostFunction ?? new ComponentCostFunction(costFunction, Parameters);
 
     public IList<string> Parameters { get; }
@@ -39,7 +39,7 @@ public class CostFunctionSum : ICompositeCostFunction
             gradients[i] += componentGradients[i];
     }
 
-    public ICostFunction WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
+    public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables) =>
         new CostFunctionSum(_components.Select(c => c.RequiresErrorDefinitionAutoScaling
             ? c.WithAutoScaledErrorDefinitionBasedOn(parameterValues, variables)
             : c).ToArray());
@@ -50,9 +50,9 @@ public class CostFunctionSum : ICompositeCostFunction
 
 file static class CostFunctionCollectionExtensions
 {
-    public static string[] DistinctParameters(this IEnumerable<ICostFunction> costFunctions) =>
+    public static string[] DistinctParameters(this IEnumerable<ICostFunctionRequiringErrorDefinitionAdjustment> costFunctions) =>
         costFunctions.Aggregate(Enumerable.Empty<string>(), Union).ToArray();
 
-    private static IEnumerable<string> Union(IEnumerable<string> parameters, ICostFunction cost) =>
+    private static IEnumerable<string> Union(IEnumerable<string> parameters, ICostFunctionRequiringErrorDefinitionAdjustment cost) =>
         parameters.Union(cost.Parameters);
 }
