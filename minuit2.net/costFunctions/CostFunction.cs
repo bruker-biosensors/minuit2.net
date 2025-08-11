@@ -31,7 +31,7 @@ public static class CostFunction
         Func<double, IList<double>, double> model,
         Func<double, IList<double>, IList<double>>? modelGradient = null)
     {
-        return new LeastSquaresWithIndividualYError(x, y, yErrors, parameters, model, modelGradient);
+        return new LeastSquares(x, y, yErrors, parameters, model, modelGradient);
     }
     
     public static ICostFunction Sum(params ICostFunction[] components)
