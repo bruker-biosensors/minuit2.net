@@ -16,7 +16,7 @@ public class A_least_squares_cost_function
         var xCount = AnyCount(10, 50);
         var yCount = xCount + countBiasDirection * AnyCount(1, 10);
         
-        var construction = void () => _ = new LeastSquares(AnyValues(xCount), AnyValues(yCount), [], (_, _) => 0);
+        var construction = void () => _ = new LeastSquaresWithUniformYError(AnyValues(xCount), AnyValues(yCount), 1, [], (_, _) => 0);
         construction.Should().Throw<ArgumentException>();
     }
     
@@ -39,7 +39,7 @@ public class A_least_squares_cost_function
         var xValues = AnyValues(valueCount);
         var yValues = AnyValues(valueCount);
         var yError = Any.Double();
-        var cost = new LeastSquares(xValues, yValues, yError, ["level"], (_, p) => p[0]);
+        var cost = new LeastSquaresWithUniformYError(xValues, yValues, yError, ["level"], (_, p) => p[0]);
         
         var expectedValue = yValues
             .Select(y => (y - constantModelLevel) / yError)
@@ -72,7 +72,7 @@ public class A_least_squares_cost_function
         var valueCount = AnyCount();
         var xValues = AnyValues(valueCount);
         var yValues = AnyValues(valueCount);
-        var cost = new LeastSquares(xValues, yValues, ["level"], (_, p) => p[0]);
+        var cost = new LeastSquaresWithUniformYError(xValues, yValues, 1, ["level"], (_, p) => p[0]);
         
         var expectedValue = yValues
             .Select(y => y - constantModelLevel)

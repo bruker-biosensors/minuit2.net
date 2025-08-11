@@ -1,69 +1,71 @@
-﻿namespace minuit2.net;
+namespace minuit2.net;
 
-public class LeastSquares : ICostFunctionRequiringErrorDefinitionAdjustment
+public class LeastSquaresWithUniformYError : ICostFunctionRequiringErrorDefinitionAdjustment
 {
-    // For chi-squared fits, ErrorDefinition = 1 corresponds to standard 1-sigma parameter errors
-    // (ErrorDefinition = 4 would correspond to 2-sigma errors etc.)
-    private const double ChiSquaredErrorDefinition = 1;
-    
     private readonly IList<double> _x;
     private readonly IList<double> _y;
-    private readonly IList<double> _yError;
-    private readonly List<DataPoint> _data;
+    private readonly double _yError;
     private readonly Func<double, IList<double>, double> _model;
     private readonly Func<double, IList<double>, IList<double>>? _modelGradient;
-    
-    public LeastSquares(
+
+    public LeastSquaresWithUniformYError(
         IList<double> x,
         IList<double> y,
-        IList<double> yError,
+        double yError,
         IList<string> parameters,
         Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null,
-        bool requiresErrorDefinitionAutoScaling = false,
+        Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        bool requiresErrorDefinitionAutoScaling = false, 
         double errorDefinitionScaling = 1)
     {
-        if (x.Count != y.Count || x.Count != yError.Count)
-            throw new ArgumentException($"{nameof(x)}, {nameof(y)} and {nameof(yError)} must have the same length");
+        if (x.Count != y.Count)
+            throw new ArgumentException($"{nameof(x)} and {nameof(y)} must have the same length");
         
         _x = x;
         _y = y;
         _yError = yError;
-        _data = x.Zip(y, yError).Select(t => new DataPoint(t.First, t.Second, t.Third)).ToList();
         _model = model;
         _modelGradient = modelGradient;
         
         Parameters = parameters;
         HasGradient = modelGradient != null;
-        ErrorDefinition = ChiSquaredErrorDefinition * errorDefinitionScaling;
+        ErrorDefinition = 1 * errorDefinitionScaling;  // TODO: Reuse constant
         RequiresErrorDefinitionAutoScaling = requiresErrorDefinitionAutoScaling;
     }
-
+    
     public IList<string> Parameters { get; }
     public bool HasGradient { get; }
     public double ErrorDefinition { get; }
     public bool RequiresErrorDefinitionAutoScaling { get; }
+    
+    public double ValueFor(IList<double> parameterValues)
+    {
+        double sum = 0;
+        for (var i = 0; i < _x.Count; i++)
+        {
+            var residual = Residual(i, parameterValues);
+            sum += residual * residual;
+        }
+        
+        return sum;
+    }
 
-    public double ValueFor(IList<double> parameterValues) => 
-        _data.Select(datum => ResidualFor(datum, parameterValues)).Select(residual => residual * residual).Sum();
+    private double Residual(int i, IList<double> parameterValues) => (_y[i] - _model(_x[i], parameterValues)) / _yError;
 
     public IList<double> GradientFor(IList<double> parameterValues)
     {
-        var gradientSums = Enumerable.Repeat(0d, Parameters.Count).ToList();
-        foreach (var datum in _data)
+        var gradientSums = new double[Parameters.Count];
+        for (var i = 0; i < _x.Count; i++)
         {
-            var gradients = _modelGradient!(datum.X, parameterValues);
-            var factor = 2 * ResidualFor(datum, parameterValues);
-            for (var i = 0; i < Parameters.Count; i++) 
-                gradientSums[i] -= factor * gradients[i] / datum.YError;          
+            var factor = 2 * Residual(i, parameterValues);
+            var gradients = _modelGradient!(_x[i], parameterValues);
+            for (var j = 0; j < Parameters.Count; j++) 
+                gradientSums[j] -= factor * gradients[j] / _yError;
         }
-
+        
         return gradientSums;
     }
-
-    private double ResidualFor(DataPoint datum, IList<double> parameterValues) =>
-        (datum.Y - _model(datum.X, parameterValues)) / datum.YError;
-
+    
     public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
     {
         // Auto-scale the error definition such that a re-evaluation -- e.g. by a subsequent minimization or accurate
@@ -75,8 +77,8 @@ public class LeastSquares : ICostFunctionRequiringErrorDefinitionAdjustment
         // This is equivalent to the default behaviour in lmfit:
         // https://lmfit.github.io/lmfit-py/fitting.html#uncertainties-in-variable-parameters-and-their-correlations
         
-        var degreesOfFreedom = _data.Count - variables.Count;
+        var degreesOfFreedom = _x.Count - variables.Count;
         var reducedChiSquared = ValueFor(parameterValues) / degreesOfFreedom;
-        return new LeastSquares(_x, _y, _yError, Parameters, _model, _modelGradient, RequiresErrorDefinitionAutoScaling, reducedChiSquared);
+        return new LeastSquaresWithUniformYError(_x, _y, _yError, Parameters, _model, _modelGradient, RequiresErrorDefinitionAutoScaling, reducedChiSquared);
     }
 }
