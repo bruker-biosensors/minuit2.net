@@ -20,7 +20,6 @@ public class LeastSquares : ICostFunctionRequiringErrorDefinitionAdjustment
         IList<string> parameters,
         Func<double, IList<double>, double> model,
         Func<double, IList<double>, IList<double>>? modelGradient = null,
-        bool requiresErrorDefinitionAutoScaling = false,
         double errorDefinitionScaling = 1)
     {
         if (x.Count != y.Count || x.Count != yError.Count)
@@ -36,7 +35,7 @@ public class LeastSquares : ICostFunctionRequiringErrorDefinitionAdjustment
         Parameters = parameters;
         HasGradient = modelGradient != null;
         ErrorDefinition = ChiSquaredErrorDefinition * errorDefinitionScaling;
-        RequiresErrorDefinitionAutoScaling = requiresErrorDefinitionAutoScaling;
+        RequiresErrorDefinitionAutoScaling = false;
     }
 
     public IList<string> Parameters { get; }
@@ -66,17 +65,6 @@ public class LeastSquares : ICostFunctionRequiringErrorDefinitionAdjustment
 
     public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
     {
-        // Auto-scale the error definition such that a re-evaluation -- e.g. by a subsequent minimization or accurate
-        // covariance computation (Hesse algorithm) -- yields the same parameter covariances that would be obtained
-        // from a minimization using data y-errors resulting in a reduced chi-squared value of 1.
-        // Yet, in contrast to scaling the y-errors, by scaling the error definition the cost value (chi-squared value)
-        // itself won't be affected. This means that for missing y-errors, the reduced chi-squared should approximate
-        // the variance of the noise overlying the data.
-        // This is equivalent to the default behaviour in lmfit:
-        // https://lmfit.github.io/lmfit-py/fitting.html#uncertainties-in-variable-parameters-and-their-correlations
-        
-        var degreesOfFreedom = _data.Count - variables.Count;
-        var reducedChiSquared = ValueFor(parameterValues) / degreesOfFreedom;
-        return new LeastSquares(_x, _y, _yError, Parameters, _model, _modelGradient, RequiresErrorDefinitionAutoScaling, reducedChiSquared);
+        throw new NotImplementedException();
     }
 }
