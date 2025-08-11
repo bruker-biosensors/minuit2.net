@@ -13,11 +13,9 @@ internal class MinimizationResult : IMinimizationResult
         ParameterValues = parameterValues.ToList();
         ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
 
-        CostValue = costFunction is ICompositeCostFunction compositeCostFunction
+        CostValue = costFunction is IComposite compositeCostFunction
             ? compositeCostFunction.CompositeValueFor(parameterValues)
-            : costFunction is ICompositeCostFunctionRequiringErrorDefinitionAdjustment compositeCostFunction2 
-                ? compositeCostFunction2.CompositeValueFor(parameterValues) 
-                : costFunction.ValueFor(parameterValues);
+            : costFunction.ValueFor(parameterValues);
 
         // Meta information
         IsValid = minimum.IsValid();

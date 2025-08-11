@@ -1,6 +1,6 @@
 namespace minuit2.net;
 
-public class CostFunctionSum : ICompositeCostFunction
+public class CostFunctionSum : ICostFunction, IComposite
 {
     private readonly ComponentCostFunction[] _components;
 
