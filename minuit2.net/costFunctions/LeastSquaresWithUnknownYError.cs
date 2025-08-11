@@ -1,63 +1,17 @@
 namespace minuit2.net.costFunctions;
 
-public class LeastSquaresWithUnknownYError : ICostFunctionRequiringErrorDefinitionAdjustment
+public class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError, ICostFunctionRequiringErrorDefinitionAdjustment
 {
-    private readonly IList<double> _x;
-    private readonly IList<double> _y;
-    private readonly Func<double, IList<double>, double> _model;
-    private readonly Func<double, IList<double>, IList<double>>? _modelGradient;
-
     public LeastSquaresWithUnknownYError(
         IList<double> x,
         IList<double> y,
         IList<string> parameters,
         Func<double, IList<double>, double> model,
         Func<double, IList<double>, IList<double>>? modelGradient = null, 
-        double errorDefinitionScaling = 1)
+        double errorDefinitionScaling = 1) 
+        : base(x, y, 1, parameters, model, modelGradient)
     {
-        if (x.Count != y.Count)
-            throw new ArgumentException($"{nameof(x)} and {nameof(y)} must have the same length");
-        
-        _x = x;
-        _y = y;
-        _model = model;
-        _modelGradient = modelGradient;
-        
-        Parameters = parameters;
-        HasGradient = modelGradient != null;
         ErrorDefinition = LeastSquares.OneSigmaErrorDefinition * errorDefinitionScaling;
-    }
-    
-    public IList<string> Parameters { get; }
-    public bool HasGradient { get; }
-    public double ErrorDefinition { get; }
-    
-    public double ValueFor(IList<double> parameterValues)
-    {
-        double sum = 0;
-        for (var i = 0; i < _x.Count; i++)
-        {
-            var residual = Residual(i, parameterValues);
-            sum += residual * residual;
-        }
-        
-        return sum;
-    }
-
-    private double Residual(int i, IList<double> parameterValues) => _y[i] - _model(_x[i], parameterValues);
-
-    public IList<double> GradientFor(IList<double> parameterValues)
-    {
-        var gradientSums = new double[Parameters.Count];
-        for (var i = 0; i < _x.Count; i++)
-        {
-            var factor = 2 * Residual(i, parameterValues);
-            var gradients = _modelGradient!(_x[i], parameterValues);
-            for (var j = 0; j < Parameters.Count; j++) 
-                gradientSums[j] -= factor * gradients[j];
-        }
-        
-        return gradientSums;
     }
     
     public ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
@@ -71,8 +25,8 @@ public class LeastSquaresWithUnknownYError : ICostFunctionRequiringErrorDefiniti
         // This is equivalent to the default behaviour in lmfit:
         // https://lmfit.github.io/lmfit-py/fitting.html#uncertainties-in-variable-parameters-and-their-correlations
         
-        var degreesOfFreedom = _x.Count - variables.Count;
+        var degreesOfFreedom = X.Count - variables.Count;
         var reducedChiSquared = ValueFor(parameterValues) / degreesOfFreedom;
-        return new LeastSquaresWithUnknownYError(_x, _y, Parameters, _model, _modelGradient, reducedChiSquared);
+        return new LeastSquaresWithUnknownYError(X, Y, Parameters, Model, ModelGradient, reducedChiSquared);
     }
 }

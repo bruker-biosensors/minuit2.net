@@ -2,11 +2,11 @@ namespace minuit2.net.costFunctions;
 
 public class LeastSquaresWithUniformYError : ICostFunction
 {
-    private readonly IList<double> _x;
-    private readonly IList<double> _y;
+    protected readonly IList<double> X;
+    protected readonly IList<double> Y;
     private readonly double _yError;
-    private readonly Func<double, IList<double>, double> _model;
-    private readonly Func<double, IList<double>, IList<double>>? _modelGradient;
+    protected readonly Func<double, IList<double>, double> Model;
+    protected readonly Func<double, IList<double>, IList<double>>? ModelGradient;
 
     public LeastSquaresWithUniformYError(
         IList<double> x,
@@ -19,11 +19,11 @@ public class LeastSquaresWithUniformYError : ICostFunction
         if (x.Count != y.Count)
             throw new ArgumentException($"{nameof(x)} and {nameof(y)} must have the same length");
         
-        _x = x;
-        _y = y;
+        X = x;
+        Y = y;
         _yError = yError;
-        _model = model;
-        _modelGradient = modelGradient;
+        Model = model;
+        ModelGradient = modelGradient;
         
         Parameters = parameters;
         HasGradient = modelGradient != null;
@@ -32,33 +32,33 @@ public class LeastSquaresWithUniformYError : ICostFunction
     
     public IList<string> Parameters { get; }
     public bool HasGradient { get; }
-    public double ErrorDefinition { get; }
+    public double ErrorDefinition { get; protected init; }
     
     public double ValueFor(IList<double> parameterValues)
     {
         double sum = 0;
-        for (var i = 0; i < _x.Count; i++)
+        for (var i = 0; i < X.Count; i++)
         {
-            var residual = Residual(i, parameterValues);
+            var residual = ResidualFor(i, parameterValues);
             sum += residual * residual;
         }
         
         return sum;
     }
-
-    private double Residual(int i, IList<double> parameterValues) => (_y[i] - _model(_x[i], parameterValues)) / _yError;
-
+    
     public IList<double> GradientFor(IList<double> parameterValues)
     {
         var gradientSums = new double[Parameters.Count];
-        for (var i = 0; i < _x.Count; i++)
+        for (var i = 0; i < X.Count; i++)
         {
-            var factor = 2 * Residual(i, parameterValues);
-            var gradients = _modelGradient!(_x[i], parameterValues);
+            var factor = 2 * ResidualFor(i, parameterValues);
+            var gradients = ModelGradient!(X[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++) 
                 gradientSums[j] -= factor * gradients[j] / _yError;
         }
         
         return gradientSums;
     }
+    
+    private double ResidualFor(int i, IList<double> parameterValues) => (Y[i] - Model(X[i], parameterValues)) / _yError;
 }
