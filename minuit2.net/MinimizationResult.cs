@@ -32,7 +32,7 @@ internal class MinimizationResult : IMinimizationResult
     public IReadOnlyCollection<string> Parameters { get; }
     public IReadOnlyCollection<string> Variables { get; }
     public IReadOnlyCollection<double> ParameterValues { get; }
-    public double[,] ParameterCovarianceMatrix { get; private set; }
+    public double[,] ParameterCovarianceMatrix { get; }
 
     // The result is considered valid if the minimizer did not run into any troubles. Reasons for an invalid result are: 
     // - the number of allowed function calls has been exhausted
@@ -89,9 +89,6 @@ internal class MinimizationResult : IMinimizationResult
     }
     
     internal FunctionMinimum Minimum { get; }
-
-    internal void UpdateParameterCovariancesWith(FunctionMinimum minimum) =>
-        ParameterCovarianceMatrix = CovarianceMatrixFrom(minimum.UserState());
 }
 
 file static class UserStateExtensions
