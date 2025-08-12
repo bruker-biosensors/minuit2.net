@@ -39,17 +39,15 @@ public static class CostFunction
     
     public static ICostFunction Sum(params ICostFunction[] components)
     {
-        if (components.Any(c => c is ICostFunctionRequiringErrorDefinitionAdjustment))
-            return new CostFunctionSumRequiringErrorDefinitionAdjustment(components);
-        
-        return new CostFunctionSum(components);
+        return components.Any(c => c is ICostFunctionRequiringErrorDefinitionAdjustment) 
+            ? new CostFunctionSumRequiringErrorDefinitionAdjustment(components) 
+            : new CostFunctionSum(components);
     }
     
     internal static ICostFunction Component(ICostFunction costFunction, IList<string> parameters)
     {
-        if (costFunction is ICostFunctionRequiringErrorDefinitionAdjustment cost)
-            return new ComponentCostFunctionRequiringErrorDefinitionAdjustment(cost, parameters);
-        
-        return new ComponentCostFunction(costFunction, parameters);
+        return costFunction is ICostFunctionRequiringErrorDefinitionAdjustment cost
+            ? new ComponentCostFunctionRequiringErrorDefinitionAdjustment(cost, parameters)
+            : new ComponentCostFunction(costFunction, parameters);
     }
 }
