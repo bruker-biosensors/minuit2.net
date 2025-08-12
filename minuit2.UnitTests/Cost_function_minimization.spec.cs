@@ -114,7 +114,7 @@ public class A_cost_function
             .Build()
             .ListeningToResetEvent(resetEvent);
         var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
-        var minimizerConfiguration = new MigradMinimizerConfiguration(strategy);
+        var minimizerConfiguration = new MinimizerConfiguration(strategy);
 
         var cts = new CancellationTokenSource();
         var task = Task.Run(() => _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration, cts.Token), CancellationToken.None);
@@ -130,7 +130,7 @@ public class A_cost_function
     {
         var cost = CubicPolynomial.LeastSquaresCost.Build();
         var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
-        var minimizerConfiguration = new MigradMinimizerConfiguration(MaximumFunctionCalls: 1);
+        var minimizerConfiguration = new MinimizerConfiguration(MaximumFunctionCalls: 1);
 
         var result = _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
 

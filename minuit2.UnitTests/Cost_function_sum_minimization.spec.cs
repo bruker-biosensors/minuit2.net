@@ -21,7 +21,7 @@ public class A_cost_function_sum
         var component = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component);
 
-        var minimizerConfiguration = new MigradMinimizerConfiguration(strategy);
+        var minimizerConfiguration = new MinimizerConfiguration(strategy);
         var componentResult = _minimizer.Minimize(component, CubicPolynomial.ParameterConfigurations.Defaults, minimizerConfiguration);
         var sumResult = _minimizer.Minimize(sum, CubicPolynomial.ParameterConfigurations.Defaults, minimizerConfiguration);
         
@@ -46,7 +46,7 @@ public class A_cost_function_sum
         var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
         var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
 
-        var minimizerConfiguration = new MigradMinimizerConfiguration(strategy);
+        var minimizerConfiguration = new MinimizerConfiguration(strategy);
         var component1Result = _minimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
         var component2Result = _minimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
         var sumResult = _minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
@@ -83,7 +83,7 @@ public class A_cost_function_sum
         var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
         var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
 
-        var minimizerConfiguration = new MigradMinimizerConfiguration(strategy);
+        var minimizerConfiguration = new MinimizerConfiguration(strategy);
         var component1Result = MigradFollowedByHesse(component1, parameterConfigurations1, minimizerConfiguration);
         var component2Result = MigradFollowedByHesse(component2, parameterConfigurations2, minimizerConfiguration);
         var sumResult = MigradFollowedByHesse(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
@@ -106,7 +106,7 @@ public class A_cost_function_sum
     private IMinimizationResult MigradFollowedByHesse(
         ICostFunction cost,
         ParameterConfiguration[] parameterConfigurations, 
-        MigradMinimizerConfiguration? minimizerConfiguration)
+        MinimizerConfiguration? minimizerConfiguration)
     {
         var result = _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
         var adjustedCost = cost.WithErrorDefinitionAdjustedWhereRequiredBasedOn(result);

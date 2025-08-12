@@ -2,17 +2,17 @@ using minuit2.net.CostFunctions;
 
 namespace minuit2.net.Minimizers;
 
-public class MigradMinimizer
+public class MigradMinimizer : IMinimizer
 {
     public IMinimizationResult Minimize(
         ICostFunction costFunction, 
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
-        MigradMinimizerConfiguration? minimizerConfiguration = null, 
+        MinimizerConfiguration? minimizerConfiguration = null, 
         CancellationToken cancellationToken = default)
     {
         ThrowIfParametersAreNotMatchingBetween(costFunction, parameterConfigurations);
         
-        minimizerConfiguration ??= new MigradMinimizerConfiguration();
+        minimizerConfiguration ??= new MinimizerConfiguration();
         return CoreMinimize(costFunction, parameterConfigurations, minimizerConfiguration, cancellationToken);
     }
     
@@ -28,7 +28,7 @@ public class MigradMinimizer
     private static IMinimizationResult CoreMinimize(
         ICostFunction costFunction,
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
-        MigradMinimizerConfiguration minimizerConfiguration, 
+        MinimizerConfiguration minimizerConfiguration, 
         CancellationToken cancellationToken)
     {
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
