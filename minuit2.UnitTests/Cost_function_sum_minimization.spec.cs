@@ -11,6 +11,8 @@ namespace minuit2.UnitTests;
 
 public class A_cost_function_sum
 {
+    private readonly MigradMinimizer _minimizer = new();
+    
     [Test, Description("Ensures that the inner scaling of gradients by the error definition in the component cost " +
                        "functions and the final rescaling works.")]
     public void with_a_single_component_when_minimized_yields_a_result_equivalent_to_the_result_for_the_isolated_component(
@@ -20,8 +22,8 @@ public class A_cost_function_sum
         var sum = CostFunction.Sum(component);
 
         var minimizerConfiguration = new MigradMinimizerConfiguration(strategy);
-        var componentResult = MigradMinimizer.Minimize(component, CubicPolynomial.ParameterConfigurations.Defaults, minimizerConfiguration);
-        var sumResult = MigradMinimizer.Minimize(sum, CubicPolynomial.ParameterConfigurations.Defaults, minimizerConfiguration);
+        var componentResult = _minimizer.Minimize(component, CubicPolynomial.ParameterConfigurations.Defaults, minimizerConfiguration);
+        var sumResult = _minimizer.Minimize(sum, CubicPolynomial.ParameterConfigurations.Defaults, minimizerConfiguration);
         
         sumResult.Should().BeEquivalentTo(componentResult, options => options
             .Excluding(x => x.NumberOfFunctionCalls)
@@ -45,9 +47,9 @@ public class A_cost_function_sum
         var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
 
         var minimizerConfiguration = new MigradMinimizerConfiguration(strategy);
-        var component1Result = MigradMinimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
-        var component2Result = MigradMinimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
-        var sumResult = MigradMinimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
+        var component1Result = _minimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
+        var component2Result = _minimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
+        var sumResult = _minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
         using (new AssertionScope())
         {
@@ -101,12 +103,12 @@ public class A_cost_function_sum
         }
     }
 
-    private static IMinimizationResult MigradFollowedByHesse(
+    private IMinimizationResult MigradFollowedByHesse(
         ICostFunction cost,
         ParameterConfiguration[] parameterConfigurations, 
         MigradMinimizerConfiguration? minimizerConfiguration)
     {
-        var result = MigradMinimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
+        var result = _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
         var adjustedCost = cost.WithErrorDefinitionAdjustedWhereRequiredBasedOn(result);
         return HesseErrorCalculator.Refine(result, adjustedCost);
     }
@@ -126,7 +128,7 @@ public class A_cost_function_sum
         var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults
             .Concat([Variable("c1_1", -2.1), Variable("c3_1", -0.15)]).ToArray();
 
-        var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+        var result = _minimizer.Minimize(cost, parameterConfigurations);
 
         result.Should()
             .HaveExitCondition(Converged).And
@@ -155,7 +157,7 @@ public class A_cost_function_sum
             CubicPolynomial.LeastSquaresCost.WithGradient(hasFirstGradient).Build(),
             CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithGradient(hasLastGradient).Build());
 
-        var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
+        var result = _minimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
 
         result.Should()
             .HaveExitCondition(Converged).And

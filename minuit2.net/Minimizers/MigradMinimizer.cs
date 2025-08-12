@@ -2,9 +2,9 @@ using minuit2.net.CostFunctions;
 
 namespace minuit2.net.Minimizers;
 
-public static class MigradMinimizer
+public class MigradMinimizer
 {
-    public static IMinimizationResult Minimize(
+    public IMinimizationResult Minimize(
         ICostFunction costFunction, 
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
         MigradMinimizerConfiguration? minimizerConfiguration = null, 

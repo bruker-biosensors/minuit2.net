@@ -14,8 +14,9 @@ public class A_migrad_minimizer
         ParameterConfiguration[] userParameters = [Variable("a", 0), Variable("b", 0)];
         var costParameters = new[] { "a", "b", "c" };
         var cost = CostFunction.LeastSquares([0, 1, 2], [0, 1, 2], costParameters, (_, _) => 0);
-
-        Action action = () => _ = MigradMinimizer.Minimize(cost, userParameters);
+        var minimizer = new MigradMinimizer();
+        
+        Action action = () => _ = minimizer.Minimize(cost, userParameters);
         action.Should().Throw<ArgumentException>();
     }
 }

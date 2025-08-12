@@ -9,6 +9,8 @@ namespace minuit2.UnitTests;
 
 public class A_cost_function
 {
+    private readonly MigradMinimizer _minimizer = new();
+    
     [Test, Description("Ensures correct parameter-configuration-to-cost-function-parameter mapping.")]
     public void when_minimized_yields_the_same_result_independent_of_the_order_parameter_configurations_are_provided_in()
     {
@@ -16,8 +18,8 @@ public class A_cost_function
         var orderedConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
         var disorderedConfigurations = CubicPolynomial.ParameterConfigurations.Defaults.InRandomOrder().ToArray();
 
-        var resultForOrderedConfigurations = MigradMinimizer.Minimize(cost, orderedConfigurations);
-        var resultForDisorderedConfigurations = MigradMinimizer.Minimize(cost, disorderedConfigurations);
+        var resultForOrderedConfigurations = _minimizer.Minimize(cost, orderedConfigurations);
+        var resultForDisorderedConfigurations = _minimizer.Minimize(cost, disorderedConfigurations);
 
         resultForDisorderedConfigurations.Should().BeEquivalentTo(resultForOrderedConfigurations);
     }
@@ -38,7 +40,7 @@ public class A_cost_function
             CubicPolynomial.ParameterConfigurations.C3.WithLimits(lowerLimit, upperLimit),
         ];
 
-        var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+        var result = _minimizer.Minimize(cost, parameterConfigurations);
 
         result.Should().HaveIsValid(true);
     }
@@ -61,7 +63,7 @@ public class A_cost_function
             CubicPolynomial.ParameterConfigurations.C3
         ];
 
-        var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+        var result = _minimizer.Minimize(cost, parameterConfigurations);
 
         result.Should().HaveIsValid(false);
     }
@@ -81,8 +83,8 @@ public class A_cost_function
         var referenceCost = costBuilder.WithErrorDefinition(1).Build();
         var cost = costBuilder.WithAnyErrorDefinitionBetween(2, 5).Build();
 
-        var referenceResult = MigradMinimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
-        var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
+        var referenceResult = _minimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
+        var result = _minimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
 
         result.CostValue.Should().BeApproximately(referenceResult.CostValue, 1E-10);
     }
@@ -94,8 +96,8 @@ public class A_cost_function
         var referenceCost = costBuilder.WithErrorDefinition(1).Build();
         var cost = costBuilder.WithAnyErrorDefinitionBetween(2, 5).Build();
 
-        var referenceResult = MigradMinimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
-        var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
+        var referenceResult = _minimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
+        var result = _minimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
 
         result.ParameterCovarianceMatrix.Should().BeEquivalentTo(referenceResult.ParameterCovarianceMatrix.MultipliedBy(cost.ErrorDefinition), 
             options => options.WithRelativeDoubleTolerance(0.001));
@@ -115,7 +117,7 @@ public class A_cost_function
         var minimizerConfiguration = new MigradMinimizerConfiguration(strategy);
 
         var cts = new CancellationTokenSource();
-        var task = Task.Run(() => MigradMinimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration, cts.Token), CancellationToken.None);
+        var task = Task.Run(() => _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration, cts.Token), CancellationToken.None);
         await cts.CancelAsync();
         resetEvent.Set();
 
@@ -130,7 +132,7 @@ public class A_cost_function
         var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
         var minimizerConfiguration = new MigradMinimizerConfiguration(MaximumFunctionCalls: 1);
 
-        var result = MigradMinimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
+        var result = _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
 
         result.Should().HaveExitCondition(FunctionCallsExhausted);
     }
@@ -142,7 +144,7 @@ public class A_cost_function
     {
         var cost = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).Build();
 
-        var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
+        var result = _minimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
 
         result.Should()
             .HaveExitCondition(Converged).And
@@ -175,7 +177,7 @@ public class A_cost_function
             CubicPolynomial.ParameterConfigurations.C3.Fixed()
         ];
 
-        var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+        var result = _minimizer.Minimize(cost, parameterConfigurations);
 
         result.Should()
             .HaveExitCondition(Converged).And
@@ -216,7 +218,7 @@ public class A_cost_function
             CubicPolynomial.ParameterConfigurations.C3
         ];
 
-        var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+        var result = _minimizer.Minimize(cost, parameterConfigurations);
 
         result.ParameterValues.First().Should().BeApproximately(expectedValue, expectedValue * 0.001);
     }
@@ -233,7 +235,7 @@ public class A_cost_function
             CubicPolynomial.ParameterConfigurations.C3.WithLimits(null, CubicPolynomial.ParameterConfigurations.C3.Value + 0.005)
         ];
 
-        var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+        var result = _minimizer.Minimize(cost, parameterConfigurations);
 
         result.Should()
             .HaveExitCondition(Converged).And
@@ -267,7 +269,7 @@ public class A_cost_function
             CubicPolynomial.ParameterConfigurations.C3.WithLimits(null, CubicPolynomial.ParameterConfigurations.C3.Value + 0.005)
         ];
 
-        var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+        var result = _minimizer.Minimize(cost, parameterConfigurations);
 
         result.Should()
             .HaveExitCondition(Converged).And
@@ -291,7 +293,7 @@ public class A_cost_function
     {
         var cost = CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithGradient(hasGradient).Build();
 
-        var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
+        var result = _minimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
 
         result.Should()
             .HaveExitCondition(Converged).And
@@ -315,7 +317,7 @@ public class A_cost_function
     {
         var cost = CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithGradient(hasGradient).Build();
 
-        var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
+        var result = _minimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
         var adjustedCost = cost.WithErrorDefinitionAdjustedWhereRequiredBasedOn(result);
         var adjustedResult = HesseErrorCalculator.Refine(result, adjustedCost);
 
@@ -339,7 +341,7 @@ public class A_cost_function
     public void when_minimized_forwards_exceptions_thrown_by_the_model_function()
     {
         var cost = CostFunction.LeastSquares([0], [0], [], ModelFunctionThrowing<TestException>());
-        Action action = () => MigradMinimizer.Minimize(cost, []);
+        Action action = () => _minimizer.Minimize(cost, []);
         action.Should().ThrowExactly<TestException>();
     }
 
