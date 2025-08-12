@@ -7,7 +7,7 @@ public static class CostFunctionExtensions
         IMinimizationResult result)
     {
         return costFunction is ICostFunctionRequiringErrorDefinitionAdjustment cost
-            ? cost.WithAdjustedErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList())
+            ? cost.WithErrorDefinitionAdjustedBasedOn(result.ParameterValues.ToList(), result.Variables.ToList())
             : costFunction;
     }
 }

@@ -18,7 +18,7 @@ internal class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError, IC
         ErrorDefinition = LeastSquares.ErrorDefinitionFor(errorDefinitionInSigma) * errorDefinitionScaling;
     }
     
-    public ICostFunctionRequiringErrorDefinitionAdjustment WithAdjustedErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables)
+    public ICostFunctionRequiringErrorDefinitionAdjustment WithErrorDefinitionAdjustedBasedOn(IList<double> parameterValues, IList<string> variables)
     {
         // Auto-scale the error definition such that a re-evaluation -- e.g. by a subsequent minimization or accurate
         // covariance computation (Hesse algorithm) -- yields the same parameter covariances that would be obtained
