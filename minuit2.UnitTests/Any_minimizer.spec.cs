@@ -10,9 +10,9 @@ public class Any_minimizer
 {
     private static IEnumerable<IMinimizer> MinimizerTestCases()
     {
-        yield return Minimizer.Migrad();
-        yield return Minimizer.Simplex();
-        yield return Minimizer.Combined();
+        yield return Minimizer.Migrad;
+        yield return Minimizer.Simplex;
+        yield return Minimizer.Combined;
     }
     
     [TestCaseSource(nameof(MinimizerTestCases))]

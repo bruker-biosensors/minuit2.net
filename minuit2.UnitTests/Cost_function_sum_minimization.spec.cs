@@ -11,7 +11,7 @@ namespace minuit2.UnitTests;
 
 public class A_cost_function_sum
 {
-    private readonly IMinimizer _minimizer = Minimizer.Migrad();
+    private readonly IMinimizer _minimizer = Minimizer.Migrad;
     
     [Test, Description("Ensures that the inner scaling of gradients by the error definition in the component cost " +
                        "functions and the final rescaling works.")]
