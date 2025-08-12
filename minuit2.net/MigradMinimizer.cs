@@ -1,5 +1,4 @@
 using minuit2.net.costFunctions;
-using static minuit2.net.MinimizationExitCondition;
 
 namespace minuit2.net;
 
@@ -14,14 +13,7 @@ public static class MigradMinimizer
         ThrowIfParametersAreNotMatchingBetween(costFunction, parameterConfigurations);
         
         minimizerConfiguration ??= new MigradMinimizerConfiguration();
-        var result = CoreMinimize(costFunction, parameterConfigurations, minimizerConfiguration, cancellationToken);
-        
-        if (result.ExitCondition == ManuallyStopped) return result;
-        if (costFunction is not ICostFunctionRequiringErrorDefinitionAdjustment cost) return result;
-
-        var adjustedCostFunction = cost.WithAutoScaledErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
-        HesseErrorCalculator.UpdateParameterCovariances(result, adjustedCostFunction, minimizerConfiguration.Strategy);
-        return result;
+        return CoreMinimize(costFunction, parameterConfigurations, minimizerConfiguration, cancellationToken);
     }
     
     private static void ThrowIfParametersAreNotMatchingBetween(

@@ -4,16 +4,16 @@ namespace minuit2.net;
 
 public static class HesseErrorCalculator
 {
-    public static void UpdateParameterCovariances(
+    public static IMinimizationResult Refine(
         IMinimizationResult result, 
         ICostFunction costFunction, 
         Strategy strategy = Strategy.Balanced)
     {
-        if (result is not MinimizationResult minimizationResult) return;
+        if (result is not MinimizationResult minimizationResult) return result;
         
         var minimum = minimizationResult.Minimum;
         Update(minimum, costFunction, strategy);
-        minimizationResult.UpdateParameterCovariancesWith(minimum);
+        return new MinimizationResult(minimum, costFunction);
     }
 
     private static void Update(FunctionMinimum minimum, ICostFunction costFunction, Strategy strategy)
