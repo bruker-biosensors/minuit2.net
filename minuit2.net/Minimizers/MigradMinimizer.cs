@@ -1,4 +1,4 @@
-using minuit2.net.costFunctions;
+using minuit2.net.CostFunctions;
 
 namespace minuit2.net.Minimizers;
 

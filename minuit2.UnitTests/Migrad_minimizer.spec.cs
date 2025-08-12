@@ -1,6 +1,6 @@
 using FluentAssertions;
 using minuit2.net;
-using minuit2.net.costFunctions;
+using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using static minuit2.net.ParameterConfiguration;
 

@@ -1,4 +1,4 @@
-namespace minuit2.net.costFunctions;
+namespace minuit2.net.CostFunctions;
 
 internal class ComponentCostFunctionRequiringErrorDefinitionAdjustment(
     ICostFunctionRequiringErrorDefinitionAdjustment inner,

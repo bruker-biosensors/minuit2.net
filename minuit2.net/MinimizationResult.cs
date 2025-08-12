@@ -1,4 +1,4 @@
-using minuit2.net.costFunctions;
+using minuit2.net.CostFunctions;
 using static minuit2.net.MinimizationExitCondition;
 
 namespace minuit2.net;
