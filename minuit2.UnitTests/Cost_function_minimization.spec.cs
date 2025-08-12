@@ -9,7 +9,7 @@ namespace minuit2.UnitTests;
 
 public class A_cost_function
 {
-    private readonly MigradMinimizer _minimizer = new();
+    private readonly IMinimizer _minimizer = Minimizer.Migrad();
     
     [Test, Description("Ensures correct parameter-configuration-to-cost-function-parameter mapping.")]
     public void when_minimized_yields_the_same_result_independent_of_the_order_parameter_configurations_are_provided_in()
