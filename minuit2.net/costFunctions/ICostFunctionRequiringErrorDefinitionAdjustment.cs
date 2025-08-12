@@ -2,5 +2,5 @@
 
 public interface ICostFunctionRequiringErrorDefinitionAdjustment : ICostFunction
 {
-    ICostFunctionRequiringErrorDefinitionAdjustment WithAutoScaledErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables);
+    ICostFunctionRequiringErrorDefinitionAdjustment WithAdjustedErrorDefinitionBasedOn(IList<double> parameterValues, IList<string> variables);
 }

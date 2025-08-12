@@ -108,7 +108,7 @@ public class A_cost_function_sum
         var result = MigradMinimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
         if (cost is not ICostFunctionRequiringErrorDefinitionAdjustment c) return result;
 
-        var postProcessedCost = c.WithAutoScaledErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
+        var postProcessedCost = c.WithAdjustedErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
         return HesseErrorCalculator.Refine(result, postProcessedCost);
     }
 

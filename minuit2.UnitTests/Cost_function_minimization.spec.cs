@@ -315,7 +315,7 @@ public class A_cost_function
         var cost = CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithGradient(hasGradient).Build();
 
         var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
-        var adjustedCost = ((ICostFunctionRequiringErrorDefinitionAdjustment)cost).WithAutoScaledErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
+        var adjustedCost = ((ICostFunctionRequiringErrorDefinitionAdjustment)cost).WithAdjustedErrorDefinitionBasedOn(result.ParameterValues.ToList(), result.Variables.ToList());
         var adjustedResult = HesseErrorCalculator.Refine(result, adjustedCost);
 
         adjustedResult.Should()
