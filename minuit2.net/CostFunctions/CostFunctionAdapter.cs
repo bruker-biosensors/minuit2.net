@@ -4,10 +4,10 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     : FCNWrap
 {
     // We always forward a neutral error definition (Up) of 1 to the C++ code. Instead, we scale the output values of
-    // the inner ValueFor() and GradientFor() by the error definition directly. This allows us to auto-scale parameter
-    // uncertainties for missing data y-errors after minimization using the Hesse algorithm (impossible otherwise),
-    // plus it makes handling of individual cost function and cost function sums consistent (mind that this means that
-    // the cost function value resulting from the minimization must be rescaled by the error definition!).
+    // the inner ValueFor() and GradientFor() by the error definition directly. This allows us to dynamically adjust
+    // error definitions, e.g. to get meaningful parameter uncertainties for least squares cost functions with unknown
+    // data errors (see LeastSquaresWithUnknownYError.cs).
+    // Mind that this means that the final cost function value must be rescaled by the error definition!
     public override double Up() => 1;
 
     public override double Cost(VectorDouble parameterValues)
