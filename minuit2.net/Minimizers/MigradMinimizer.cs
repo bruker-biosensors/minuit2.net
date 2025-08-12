@@ -1,6 +1,6 @@
 using minuit2.net.costFunctions;
 
-namespace minuit2.net;
+namespace minuit2.net.Minimizers;
 
 public static class MigradMinimizer
 {
