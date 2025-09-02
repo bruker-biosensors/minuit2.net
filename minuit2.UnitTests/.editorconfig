@@ -1,0 +1,23 @@
+[*.spec.cs]
+
+# Test Fixture Naming
+dotnet_naming_rule.test_fixture_rule.symbols = test_fixture_symbols
+dotnet_naming_rule.test_fixture_rule.style = test_fixture_style
+dotnet_naming_rule.test_fixture_rule.severity = warning
+
+dotnet_naming_symbols.test_fixture_symbols.applicable_accessibilities = public,local
+dotnet_naming_symbols.test_fixture_symbols.applicable_kinds = class
+
+dotnet_naming_style.test_fixture_style.capitalization = first_word_upper
+dotnet_naming_style.test_fixture_style.word_separator = _
+
+# Test Case Naming
+dotnet_naming_rule.test_case_rule.symbols = test_case_symbols
+dotnet_naming_rule.test_case_rule.style = test_case_style
+dotnet_naming_rule.test_case_rule.severity = warning
+
+dotnet_naming_symbols.test_case_symbols.applicable_accessibilities = public,local
+dotnet_naming_symbols.test_case_symbols.applicable_kinds = method
+
+dotnet_naming_style.test_case_style.capitalization = all_lower
+dotnet_naming_style.test_case_style.word_separator = _
