@@ -3,7 +3,7 @@ using AutoFixture;
 
 namespace minuit2.UnitTests.TestUtilities;
 
-internal class AnyNumber<T>(Fixture fixture) where T : INumber<T>, IMinMaxValue<T>
+internal class AnyNumber<T>(IFixture fixture) where T : INumber<T>, IMinMaxValue<T>
 {
     private readonly T[] _ascendingNumbers = fixture.CreateMany<T>(3).Order().ToArray();
     
