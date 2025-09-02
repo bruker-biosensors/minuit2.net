@@ -56,13 +56,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     {
         var cost = CubicPolynomial.LeastSquaresCost.Build();
         var unlimitedParameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
-        var parameterConfigurationsWithInfiniteLimits = new[]
-        {
-            CubicPolynomial.ParameterConfigurations.C0.WithLimits(lowerLimit, upperLimit),
-            CubicPolynomial.ParameterConfigurations.C1.WithLimits(lowerLimit, upperLimit),
-            CubicPolynomial.ParameterConfigurations.C2.WithLimits(lowerLimit, upperLimit),
-            CubicPolynomial.ParameterConfigurations.C3.WithLimits(lowerLimit, upperLimit),
-        };
+        var parameterConfigurationsWithInfiniteLimits = CubicPolynomial.ParameterConfigurations.Defaults.WithLimits(lowerLimit, upperLimit);
 
         var resultForUnlimited = minimizer.Minimize(cost, unlimitedParameterConfigurations);
         var resultForInfiniteLimits = minimizer.Minimize(cost, parameterConfigurationsWithInfiniteLimits);

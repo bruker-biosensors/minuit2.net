@@ -24,4 +24,12 @@ internal static class ParameterConfigurationExtensions
 
     public static ParameterConfiguration Fixed(this ParameterConfiguration parameter) =>
         ParameterConfiguration.Fixed(parameter.Name, parameter.Value);
+    
+    public static ParameterConfiguration[] WithLimits(
+        this IEnumerable<ParameterConfiguration> parameters, 
+        double? lowerLimit, 
+        double? upperLimit)
+    {
+        return parameters.Select(p => p.WithLimits(lowerLimit, upperLimit)).ToArray();
+    }
 }
