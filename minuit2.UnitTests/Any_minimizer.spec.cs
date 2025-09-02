@@ -63,4 +63,21 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         resultForInfiniteLimits.Should().HaveIsValid(true).And.BeEquivalentTo(resultForUnlimited);
     }
+    
+    [TestCase(-1E15, 1E15)]
+    [TestCase(null, 1E15)]
+    [TestCase(-1E15, null)]
+    [Description("In the presence of parameter limits, parameter values are projected to internal values for the " +
+                 "minimization (see Minuit docs). This projection runs into numeric problems when one or both limits " +
+                 "become very large compared to the value. In such a case, we expect the result to be invalid.")]
+    public void when_minimizing_a_cost_function_for_extreme_parameter_limits_leading_to_numerical_issues_in_the_internal_parameter_projection_yields_an_invalid_result(
+        double? lowerLimit, double? upperLimit)
+    {
+        var cost = CubicPolynomial.LeastSquaresCost.Build();
+        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults.WithLimits(lowerLimit, upperLimit);
+        
+        var result = minimizer.Minimize(cost, parameterConfigurations);
+        
+        result.Should().HaveIsValid(false);
+    }
 }

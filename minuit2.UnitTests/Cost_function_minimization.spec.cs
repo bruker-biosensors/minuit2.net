@@ -11,29 +11,6 @@ public class A_cost_function
 {
     private readonly IMinimizer _minimizer = Minimizer.Migrad;
     
-    [TestCase(-1E15, 1E15)]
-    [TestCase(null, 1E15)]
-    [TestCase(-1E15, null)]
-    [Description("In the presence of parameter limits, parameter values are projected to internal values for the " +
-                 "minimization (see Minuit docs). This projection runs into numeric problems when one or both limits " +
-                 "become very large compared to the value. In such a case, we expect the result to be invalid.")]
-    public void when_minimized_with_parameter_limits_leading_to_numerical_issues_in_the_internal_parameter_projection_yields_an_invalid_result(
-        double? lowerLimit, double? upperLimit)
-    {
-        var cost = CubicPolynomial.LeastSquaresCost.Build();
-        ParameterConfiguration[] parameterConfigurations =
-        [
-            CubicPolynomial.ParameterConfigurations.C0.WithLimits(lowerLimit, upperLimit),
-            CubicPolynomial.ParameterConfigurations.C1,
-            CubicPolynomial.ParameterConfigurations.C2,
-            CubicPolynomial.ParameterConfigurations.C3
-        ];
-
-        var result = _minimizer.Minimize(cost, parameterConfigurations);
-
-        result.Should().HaveIsValid(false);
-    }
-
     private static IEnumerable<CubicPolynomial.LeastSquaresBuilder> CostFunctionWithVaryingErrorDefinitionTestCases()
     {
         yield return CubicPolynomial.LeastSquaresCost;
