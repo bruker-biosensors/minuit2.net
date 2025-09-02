@@ -16,7 +16,7 @@ public class Any_minimizer
     }
     
     [TestCaseSource(nameof(MinimizerTestCases))]
-    public void when_called_with_parameter_configurations_that_mismatch_the_cost_function_parameters_throws_an_exception(
+    public void when_called_with_parameter_configurations_mismatching_the_cost_function_parameters_throws_an_exception(
         IMinimizer minimizer)
     {
         ParameterConfiguration[] userParameters = [Variable("a", 0), Variable("b", 0)];
