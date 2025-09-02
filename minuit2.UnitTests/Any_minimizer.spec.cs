@@ -45,4 +45,28 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         resultForDisorderedConfigurations.Should().BeEquivalentTo(resultForOrderedConfigurations);
     }
+    
+    [TestCase(double.NegativeInfinity, double.PositiveInfinity)]
+    [TestCase(double.NaN, double.PositiveInfinity)]
+    [TestCase(double.NegativeInfinity, double.NaN)]
+    [TestCase(double.NaN, double.NaN)]
+    [Description("Ensures minimizer handles infinite parameter limits the same way as if there were no limits.")]
+    public void when_minimizing_a_cost_function_yields_the_same_result_for_unlimited_parameters_and_parameters_with_infinite_limits(
+        double lowerLimit, double upperLimit)
+    {
+        var cost = CubicPolynomial.LeastSquaresCost.Build();
+        var unlimitedParameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+        var parameterConfigurationsWithInfiniteLimits = new[]
+        {
+            CubicPolynomial.ParameterConfigurations.C0.WithLimits(lowerLimit, upperLimit),
+            CubicPolynomial.ParameterConfigurations.C1.WithLimits(lowerLimit, upperLimit),
+            CubicPolynomial.ParameterConfigurations.C2.WithLimits(lowerLimit, upperLimit),
+            CubicPolynomial.ParameterConfigurations.C3.WithLimits(lowerLimit, upperLimit),
+        };
+
+        var resultForUnlimited = minimizer.Minimize(cost, unlimitedParameterConfigurations);
+        var resultForInfiniteLimits = minimizer.Minimize(cost, parameterConfigurationsWithInfiniteLimits);
+        
+        resultForInfiniteLimits.Should().HaveIsValid(true).And.BeEquivalentTo(resultForUnlimited);
+    }
 }

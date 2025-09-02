@@ -11,27 +11,6 @@ public class A_cost_function
 {
     private readonly IMinimizer _minimizer = Minimizer.Migrad;
     
-    [TestCase(double.NegativeInfinity, double.PositiveInfinity)]
-    [TestCase(double.NaN, double.PositiveInfinity)]
-    [TestCase(double.NegativeInfinity, double.NaN)]
-    [TestCase(double.NaN, double.NaN)]
-    [Description("Ensures minimizer handles infinite parameter limits the same way as if there were no limits.")]
-    public void can_be_minimized_with_infinite_parameter_limits(double lowerLimit, double upperLimit)
-    {
-        var cost = CubicPolynomial.LeastSquaresCost.Build();
-        ParameterConfiguration[] parameterConfigurations =
-        [
-            CubicPolynomial.ParameterConfigurations.C0.WithLimits(lowerLimit, upperLimit),
-            CubicPolynomial.ParameterConfigurations.C1.WithLimits(lowerLimit, upperLimit),
-            CubicPolynomial.ParameterConfigurations.C2.WithLimits(lowerLimit, upperLimit),
-            CubicPolynomial.ParameterConfigurations.C3.WithLimits(lowerLimit, upperLimit),
-        ];
-
-        var result = _minimizer.Minimize(cost, parameterConfigurations);
-
-        result.Should().HaveIsValid(true);
-    }
-
     [TestCase(-1E15, 1E15)]
     [TestCase(null, 1E15)]
     [TestCase(-1E15, null)]
