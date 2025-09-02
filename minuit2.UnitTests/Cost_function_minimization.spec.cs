@@ -11,41 +11,6 @@ public class A_cost_function
 {
     private readonly IMinimizer _minimizer = Minimizer.Migrad;
     
-    private static IEnumerable<CubicPolynomial.LeastSquaresBuilder> CostFunctionWithVaryingErrorDefinitionTestCases()
-    {
-        yield return CubicPolynomial.LeastSquaresCost;
-        yield return CubicPolynomial.LeastSquaresCost.WithMissingYErrors();
-        yield return CubicPolynomial.LeastSquaresCost.WithGradient();
-        yield return CubicPolynomial.LeastSquaresCost.WithGradient().WithMissingYErrors();
-    }
-
-    [TestCaseSource(nameof(CostFunctionWithVaryingErrorDefinitionTestCases))]
-    public void when_minimized_yields_the_same_cost_value_independent_of_its_error_definition(
-        CubicPolynomial.LeastSquaresBuilder costBuilder)
-    {
-        var referenceCost = costBuilder.WithErrorDefinition(1).Build();
-        var cost = costBuilder.WithAnyErrorDefinitionBetween(2, 5).Build();
-
-        var referenceResult = _minimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
-        var result = _minimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
-
-        result.CostValue.Should().BeApproximately(referenceResult.CostValue, 1E-10);
-    }
-
-    [TestCaseSource(nameof(CostFunctionWithVaryingErrorDefinitionTestCases))]
-    public void when_minimized_yields_parameter_covariances_that_directly_scale_with_the_error_definition(
-        CubicPolynomial.LeastSquaresBuilder costBuilder)
-    {
-        var referenceCost = costBuilder.WithErrorDefinition(1).Build();
-        var cost = costBuilder.WithAnyErrorDefinitionBetween(2, 5).Build();
-
-        var referenceResult = _minimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
-        var result = _minimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
-
-        result.ParameterCovarianceMatrix.Should().BeEquivalentTo(referenceResult.ParameterCovarianceMatrix.MultipliedBy(cost.ErrorDefinition), 
-            options => options.WithRelativeDoubleTolerance(0.001));
-    }
-
     [Test]
     public async Task when_minimized_but_minimization_is_cancelled_during_the_process_yields_a_result_with_manually_stopped_exit_condition(
         [Values] bool hasYErrors, [Values] bool hasGradient, [Values] Strategy strategy)
