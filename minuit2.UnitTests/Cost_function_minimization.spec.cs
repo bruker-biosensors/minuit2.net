@@ -11,19 +11,6 @@ public class A_cost_function
 {
     private readonly IMinimizer _minimizer = Minimizer.Migrad;
     
-    [Test, Description("Ensures correct parameter-configuration-to-cost-function-parameter mapping.")]
-    public void when_minimized_yields_the_same_result_independent_of_the_order_parameter_configurations_are_provided_in()
-    {
-        var cost = CubicPolynomial.LeastSquaresCost.Build();
-        var orderedConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
-        var disorderedConfigurations = CubicPolynomial.ParameterConfigurations.Defaults.InRandomOrder().ToArray();
-
-        var resultForOrderedConfigurations = _minimizer.Minimize(cost, orderedConfigurations);
-        var resultForDisorderedConfigurations = _minimizer.Minimize(cost, disorderedConfigurations);
-
-        resultForDisorderedConfigurations.Should().BeEquivalentTo(resultForOrderedConfigurations);
-    }
-
     [TestCase(double.NegativeInfinity, double.PositiveInfinity)]
     [TestCase(double.NaN, double.PositiveInfinity)]
     [TestCase(double.NegativeInfinity, double.NaN)]

@@ -32,4 +32,17 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         Action action = () => _ = minimizer.Minimize(cost, mismatchingParameterConfigurations.ToList());
         action.Should().Throw<ArgumentException>();
     }
+    
+    [Test, Description("Ensures correct parameter-configuration-to-cost-function-parameter mapping.")]
+    public void when_minimizing_a_cost_function_yields_the_same_result_independent_of_the_order_parameter_configurations_are_provided_in()
+    {
+        var cost = CubicPolynomial.LeastSquaresCost.Build();
+        var orderedConfigurations = CubicPolynomial.ParameterConfigurations.Defaults; 
+        var disorderedConfigurations = CubicPolynomial.ParameterConfigurations.Defaults.InRandomOrder().ToArray();
+        
+        var resultForOrderedConfigurations = minimizer.Minimize(cost, orderedConfigurations);
+        var resultForDisorderedConfigurations = minimizer.Minimize(cost, disorderedConfigurations);
+        
+        resultForDisorderedConfigurations.Should().BeEquivalentTo(resultForOrderedConfigurations);
+    }
 }
