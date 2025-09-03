@@ -80,4 +80,23 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         result.Should().HaveIsValid(false);
     }
+    
+    [Test, Description("Ensures that the minimum cost value is independent of the error definition. " +
+                       "This holds only if the minimization converges and doesn't terminate prematurely. " +
+                       "Since Minuit defines convergence via the estimated vertical distance to the minimum (EDM), " +
+                       "which scales with tolerance and error definition, this test sets a minimum tolerance to " +
+                       "prevent early termination for large error definition values.")]
+    public void when_minimizing_the_same_cost_function_with_varying_error_definitions_yields_the_same_cost_value()
+    {
+        var cost = CubicPolynomial.LeastSquaresCost.WithAnyErrorDefinitionBetween(2, 5).Build();
+        var referenceCost = CubicPolynomial.LeastSquaresCost.WithErrorDefinition(1).Build();
+        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+        var minimizerConfiguration = new MinimizerConfiguration(Tolerance: 0);
+
+        var result = minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
+        var referenceResult = minimizer.Minimize(referenceCost, parameterConfigurations, minimizerConfiguration);
+        
+        var tolerance = Math.Abs(referenceResult.CostValue * 0.001);
+        result.CostValue.Should().BeApproximately(referenceResult.CostValue, tolerance);
+    }
 }
