@@ -96,7 +96,6 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var result = minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
         var referenceResult = minimizer.Minimize(referenceCost, parameterConfigurations, minimizerConfiguration);
         
-        var tolerance = Math.Abs(referenceResult.CostValue * 0.001);
-        result.CostValue.Should().BeApproximately(referenceResult.CostValue, tolerance);
+        result.CostValue.Should().BeApproximately(referenceResult.CostValue).WithRelativeTolerance(0.001);
     }
 }
