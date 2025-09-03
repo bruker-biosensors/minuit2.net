@@ -114,4 +114,16 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var result = await task;
         result.Should().HaveExitCondition(MinimizationExitCondition.ManuallyStopped);
     }
+    
+    [Test]
+    public void when_minimization_runs_into_function_call_limit_yields_a_result_with_function_calls_exhausted_exit_condition()
+    {
+        var cost = CubicPolynomial.LeastSquaresCost.Build();
+        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+        var minimizerConfiguration = new MinimizerConfiguration(MaximumFunctionCalls: 1);
+        
+        var result = minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
+
+        result.Should().HaveExitCondition(MinimizationExitCondition.FunctionCallsExhausted);
+    }
 }
