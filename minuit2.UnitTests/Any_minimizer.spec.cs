@@ -98,4 +98,20 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         result.CostValue.Should().BeApproximately(referenceResult.CostValue).WithRelativeTolerance(0.001);
     }
+    
+    [Test]
+    public async Task when_minimization_is_cancelled_during_the_process_yields_a_result_with_manually_stopped_exit_condition()
+    {
+        var resetEvent = new ManualResetEvent(false);
+        var cost = CubicPolynomial.LeastSquaresCost.Build().ListeningToResetEvent(resetEvent);
+        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+        
+        var cts = new CancellationTokenSource();
+        var task = Task.Run(() => minimizer.Minimize(cost, parameterConfigurations, cancellationToken: cts.Token), CancellationToken.None);
+        await cts.CancelAsync();
+        resetEvent.Set();
+        
+        var result = await task;
+        result.Should().HaveExitCondition(MinimizationExitCondition.ManuallyStopped);
+    }
 }

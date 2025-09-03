@@ -12,28 +12,6 @@ public class A_cost_function
     private readonly IMinimizer _minimizer = Minimizer.Migrad;
     
     [Test]
-    public async Task when_minimized_but_minimization_is_cancelled_during_the_process_yields_a_result_with_manually_stopped_exit_condition(
-        [Values] bool hasYErrors, [Values] bool hasGradient, [Values] Strategy strategy)
-    {
-        var resetEvent = new ManualResetEvent(false);
-        var cost = CubicPolynomial.LeastSquaresCost
-            .WithYErrors(hasYErrors)
-            .WithGradient(hasGradient)
-            .Build()
-            .ListeningToResetEvent(resetEvent);
-        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
-        var minimizerConfiguration = new MinimizerConfiguration(strategy);
-
-        var cts = new CancellationTokenSource();
-        var task = Task.Run(() => _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration, cts.Token), CancellationToken.None);
-        await cts.CancelAsync();
-        resetEvent.Set();
-
-        var result = await task;
-        result.Should().HaveExitCondition(ManuallyStopped);
-    }
-
-    [Test]
     public void when_minimized_with_a_function_call_limit_lower_than_the_number_of_required_calls_yields_a_result_with_calls_exhausted_exit_condition()
     {
         var cost = CubicPolynomial.LeastSquaresCost.Build();
