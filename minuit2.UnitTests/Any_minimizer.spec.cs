@@ -70,7 +70,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     [Description("In the presence of parameter limits, parameter values are projected to internal values for the " +
                  "minimization (see Minuit docs). This projection runs into numeric problems when one or both limits " +
                  "become very large compared to the value. In such a case, we expect the result to be invalid.")]
-    public void when_minimizing_a_cost_function_for_extreme_parameter_limits_leading_to_numerical_issues_in_the_internal_parameter_projection_yields_an_invalid_result(
+    public void when_minimizing_a_cost_function_for_extreme_parameter_limits_causing_numerical_issues_in_the_internal_parameter_projection_yields_an_invalid_result(
         double? lowerLimit, double? upperLimit)
     {
         var cost = CubicPolynomial.LeastSquaresCost.Build();
@@ -100,7 +100,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     }
     
     [Test]
-    public async Task when_minimization_is_cancelled_during_the_process_yields_a_result_with_manually_stopped_exit_condition()
+    public async Task when_cancelled_during_a_minimization_process_yields_a_result_with_manually_stopped_exit_condition()
     {
         var resetEvent = new ManualResetEvent(false);
         var cost = CubicPolynomial.LeastSquaresCost.Build().ListeningToResetEvent(resetEvent);
@@ -116,7 +116,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     }
     
     [Test]
-    public void when_minimization_runs_into_function_call_limit_yields_a_result_with_function_calls_exhausted_exit_condition()
+    public void when_running_into_the_function_call_limit_during_a_minimization_process_yields_a_result_with_function_calls_exhausted_exit_condition()
     {
         var cost = CubicPolynomial.LeastSquaresCost.Build();
         var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
@@ -137,7 +137,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     }
 
     [TestCaseSource(nameof(BestValueOutsideLimitsParameterConfigurations))]
-    public void when_minimized_with_limited_parameters_and_optimal_values_are_located_outside_the_limits_yields_a_result_with_affected_parameters_at_their_next_best_limit(
+    public void when_minimizing_a_cost_function_optimal_parameter_values_located_outside_the_provided_parameters_limits_yields_a_result_with_affected_parameters_at_their_next_best_limit(
         ParameterConfiguration parameterConfiguration, double expectedValue)
     {
         var cost = CubicPolynomial.LeastSquaresCost.Build();
