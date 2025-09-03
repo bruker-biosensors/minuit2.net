@@ -126,4 +126,31 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
         result.Should().HaveExitCondition(MinimizationExitCondition.FunctionCallsExhausted);
     }
+    
+    private static IEnumerable<TestCaseData> BestValueOutsideLimitsParameterConfigurations()
+    {
+        // best/true value for parameter c0 is 10 (see CubicPolynomial.cs)
+        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0.WithValue(11).WithLimits(10.5, 12), 10.5);
+        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0.WithValue(11).WithLimits(10.5, null), 10.5);
+        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0.WithValue(9).WithLimits(8, 9.5), 9.5);
+        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0.WithValue(9).WithLimits(null, 9.5), 9.5);
+    }
+
+    [TestCaseSource(nameof(BestValueOutsideLimitsParameterConfigurations))]
+    public void when_minimized_with_limited_parameters_and_optimal_values_are_located_outside_the_limits_yields_a_result_with_affected_parameters_at_their_next_best_limit(
+        ParameterConfiguration parameterConfiguration, double expectedValue)
+    {
+        var cost = CubicPolynomial.LeastSquaresCost.Build();
+        ParameterConfiguration[] parameterConfigurations =
+        [
+            parameterConfiguration,
+            CubicPolynomial.ParameterConfigurations.C1,
+            CubicPolynomial.ParameterConfigurations.C2,
+            CubicPolynomial.ParameterConfigurations.C3
+        ];
+        
+        var result = minimizer.Minimize(cost, parameterConfigurations);
+        
+        result.ParameterValues.First().Should().BeApproximately(expectedValue).WithRelativeTolerance(0.001);
+    }
 }
