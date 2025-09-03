@@ -5,7 +5,7 @@ using minuit2.UnitTests.TestUtilities;
 namespace minuit2.UnitTests;
 
 [TestFixture]
-public class The_migrad_minimizer() : Any_minimizer(Migrad)
+public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimizer(Migrad)
 {
     private static readonly IMinimizer Migrad = Minimizer.Migrad;
 
