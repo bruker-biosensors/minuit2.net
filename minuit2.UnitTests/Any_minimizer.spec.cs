@@ -153,4 +153,17 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
         result.Should().HaveExitCondition(MinimizationExitCondition.FunctionCallsExhausted);
     }
+    
+    [Test]
+    public void when_the_cost_function_throws_an_exception_during_a_minimization_process_forwards_that_exception()
+    {
+        var cost = CostFunction.LeastSquares([0], [0], [], ModelThrowing<TestException>());
+        Action action = () => minimizer.Minimize(cost, []);
+        action.Should().ThrowExactly<TestException>();
+    }
+
+    private static Func<double, IList<double>, double> ModelThrowing<T>() where T : Exception, new() =>
+        (_, _) => throw new T();
+    
+    private class TestException : Exception;
 }
