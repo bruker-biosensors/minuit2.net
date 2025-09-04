@@ -27,7 +27,7 @@ internal static class EquivalencyOptionsExtensions
     private static EquivalencyOptions<T> WithRelativeDoubleTolerance<T>(this EquivalencyOptions<T> options, double relativeTolerance)
     {
         return options
-            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, Math.Abs(ctx.Expectation * relativeTolerance)))
+            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation).WithRelativeTolerance(relativeTolerance))
             .WhenTypeIs<double>();
     }
     
