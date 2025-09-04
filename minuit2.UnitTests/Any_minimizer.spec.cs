@@ -166,4 +166,23 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         (_, _) => throw new T();
     
     private class TestException : Exception;
+
+    [Test, Description("Ensures that the inner scaling of gradients by the error definition in the component cost " +
+                       "function and the final rescaling works.")]
+    public void when_minimizing_a_cost_function_sum_with_a_single_component_yields_a_result_equivalent_to_the_result_for_the_isolated_component(
+        [Values] bool hasGradient, 
+        [Values] Strategy strategy)
+    {
+        var component = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).WithErrorDefinition(2).Build();
+        var sum = CostFunction.Sum(component);
+        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+        var minimizerConfiguration = new MinimizerConfiguration(strategy);
+
+        var componentResult = minimizer.Minimize(component, parameterConfigurations, minimizerConfiguration);
+        var sumResult = minimizer.Minimize(sum, parameterConfigurations, minimizerConfiguration);
+        
+        sumResult.Should().BeEquivalentTo(componentResult, options => options
+            .Excluding(x => x.NumberOfFunctionCalls)
+            .WithRelativeDoubleTolerance(0.001));
+    }
 }

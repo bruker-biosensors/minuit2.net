@@ -13,23 +13,6 @@ public class A_cost_function_sum
 {
     private readonly IMinimizer _minimizer = Minimizer.Migrad;
     
-    [Test, Description("Ensures that the inner scaling of gradients by the error definition in the component cost " +
-                       "functions and the final rescaling works.")]
-    public void with_a_single_component_when_minimized_yields_a_result_equivalent_to_the_result_for_the_isolated_component(
-        [Values] bool hasGradient, [Values] Strategy strategy)
-    {
-        var component = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).WithErrorDefinition(2).Build();
-        var sum = CostFunction.Sum(component);
-
-        var minimizerConfiguration = new MinimizerConfiguration(strategy);
-        var componentResult = _minimizer.Minimize(component, CubicPolynomial.ParameterConfigurations.Defaults, minimizerConfiguration);
-        var sumResult = _minimizer.Minimize(sum, CubicPolynomial.ParameterConfigurations.Defaults, minimizerConfiguration);
-        
-        sumResult.Should().BeEquivalentTo(componentResult, options => options
-            .Excluding(x => x.NumberOfFunctionCalls)
-            .WithRelativeDoubleTolerance(0.001));
-    }
-    
     [Test, Description("Ensures that scaling and rescaling by the error definition works on a per-cost basis.")]
     public void of_independent_components_with_different_error_definitions_when_minimized_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
         [Values] bool hasGradient, [Values] Strategy strategy)
