@@ -80,4 +80,25 @@ public class A_least_squares_cost_function
             .Sum();
         cost.ValueFor([constantModelLevel]).Should().Be(expectedValue);
     }
+
+    [Test]
+    public void has_a_default_error_definition_of_one()
+    {
+        var cost = CostFunction.LeastSquares(x: AnyValues(10), y: AnyValues(10), parameters: [], model: (_, _) => 0);
+        cost.ErrorDefinition.Should().Be(1);
+    }
+    
+    [Test]
+    public void with_a_custom_error_definition_in_terms_of_sigma_uses_the_square_of_that_value_for_its_absolute_error_definition()
+    {
+        var errorDefinitionInSigma = Any.Double().Between(2, 5);
+        var cost = CostFunction.LeastSquares(
+            x: AnyValues(10), 
+            y: AnyValues(10), 
+            parameters: [], 
+            model: (_, _) => 0,
+            errorDefinitionInSigma: errorDefinitionInSigma);
+        
+        cost.ErrorDefinition.Should().Be(errorDefinitionInSigma * errorDefinitionInSigma);
+    }
 }
