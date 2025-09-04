@@ -4,7 +4,7 @@ using minuit2.net;
 
 namespace minuit2.UnitTests.TestUtilities;
 
-internal static class EquivalencyAssertionOptionsExtensions
+internal static class EquivalencyOptionsExtensions
 {
     public static EquivalencyOptions<double> WithRelativeDoubleTolerance(
         this EquivalencyOptions<double> options, double relativeTolerance)
