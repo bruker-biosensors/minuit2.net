@@ -4,7 +4,7 @@ using static minuit2.net.ParameterConfiguration;
 
 namespace minuit2.UnitTests.TestUtilities;
 
-public static class CubicPolynomial
+internal static class CubicPolynomial
 {
     private static readonly Func<double, IList<double>, double> Model = 
         (x, c) => c[0] + c[1] * x + c[2] * x * x + c[3] * x * x * x;
