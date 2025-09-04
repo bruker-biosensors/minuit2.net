@@ -1,7 +1,8 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
-using FluentAssertions.Primitives;
+using AwesomeAssertions;
+using AwesomeAssertions.Execution;
+using AwesomeAssertions.Primitives;
 using minuit2.net;
 
 namespace minuit2.UnitTests.TestUtilities;
@@ -14,7 +15,7 @@ internal static class MinimizationResultAssertionExtensions
 [DebuggerStepThrough]
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global", Justification = "Adhere to convention")]
 internal class MinimizationResultAssertions(IMinimizationResult value)
-    : ObjectAssertions<IMinimizationResult, MinimizationResultAssertions>(value)
+    : ObjectAssertions<IMinimizationResult, MinimizationResultAssertions>(value, AssertionChain.GetOrCreate())
 {
     private const double DefaultRelativeTolerance = 0.001;
 

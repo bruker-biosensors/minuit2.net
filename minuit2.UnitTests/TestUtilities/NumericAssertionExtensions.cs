@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
-using FluentAssertions.Numeric;
+using AwesomeAssertions;
+using AwesomeAssertions.Numeric;
 
 namespace minuit2.UnitTests.TestUtilities;
 

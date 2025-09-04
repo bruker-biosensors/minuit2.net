@@ -1,4 +1,4 @@
-using FluentAssertions;
+using AwesomeAssertions;
 using minuit2.net;
 using minuit2.UnitTests.TestUtilities;
 
