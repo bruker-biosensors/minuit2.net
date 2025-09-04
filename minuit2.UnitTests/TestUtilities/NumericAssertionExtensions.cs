@@ -16,7 +16,7 @@ internal static class NumericAssertionExtensions
         return new DoubleAssertionConfigurator(parent, expectedValue, because, becauseArgs);
     }
 
-    public class DoubleAssertionConfigurator(
+    internal class DoubleAssertionConfigurator(
             NumericAssertions<double> parent,
             double expectedValue,
             string because = "",
