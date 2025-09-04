@@ -67,12 +67,6 @@ public static class CubicPolynomial
             return this;
         }
 
-        public LeastSquaresBuilder WithYErrors(bool hasYErrors = true)
-        {
-            _hasYErrors = hasYErrors;
-            return this;
-        }
-        
         public LeastSquaresBuilder WithMissingYErrors()
         {
             _hasYErrors = false;
