@@ -32,7 +32,12 @@ internal static class NumericAssertionExtensions
             return parent.BeApproximately(expectedValue, tolerance, because, becauseArgs);
         }
 
-        public AndConstraint<NumericAssertions<double>> WithRelativeTolerance(double relativeTolerance) =>
-            WithTolerance(Math.Abs(expectedValue * relativeTolerance));
+        public AndConstraint<NumericAssertions<double>> WithRelativeTolerance(
+            double relativeTolerance, 
+            double minimumTolerance = 1E-8)
+        {
+            var tolerance = Math.Abs(expectedValue * relativeTolerance);
+            return WithTolerance(Math.Max(tolerance, minimumTolerance));
+        }
     }
 }

@@ -41,12 +41,9 @@ public class A_cost_function_sum
                 .HaveCostValue(component1Result.CostValue + component2Result.CostValue).And
                 .HaveParameterValues(component1Result.ParameterValues.Concat(component2Result.ParameterValues).ToArray());
             
-            const double relativeToleranceForNonZeros = 0.004;
-            const double absoluteToleranceForZeros = 1e-8;
-            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,0,3).Should().BeEquivalentTo(component1Result.ParameterCovarianceMatrix, options => options.WithRelativeDoubleTolerance(relativeToleranceForNonZeros));
-            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,4,7).Should().BeEquivalentTo(component2Result.ParameterCovarianceMatrix, options => options.WithRelativeDoubleTolerance(relativeToleranceForNonZeros));
-            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,0,3).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options.WithDoubleTolerance(absoluteToleranceForZeros));
-            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,4,7).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options.WithDoubleTolerance(absoluteToleranceForZeros));
+            sumResult.ParameterCovarianceMatrix.Should()
+                .BeEquivalentTo(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix), 
+                    options => options.WithRelativeDoubleTolerance(0.004));
         }
     }
 
@@ -59,8 +56,6 @@ public class A_cost_function_sum
         var adjustedCost = cost.WithErrorDefinitionAdjustedWhereRequiredBasedOn(result);
         return HesseErrorCalculator.Refine(result, adjustedCost);
     }
-
-    private static double[,] AllZeroMatrix(int rows, int columns) => new double[rows, columns];
 
     [TestCase(false, false, 182),
      TestCase(true, false, 182),

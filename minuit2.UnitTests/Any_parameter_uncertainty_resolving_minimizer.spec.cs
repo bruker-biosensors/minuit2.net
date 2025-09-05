@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using AwesomeAssertions.Execution;
 using minuit2.net;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
@@ -62,13 +61,13 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
 
         var component1Result = _minimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
         var component2Result = _minimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
-        var sumResult = _minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(),
-            minimizerConfiguration);
+        var sumResult = _minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
-        AssertCovariancesAreEquivalentBetween(sumResult, component1Result, component2Result);
+        sumResult.ParameterCovarianceMatrix.Should()
+            .BeEquivalentTo(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix), 
+                options => options.WithRelativeDoubleTolerance(0.001));
     }
-
-
+    
     [Test]
     public void when_minimizing_a_cost_function_sum_of_independent_components_with_different_error_definitions_using_the_fast_strategy_and_subsequently_applying_error_refinement_yields_parameter_covariances_equivalent_to_those_for_the_isolated_components(
         [Values] bool hasGradient)
@@ -84,7 +83,9 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         var component2Result = MinimizeAndRefineErrors(component2, parameterConfigurations2, minimizerConfiguration);
         var sumResult = MinimizeAndRefineErrors(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
-        AssertCovariancesAreEquivalentBetween(sumResult, component1Result, component2Result);
+        sumResult.ParameterCovarianceMatrix.Should()
+            .BeEquivalentTo(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix), 
+                options => options.WithRelativeDoubleTolerance(0.001));
     }
     
     private IMinimizationResult MinimizeAndRefineErrors(
@@ -95,32 +96,4 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         var result = _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
         return HesseErrorCalculator.Refine(result, cost);
     }
-
-    private static void AssertCovariancesAreEquivalentBetween(
-        IMinimizationResult sum, 
-        IMinimizationResult component1, 
-        IMinimizationResult component2)
-    {
-        // Assumes components are completely independent (no shared parameters)
-        
-        const double relativeToleranceForNonZeros = 0.001;
-        const double absoluteToleranceForZeros = 1e-8;
-
-        var dim1 = component1.Parameters.Count;
-        var dim2 = component2.Parameters.Count;
-        var component1Section = sum.ParameterCovarianceMatrix.SubMatrix(0, dim1 - 1, 0, dim1 - 1);
-        var component2Section = sum.ParameterCovarianceMatrix.SubMatrix(dim1, dim1 + dim2 - 1, dim1, dim1 + dim2 - 1);
-        var offSection1 = sum.ParameterCovarianceMatrix.SubMatrix(0, dim1 - 1, dim1, dim1 + dim2 - 1);
-        var offSection2 = sum.ParameterCovarianceMatrix.SubMatrix(dim1, dim1 + dim2 - 1, 0, dim1 - 1);
-        
-        using (new AssertionScope())
-        {
-            component1Section.Should().BeEquivalentTo(component1.ParameterCovarianceMatrix, options => options.WithRelativeDoubleTolerance(relativeToleranceForNonZeros));
-            component2Section.Should().BeEquivalentTo(component2.ParameterCovarianceMatrix, options => options.WithRelativeDoubleTolerance(relativeToleranceForNonZeros));
-            offSection1.Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options.WithDoubleTolerance(absoluteToleranceForZeros));
-            offSection2.Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options.WithDoubleTolerance(absoluteToleranceForZeros));
-        }
-    }
-    
-    private static double[,] AllZeroMatrix(int rows, int columns) => new double[rows, columns];
 }
