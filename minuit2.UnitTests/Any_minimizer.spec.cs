@@ -9,14 +9,20 @@ namespace minuit2.UnitTests;
 
 public abstract class Any_minimizer(IMinimizer minimizer)
 {
-    private readonly IEnumerable<IMinimizationProblem> _wellDefinedMinimizationProblems = [];
+    private readonly IEnumerable<IMinimizationProblem> _wellDefinedMinimizationProblems =
+    [
+        new CubicPolynomialLeastSquaresProblem()
+    ];
     
     [Test]
-    public void when_minimizing_a_well_defined_problem_converges_to_a_valid_cost_function_minimum_representing_the_optimum_parameter_values()
+    public void when_minimizing_a_well_defined_problem_converges_to_a_valid_cost_function_minimum_representing_the_optimum_parameter_values(
+        [Values] Strategy strategy)
     {
         _wellDefinedMinimizationProblems.Should().AllSatisfy(problem =>
         {
-            var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
+            // A minimal tolerance is used to enforce maximum accuracy (prevent early termination). 
+            var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
+            var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
             result.Should()
                 .HaveExitCondition(MinimizationExitCondition.Converged).And
                 .HaveIsValid(true).And
