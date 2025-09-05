@@ -17,11 +17,9 @@ internal static class MinimizationResultAssertionExtensions
 internal class MinimizationResultAssertions(IMinimizationResult value)
     : ObjectAssertions<IMinimizationResult, MinimizationResultAssertions>(value, AssertionChain.GetOrCreate())
 {
-    private const double DefaultRelativeTolerance = 0.001;
-
-    public AndConstraint<MinimizationResultAssertions> HaveCostValue(double expectedValue)
+    public AndConstraint<MinimizationResultAssertions> HaveCostValue(double expectedValue, double relativeTolerance = 0.001)
     {
-        Subject.CostValue.Should().BeApproximately(expectedValue, Math.Abs(expectedValue * DefaultRelativeTolerance));
+        Subject.CostValue.Should().BeApproximately(expectedValue, Math.Abs(expectedValue * relativeTolerance));
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
@@ -31,15 +29,15 @@ internal class MinimizationResultAssertions(IMinimizationResult value)
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
-    public AndConstraint<MinimizationResultAssertions> HaveParameterValues(IReadOnlyCollection<double> expectedValues)
+    public AndConstraint<MinimizationResultAssertions> HaveParameterValues(IReadOnlyCollection<double> expectedValues, double relativeTolerance = 0.001)
     {
-        Subject.ParameterValues.Should().BeEquivalentTo(expectedValues, options => options.WithRelativeDoubleTolerance(DefaultRelativeTolerance));
+        Subject.ParameterValues.Should().BeEquivalentTo(expectedValues, options => options.WithRelativeDoubleTolerance(relativeTolerance));
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
-    public AndConstraint<MinimizationResultAssertions> HaveParameterCovarianceMatrix(double[,] expectedValues, double? relativeTolerance = null)
+    public AndConstraint<MinimizationResultAssertions> HaveParameterCovarianceMatrix(double[,] expectedValues, double relativeTolerance = 0.001)
     {
-        Subject.ParameterCovarianceMatrix.Should().BeEquivalentTo(expectedValues, options => options.WithRelativeDoubleTolerance(relativeTolerance ?? DefaultRelativeTolerance));
+        Subject.ParameterCovarianceMatrix.Should().BeEquivalentTo(expectedValues, options => options.WithRelativeDoubleTolerance(relativeTolerance));
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 

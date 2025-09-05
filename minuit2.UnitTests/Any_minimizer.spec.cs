@@ -9,6 +9,22 @@ namespace minuit2.UnitTests;
 
 public abstract class Any_minimizer(IMinimizer minimizer)
 {
+    private readonly IEnumerable<IMinimizationProblem> _wellDefinedMinimizationProblems = [];
+    
+    [Test]
+    public void when_minimizing_a_well_defined_problem_converges_to_a_valid_cost_function_minimum_representing_the_optimum_parameter_values()
+    {
+        _wellDefinedMinimizationProblems.Should().AllSatisfy(problem =>
+        {
+            var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
+            result.Should()
+                .HaveExitCondition(MinimizationExitCondition.Converged).And
+                .HaveIsValid(true).And
+                .HaveParameters(problem.Cost.Parameters).And
+                .HaveParameterValues(problem.OptimumParameterValues, relativeTolerance: 0.01);
+        });
+    }
+    
     private static IEnumerable<TestCaseData> MismatchingParameterConfigurationTestCases()
     {
         var cost = Any.InstanceOf<ICostFunction>();
