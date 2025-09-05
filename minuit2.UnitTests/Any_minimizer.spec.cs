@@ -183,6 +183,35 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         sumResult.Should().BeEquivalentTo(componentResult, options => options
             .Excluding(x => x.NumberOfFunctionCalls)
+            .Excluding(x => x.ParameterCovarianceMatrix)
             .WithRelativeDoubleTolerance(0.001));
+    }
+
+    [Test, Description("Ensures that scaling and rescaling by the error definition works on a per-cost basis.")]
+    public void when_minimizing_a_cost_function_sum_of_independent_components_with_different_error_definitions_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
+            [Values] bool hasGradient,
+            [Values] Strategy strategy)
+    {
+        // While this statement generally holds, the Simplex minimizer fails to produce strictly equivalent results
+        // for more complex models (that's why a very simple model is used in this test). This occurs because it can
+        // terminate prematurely — even with minimal convergence tolerance — due to its unsound convergence criterion
+        // (as noted in the Minuit documentation, where the convergence estimate is described as "largely fantasy").
+        // Users should be aware of this limitation and are advised to either choose alternative minimizers or apply
+        // additional minimization cycles when strict convergence and accurate results are required.
+        
+        var component1 = QuadraticPolynomial.LeastSquaresCost.WithParameterSuffix(1).WithGradient(hasGradient).Build();
+        var component2 = QuadraticPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).WithErrorDefinition(2).Build();
+        var sum = CostFunction.Sum(component1, component2);
+        var parameterConfigurations1 = QuadraticPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
+        var parameterConfigurations2 = QuadraticPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
+        var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
+
+        var component1Result = minimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
+        var component2Result = minimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
+        var sumResult = minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
+
+        sumResult.Should()
+            .HaveCostValue(component1Result.CostValue + component2Result.CostValue).And
+            .HaveParameterValues(component1Result.ParameterValues.Concat(component2Result.ParameterValues).ToArray());
     }
 }

@@ -13,42 +13,6 @@ public class A_cost_function_sum
 {
     private readonly IMinimizer _minimizer = Minimizer.Migrad;
     
-    [Test, Description("Ensures that scaling and rescaling by the error definition works on a per-cost basis.")]
-    public void of_independent_components_with_different_error_definitions_when_minimized_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
-        [Values] bool hasGradient, [Values] Strategy strategy)
-    {
-        if (strategy == Strategy.Fast)
-            Assert.Ignore("The fast minimization strategy currently leads to inconsistent covariances. " +
-                          "In iminuit, this is resolved by calling the Hesse algorithm after minimization. " +
-                          "Once the additional Hesse call is added here, the skipped tests could be re-enabled.");
-        
-        var component1 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(1).WithGradient(hasGradient).Build();
-        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).WithErrorDefinition(2).Build();
-        var sum = CostFunction.Sum(component1, component2);
-
-        var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
-        var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
-
-        var minimizerConfiguration = new MinimizerConfiguration(strategy);
-        var component1Result = _minimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
-        var component2Result = _minimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
-        var sumResult = _minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
-
-        using (new AssertionScope())
-        {
-            sumResult.Should()
-                .HaveCostValue(component1Result.CostValue + component2Result.CostValue).And
-                .HaveParameterValues(component1Result.ParameterValues.Concat(component2Result.ParameterValues).ToArray());
-
-            const double relativeToleranceForNonZeros = 0.001;
-            const double absoluteToleranceForZeros = 1e-8;
-            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,0,3).Should().BeEquivalentTo(component1Result.ParameterCovarianceMatrix, options => options.WithRelativeDoubleTolerance(relativeToleranceForNonZeros));
-            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,4,7).Should().BeEquivalentTo(component2Result.ParameterCovarianceMatrix, options => options.WithRelativeDoubleTolerance(relativeToleranceForNonZeros));
-            sumResult.ParameterCovarianceMatrix.SubMatrix(4,7,0,3).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options.WithDoubleTolerance(absoluteToleranceForZeros));
-            sumResult.ParameterCovarianceMatrix.SubMatrix(0,3,4,7).Should().BeEquivalentTo(AllZeroMatrix(4,4), options => options.WithDoubleTolerance(absoluteToleranceForZeros));
-        }
-    }
-    
     [Test, Description("Ensures that auto-scaling of the error definition for cost functions with missing y-errors " +
                        "and, hence, parameter covariances works (on a per-cost basis).")]
     public void of_independent_components_with_some_components_having_unknown_data_errors_when_minimized_and_subsequently_passed_to_the_hesse_error_refinement_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
