@@ -10,27 +10,20 @@ internal static class NumericAssertionExtensions
     public static DoubleAssertionConfigurator BeApproximately(
         this NumericAssertions<double> parent,
         double expectedValue,
-        bool considerNaNsEqual = true,
         string because = "",
         params object[] becauseArgs)
     {
-        return new DoubleAssertionConfigurator(parent, expectedValue, considerNaNsEqual, because, becauseArgs);
+        return new DoubleAssertionConfigurator(parent, expectedValue, because, becauseArgs);
     }
 
     internal class DoubleAssertionConfigurator(
             NumericAssertions<double> parent,
             double expectedValue,
-            bool considerNaNsEqual,
             string because,
             params object[] becauseArgs)
     {
-        public AndConstraint<NumericAssertions<double>> WithTolerance(double tolerance)
-        {
-            if (considerNaNsEqual && double.IsNaN(parent.Subject) && double.IsNaN(expectedValue))
-                return new AndConstraint<NumericAssertions<double>>(parent);
-            
-            return parent.BeApproximately(expectedValue, tolerance, because, becauseArgs);
-        }
+        public AndConstraint<NumericAssertions<double>> WithTolerance(double tolerance) =>
+            parent.BeApproximately(expectedValue, tolerance, because, becauseArgs);
 
         public AndConstraint<NumericAssertions<double>> WithRelativeTolerance(
             double relativeTolerance, 
