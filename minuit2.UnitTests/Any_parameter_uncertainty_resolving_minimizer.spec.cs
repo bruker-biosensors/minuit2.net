@@ -2,6 +2,7 @@ using AwesomeAssertions;
 using minuit2.net;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
+using minuit2.UnitTests.MinimizationProblems;
 using minuit2.UnitTests.TestUtilities;
 
 namespace minuit2.UnitTests;
@@ -10,6 +11,22 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
 {
     private readonly IMinimizer _minimizer = minimizer;
 
+    [TestCaseSource(nameof(WellDefinedMinimizationProblems))]
+    public void when_minimizing_a_well_defined_problem_yields_parameter_values_that_agree_with_the_optimum_values_within_3_sigma_tolerance(
+        IMinimizationProblem problem,
+        Strategy strategy)
+    { 
+        // A minimal tolerance is used to enforce maximum accuracy (prevent early termination).
+        var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
+        var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+        result.ParameterValues.Select((value, index) => (value, index)).Should().AllSatisfy(p =>
+        {
+            var optimumValue = problem.OptimumParameterValues.ElementAt(p.index);
+            var tolerance = 3 * Math.Sqrt(result.ParameterCovarianceMatrix[p.index, p.index]);
+            p.value.Should().BeApproximately(optimumValue, tolerance);
+        });
+    }
+    
     [Test]
     public void when_minimizing_the_same_cost_function_with_varying_error_definitions_yields_parameter_covariances_that_directly_scale_with_the_error_definition()
     {

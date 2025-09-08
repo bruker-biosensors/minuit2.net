@@ -10,7 +10,7 @@ namespace minuit2.UnitTests;
 
 public abstract class Any_minimizer(IMinimizer minimizer)
 {
-    private static IEnumerable<TestCaseData> WellDefinedMinimizationProblems()
+    protected static IEnumerable<TestCaseData> WellDefinedMinimizationProblems()
     {
         foreach (var strategy in Enum.GetValues(typeof(Strategy)))
             yield return new TestCaseData(new CubicPolynomialLeastSquaresProblem(), strategy)
