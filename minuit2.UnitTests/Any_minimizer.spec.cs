@@ -24,12 +24,18 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     { 
         // A minimal tolerance is used to enforce maximum accuracy (prevent early termination). 
         var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
+        
         var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+
+        var initialCostValue = problem.Cost.ValueFor(problem.ParameterConfigurations
+                .OrderBy(p => problem.Cost.Parameters.IndexOf(p.Name))
+                .Select(p => p.Value)
+                .ToArray());
         result.Should()
             .HaveExitCondition(MinimizationExitCondition.Converged).And
             .HaveIsValid(true).And
-            .HaveParameters(problem.Cost.Parameters).And
-            .HaveParameterValues(problem.OptimumParameterValues, relativeTolerance: 0.01);
+            .HaveParameterValues(problem.OptimumParameterValues, relativeTolerance: 0.01).And
+            .Subject.CostValue.Should().BeLessThan(initialCostValue);
     }
     
     private static IEnumerable<TestCaseData> MismatchingParameterConfigurationTestCases()
