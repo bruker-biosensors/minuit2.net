@@ -13,8 +13,14 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     protected static IEnumerable<TestCaseData> WellDefinedMinimizationProblems()
     {
         foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
-            yield return new TestCaseData(CubicPolynomialLeastSquares, strategy)
-                .SetArgDisplayNames(nameof(CubicPolynomialLeastSquares), strategy.ToString());
+        {
+            yield return TestCase(QuadraticPolynomialLeastSquares, nameof(QuadraticPolynomialLeastSquares));
+            yield return TestCase(CubicPolynomialLeastSquares, nameof(CubicPolynomialLeastSquares));
+            continue;
+
+            TestCaseData TestCase(MinimizationProblem problem, string problemDisplayName) =>
+                new TestCaseData(problem, strategy).SetArgDisplayNames(problemDisplayName, strategy.ToString());
+        }
     }
     
     [TestCaseSource(nameof(WellDefinedMinimizationProblems))]

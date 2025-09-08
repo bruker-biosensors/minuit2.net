@@ -26,6 +26,10 @@ internal static class QuadraticPolynomial
 
     private const double YError = 0.1;  // standard deviation of noise used to generate the above y-values
     
+    // Since the model is linear in its coefficients, the optimal parameter values are fully determined by the
+    // closed-form solution of a linear regression (here, rounded to 2-digit precision).
+    public static IReadOnlyCollection<double> OptimumParameterValues { get; } = [10, -5, 0.5];
+    
     public static LeastSquaresBuilder LeastSquaresCost => new();
 
     public class LeastSquaresBuilder
@@ -62,7 +66,7 @@ internal static class QuadraticPolynomial
         private static ParameterConfiguration C0 => ParameterConfiguration.Variable("c0", 10.90);
         private static ParameterConfiguration C1 => ParameterConfiguration.Variable("c1", -6.06);
         private static ParameterConfiguration C2 => ParameterConfiguration.Variable("c2", 0.58);
-        private static ParameterConfiguration[] Defaults => [C0, C1, C2];
+        public static ParameterConfiguration[] Defaults => [C0, C1, C2];
         public static ParameterConfiguration[] DefaultsWithSuffix(int suffix) => Defaults.Select(p => p.WithSuffix($"{suffix}")).ToArray();
     }
 }

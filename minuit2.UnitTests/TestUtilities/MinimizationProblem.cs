@@ -8,6 +8,11 @@ public record MinimizationProblem(
     IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations,
     IReadOnlyCollection<double> OptimumParameterValues)
 {
+    public static MinimizationProblem QuadraticPolynomialLeastSquares =>
+        new(QuadraticPolynomial.LeastSquaresCost.Build(),
+            QuadraticPolynomial.ParameterConfigurations.Defaults,
+            QuadraticPolynomial.OptimumParameterValues);
+    
     public static MinimizationProblem CubicPolynomialLeastSquares =>
         new(CubicPolynomial.LeastSquaresCost.Build(),
             CubicPolynomial.ParameterConfigurations.Defaults,
