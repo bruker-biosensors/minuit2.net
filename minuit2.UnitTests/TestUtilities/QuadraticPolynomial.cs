@@ -61,12 +61,37 @@ internal static class QuadraticPolynomial
         }
     }
     
-    public static class ParameterConfigurations
+    public static ParameterConfigurationsBuilder ParameterConfigurations => new();
+    
+    public class ParameterConfigurationsBuilder
     {
-        private static ParameterConfiguration C0 => ParameterConfiguration.Variable("c0", 10.90);
-        private static ParameterConfiguration C1 => ParameterConfiguration.Variable("c1", -6.06);
-        private static ParameterConfiguration C2 => ParameterConfiguration.Variable("c2", 0.58);
-        public static ParameterConfiguration[] Defaults => [C0, C1, C2];
-        public static ParameterConfiguration[] DefaultsWithSuffix(int suffix) => Defaults.Select(p => p.WithSuffix($"{suffix}")).ToArray();
+        private ParameterConfiguration _c0 = ParameterConfiguration.Variable("c0", 10.90);
+        private ParameterConfiguration _c1 = ParameterConfiguration.Variable("c1", -6.06);
+        private ParameterConfiguration _c2 = ParameterConfiguration.Variable("c2", 0.58);
+
+        public ParameterConfiguration[] Build() => [_c0, _c1, _c2];
+        
+        public ParameterConfigurationsBuilder WithSuffix(string suffix)
+        {
+            _c0 = _c0.WithSuffix(suffix);
+            _c1 = _c1.WithSuffix(suffix);
+            _c2 = _c2.WithSuffix(suffix);
+            return this;
+        }
+        
+        public ParameterConfigurationsBuilder WithAnyValuesCloseToOptimumValues(double maximumRelativeBias)
+        {
+            _c0 = _c0.WithValue(AnyValueCloseToOptimumValue(0, maximumRelativeBias));
+            _c1 = _c1.WithValue(AnyValueCloseToOptimumValue(1, maximumRelativeBias));
+            _c2 = _c2.WithValue(AnyValueCloseToOptimumValue(2, maximumRelativeBias));
+            return this;
+        }
+
+        private static double AnyValueCloseToOptimumValue(int index, double maximumRelativeBias)
+        {
+            var optimum = OptimumParameterValues.ElementAt(index);
+            var maximumBias = Math.Abs(optimum * maximumRelativeBias);
+            return Any.Double().Between(optimum - maximumBias, optimum + maximumBias);
+        }
     }
 }

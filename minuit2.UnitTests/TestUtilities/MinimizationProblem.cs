@@ -15,8 +15,8 @@ public record MinimizationProblem(
 
     public static MinimizationProblem QuadraticPolynomialLeastSquares =>
         new(QuadraticPolynomial.LeastSquaresCost.Build(),
-            QuadraticPolynomial.OptimumParameterValues, 
-            QuadraticPolynomial.ParameterConfigurations.Defaults);
+            QuadraticPolynomial.OptimumParameterValues,
+            QuadraticPolynomial.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
     
     public static MinimizationProblem CubicPolynomialLeastSquares =>
         new(CubicPolynomial.LeastSquaresCost.Build(),

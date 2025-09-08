@@ -231,8 +231,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var component1 = QuadraticPolynomial.LeastSquaresCost.WithParameterSuffix(1).WithGradient(hasGradient).Build();
         var component2 = QuadraticPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component1, component2);
-        var parameterConfigurations1 = QuadraticPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
-        var parameterConfigurations2 = QuadraticPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
+        var parameterConfigurations1 = QuadraticPolynomial.ParameterConfigurations.WithSuffix("1").Build();
+        var parameterConfigurations2 = QuadraticPolynomial.ParameterConfigurations.WithSuffix("2").Build();
         var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
 
         var component1Result = minimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
