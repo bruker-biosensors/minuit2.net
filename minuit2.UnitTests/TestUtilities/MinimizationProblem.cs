@@ -5,8 +5,8 @@ namespace minuit2.UnitTests.TestUtilities;
 
 public record MinimizationProblem(
     ICostFunction Cost,
-    IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations,
-    IReadOnlyCollection<double> OptimumParameterValues)
+    IReadOnlyCollection<double> OptimumParameterValues,
+    IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations)
 {
     public double InitialCostValue => Cost.ValueFor(OrderedParameterConfigurations.Select(p => p.Value).ToArray());
 
@@ -15,11 +15,11 @@ public record MinimizationProblem(
 
     public static MinimizationProblem QuadraticPolynomialLeastSquares =>
         new(QuadraticPolynomial.LeastSquaresCost.Build(),
-            QuadraticPolynomial.ParameterConfigurations.Defaults,
-            QuadraticPolynomial.OptimumParameterValues);
+            QuadraticPolynomial.OptimumParameterValues, 
+            QuadraticPolynomial.ParameterConfigurations.Defaults);
     
     public static MinimizationProblem CubicPolynomialLeastSquares =>
         new(CubicPolynomial.LeastSquaresCost.Build(),
-            CubicPolynomial.ParameterConfigurations.Defaults,
-            CubicPolynomial.OptimumParameterValues);
+            CubicPolynomial.OptimumParameterValues, 
+            CubicPolynomial.ParameterConfigurations.Defaults);
 }
