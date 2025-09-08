@@ -10,26 +10,26 @@ namespace minuit2.UnitTests;
 
 public abstract class Any_minimizer(IMinimizer minimizer)
 {
-    private readonly IEnumerable<IMinimizationProblem> _wellDefinedMinimizationProblems =
-    [
-        new CubicPolynomialLeastSquaresProblem()
-    ];
-    
-    [Test]
-    public void when_minimizing_a_well_defined_problem_converges_to_a_valid_cost_function_minimum_representing_the_optimum_parameter_values(
-        [Values] Strategy strategy)
+    private static IEnumerable<TestCaseData> WellDefinedMinimizationProblems()
     {
-        _wellDefinedMinimizationProblems.Should().AllSatisfy(problem =>
-        {
-            // A minimal tolerance is used to enforce maximum accuracy (prevent early termination). 
-            var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
-            var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
-            result.Should()
-                .HaveExitCondition(MinimizationExitCondition.Converged).And
-                .HaveIsValid(true).And
-                .HaveParameters(problem.Cost.Parameters).And
-                .HaveParameterValues(problem.OptimumParameterValues, relativeTolerance: 0.01);
-        });
+        foreach (var strategy in Enum.GetValues(typeof(Strategy)))
+            yield return new TestCaseData(new CubicPolynomialLeastSquaresProblem(), strategy)
+                .SetName($"Cubic polynomial least squares problem using {strategy} strategy");
+    }
+    
+    [TestCaseSource(nameof(WellDefinedMinimizationProblems))]
+    public void when_minimizing_a_well_defined_problem_converges_to_a_valid_cost_function_minimum_representing_the_optimum_parameter_values(
+        IMinimizationProblem problem,
+        Strategy strategy)
+    { 
+        // A minimal tolerance is used to enforce maximum accuracy (prevent early termination). 
+        var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
+        var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+        result.Should()
+            .HaveExitCondition(MinimizationExitCondition.Converged).And
+            .HaveIsValid(true).And
+            .HaveParameters(problem.Cost.Parameters).And
+            .HaveParameterValues(problem.OptimumParameterValues, relativeTolerance: 0.01);
     }
     
     private static IEnumerable<TestCaseData> MismatchingParameterConfigurationTestCases()
