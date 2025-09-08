@@ -2,9 +2,9 @@ using AwesomeAssertions;
 using minuit2.net;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
-using minuit2.UnitTests.MinimizationProblems;
 using minuit2.UnitTests.TestUtilities;
 using static minuit2.net.ParameterConfiguration;
+using static minuit2.UnitTests.TestUtilities.MinimizationProblem;
 
 namespace minuit2.UnitTests;
 
@@ -12,14 +12,14 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 {
     protected static IEnumerable<TestCaseData> WellDefinedMinimizationProblems()
     {
-        foreach (var strategy in Enum.GetValues(typeof(Strategy)))
-            yield return new TestCaseData(new CubicPolynomialLeastSquaresProblem(), strategy)
-                .SetName($"Cubic polynomial least squares problem using {strategy} strategy");
+        foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
+            yield return new TestCaseData(CubicPolynomialLeastSquares, strategy)
+                .SetArgDisplayNames(nameof(CubicPolynomialLeastSquares), strategy.ToString());
     }
     
     [TestCaseSource(nameof(WellDefinedMinimizationProblems))]
     public void when_minimizing_a_well_defined_problem_converges_to_a_valid_cost_function_minimum_representing_the_optimum_parameter_values(
-        IMinimizationProblem problem,
+        MinimizationProblem problem,
         Strategy strategy)
     { 
         // A minimal tolerance is used to enforce maximum accuracy (prevent early termination). 

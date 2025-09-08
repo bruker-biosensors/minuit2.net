@@ -29,6 +29,10 @@ internal static class CubicPolynomial
 
     private const double YError = 0.1;  // standard deviation of noise used to generate the above y-values
     
+    // Since the model is linear in its coefficients, the optimal parameter values are fully determined by the
+    // closed-form solution of a linear regression (here, rounded to 2-digit precision).
+    public static IReadOnlyCollection<double> OptimumParameterValues { get; } = [9.97, -1.96, 0.99, -0.1];
+    
     public static LeastSquaresBuilder LeastSquaresCost => new();
 
     public class LeastSquaresBuilder
