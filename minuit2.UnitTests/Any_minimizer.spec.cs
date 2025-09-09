@@ -59,7 +59,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
     [TestCaseSource(nameof(MismatchingParameterConfigurationTestCases))]
     public void when_asked_to_minimize_a_cost_function_with_mismatching_parameter_configurations_throws_an_exception(
-        ICostFunction cost, IEnumerable<ParameterConfiguration> mismatchingParameterConfigurations)
+        ICostFunction cost, 
+        IEnumerable<ParameterConfiguration> mismatchingParameterConfigurations)
     {
         Action action = () => _ = minimizer.Minimize(cost, mismatchingParameterConfigurations.ToList());
         action.Should().Throw<ArgumentException>();
@@ -83,7 +84,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     [TestCase(double.NegativeInfinity, double.NaN)]
     [TestCase(double.NaN, double.NaN)]
     public void when_minimizing_a_cost_function_yields_the_same_result_for_unlimited_parameters_and_parameters_with_infinite_limits(
-        double lowerLimit, double upperLimit)
+        double lowerLimit, 
+        double upperLimit)
     {
         var cost = _defaultProblem.Cost.Build();
         var unlimitedParameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
@@ -102,7 +104,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
                  "minimization (see Minuit docs). This projection runs into numeric problems when one or both limits " +
                  "become very large compared to the value. In such a case, we expect the result to be invalid.")]
     public void when_minimizing_a_cost_function_for_extreme_parameter_limits_causing_numerical_issues_in_the_internal_parameter_projection_yields_an_invalid_result(
-        double? lowerLimit, double? upperLimit)
+        double? lowerLimit, 
+        double? upperLimit)
     {
         var cost = _defaultProblem.Cost.Build();
         var parameterConfigurations = _defaultProblem.ParameterConfigurations.WithLimits(lowerLimit, upperLimit).Build();
