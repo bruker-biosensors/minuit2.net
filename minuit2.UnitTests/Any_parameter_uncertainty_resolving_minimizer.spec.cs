@@ -13,7 +13,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
 
     [TestCaseSource(nameof(WellDefinedMinimizationProblems))]
     public void when_minimizing_a_well_defined_problem_yields_parameter_values_that_agree_with_the_optimum_values_within_3_sigma_tolerance(
-        MinimizationProblem problem,
+        PreconfiguredProblem problem,
         Strategy strategy)
     { 
         // A minimal tolerance is used to enforce maximum accuracy (prevent early termination).

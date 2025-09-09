@@ -3,7 +3,7 @@ using minuit2.net.CostFunctions;
 
 namespace minuit2.UnitTests.TestUtilities;
 
-public record MinimizationProblem(
+public record PreconfiguredProblem(
     ICostFunction Cost,
     IReadOnlyCollection<double> OptimumParameterValues,
     IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations)
@@ -13,18 +13,18 @@ public record MinimizationProblem(
     private IOrderedEnumerable<ParameterConfiguration> OrderedParameterConfigurations =>
         ParameterConfigurations.OrderBy(p => Cost.Parameters.IndexOf(p.Name));
 
-    public static MinimizationProblem QuadraticPolynomialLeastSquares()
+    public static PreconfiguredProblem QuadraticPolynomialLeastSquares()
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
-        return new MinimizationProblem(problem.Cost.Build(),
+        return new PreconfiguredProblem(problem.Cost.Build(),
             problem.OptimumParameterValues,
             problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
     }
 
-    public static MinimizationProblem CubicPolynomialLeastSquares()
+    public static PreconfiguredProblem CubicPolynomialLeastSquares()
     {
         var problem = new CubicPolynomialLeastSquaresProblem();
-        return new MinimizationProblem(problem.Cost.Build(),
+        return new PreconfiguredProblem(problem.Cost.Build(),
             problem.OptimumParameterValues,
             problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
     }

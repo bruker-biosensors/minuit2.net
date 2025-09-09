@@ -4,7 +4,7 @@ using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.UnitTests.TestUtilities;
 using static minuit2.net.ParameterConfiguration;
-using static minuit2.UnitTests.TestUtilities.MinimizationProblem;
+using static minuit2.UnitTests.TestUtilities.PreconfiguredProblem;
 
 namespace minuit2.UnitTests;
 
@@ -20,14 +20,14 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             yield return TestCase(CubicPolynomialLeastSquares(), nameof(CubicPolynomialLeastSquares));
             continue;
 
-            TestCaseData TestCase(MinimizationProblem problem, string problemDisplayName) =>
+            TestCaseData TestCase(PreconfiguredProblem problem, string problemDisplayName) =>
                 new TestCaseData(problem, strategy).SetArgDisplayNames(problemDisplayName, strategy.ToString());
         }
     }
     
     [TestCaseSource(nameof(WellDefinedMinimizationProblems))]
     public void when_minimizing_a_well_defined_problem_converges_to_a_valid_cost_function_minimum_representing_the_optimum_parameter_values(
-        MinimizationProblem problem,
+        PreconfiguredProblem problem,
         Strategy strategy)
     { 
         // A minimal tolerance is used to enforce maximum accuracy (prevent early termination). 
