@@ -68,7 +68,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
                           "they are not strictly equivalent — even when using a minimal convergence tolerance to " +
                           "prevent early termination. Users should be aware of this limitation and are advised to " +
                           "apply error refinement after minimizing cost function sums with the fast strategy when " +
-                          "precise parameter uncertainties are required (see test below).");
+                          "precise parameter uncertainties are required (see complementary test).");
         
         var component1 = _defaultProblem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
         var component2 = _defaultProblem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
