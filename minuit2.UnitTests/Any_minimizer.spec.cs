@@ -148,7 +148,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     {
         var cost = _defaultProblem.Cost.Build();
         var parameterConfigurations = _defaultProblem.ParameterConfigurations
-            .WithParameterAtIndex(0).WithValue(initialValue).WithLimits(lowerLimit, upperLimit)
+            .WithParameter(0).WithValue(initialValue).WithLimits(lowerLimit, upperLimit)
             .Build();
         
         var result = minimizer.Minimize(cost, parameterConfigurations);
@@ -230,8 +230,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         // additional minimization cycles when strict convergence and accurate results are required.
 
         var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var component1 = problem.Cost.WithParametersSuffixedBy("1").WithGradient(hasGradient).Build();
-        var component2 = problem.Cost.WithParametersSuffixedBy("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
+        var component1 = problem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
+        var component2 = problem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component1, component2);
         var parameterConfigurations1 = problem.ParameterConfigurations.WithSuffix("1").Build();
         var parameterConfigurations2 = problem.ParameterConfigurations.WithSuffix("2").Build();

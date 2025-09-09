@@ -70,8 +70,8 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
                           "apply error refinement after minimizing cost function sums with the fast strategy when " +
                           "precise parameter uncertainties are required (see test below).");
         
-        var component1 = _defaultProblem.Cost.WithParametersSuffixedBy("1").WithGradient(hasGradient).Build();
-        var component2 = _defaultProblem.Cost.WithParametersSuffixedBy("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
+        var component1 = _defaultProblem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
+        var component2 = _defaultProblem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component1, component2);
         var parameterConfigurations1 = _defaultProblem.ParameterConfigurations.WithSuffix("1").Build();
         var parameterConfigurations2 = _defaultProblem.ParameterConfigurations.WithSuffix("2").Build();
@@ -90,8 +90,8 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
     public void when_minimizing_a_cost_function_sum_of_independent_components_with_different_error_definitions_using_the_fast_strategy_and_subsequently_applying_error_refinement_yields_parameter_covariances_equivalent_to_those_for_the_isolated_components(
         [Values] bool hasGradient)
     { 
-        var component1 = _defaultProblem.Cost.WithParametersSuffixedBy("1").WithGradient(hasGradient).Build();
-        var component2 = _defaultProblem.Cost.WithParametersSuffixedBy("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
+        var component1 = _defaultProblem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
+        var component2 = _defaultProblem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component1, component2);
         var parameterConfigurations1 = _defaultProblem.ParameterConfigurations.WithSuffix("1").Build();
         var parameterConfigurations2 = _defaultProblem.ParameterConfigurations.WithSuffix("2").Build();

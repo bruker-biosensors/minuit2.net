@@ -60,7 +60,7 @@ internal abstract class ConfigurableLeastSquaresProblem
             return this;
         }
 
-        public LeastSquaresCostBuilder WithParametersSuffixedBy(string suffix, IEnumerable<int>? indicesToSuffix = null)
+        public LeastSquaresCostBuilder WithParameterSuffixes(string suffix, IEnumerable<int>? indicesToSuffix = null)
         {
             indicesToSuffix ??= Enumerable.Range(0, _parameterNames.Length);
             foreach (var index in indicesToSuffix)
@@ -113,8 +113,7 @@ internal abstract class ConfigurableLeastSquaresProblem
             return this;
         }
 
-        public ParameterConfigurationsWithSpecialParameterBuilder WithParameterAtIndex(int index) =>
-            new(this, index);
+        public ParameterConfigurationsWithSpecialParameterBuilder WithParameter(int index) => new(this, index);
         
         public class ParameterConfigurationsWithSpecialParameterBuilder(ParameterConfigurationsBuilder outer, int index)
         {

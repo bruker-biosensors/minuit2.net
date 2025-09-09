@@ -60,9 +60,8 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
         {
             var cost = _problem.Cost.WithGradient(hasGradient).Build();
             var parameterConfigurations = _problem.ParameterConfigurations
-                .WithParameterAtIndex(1).Fixed().And
-                .WithParameterAtIndex(3).Fixed()
-                .Build();
+                .WithParameter(1).Fixed().And
+                .WithParameter(3).Fixed().Build();
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
@@ -88,9 +87,8 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
         {
             var cost = _problem.Cost.Build();
             var parameterConfigurations = _problem.ParameterConfigurations
-                .WithParameterAtIndex(0).WithLimits(10.5, null).And
-                .WithParameterAtIndex(3).WithLimits(null, -0.105)
-                .Build();
+                .WithParameter(0).WithLimits(10.5, null).And
+                .WithParameter(3).WithLimits(null, -0.105).Build();
             
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
@@ -116,9 +114,8 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
         {
             var cost = _problem.Cost.WithGradient().Build();
             var parameterConfigurations = _problem.ParameterConfigurations
-                .WithParameterAtIndex(0).WithLimits(10.5, null).And
-                .WithParameterAtIndex(3).WithLimits(null, -0.105)
-                .Build();
+                .WithParameter(0).WithLimits(10.5, null).And
+                .WithParameter(3).WithLimits(null, -0.105).Build();
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
@@ -204,8 +201,8 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 [Values] bool hasGradient, 
                 [Values] Strategy strategy)
         {
-            var component1 = _problem.Cost.WithParametersSuffixedBy("1").WithGradient(hasGradient).Build();
-            var component2 = _problem.Cost.WithParametersSuffixedBy("2").WithGradient(hasGradient).WithUnknownYErrors().Build();
+            var component1 = _problem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
+            var component2 = _problem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithUnknownYErrors().Build();
             var sum = CostFunction.Sum(component1, component2);
             var parameterConfigurations1 = _problem.ParameterConfigurations.WithSuffix("1").Build();
             var parameterConfigurations2 = _problem.ParameterConfigurations.WithSuffix("2").Build();
@@ -238,11 +235,11 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
         {
             var cost = CostFunction.Sum(
                 _problem.Cost.WithGradient(hasFirstGradient).Build(),
-                _problem.Cost.WithGradient(hasLastGradient).WithParametersSuffixedBy("1", [1, 3]).Build());
+                _problem.Cost.WithGradient(hasLastGradient).WithParameterSuffixes("1", [1, 3]).Build());
             var parameterConfigurations = _problem.ParameterConfigurations.Build()
                 .CombinedWith(_problem.ParameterConfigurations
-                    .WithParameterAtIndex(1).WithSuffix("1").WithValue(-2.1).And
-                    .WithParameterAtIndex(3).WithSuffix("1").WithValue(-0.15).Build());
+                    .WithParameter(1).WithSuffix("1").WithValue(-2.1).And
+                    .WithParameter(3).WithSuffix("1").WithValue(-0.15).Build());
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
