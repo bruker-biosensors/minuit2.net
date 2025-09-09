@@ -3,6 +3,7 @@ using AwesomeAssertions.Execution;
 using minuit2.net;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
+using minuit2.UnitTests.MinimizationProblems;
 using minuit2.UnitTests.TestUtilities;
 using static minuit2.net.MinimizationExitCondition;
 

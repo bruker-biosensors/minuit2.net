@@ -30,8 +30,4 @@
       <ProjectReference Include="..\minuit2.net\minuit2.net.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="MinimizationProblems\" />
-    </ItemGroup>
-
 </Project>

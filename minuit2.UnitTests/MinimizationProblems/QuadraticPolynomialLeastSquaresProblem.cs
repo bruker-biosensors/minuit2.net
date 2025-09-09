@@ -1,4 +1,4 @@
-namespace minuit2.UnitTests.TestUtilities;
+namespace minuit2.UnitTests.MinimizationProblems;
 
 internal class QuadraticPolynomialLeastSquaresProblem : ConfigurableLeastSquaresProblem
 {

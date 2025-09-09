@@ -1,7 +1,8 @@
 using minuit2.net;
 using minuit2.net.CostFunctions;
+using minuit2.UnitTests.TestUtilities;
 
-namespace minuit2.UnitTests.TestUtilities;
+namespace minuit2.UnitTests.MinimizationProblems;
 
 internal abstract class ConfigurableLeastSquaresProblem
 {

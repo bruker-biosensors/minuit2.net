@@ -2,9 +2,10 @@ using AwesomeAssertions;
 using minuit2.net;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
+using minuit2.UnitTests.MinimizationProblems;
 using minuit2.UnitTests.TestUtilities;
 using static minuit2.net.ParameterConfiguration;
-using static minuit2.UnitTests.TestUtilities.PreconfiguredProblem;
+using static minuit2.UnitTests.MinimizationProblems.PreconfiguredProblem;
 
 namespace minuit2.UnitTests;
 
