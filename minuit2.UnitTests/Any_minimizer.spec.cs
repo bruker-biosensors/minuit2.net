@@ -17,17 +17,17 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     {
         foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
         {
-            yield return TestCase(QuadraticPolynomialLeastSquares(), nameof(QuadraticPolynomialLeastSquares));
-            yield return TestCase(CubicPolynomialLeastSquares(), nameof(CubicPolynomialLeastSquares));
-            yield return TestCase(ExponentialDecayLeastSquares(), nameof(ExponentialDecayLeastSquares));
-            yield return TestCase(BellCurveLeastSquares(), nameof(BellCurveLeastSquares));
+            yield return TestCase(new QuadraticPolynomialLeastSquaresProblem(), nameof(QuadraticPolynomialLeastSquaresProblem));
+            yield return TestCase(new CubicPolynomialLeastSquaresProblem(), nameof(CubicPolynomialLeastSquaresProblem));
+            yield return TestCase(new ExponentialDecayLeastSquaresProblem(), nameof(ExponentialDecayLeastSquaresProblem));
+            yield return TestCase(new BellCurveLeastSquaresProblem(), nameof(BellCurveLeastSquaresProblem));
             continue;
 
-            TestCaseData TestCase(PreconfiguredProblem problem, string problemDisplayName) =>
-                new TestCaseData(problem, strategy).SetArgDisplayNames(problemDisplayName, strategy.ToString());
+            TestCaseData TestCase(ConfigurableLeastSquaresProblem problem, string problemName) =>
+                new TestCaseData(Preconfigured(problem), strategy).SetArgDisplayNames(problemName, strategy.ToString());
         }
     }
-    
+
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
     public void when_minimizing_a_well_posed_problem_converges_to_a_valid_cost_function_minimum_representing_the_optimum_parameter_values(
         PreconfiguredProblem problem,

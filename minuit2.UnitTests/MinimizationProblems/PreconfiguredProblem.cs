@@ -8,7 +8,7 @@ public record PreconfiguredProblem(
     IReadOnlyCollection<double> OptimumParameterValues,
     IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations)
 {
-    public double InitialCostValue()
+    internal double InitialCostValue()
     {
         var orderedParameterValues = ParameterConfigurations
             .OrderBy(p => Cost.Parameters.IndexOf(p.Name))
@@ -18,39 +18,8 @@ public record PreconfiguredProblem(
         return Cost.ValueFor(orderedParameterValues);
     }
 
-    public static PreconfiguredProblem QuadraticPolynomialLeastSquares()
-    {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
-        return new PreconfiguredProblem(
-            problem.Cost.Build(),
-            problem.OptimumParameterValues,
+    internal static PreconfiguredProblem Preconfigured(ConfigurableLeastSquaresProblem problem) =>
+        new(problem.Cost.Build(), 
+            problem.OptimumParameterValues, 
             problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
-    }
-
-    public static PreconfiguredProblem CubicPolynomialLeastSquares()
-    {
-        var problem = new CubicPolynomialLeastSquaresProblem();
-        return new PreconfiguredProblem(
-            problem.Cost.Build(),
-            problem.OptimumParameterValues,
-            problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
-    }
-
-    public static PreconfiguredProblem ExponentialDecayLeastSquares()
-    {
-        var problem = new ExponentialDecayLeastSquaresProblem();
-        return new PreconfiguredProblem(
-            problem.Cost.Build(),
-            problem.OptimumParameterValues,
-            problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
-    }
-    
-    public static PreconfiguredProblem BellCurveLeastSquares()
-    {
-        var problem = new BellCurveLeastSquaresProblem();
-        return new PreconfiguredProblem(
-            problem.Cost.Build(),
-            problem.OptimumParameterValues,
-            problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
-    }
 }
