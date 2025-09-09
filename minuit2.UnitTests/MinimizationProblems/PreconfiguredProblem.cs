@@ -21,7 +21,8 @@ public record PreconfiguredProblem(
     public static PreconfiguredProblem QuadraticPolynomialLeastSquares()
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
-        return new PreconfiguredProblem(problem.Cost.Build(),
+        return new PreconfiguredProblem(
+            problem.Cost.Build(),
             problem.OptimumParameterValues,
             problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
     }
@@ -29,7 +30,26 @@ public record PreconfiguredProblem(
     public static PreconfiguredProblem CubicPolynomialLeastSquares()
     {
         var problem = new CubicPolynomialLeastSquaresProblem();
-        return new PreconfiguredProblem(problem.Cost.Build(),
+        return new PreconfiguredProblem(
+            problem.Cost.Build(),
+            problem.OptimumParameterValues,
+            problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
+    }
+
+    public static PreconfiguredProblem ExponentialDecayLeastSquares()
+    {
+        var problem = new ExponentialDecayLeastSquaresProblem();
+        return new PreconfiguredProblem(
+            problem.Cost.Build(),
+            problem.OptimumParameterValues,
+            problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
+    }
+    
+    public static PreconfiguredProblem BellCurveLeastSquares()
+    {
+        var problem = new BellCurveLeastSquaresProblem();
+        return new PreconfiguredProblem(
+            problem.Cost.Build(),
             problem.OptimumParameterValues,
             problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
     }

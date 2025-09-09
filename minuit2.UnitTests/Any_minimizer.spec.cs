@@ -19,6 +19,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         {
             yield return TestCase(QuadraticPolynomialLeastSquares(), nameof(QuadraticPolynomialLeastSquares));
             yield return TestCase(CubicPolynomialLeastSquares(), nameof(CubicPolynomialLeastSquares));
+            yield return TestCase(ExponentialDecayLeastSquares(), nameof(ExponentialDecayLeastSquares));
+            yield return TestCase(BellCurveLeastSquares(), nameof(BellCurveLeastSquares));
             continue;
 
             TestCaseData TestCase(PreconfiguredProblem problem, string problemDisplayName) =>
