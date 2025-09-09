@@ -132,7 +132,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     
     private static IEnumerable<TestCaseData> BestValueOutsideLimitsParameterConfigurations()
     {
-        // best/true value for parameter c0 is 10 (see CubicPolynomialLeastSquaresProblem.cs)
+        // optimum value for parameter c0 is 10 (see CubicPolynomialLeastSquaresProblem.cs)
         yield return new TestCaseData(11.0, 10.5, 12.0, 10.5);
         yield return new TestCaseData(11.0, 10.5, null, 10.5);
         yield return new TestCaseData(9.0, 8.0, 9.5, 9.5);
