@@ -14,7 +14,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     {
         foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
         {
-            yield return TestCase(QuadraticPolynomialLeastSquares, nameof(QuadraticPolynomialLeastSquares));
+            yield return TestCase(QuadraticPolynomialLeastSquares(), nameof(QuadraticPolynomialLeastSquares));
             yield return TestCase(CubicPolynomialLeastSquares, nameof(CubicPolynomialLeastSquares));
             continue;
 
@@ -227,12 +227,13 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         // (as noted in the Minuit documentation, where the convergence estimate is described as "largely fantasy").
         // Users should be aware of this limitation and are advised to either choose alternative minimizers or apply
         // additional minimization cycles when strict convergence and accurate results are required.
-        
-        var component1 = QuadraticPolynomial.LeastSquaresCost.WithParameterSuffix(1).WithGradient(hasGradient).Build();
-        var component2 = QuadraticPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).WithErrorDefinition(2).Build();
+
+        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var component1 = problem.Cost.WithParameterSuffix(1).WithGradient(hasGradient).Build();
+        var component2 = problem.Cost.WithParameterSuffix(2).WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component1, component2);
-        var parameterConfigurations1 = QuadraticPolynomial.ParameterConfigurations.WithSuffix("1").Build();
-        var parameterConfigurations2 = QuadraticPolynomial.ParameterConfigurations.WithSuffix("2").Build();
+        var parameterConfigurations1 = problem.ParameterConfigurations.WithSuffix("1").Build();
+        var parameterConfigurations2 = problem.ParameterConfigurations.WithSuffix("2").Build();
         var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
 
         var component1Result = minimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
