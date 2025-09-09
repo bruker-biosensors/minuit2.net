@@ -13,7 +13,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 {
     private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialLeastSquaresProblem();
     
-    protected static IEnumerable<TestCaseData> WellDefinedMinimizationProblems()
+    protected static IEnumerable<TestCaseData> WellPosedMinimizationProblems()
     {
         foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
         {
@@ -28,8 +28,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         }
     }
     
-    [TestCaseSource(nameof(WellDefinedMinimizationProblems))]
-    public void when_minimizing_a_well_defined_problem_converges_to_a_valid_cost_function_minimum_representing_the_optimum_parameter_values(
+    [TestCaseSource(nameof(WellPosedMinimizationProblems))]
+    public void when_minimizing_a_well_posed_problem_converges_to_a_valid_cost_function_minimum_representing_the_optimum_parameter_values(
         PreconfiguredProblem problem,
         Strategy strategy)
     { 

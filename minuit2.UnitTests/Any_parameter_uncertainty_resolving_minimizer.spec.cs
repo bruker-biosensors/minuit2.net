@@ -12,8 +12,8 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
     private readonly IMinimizer _minimizer = minimizer;
     private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialLeastSquaresProblem();
 
-    [TestCaseSource(nameof(WellDefinedMinimizationProblems))]
-    public void when_minimizing_a_well_defined_problem_yields_parameter_values_that_agree_with_the_optimum_values_within_3_sigma_tolerance(
+    [TestCaseSource(nameof(WellPosedMinimizationProblems))]
+    public void when_minimizing_a_well_posed_problem_yields_parameter_values_that_agree_with_the_optimum_values_within_3_sigma_tolerance(
         PreconfiguredProblem problem,
         Strategy strategy)
     { 

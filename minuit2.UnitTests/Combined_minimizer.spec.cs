@@ -10,12 +10,12 @@ public class The_combined_minimizer() : Any_parameter_uncertainty_resolving_mini
 {
     private static readonly IMinimizer CombinedMinimizer = Minimizer.Combined;
 
-    [TestCaseSource(nameof(WellDefinedMinimizationProblems))]
+    [TestCaseSource(nameof(WellPosedMinimizationProblems))]
     [Description("The combined minimizer leverages Migrad, and only temporarily switches to the Simplex method when " +
                  "Migrad runs into problems (see Minuit documentation). Therefore, for well-posed problems, where " +
                  "Migrad shouldn't face issues, there should be no difference between results obtained by Migrad and " +
                  "the combined minimizer.")]
-    public void when_minimizing_a_well_defined_problem_yields_the_same_result_as_the_migrad_minimizer(
+    public void when_minimizing_a_well_posed_problem_yields_the_same_result_as_the_migrad_minimizer(
         PreconfiguredProblem problem, 
         Strategy strategy)
     {
