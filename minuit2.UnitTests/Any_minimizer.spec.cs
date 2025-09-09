@@ -10,12 +10,14 @@ namespace minuit2.UnitTests;
 
 public abstract class Any_minimizer(IMinimizer minimizer)
 {
+    private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialLeastSquaresProblem();
+    
     protected static IEnumerable<TestCaseData> WellDefinedMinimizationProblems()
     {
         foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
         {
             yield return TestCase(QuadraticPolynomialLeastSquares(), nameof(QuadraticPolynomialLeastSquares));
-            yield return TestCase(CubicPolynomialLeastSquares, nameof(CubicPolynomialLeastSquares));
+            yield return TestCase(CubicPolynomialLeastSquares(), nameof(CubicPolynomialLeastSquares));
             continue;
 
             TestCaseData TestCase(MinimizationProblem problem, string problemDisplayName) =>
@@ -65,9 +67,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     [Test, Description("Ensures correct parameter-configuration-to-cost-function-parameter mapping.")]
     public void when_minimizing_a_cost_function_yields_the_same_result_independent_of_the_order_parameter_configurations_are_provided_in()
     {
-        var cost = CubicPolynomial.LeastSquaresCost.Build();
-        var orderedConfigurations = CubicPolynomial.ParameterConfigurations.Defaults; 
-        var disorderedConfigurations = CubicPolynomial.ParameterConfigurations.Defaults.InRandomOrder().ToArray();
+        var cost = _defaultProblem.Cost.Build();
+        var orderedConfigurations = _defaultProblem.ParameterConfigurations.Build(); 
+        var disorderedConfigurations = _defaultProblem.ParameterConfigurations.InRandomOrder().Build();
         
         var resultForOrderedConfigurations = minimizer.Minimize(cost, orderedConfigurations);
         var resultForDisorderedConfigurations = minimizer.Minimize(cost, disorderedConfigurations);
@@ -83,9 +85,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     public void when_minimizing_a_cost_function_yields_the_same_result_for_unlimited_parameters_and_parameters_with_infinite_limits(
         double lowerLimit, double upperLimit)
     {
-        var cost = CubicPolynomial.LeastSquaresCost.Build();
-        var unlimitedParameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
-        var parameterConfigurationsWithInfiniteLimits = CubicPolynomial.ParameterConfigurations.Defaults.WithLimits(lowerLimit, upperLimit);
+        var cost = _defaultProblem.Cost.Build();
+        var unlimitedParameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
+        var parameterConfigurationsWithInfiniteLimits = _defaultProblem.ParameterConfigurations.WithLimits(lowerLimit, upperLimit).Build();
 
         var resultForUnlimited = minimizer.Minimize(cost, unlimitedParameterConfigurations);
         var resultForInfiniteLimits = minimizer.Minimize(cost, parameterConfigurationsWithInfiniteLimits);
@@ -102,8 +104,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     public void when_minimizing_a_cost_function_for_extreme_parameter_limits_causing_numerical_issues_in_the_internal_parameter_projection_yields_an_invalid_result(
         double? lowerLimit, double? upperLimit)
     {
-        var cost = CubicPolynomial.LeastSquaresCost.Build();
-        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults.WithLimits(lowerLimit, upperLimit);
+        var cost = _defaultProblem.Cost.Build();
+        var parameterConfigurations = _defaultProblem.ParameterConfigurations.WithLimits(lowerLimit, upperLimit).Build();
         
         var result = minimizer.Minimize(cost, parameterConfigurations);
         
@@ -117,9 +119,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
                        "prevent early termination for large error definition values.")]
     public void when_minimizing_the_same_cost_function_with_varying_error_definitions_yields_the_same_cost_value()
     {
-        var cost = CubicPolynomial.LeastSquaresCost.WithAnyErrorDefinitionBetween(2, 5).Build();
-        var referenceCost = CubicPolynomial.LeastSquaresCost.WithErrorDefinition(1).Build();
-        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+        var cost = _defaultProblem.Cost.WithErrorDefinition(Any.Double().Between(2, 5)).Build();
+        var referenceCost = _defaultProblem.Cost.WithErrorDefinition(1).Build();
+        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
         var minimizerConfiguration = new MinimizerConfiguration(Tolerance: 0);
 
         var result = minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
@@ -130,25 +132,24 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     
     private static IEnumerable<TestCaseData> BestValueOutsideLimitsParameterConfigurations()
     {
-        // best/true value for parameter c0 is 10 (see CubicPolynomial.cs)
-        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0.WithValue(11).WithLimits(10.5, 12), 10.5);
-        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0.WithValue(11).WithLimits(10.5, null), 10.5);
-        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0.WithValue(9).WithLimits(8, 9.5), 9.5);
-        yield return new TestCaseData(CubicPolynomial.ParameterConfigurations.C0.WithValue(9).WithLimits(null, 9.5), 9.5);
+        // best/true value for parameter c0 is 10 (see CubicPolynomialLeastSquaresProblem.cs)
+        yield return new TestCaseData(11.0, 10.5, 12.0, 10.5);
+        yield return new TestCaseData(11.0, 10.5, null, 10.5);
+        yield return new TestCaseData(9.0, 8.0, 9.5, 9.5);
+        yield return new TestCaseData(9.0, null, 9.5, 9.5);
     }
 
     [TestCaseSource(nameof(BestValueOutsideLimitsParameterConfigurations))]
-    public void when_minimizing_a_cost_function_optimal_parameter_values_located_outside_the_provided_parameters_limits_yields_a_result_with_affected_parameters_at_their_next_best_limit(
-        ParameterConfiguration parameterConfiguration, double expectedValue)
+    public void when_minimizing_a_cost_function_with_optimal_parameter_values_located_outside_the_provided_parameters_limits_yields_a_result_with_the_affected_parameters_at_their_next_best_limit(
+        double initialValue, 
+        double? lowerLimit, 
+        double? upperLimit, 
+        double expectedValue)
     {
-        var cost = CubicPolynomial.LeastSquaresCost.Build();
-        ParameterConfiguration[] parameterConfigurations =
-        [
-            parameterConfiguration,
-            CubicPolynomial.ParameterConfigurations.C1,
-            CubicPolynomial.ParameterConfigurations.C2,
-            CubicPolynomial.ParameterConfigurations.C3
-        ];
+        var cost = _defaultProblem.Cost.Build();
+        var parameterConfigurations = _defaultProblem.ParameterConfigurations
+            .WithParameterAtIndex(0).WithValue(initialValue).WithLimits(lowerLimit, upperLimit)
+            .Build();
         
         var result = minimizer.Minimize(cost, parameterConfigurations);
         
@@ -159,8 +160,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     public async Task when_cancelled_during_a_minimization_process_yields_a_result_with_manually_stopped_exit_condition()
     {
         var resetEvent = new ManualResetEvent(false);
-        var cost = CubicPolynomial.LeastSquaresCost.Build().ListeningToResetEvent(resetEvent);
-        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+        var cost = _defaultProblem.Cost.Build().ListeningToResetEvent(resetEvent);
+        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
         
         var cts = new CancellationTokenSource();
         var task = Task.Run(() => minimizer.Minimize(cost, parameterConfigurations, cancellationToken: cts.Token), CancellationToken.None);
@@ -174,8 +175,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     [Test]
     public void when_running_into_the_function_call_limit_during_a_minimization_process_yields_a_result_with_function_calls_exhausted_exit_condition()
     {
-        var cost = CubicPolynomial.LeastSquaresCost.Build();
-        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+        var cost = _defaultProblem.Cost.Build();
+        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
         var minimizerConfiguration = new MinimizerConfiguration(MaximumFunctionCalls: 1);
         
         var result = minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
@@ -202,9 +203,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         [Values] bool hasGradient, 
         [Values] Strategy strategy)
     {
-        var component = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).WithErrorDefinition(2).Build();
+        var component = _defaultProblem.Cost.WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component);
-        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
 
         var componentResult = minimizer.Minimize(component, parameterConfigurations, minimizerConfiguration);
@@ -222,15 +223,15 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             [Values] Strategy strategy)
     {
         // While this statement generally holds, the Simplex minimizer fails to produce strictly equivalent results
-        // for more complex models (that's why a very simple model is used in this test). This occurs because it can
+        // for more complex models (that's why the simplest problem is used in this test). This occurs because it can
         // terminate prematurely — even with minimal convergence tolerance — due to its unsound convergence criterion
         // (as noted in the Minuit documentation, where the convergence estimate is described as "largely fantasy").
         // Users should be aware of this limitation and are advised to either choose alternative minimizers or apply
         // additional minimization cycles when strict convergence and accurate results are required.
 
         var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var component1 = problem.Cost.WithParameterSuffix(1).WithGradient(hasGradient).Build();
-        var component2 = problem.Cost.WithParameterSuffix(2).WithGradient(hasGradient).WithErrorDefinition(2).Build();
+        var component1 = problem.Cost.WithParameterSuffix("1").WithGradient(hasGradient).Build();
+        var component2 = problem.Cost.WithParameterSuffix("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component1, component2);
         var parameterConfigurations1 = problem.ParameterConfigurations.WithSuffix("1").Build();
         var parameterConfigurations2 = problem.ParameterConfigurations.WithSuffix("2").Build();

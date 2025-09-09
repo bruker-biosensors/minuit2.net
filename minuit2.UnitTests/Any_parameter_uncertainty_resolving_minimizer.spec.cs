@@ -9,6 +9,7 @@ namespace minuit2.UnitTests;
 public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer minimizer) : Any_minimizer(minimizer)
 {
     private readonly IMinimizer _minimizer = minimizer;
+    private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialLeastSquaresProblem();
 
     [TestCaseSource(nameof(WellDefinedMinimizationProblems))]
     public void when_minimizing_a_well_defined_problem_yields_parameter_values_that_agree_with_the_optimum_values_within_3_sigma_tolerance(
@@ -29,11 +30,12 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
     [Test]
     public void when_minimizing_the_same_cost_function_with_varying_error_definitions_yields_parameter_covariances_that_directly_scale_with_the_error_definition()
     {
-        var cost = CubicPolynomial.LeastSquaresCost.WithAnyErrorDefinitionBetween(2, 5).Build();
-        var referenceCost = CubicPolynomial.LeastSquaresCost.WithErrorDefinition(1).Build();
+        var cost = _defaultProblem.Cost.WithErrorDefinition(Any.Double().Between(2, 5)).Build();
+        var referenceCost = _defaultProblem.Cost.WithErrorDefinition(1).Build();
+        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
         
-        var result = _minimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
-        var referenceResult = _minimizer.Minimize(referenceCost, CubicPolynomial.ParameterConfigurations.Defaults);
+        var result = _minimizer.Minimize(cost, parameterConfigurations);
+        var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
         
         result.ParameterCovarianceMatrix.Should().BeEquivalentTo(referenceResult.ParameterCovarianceMatrix.MultipliedBy(cost.ErrorDefinition), 
             options => options.WithRelativeDoubleTolerance(0.001));
@@ -44,9 +46,9 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         [Values] bool hasGradient, 
         [Values] Strategy strategy)
     {
-        var component = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).WithErrorDefinition(2).Build();
+        var component = _defaultProblem.Cost.WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component);
-        var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
 
         var componentResult = _minimizer.Minimize(component, parameterConfigurations, minimizerConfiguration);
@@ -68,11 +70,11 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
                           "apply error refinement after minimizing cost function sums with the fast strategy when " +
                           "precise parameter uncertainties are required (see test below).");
         
-        var component1 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(1).WithGradient(hasGradient).Build();
-        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).WithErrorDefinition(2).Build();
+        var component1 = _defaultProblem.Cost.WithParameterSuffix("1").WithGradient(hasGradient).Build();
+        var component2 = _defaultProblem.Cost.WithParameterSuffix("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component1, component2);
-        var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
-        var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
+        var parameterConfigurations1 = _defaultProblem.ParameterConfigurations.WithSuffix("1").Build();
+        var parameterConfigurations2 = _defaultProblem.ParameterConfigurations.WithSuffix("2").Build();
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
 
         var component1Result = _minimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
@@ -88,11 +90,11 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
     public void when_minimizing_a_cost_function_sum_of_independent_components_with_different_error_definitions_using_the_fast_strategy_and_subsequently_applying_error_refinement_yields_parameter_covariances_equivalent_to_those_for_the_isolated_components(
         [Values] bool hasGradient)
     { 
-        var component1 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(1).WithGradient(hasGradient).Build();
-        var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).WithErrorDefinition(2).Build();
+        var component1 = _defaultProblem.Cost.WithParameterSuffix("1").WithGradient(hasGradient).Build();
+        var component2 = _defaultProblem.Cost.WithParameterSuffix("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component1, component2);
-        var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
-        var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
+        var parameterConfigurations1 = _defaultProblem.ParameterConfigurations.WithSuffix("1").Build();
+        var parameterConfigurations2 = _defaultProblem.ParameterConfigurations.WithSuffix("2").Build();
         var minimizerConfiguration = new MinimizerConfiguration(Strategy.Fast);
 
         var component1Result = MinimizeAndRefineErrors(component1, parameterConfigurations1, minimizerConfiguration);

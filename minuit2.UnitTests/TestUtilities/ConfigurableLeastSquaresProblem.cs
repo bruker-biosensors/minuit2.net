@@ -28,14 +28,25 @@ internal abstract class ConfigurableLeastSquaresProblem
     {
         private readonly IList<double> _xValues = xValues.ToArray();
         private readonly IList<double> _yValues = yValues.ToArray();
-        private IList<string> _parameterNames = parameterNames.ToArray();
+        private readonly string[] _parameterNames = parameterNames.ToArray();
         
+        private bool _hasYErrors = true;
         private bool _hasGradient;
         private double _errorDefinitionInSigma = 1;
 
-        public ICostFunction Build() => _hasGradient 
-            ? CostFunction.LeastSquares(_xValues, _yValues, yError, _parameterNames, model, modelGradient, _errorDefinitionInSigma) 
-            : CostFunction.LeastSquares(_xValues, _yValues, yError, _parameterNames, model, errorDefinitionInSigma: _errorDefinitionInSigma);
+        public ICostFunction Build() => _hasYErrors switch
+        {
+            true when _hasGradient => CostFunction.LeastSquares(_xValues, _yValues, yError, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
+            true when !_hasGradient => CostFunction.LeastSquares(_xValues, _yValues, yError, _parameterNames, model, null, _errorDefinitionInSigma),
+            false when _hasGradient => CostFunction.LeastSquares(_xValues, _yValues, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
+            _ => CostFunction.LeastSquares(_xValues, _yValues, _parameterNames, model, null, _errorDefinitionInSigma)
+        };
+
+        public LeastSquaresCostBuilder WithUnknownYErrors()
+        {
+            _hasYErrors = false;
+            return this;
+        }
 
         public LeastSquaresCostBuilder WithGradient(bool hasGradient = true)
         {
@@ -43,15 +54,17 @@ internal abstract class ConfigurableLeastSquaresProblem
             return this;
         }
         
-        public LeastSquaresCostBuilder WithParameterSuffix(int suffix)
-        {
-            _parameterNames = _parameterNames.Select(p => $"{p}_{suffix}").ToArray();
-            return this;
-        }
-        
         public LeastSquaresCostBuilder WithErrorDefinition(double sigma)
         {
             _errorDefinitionInSigma = sigma;
+            return this;
+        }
+
+        public LeastSquaresCostBuilder WithParameterSuffix(string suffix, IEnumerable<int>? indicesToSuffix = null)
+        {
+            indicesToSuffix ??= Enumerable.Range(0, _parameterNames.Length);
+            foreach (var index in indicesToSuffix)
+                _parameterNames[index] += $"_{suffix}";
             return this;
         }
     }
@@ -86,6 +99,52 @@ internal abstract class ConfigurableLeastSquaresProblem
         {
             var maximumBias = Math.Abs(value * maximumRelativeBias);
             return Any.Double().Between(value - maximumBias, value + maximumBias);
+        }
+
+        public ParameterConfigurationsBuilder WithLimits(double? lowerLimit, double? upperLimit)
+        {
+            _configs = _configs.WithLimits(lowerLimit, upperLimit);
+            return this;
+        }
+
+        public ParameterConfigurationsBuilder InRandomOrder()
+        {
+            _configs = _configs.InRandomOrder().ToArray();
+            return this;
+        }
+
+        public ParameterConfigurationsWithSpecialParameterBuilder WithParameterAtIndex(int index) =>
+            new(this, index);
+        
+        public class ParameterConfigurationsWithSpecialParameterBuilder(ParameterConfigurationsBuilder outer, int index)
+        {
+            private ParameterConfiguration Config
+            {
+                get => outer._configs[index];
+                set => outer._configs[index] = value;
+            }
+            
+            public ParameterConfiguration[] Build() => outer.Build();
+            
+            public ParameterConfigurationsBuilder And => outer;
+            
+            public ParameterConfigurationsWithSpecialParameterBuilder WithValue(double value)
+            {
+                Config = Config.WithValue(value);
+                return this;
+            }
+
+            public ParameterConfigurationsWithSpecialParameterBuilder WithLimits(double? lowerLimit, double? upperLimit)
+            {
+                Config = Config.WithLimits(lowerLimit, upperLimit);
+                return this;
+            }
+
+            public ParameterConfigurationsWithSpecialParameterBuilder Fixed()
+            {
+                Config = Config.Fixed();
+                return this;
+            }
         }
     }
 }

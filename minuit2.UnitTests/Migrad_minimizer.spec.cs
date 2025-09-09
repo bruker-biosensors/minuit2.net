@@ -26,12 +26,14 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
     
     public class When_minimizing_a_least_squares_cost_function
     {
+        private readonly ConfigurableLeastSquaresProblem _problem = new CubicPolynomialLeastSquaresProblem();
+        
         [TestCase(false, 100), 
          TestCase(true, 78)]
         public void yields_the_expected_result(bool hasGradient, int expectedFunctionCalls)
         {
-            var cost = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).Build();
-            var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+            var cost = _problem.Cost.WithGradient(hasGradient).Build();
+            var parameterConfigurations = _problem.ParameterConfigurations.Build();
             
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
@@ -56,14 +58,11 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
          TestCase(true, 31)]
         public void with_fixed_parameters_yields_the_expected_result(bool hasGradient, int expectedFunctionCalls)
         {
-            var cost = CubicPolynomial.LeastSquaresCost.WithGradient(hasGradient).Build();
-            var parameterConfigurations = new[]
-            {
-                CubicPolynomial.ParameterConfigurations.C0,
-                CubicPolynomial.ParameterConfigurations.C1.Fixed(),
-                CubicPolynomial.ParameterConfigurations.C2,
-                CubicPolynomial.ParameterConfigurations.C3.Fixed()
-            };
+            var cost = _problem.Cost.WithGradient(hasGradient).Build();
+            var parameterConfigurations = _problem.ParameterConfigurations
+                .WithParameterAtIndex(1).Fixed().And
+                .WithParameterAtIndex(3).Fixed()
+                .Build();
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
@@ -87,15 +86,12 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
         [Test]
         public void with_limited_parameters_yields_the_expected_result()
         {
-            var cost = CubicPolynomial.LeastSquaresCost.Build();
-            var parameterConfigurations = new[]
-            {
-                CubicPolynomial.ParameterConfigurations.C0.WithLimits(CubicPolynomial.ParameterConfigurations.C0.Value - 0.25, null),
-                CubicPolynomial.ParameterConfigurations.C1,
-                CubicPolynomial.ParameterConfigurations.C2,
-                CubicPolynomial.ParameterConfigurations.C3.WithLimits(null, CubicPolynomial.ParameterConfigurations.C3.Value + 0.005)
-            };
-
+            var cost = _problem.Cost.Build();
+            var parameterConfigurations = _problem.ParameterConfigurations
+                .WithParameterAtIndex(0).WithLimits(10.5, null).And
+                .WithParameterAtIndex(3).WithLimits(null, -0.105)
+                .Build();
+            
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
             result.Should()
@@ -118,14 +114,11 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
         [Test]
         public void with_an_analytical_gradient_and_with_limited_parameters_yields_the_expected_result()
         {
-            var cost = CubicPolynomial.LeastSquaresCost.WithGradient().Build();
-            var parameterConfigurations = new[]
-            {
-                CubicPolynomial.ParameterConfigurations.C0.WithLimits(CubicPolynomial.ParameterConfigurations.C0.Value - 0.25, null),
-                CubicPolynomial.ParameterConfigurations.C1,
-                CubicPolynomial.ParameterConfigurations.C2,
-                CubicPolynomial.ParameterConfigurations.C3.WithLimits(null, CubicPolynomial.ParameterConfigurations.C3.Value + 0.005)
-            };
+            var cost = _problem.Cost.WithGradient().Build();
+            var parameterConfigurations = _problem.ParameterConfigurations
+                .WithParameterAtIndex(0).WithLimits(10.5, null).And
+                .WithParameterAtIndex(3).WithLimits(null, -0.105)
+                .Build();
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
@@ -153,9 +146,10 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
         [Test]
         public void with_unknown_data_errors_yields_the_expected_result([Values] bool hasGradient)
         {
-            var cost = CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithGradient(hasGradient).Build();
-
-            var result = MigradMinimizer.Minimize(cost, CubicPolynomial.ParameterConfigurations.Defaults);
+            var cost = _problem.Cost.WithUnknownYErrors().WithGradient(hasGradient).Build();
+            var parameterConfigurations = _problem.ParameterConfigurations.Build();
+            
+            var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
             result.Should()
                 .HaveExitCondition(Converged).And
@@ -177,8 +171,8 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
         public void with_unknown_data_errors_and_subsequently_applying_error_refinement_yields_the_expected_result(
             [Values] bool hasGradient)
         {
-            var cost = CubicPolynomial.LeastSquaresCost.WithMissingYErrors().WithGradient(hasGradient).Build();
-            var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+            var cost = _problem.Cost.WithUnknownYErrors().WithGradient(hasGradient).Build();
+            var parameterConfigurations = _problem.ParameterConfigurations.Build();
             
             var result = MinimizeAndRefineErrors(cost, parameterConfigurations);
 
@@ -201,6 +195,8 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
 
     public class When_minimizing_a_sum_of_least_squares_cost_functions
     {
+        private readonly ConfigurableLeastSquaresProblem _problem = new CubicPolynomialLeastSquaresProblem();
+        
         [Test, 
          Description("Ensures that auto-adjustment of the error definition for least squares cost functions with " +
                      "unknown y-errors and, hence, parameter covariances works (on a per-cost basis).")]
@@ -208,11 +204,11 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 [Values] bool hasGradient, 
                 [Values] Strategy strategy)
         {
-            var component1 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(1).WithGradient(hasGradient).Build();
-            var component2 = CubicPolynomial.LeastSquaresCost.WithParameterSuffix(2).WithGradient(hasGradient).WithMissingYErrors().Build();
+            var component1 = _problem.Cost.WithParameterSuffix("1").WithGradient(hasGradient).Build();
+            var component2 = _problem.Cost.WithParameterSuffix("2").WithGradient(hasGradient).WithUnknownYErrors().Build();
             var sum = CostFunction.Sum(component1, component2);
-            var parameterConfigurations1 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(1);
-            var parameterConfigurations2 = CubicPolynomial.ParameterConfigurations.DefaultsWithSuffix(2);
+            var parameterConfigurations1 = _problem.ParameterConfigurations.WithSuffix("1").Build();
+            var parameterConfigurations2 = _problem.ParameterConfigurations.WithSuffix("2").Build();
             // A minimum tolerance is used to prevent premature termination when using the fast strategy.
             var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
             
@@ -241,10 +237,13 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             int expectedFunctionCalls)
         {
             var cost = CostFunction.Sum(
-                CubicPolynomial.LeastSquaresCost.WithGradient(hasFirstGradient).Build(),
-                CubicPolynomial.LeastSquaresCost.WithGradient(hasLastGradient).WithParameterNames(c1: "c1_1", c3: "c3_1").Build());
-            var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults
-                .Concat([ParameterConfiguration.Variable("c1_1", -2.1), ParameterConfiguration.Variable("c3_1", -0.15)]).ToArray();
+                _problem.Cost.WithGradient(hasFirstGradient).Build(),
+                _problem.Cost.WithGradient(hasLastGradient).WithParameterSuffix("1", [1, 3]).Build());
+            var parameterConfigurations1 = _problem.ParameterConfigurations.Build();
+            var parameterConfigurations = parameterConfigurations1.Concat([
+                parameterConfigurations1[1].WithSuffix("1").WithValue(-2.1),
+                parameterConfigurations1[3].WithSuffix("1").WithValue(-0.15)
+            ]).ToArray();
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
@@ -273,9 +272,9 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             [Values] bool hasLastGradient)
         {
             var cost = CostFunction.Sum(
-                CubicPolynomial.LeastSquaresCost.WithGradient(hasFirstGradient).Build(),
-                CubicPolynomial.LeastSquaresCost.WithGradient(hasLastGradient).WithMissingYErrors().Build());
-            var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+                _problem.Cost.WithGradient(hasFirstGradient).Build(),
+                _problem.Cost.WithGradient(hasLastGradient).WithUnknownYErrors().Build());
+            var parameterConfigurations = _problem.ParameterConfigurations.Build();
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
@@ -302,9 +301,9 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             [Values] bool hasLastGradient)
         {
             var cost = CostFunction.Sum(
-                CubicPolynomial.LeastSquaresCost.WithGradient(hasFirstGradient).Build(),
-                CubicPolynomial.LeastSquaresCost.WithGradient(hasLastGradient).WithMissingYErrors().Build());
-            var parameterConfigurations = CubicPolynomial.ParameterConfigurations.Defaults;
+                _problem.Cost.WithGradient(hasFirstGradient).Build(),
+                _problem.Cost.WithGradient(hasLastGradient).WithUnknownYErrors().Build());
+            var parameterConfigurations = _problem.ParameterConfigurations.Build();
 
             var result = MinimizeAndRefineErrors(cost, parameterConfigurations);
 

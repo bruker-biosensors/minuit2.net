@@ -21,8 +21,11 @@ public record MinimizationProblem(
             problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
     }
 
-    public static MinimizationProblem CubicPolynomialLeastSquares =>
-        new(CubicPolynomial.LeastSquaresCost.Build(),
-            CubicPolynomial.OptimumParameterValues, 
-            CubicPolynomial.ParameterConfigurations.Defaults);
+    public static MinimizationProblem CubicPolynomialLeastSquares()
+    {
+        var problem = new CubicPolynomialLeastSquaresProblem();
+        return new MinimizationProblem(problem.Cost.Build(),
+            problem.OptimumParameterValues,
+            problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
+    }
 }
