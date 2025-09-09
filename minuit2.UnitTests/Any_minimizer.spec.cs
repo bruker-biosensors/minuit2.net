@@ -82,7 +82,6 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     [TestCase(double.NaN, double.PositiveInfinity)]
     [TestCase(double.NegativeInfinity, double.NaN)]
     [TestCase(double.NaN, double.NaN)]
-    [Description("Ensures minimizer handles infinite parameter limits the same way as if there were no limits.")]
     public void when_minimizing_a_cost_function_yields_the_same_result_for_unlimited_parameters_and_parameters_with_infinite_limits(
         double lowerLimit, double upperLimit)
     {
