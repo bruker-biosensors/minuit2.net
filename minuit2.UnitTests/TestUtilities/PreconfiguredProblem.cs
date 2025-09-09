@@ -8,10 +8,15 @@ public record PreconfiguredProblem(
     IReadOnlyCollection<double> OptimumParameterValues,
     IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations)
 {
-    public double InitialCostValue => Cost.ValueFor(OrderedParameterConfigurations.Select(p => p.Value).ToArray());
-
-    private IOrderedEnumerable<ParameterConfiguration> OrderedParameterConfigurations =>
-        ParameterConfigurations.OrderBy(p => Cost.Parameters.IndexOf(p.Name));
+    public double InitialCostValue()
+    {
+        var orderedParameterValues = ParameterConfigurations
+            .OrderBy(p => Cost.Parameters.IndexOf(p.Name))
+            .Select(p => p.Value)
+            .ToArray();
+        
+        return Cost.ValueFor(orderedParameterValues);
+    }
 
     public static PreconfiguredProblem QuadraticPolynomialLeastSquares()
     {

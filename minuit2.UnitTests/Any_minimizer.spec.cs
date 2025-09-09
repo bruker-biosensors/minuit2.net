@@ -37,7 +37,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             .HaveExitCondition(MinimizationExitCondition.Converged).And
             .HaveIsValid(true).And
             .HaveParameterValues(problem.OptimumParameterValues, relativeTolerance: 0.01).And
-            .Subject.CostValue.Should().BeLessThan(problem.InitialCostValue);
+            .Subject.CostValue.Should().BeLessThan(problem.InitialCostValue());
     }
     
     private static IEnumerable<TestCaseData> MismatchingParameterConfigurationTestCases()
