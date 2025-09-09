@@ -17,11 +17,20 @@ internal static class ParameterConfigurationExtensions
         parameter.CopyWith(lowerLimit: lowerLimit, upperLimit: upperLimit);
     
     public static ParameterConfiguration[] WithLimits(
-        this IEnumerable<ParameterConfiguration> parameters, 
+        this ParameterConfiguration[] parameters, 
         double? lowerLimit, 
         double? upperLimit)
     {
         return parameters.Select(p => p.WithLimits(lowerLimit, upperLimit)).ToArray();
+    }
+    
+    public static ParameterConfiguration[] CombinedWith(
+        this ParameterConfiguration[] parameters,
+        ParameterConfiguration[] otherParameters)
+    {
+        var parameterNames = parameters.Select(p => p.Name);
+        var filteredOtherParameters = otherParameters.Where(p => !parameterNames.Contains(p.Name));
+        return parameters.Concat(filteredOtherParameters).ToArray();
     }
 
     private static ParameterConfiguration CopyWith(
