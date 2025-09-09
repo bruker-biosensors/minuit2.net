@@ -65,8 +65,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         Action action = () => _ = minimizer.Minimize(cost, mismatchingParameterConfigurations.ToList());
         action.Should().Throw<ArgumentException>();
     }
-    
-    [Test, Description("Ensures correct parameter-configuration-to-cost-function-parameter mapping.")]
+
+    [Test]
+    [Description("Ensures correct parameter-configuration-to-cost-function-parameter mapping.")]
     public void when_minimizing_a_cost_function_yields_the_same_result_independent_of_the_order_parameter_configurations_are_provided_in()
     {
         var cost = _defaultProblem.Cost.Build();
@@ -114,12 +115,12 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         result.Should().HaveIsValid(false);
     }
-    
-    [Test, Description("Ensures that the minimum cost value is independent of the error definition. " +
-                       "This holds only if the minimization converges and doesn't terminate prematurely. " +
-                       "Since Minuit defines convergence via the estimated vertical distance to the minimum (EDM), " +
-                       "which scales with tolerance and error definition, this test sets a minimum tolerance to " +
-                       "prevent early termination for large error definition values.")]
+
+    [Test]
+    [Description("Ensures that the minimum cost value is independent of the error definition. This holds only if the " +
+                 "minimization converges and doesn't terminate prematurely. Since Minuit defines convergence via the " +
+                 "estimated vertical distance to the minimum (EDM), which scales with tolerance and error definition, " +
+                 "this test sets a minimum tolerance to prevent early termination for large error definition values.")]
     public void when_minimizing_the_same_cost_function_with_varying_error_definitions_yields_the_same_cost_value()
     {
         var cost = _defaultProblem.Cost.WithErrorDefinition(Any.Double().Between(2, 5)).Build();
@@ -200,8 +201,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     
     private class TestException : Exception;
 
-    [Test, Description("Ensures that the inner scaling of gradients by the error definition in the component cost " +
-                       "function and the final rescaling works.")]
+    [Test]
+    [Description("Ensures that the inner scaling of gradients by the error definition in the component cost function " +
+                 "and the final rescaling works.")]
     public void when_minimizing_a_cost_function_sum_with_a_single_component_yields_a_result_equivalent_to_the_result_for_the_isolated_component(
         [Values] bool hasGradient, 
         [Values] Strategy strategy)
@@ -220,7 +222,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             .WithRelativeDoubleTolerance(0.001));
     }
 
-    [Test, Description("Ensures that scaling and rescaling by the error definition works on a per-cost basis.")]
+    [Test]
+    [Description("Ensures that scaling and rescaling by the error definition works on a per-cost basis.")]
     public void when_minimizing_a_cost_function_sum_of_independent_components_with_different_error_definitions_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
             [Values] bool hasGradient,
             [Values] Strategy strategy)
