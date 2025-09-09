@@ -44,18 +44,19 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     {
         var cost = Any.InstanceOf<ICostFunction>();
 
-        var mismatchingNames = cost.Parameters.Select(name => ParameterConfiguration(name + Any.String()));
+        var mismatchingNames = cost.Parameters.Select(name => VariableWithAnyValue(name + Any.String()));
         yield return new TestCaseData(cost, mismatchingNames).SetName("Mismatching parameter names");
 
-        var tooFew = cost.Parameters.Skip(1).Select(ParameterConfiguration);
+        var tooFew = cost.Parameters.Skip(1).Select(VariableWithAnyValue);
         yield return new TestCaseData(cost, tooFew).SetName("Too few parameter configurations");
 
-        var tooMany = cost.Parameters.Select(ParameterConfiguration).Concat([ParameterConfiguration(Any.String())]);
+        var tooMany = cost.Parameters.Select(VariableWithAnyValue).Concat([VariableWithAnyValue(Any.String())]);
         yield return new TestCaseData(cost, tooMany).SetName("Too many parameter configurations");
+        yield break;
+
+        ParameterConfiguration VariableWithAnyValue(string name) => Variable(name, Any.Double());
     }
-    
-    private static ParameterConfiguration ParameterConfiguration(string name) => Variable(name, Any.Double());
-    
+
     [TestCaseSource(nameof(MismatchingParameterConfigurationTestCases))]
     public void when_asked_to_minimize_a_cost_function_with_mismatching_parameter_configurations_throws_an_exception(
         ICostFunction cost, IEnumerable<ParameterConfiguration> mismatchingParameterConfigurations)
