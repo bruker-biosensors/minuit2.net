@@ -50,10 +50,15 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var mismatchingNames = cost.Parameters.Select(name => VariableWithAnyValue(name + Any.String()));
         yield return new TestCaseData(cost, mismatchingNames).SetName("Mismatching parameter names");
 
+        var duplicateNames = cost.Parameters.Select(VariableWithAnyValue)
+            .Concat([VariableWithAnyValue(cost.Parameters.First())]);
+        yield return new TestCaseData(cost, duplicateNames).SetName("Duplicate parameter names");
+        
         var tooFew = cost.Parameters.Skip(1).Select(VariableWithAnyValue);
         yield return new TestCaseData(cost, tooFew).SetName("Too few parameter configurations");
 
-        var tooMany = cost.Parameters.Select(VariableWithAnyValue).Concat([VariableWithAnyValue(Any.String())]);
+        var tooMany = cost.Parameters.Select(VariableWithAnyValue)
+            .Concat([VariableWithAnyValue(Any.String())]);
         yield return new TestCaseData(cost, tooMany).SetName("Too many parameter configurations");
         yield break;
 
