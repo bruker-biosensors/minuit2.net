@@ -223,18 +223,18 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     }
 
     [Test]
-    [Description("Ensures that scaling and rescaling by the error definition works on a per-cost basis.")]
+    [Description("Ensures that scaling and rescaling by the error definition works on a per-cost basis. While this " +
+                 "generally holds, the Simplex minimizer fails to produce strictly equivalent results for more " +
+                 "complex models (that's why this test uses a simple quadratic polynomial). This occurs because it " +
+                 "can terminate prematurely — even with minimal convergence tolerance — due to its unsound " +
+                 "convergence criterion (as noted in the Minuit documentation, where the convergence estimate is " +
+                 "described as 'largely fantasy'). Users should be aware of this limitation and are advised to " +
+                 "either choose alternative minimizers or apply additional minimization cycles when strict " +
+                 "convergence and accurate results are required.")]
     public void when_minimizing_a_cost_function_sum_of_independent_components_with_different_error_definitions_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
             [Values] bool hasGradient,
             [Values] Strategy strategy)
     {
-        // While this statement generally holds, the Simplex minimizer fails to produce strictly equivalent results
-        // for more complex models (that's why the simplest problem is used in this test). This occurs because it can
-        // terminate prematurely — even with minimal convergence tolerance — due to its unsound convergence criterion
-        // (as noted in the Minuit documentation, where the convergence estimate is described as "largely fantasy").
-        // Users should be aware of this limitation and are advised to either choose alternative minimizers or apply
-        // additional minimization cycles when strict convergence and accurate results are required.
-
         var problem = new QuadraticPolynomialLeastSquaresProblem();
         var component1 = problem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
         var component2 = problem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
