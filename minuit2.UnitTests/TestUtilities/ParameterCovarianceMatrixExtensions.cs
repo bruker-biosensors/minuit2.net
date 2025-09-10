@@ -4,30 +4,42 @@ internal static class ParameterCovarianceMatrixExtensions
 {
     public static double[,] MultipliedBy(this double[,] matrix, double factor)
     {
-        var rows = matrix.GetLength(0);
-        var cols = matrix.GetLength(1);
-        var multipliedMatrix = new double[rows, cols];
-        for (var i = 0; i < rows; i++)
-        for (var j = 0; j < cols; j++)
-            multipliedMatrix[i, j] = matrix[i, j] * factor;
-        return multipliedMatrix;
+        var rows = matrix.Rows();
+        var columns = matrix.Columns();
+        var scaledMatrix = new double[rows, columns];
+        
+        for (var row = 0; row < rows; row++)
+        for (var column = 0; column < columns; column++)
+            scaledMatrix[row, column] = matrix[row, column] * factor;
+        
+        return scaledMatrix;
     }
 
     public static double[,] BlockConcat(this double[,] matrix, double[,] otherMatrix)
     {
         var combinedMatrix = new double[
-            matrix.GetLength(0) + otherMatrix.GetLength(0),
-            matrix.GetLength(1) + otherMatrix.GetLength(1)];
+            matrix.Rows() + otherMatrix.Rows(),
+            matrix.Columns() + otherMatrix.Columns()];
 
-        for (var i = 0; i < combinedMatrix.GetLength(0); i++)
-        for (var j = 0; j < combinedMatrix.GetLength(1); j++)
+        for (var row = 0; row < combinedMatrix.Rows(); row++)
+        for (var column = 0; column < combinedMatrix.Columns(); column++)
         {
-            if (i < matrix.GetLength(0) && j < matrix.GetLength(1))
-                combinedMatrix[i, j] = matrix[i, j];
-            if (i >= matrix.GetLength(0) && j >= matrix.GetLength(1))
-                combinedMatrix[i, j] = otherMatrix[i - matrix.GetLength(0), j - matrix.GetLength(1)];
+            if (matrix.IncludesBoth(row, column))
+                combinedMatrix[row, column] = matrix[row, column];
+            if (matrix.ExcludesBoth(row, column))
+                combinedMatrix[row, column] = otherMatrix[row - matrix.Rows(), column - matrix.Columns()];
         }
 
         return combinedMatrix;
     }
+    
+    private static int Rows(this double[,] matrix) => matrix.GetLength(0);
+    
+    private static int Columns(this double[,] matrix) => matrix.GetLength(1);
+
+    private static bool IncludesBoth(this double[,] matrix, int row, int column) =>
+        row < matrix.GetLength(0) && column < matrix.GetLength(1);
+
+    private static bool ExcludesBoth(this double[,] matrix, int rowIndex, int columnIndex) =>
+        rowIndex >= matrix.GetLength(0) && columnIndex >= matrix.GetLength(1);
 }
