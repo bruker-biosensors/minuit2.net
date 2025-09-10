@@ -24,13 +24,6 @@ internal static class ParameterConfigurationExtensions
             state.SetUpperLimit(parameter.Name, parameter.UpperLimit!.Value);
     }
 
-    public static bool ContainsUniqueMatchesFor(
-        this IEnumerable<ParameterConfiguration> parameterConfigurations,
-        IList<string> parameterNames)
-    {
-        return parameterNames.All(name => parameterConfigurations.Count(p => p.Name == name) == 1);
-    }
-    
     public static IEnumerable<ParameterConfiguration> ExtractInOrder(
         this IEnumerable<ParameterConfiguration> parameterConfigurations, 
         IList<string> parameterNames)

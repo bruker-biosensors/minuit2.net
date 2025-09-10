@@ -10,9 +10,7 @@ internal abstract class MnMinimizer : IMinimizer
         MinimizerConfiguration? minimizerConfiguration = null, 
         CancellationToken cancellationToken = default)
     {
-        if (!parameterConfigurations.ContainsUniqueMatchesFor(costFunction.Parameters))
-            throw new ArgumentException("The given parameter configurations do not contain unique matches for all " +
-                                        "cost function parameters.");
+        ThrowIfNoUniqueMappingBetween(costFunction.Parameters, parameterConfigurations);
 
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
         using var parameterState = parameterConfigurations.ExtractInOrder(costFunction.Parameters).AsState();
@@ -31,6 +29,27 @@ internal abstract class MnMinimizer : IMinimizer
         {
             return new CancelledMinimizationResult();
         }
+    }
+
+    private static void ThrowIfNoUniqueMappingBetween(
+        IList<string> costFunctionParameters,
+        IReadOnlyCollection<ParameterConfiguration> parameterConfigurations)
+    {
+        var exceptions = new List<Exception>();
+        foreach (var name in costFunctionParameters)
+        {
+            var requiresUniqueConfig = $"Cost function parameter '{name}' requires a unique configuration";
+            var numberOfConfigs = parameterConfigurations.Count(p => p.Name == name);
+            if (numberOfConfigs == 0)
+                exceptions.Add(new ArgumentException($"{requiresUniqueConfig}, but did not receive one."));
+            if (numberOfConfigs > 1) 
+                exceptions.Add(new ArgumentException($"{requiresUniqueConfig}, but received {numberOfConfigs}."));
+        }
+
+        if (exceptions.Count == 1)
+            throw exceptions.Single();
+        if (exceptions.Count > 1) 
+            throw new AggregateException(exceptions);
     }
 
     protected abstract FunctionMinimum MnMinimize(
