@@ -145,12 +145,6 @@ internal abstract class ConfigurableLeastSquaresProblem
                 Config = Config.Fixed();
                 return this;
             }
-
-            public ParameterConfigurationsWithSpecialParameterBuilder WithSuffix(string suffix)
-            {
-                Config = Config.WithSuffix(suffix);
-                return this;
-            }
         }
     }
 }

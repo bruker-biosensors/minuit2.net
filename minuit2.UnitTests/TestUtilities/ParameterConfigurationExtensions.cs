@@ -23,15 +23,6 @@ internal static class ParameterConfigurationExtensions
     {
         return parameters.Select(p => p.WithLimits(lowerLimit, upperLimit)).ToArray();
     }
-    
-    public static ParameterConfiguration[] CombinedWith(
-        this ParameterConfiguration[] parameters,
-        ParameterConfiguration[] otherParameters)
-    {
-        var parameterNames = parameters.Select(p => p.Name);
-        var filteredOtherParameters = otherParameters.Where(p => !parameterNames.Contains(p.Name));
-        return parameters.Concat(filteredOtherParameters).ToArray();
-    }
 
     private static ParameterConfiguration CopyWith(
         this ParameterConfiguration parameter,

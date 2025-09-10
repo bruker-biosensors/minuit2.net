@@ -236,13 +236,13 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
         {
             var cost = CostFunction.Sum(
                 _problem.Cost.WithGradient(hasFirstGradient).Build(),
-                _problem.Cost.WithGradient(hasLastGradient).WithParameterSuffixes("1", [1, 3]).Build());
+                _problem.Cost.WithGradient(hasLastGradient).WithParameterSuffixes("1", indicesToSuffix: [1, 3]).Build());
             var parameterConfigurations = _problem.ParameterConfigurations.Build()
-                .CombinedWith(_problem.ParameterConfigurations
-                    .WithParameter(1).WithSuffix("1").WithValue(-2.1).And
-                    .WithParameter(3).WithSuffix("1").WithValue(-0.15).Build());
+                .Concat(_problem.ParameterConfigurations.WithSuffix("1")
+                    .WithParameter(1).WithValue(-2.1).And
+                    .WithParameter(3).WithValue(-0.15).Build());
 
-            var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+            var result = MigradMinimizer.Minimize(cost, parameterConfigurations.ToArray());
 
             result.Should()
                 .HaveExitCondition(Converged).And
