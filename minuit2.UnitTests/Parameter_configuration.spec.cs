@@ -73,7 +73,7 @@ public class A_parameter_configuration
             double value, double lowerLimit, double? upperLimit)
         {
             Action action = () => _ = TestVariable(value, lowerLimit, upperLimit);
-            action.Should().ThrowExactly<InvalidParameterConfiguration>();
+            action.Should().Throw<ArgumentException>();
         }
 
         private static IEnumerable<TestCaseData> InvalidUpperLimitTestCases()
@@ -89,7 +89,7 @@ public class A_parameter_configuration
             double value, double? lowerLimit, double upperLimit)
         {
             Action action = () => _ = TestVariable(value, lowerLimit, upperLimit);
-            action.Should().ThrowExactly<InvalidParameterConfiguration>();
+            action.Should().Throw<ArgumentException>();
         }
     }
 

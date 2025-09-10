@@ -10,7 +10,7 @@ public class ParameterConfiguration
         LowerLimit = lowerLimit;
         UpperLimit = upperLimit; 
         
-        ValidateValueComplianceWithLimits();
+        ThrowIfValueViolatesLimits();
     } 
     
     public static ParameterConfiguration Fixed(string name, double value) => 
@@ -27,12 +27,16 @@ public class ParameterConfiguration
     public bool HasLowerLimit => LowerLimit is > double.NegativeInfinity;
     public bool HasUpperLimit => UpperLimit is < double.PositiveInfinity;
     
-    private void ValidateValueComplianceWithLimits()
+    private void ThrowIfValueViolatesLimits()
     {
+        var valueMustBe = $"Value of '{Name}' ({Value}) must be";
+
         if (LowerLimit is { } lower && lower >= Value)
-            throw new InvalidParameterConfiguration($"Lower limit for '{Name}' must be smaller than its value, but {lower} >= {Value}");
+            throw new ArgumentException($"{valueMustBe} greater than its lower limit ({lower}), but " +
+                                        (Value < lower ? "it is smaller." : "both are equal."));
         
         if (UpperLimit is { } upper && upper <= Value)
-            throw new InvalidParameterConfiguration($"Upper limit for '{Name}' must be greater than its value, but {upper} <= {Value}");
+            throw new ArgumentException($"{valueMustBe} smaller than its upper limit ({upper}), but " +
+                                        (Value > upper ? "it is greater." : "both are equal."));
     }
 }
