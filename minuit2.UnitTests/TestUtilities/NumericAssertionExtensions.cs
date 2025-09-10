@@ -22,7 +22,7 @@ internal static class NumericAssertionExtensions
             string because,
             params object[] becauseArgs)
     {
-        public AndConstraint<NumericAssertions<double>> WithTolerance(double tolerance) =>
+        private AndConstraint<NumericAssertions<double>> WithTolerance(double tolerance) =>
             parent.BeApproximately(expectedValue, tolerance, because, becauseArgs);
 
         public AndConstraint<NumericAssertions<double>> WithRelativeTolerance(

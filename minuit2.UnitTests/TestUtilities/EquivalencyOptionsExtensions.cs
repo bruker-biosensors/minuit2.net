@@ -30,17 +30,4 @@ internal static class EquivalencyOptionsExtensions
             .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation).WithRelativeTolerance(relativeTolerance))
             .WhenTypeIs<double>();
     }
-    
-    public static EquivalencyOptions<double[,]> WithDoubleTolerance(
-        this EquivalencyOptions<double[,]> options, double relativeTolerance)
-    {
-        return options.WithDoubleTolerance<double[,]>(relativeTolerance);
-    }
-    
-    private static EquivalencyOptions<T> WithDoubleTolerance<T>(this EquivalencyOptions<T> options, double tolerance)
-    {
-        return options
-            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation).WithTolerance(tolerance))
-            .WhenTypeIs<double>();
-    }
 }
