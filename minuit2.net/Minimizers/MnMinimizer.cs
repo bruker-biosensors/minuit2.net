@@ -10,10 +10,12 @@ internal abstract class MnMinimizer : IMinimizer
         MinimizerConfiguration? minimizerConfiguration = null, 
         CancellationToken cancellationToken = default)
     {
-        ThrowIfParametersAreNotMatchingBetween(costFunction, parameterConfigurations);
-        
+        if (!parameterConfigurations.ContainsUniqueMatchesFor(costFunction.Parameters))
+            throw new ArgumentException("The given parameter configurations do not contain unique matches for all " +
+                                        "cost function parameters.");
+
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
-        using var parameterState = parameterConfigurations.OrderedBy(costFunction.Parameters).AsState();
+        using var parameterState = parameterConfigurations.ExtractInOrder(costFunction.Parameters).AsState();
         
         minimizerConfiguration ??= new MinimizerConfiguration();
         using var strategy = minimizerConfiguration.Strategy.AsMnStrategy();
@@ -30,16 +32,7 @@ internal abstract class MnMinimizer : IMinimizer
             return new CancelledMinimizationResult();
         }
     }
-    
-    private static void ThrowIfParametersAreNotMatchingBetween(
-        ICostFunction costFunction,
-        IReadOnlyCollection<ParameterConfiguration> parameterConfigurations)
-    {
-        if (parameterConfigurations.AreNotMatching(costFunction.Parameters))
-            throw new ArgumentException("The given parameter configurations do not match the parameter names defined " +
-                                        $"by the cost function: {costFunction.Parameters}");
-    }
-    
+
     protected abstract FunctionMinimum MnMinimize(
         FCNWrap costFunction, 
         MnUserParameterState parameterState, 

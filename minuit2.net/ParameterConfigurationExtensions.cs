@@ -24,16 +24,17 @@ internal static class ParameterConfigurationExtensions
             state.SetUpperLimit(parameter.Name, parameter.UpperLimit!.Value);
     }
 
-    public static bool AreNotMatching(this IReadOnlyCollection<ParameterConfiguration> parameterConfigurations, 
+    public static bool ContainsUniqueMatchesFor(
+        this IEnumerable<ParameterConfiguration> parameterConfigurations,
         IList<string> parameterNames)
     {
-        if (parameterConfigurations.Count != parameterNames.Count) return true;
-        return !parameterConfigurations.All(p => parameterNames.Contains(p.Name));
+        return parameterNames.All(name => parameterConfigurations.Count(p => p.Name == name) == 1);
     }
-
-    public static IEnumerable<ParameterConfiguration> OrderedBy(this IEnumerable<ParameterConfiguration> parameterConfigurations, 
+    
+    public static IEnumerable<ParameterConfiguration> ExtractInOrder(
+        this IEnumerable<ParameterConfiguration> parameterConfigurations, 
         IList<string> parameterNames)
     {
-        return parameterConfigurations.OrderBy(p => parameterNames.IndexOf(p.Name));
+        return parameterNames.Select(name => parameterConfigurations.Single(p => p.Name == name));
     }
 }

@@ -43,35 +43,45 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             .Subject.CostValue.Should().BeLessThan(problem.InitialCostValue());
     }
     
-    private static IEnumerable<TestCaseData> MismatchingParameterConfigurationTestCases()
+    private static IEnumerable<TestCaseData> InvalidParameterConfigurationTestCases()
     {
         var cost = Any.InstanceOf<ICostFunction>();
 
-        var mismatchingNames = cost.Parameters.Select(name => VariableWithAnyValue(name + Any.String()));
-        yield return new TestCaseData(cost, mismatchingNames).SetName("Mismatching parameter names");
-
-        var duplicateNames = cost.Parameters.Select(VariableWithAnyValue)
-            .Concat([VariableWithAnyValue(cost.Parameters.First())]);
-        yield return new TestCaseData(cost, duplicateNames).SetName("Duplicate parameter names");
+        var missing = cost.Parameters.Skip(1).Select(AnyConfig);
+        yield return new TestCaseData(cost, missing)
+            .SetName("Missing parameter configurations");
         
-        var tooFew = cost.Parameters.Skip(1).Select(VariableWithAnyValue);
-        yield return new TestCaseData(cost, tooFew).SetName("Too few parameter configurations");
-
-        var tooMany = cost.Parameters.Select(VariableWithAnyValue)
-            .Concat([VariableWithAnyValue(Any.String())]);
-        yield return new TestCaseData(cost, tooMany).SetName("Too many parameter configurations");
-        yield break;
-
-        ParameterConfiguration VariableWithAnyValue(string name) => Variable(name, Any.Double());
+        var duplicates = cost.Parameters.Select(AnyConfig).Concat([AnyConfig(cost.Parameters.First())]);
+        yield return new TestCaseData(cost, duplicates)
+            .SetName("Matching parameter configurations with additional duplicate configuration");
+        
+        var mismatching = cost.Parameters.Select(name => AnyConfig(name + Any.String()));
+        yield return new TestCaseData(cost, mismatching)
+            .SetName("Matching number of parameter configurations but mismatching names");
     }
 
-    [TestCaseSource(nameof(MismatchingParameterConfigurationTestCases))]
-    public void when_asked_to_minimize_a_cost_function_with_mismatching_parameter_configurations_throws_an_exception(
+    private static ParameterConfiguration AnyConfig(string name) => Variable(name, Any.Double());
+
+    [TestCaseSource(nameof(InvalidParameterConfigurationTestCases))]
+    public void when_asked_to_minimize_a_cost_function_with_invalid_parameter_configurations_throws_an_exception(
         ICostFunction cost, 
         IEnumerable<ParameterConfiguration> mismatchingParameterConfigurations)
     {
         Action action = () => _ = minimizer.Minimize(cost, mismatchingParameterConfigurations.ToList());
         action.Should().Throw<ArgumentException>();
+    }
+
+    [Test]
+    public void when_minimizing_a_cost_function_with_parameter_configurations_that_contain_unique_matches_for_all_cost_parameters_ignores_any_excess_configurations()
+    {
+        var costFunction = _defaultProblem.Cost.Build();
+        var matchingParameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
+        var excessParameterConfigurations = matchingParameterConfigurations.Concat([AnyConfig("excess")]).ToArray();
+
+        var result = minimizer.Minimize(costFunction, excessParameterConfigurations);
+        var referenceResult = minimizer.Minimize(costFunction, matchingParameterConfigurations);
+
+        result.Should().BeEquivalentTo(referenceResult);
     }
 
     [Test]
