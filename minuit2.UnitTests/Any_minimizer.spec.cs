@@ -16,20 +16,20 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     {
         foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
         {
-            yield return TestCase(new QuadraticPolynomialLeastSquaresProblem().Preconfigured(), nameof(QuadraticPolynomialLeastSquaresProblem));
-            yield return TestCase(new CubicPolynomialLeastSquaresProblem().Preconfigured(), nameof(CubicPolynomialLeastSquaresProblem));
-            yield return TestCase(new ExponentialDecayLeastSquaresProblem().Preconfigured(), nameof(ExponentialDecayLeastSquaresProblem));
-            yield return TestCase(new BellCurveLeastSquaresProblem().Preconfigured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveLeastSquaresProblem));
+            yield return TestCase(new QuadraticPolynomialLeastSquaresProblem().Configured(), nameof(QuadraticPolynomialLeastSquaresProblem));
+            yield return TestCase(new CubicPolynomialLeastSquaresProblem().Configured(), nameof(CubicPolynomialLeastSquaresProblem));
+            yield return TestCase(new ExponentialDecayLeastSquaresProblem().Configured(), nameof(ExponentialDecayLeastSquaresProblem));
+            yield return TestCase(new BellCurveLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveLeastSquaresProblem));
             continue;
 
-            TestCaseData TestCase(PreconfiguredProblem problem, string problemName) =>
+            TestCaseData TestCase(ConfiguredProblem problem, string problemName) =>
                 new TestCaseData(problem, strategy).SetArgDisplayNames(problemName, strategy.ToString());
         }
     }
 
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
     public void when_minimizing_a_well_posed_problem_converges_to_a_valid_cost_function_minimum_representing_the_optimum_parameter_values(
-        PreconfiguredProblem problem,
+        ConfiguredProblem problem,
         Strategy strategy)
     { 
         // A minimal tolerance is used to enforce maximum accuracy (prevent early termination). 

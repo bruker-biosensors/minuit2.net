@@ -149,12 +149,12 @@ internal abstract class ConfigurableLeastSquaresProblem
         }
     }
 
-    internal PreconfiguredProblem Preconfigured(
+    internal ConfiguredProblem Configured(
         Func<ParameterConfigurationsBuilder, ParameterConfigurationsWithSpecialParameterBuilder>? customization = null)
     {
         var configBuilder = ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1);
         if (customization != null) configBuilder = customization(configBuilder).And;
 
-        return new PreconfiguredProblem(Cost.Build(), OptimumParameterValues, configBuilder.Build());
+        return new ConfiguredProblem(Cost.Build(), OptimumParameterValues, configBuilder.Build());
     }
 }

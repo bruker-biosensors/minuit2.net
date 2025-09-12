@@ -3,7 +3,7 @@ using minuit2.net.CostFunctions;
 
 namespace minuit2.UnitTests.MinimizationProblems;
 
-public record PreconfiguredProblem(
+public record ConfiguredProblem(
     ICostFunction Cost,
     IReadOnlyCollection<double> OptimumParameterValues,
     IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations)
