@@ -5,7 +5,6 @@ using minuit2.net.Minimizers;
 using minuit2.UnitTests.MinimizationProblems;
 using minuit2.UnitTests.TestUtilities;
 using static minuit2.net.ParameterConfiguration;
-using static minuit2.UnitTests.MinimizationProblems.PreconfiguredProblem;
 
 namespace minuit2.UnitTests;
 
@@ -17,14 +16,14 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     {
         foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
         {
-            yield return TestCase(new QuadraticPolynomialLeastSquaresProblem(), nameof(QuadraticPolynomialLeastSquaresProblem));
-            yield return TestCase(new CubicPolynomialLeastSquaresProblem(), nameof(CubicPolynomialLeastSquaresProblem));
-            yield return TestCase(new ExponentialDecayLeastSquaresProblem(), nameof(ExponentialDecayLeastSquaresProblem));
-            yield return TestCase(new BellCurveLeastSquaresProblem(), nameof(BellCurveLeastSquaresProblem));
+            yield return TestCase(new QuadraticPolynomialLeastSquaresProblem().Preconfigured(), nameof(QuadraticPolynomialLeastSquaresProblem));
+            yield return TestCase(new CubicPolynomialLeastSquaresProblem().Preconfigured(), nameof(CubicPolynomialLeastSquaresProblem));
+            yield return TestCase(new ExponentialDecayLeastSquaresProblem().Preconfigured(), nameof(ExponentialDecayLeastSquaresProblem));
+            yield return TestCase(new BellCurveLeastSquaresProblem().Preconfigured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveLeastSquaresProblem));
             continue;
 
-            TestCaseData TestCase(ConfigurableLeastSquaresProblem problem, string problemName) =>
-                new TestCaseData(Preconfigured(problem), strategy).SetArgDisplayNames(problemName, strategy.ToString());
+            TestCaseData TestCase(PreconfiguredProblem problem, string problemName) =>
+                new TestCaseData(problem, strategy).SetArgDisplayNames(problemName, strategy.ToString());
         }
     }
 

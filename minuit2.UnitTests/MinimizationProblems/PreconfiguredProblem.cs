@@ -17,9 +17,4 @@ public record PreconfiguredProblem(
         
         return Cost.ValueFor(orderedParameterValues);
     }
-
-    internal static PreconfiguredProblem Preconfigured(ConfigurableLeastSquaresProblem problem) =>
-        new(problem.Cost.Build(), 
-            problem.OptimumParameterValues, 
-            problem.ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1).Build());
 }

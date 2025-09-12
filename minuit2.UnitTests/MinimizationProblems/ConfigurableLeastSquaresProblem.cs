@@ -1,6 +1,7 @@
 using minuit2.net;
 using minuit2.net.CostFunctions;
 using minuit2.UnitTests.TestUtilities;
+using static minuit2.UnitTests.MinimizationProblems.ConfigurableLeastSquaresProblem.ParameterConfigurationsBuilder;
 
 namespace minuit2.UnitTests.MinimizationProblems;
 
@@ -146,5 +147,14 @@ internal abstract class ConfigurableLeastSquaresProblem
                 return this;
             }
         }
+    }
+
+    internal PreconfiguredProblem Preconfigured(
+        Func<ParameterConfigurationsBuilder, ParameterConfigurationsWithSpecialParameterBuilder>? customization = null)
+    {
+        var configBuilder = ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1);
+        if (customization != null) configBuilder = customization(configBuilder).And;
+
+        return new PreconfiguredProblem(Cost.Build(), OptimumParameterValues, configBuilder.Build());
     }
 }
