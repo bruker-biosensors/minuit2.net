@@ -26,7 +26,7 @@ public static class HesseErrorCalculator
         try
         {
             hesse.Update(minimum, cost);
-            return new MinimizationResult(minimum, costFunction, cost.HasFiniteValue, cost.HasFiniteGradient);
+            return new MinimizationResult(minimum, costFunction, cost);
         }
         catch (OperationCanceledException)
         {

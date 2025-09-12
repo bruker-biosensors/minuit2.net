@@ -28,7 +28,7 @@ internal abstract class MnMinimizer : IMinimizer
         try
         {
             var minimum = MnMinimize(cost, parameterState, strategy, maximumFunctionCalls, tolerance);
-            return new MinimizationResult(minimum, costFunction, cost.HasFiniteValue, cost.HasFiniteGradient);
+            return new MinimizationResult(minimum, costFunction, cost);
         }
         catch (OperationCanceledException)
         {
