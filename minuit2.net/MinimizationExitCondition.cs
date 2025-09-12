@@ -5,5 +5,7 @@ public enum MinimizationExitCondition
     None,
     FunctionCallsExhausted,
     ManuallyStopped,
-    Converged
+    Converged,
+    NonFiniteValue,
+    NonFiniteGradient
 }

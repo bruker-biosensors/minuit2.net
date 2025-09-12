@@ -204,19 +204,6 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
         result.Should().HaveExitCondition(MinimizationExitCondition.FunctionCallsExhausted);
     }
-    
-    [Test]
-    public void when_the_cost_function_throws_an_exception_during_a_minimization_process_forwards_that_exception()
-    {
-        var cost = CostFunction.LeastSquares([0], [0], [], ModelThrowing<TestException>());
-        Action action = () => minimizer.Minimize(cost, []);
-        action.Should().ThrowExactly<TestException>();
-    }
-
-    private static Func<double, IList<double>, double> ModelThrowing<T>() where T : Exception, new() =>
-        (_, _) => throw new T();
-    
-    private class TestException : Exception;
 
     [Test]
     [Description("Ensures that the inner scaling of gradients by the error definition in the component cost function " +
@@ -267,5 +254,36 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         sumResult.Should()
             .HaveCostValue(component1Result.CostValue + component2Result.CostValue).And
             .HaveParameterValues(component1Result.ParameterValues.Concat(component2Result.ParameterValues).ToArray());
+    }
+
+    [TestCase(double.NaN)]
+    [TestCase(double.NegativeInfinity)]
+    [TestCase(double.PositiveInfinity)]
+    [Description("Ensures that the result indicates process termination due to an non-finite value. The Minuit2 code " +
+                 "silently fails in this case and just returns a minimum corresponding to the last valid iteration.")]
+    public void when_the_cost_function_returns_a_non_finite_value_during_a_minimization_process_yields_an_invalid_result_with_non_finite_value_exit_condition(
+        double nonFiniteValue)
+    {
+        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var cost = problem.Cost.Build().WithValueSwitchingTo(_ => nonFiniteValue);
+        var parameterConfigurations = problem.ParameterConfigurations.Build();
+        
+        var result = minimizer.Minimize(cost, parameterConfigurations);
+
+        result.Should()
+            .HaveIsValid(false).And
+            .HaveExitCondition(MinimizationExitCondition.NonFiniteValue);
+    }
+    
+    [Test]
+    public void when_the_cost_function_value_calculation_throws_an_exception_during_a_minimization_process_forwards_that_exception()
+    {
+        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var cost = problem.Cost.Build().WithValueSwitchingTo(_ => throw new TestException());
+        var parameterConfigurations = problem.ParameterConfigurations.Build();
+        
+        Action action = () => minimizer.Minimize(cost, parameterConfigurations);
+        
+        action.Should().ThrowExactly<TestException>();
     }
 }

@@ -13,11 +13,20 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     public override double Cost(VectorDouble parameterValues)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return function.ValueFor(parameterValues) / function.ErrorDefinition;
+        var value = function.ValueFor(parameterValues) / function.ErrorDefinition;
+        HasFiniteValue = double.IsFinite(value);
+        return value;
     }
 
-    public override VectorDouble Gradient(VectorDouble parameterValues) =>
-        new(function.GradientFor(parameterValues).Select(g => g / function.ErrorDefinition));
+    public override VectorDouble Gradient(VectorDouble parameterValues)
+    {
+        var gradients = new VectorDouble(function.GradientFor(parameterValues).Select(g => g / function.ErrorDefinition));
+        HasFiniteGradient = gradients.All(double.IsFinite);
+        return gradients;
+    }
 
     public override bool HasGradient() => function.HasGradient;
+
+    public bool HasFiniteValue { get; private set; } = true;
+    public bool HasFiniteGradient { get; private set; } = true;
 }

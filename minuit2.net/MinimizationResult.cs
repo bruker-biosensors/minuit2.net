@@ -5,7 +5,11 @@ namespace minuit2.net;
 
 internal class MinimizationResult : IMinimizationResult
 {
-    internal MinimizationResult(FunctionMinimum minimum, ICostFunction costFunction)
+    internal MinimizationResult(
+        FunctionMinimum minimum, 
+        ICostFunction costFunction, 
+        bool hasFiniteValue, 
+        bool hasFiniteGradient)
     {
         var state = minimum.UserState();
         Parameters = costFunction.Parameters.ToList();
@@ -19,10 +23,10 @@ internal class MinimizationResult : IMinimizationResult
             : costFunction.ValueFor(parameterValues);
 
         // Meta information
-        IsValid = minimum.IsValid();
+        IsValid = minimum.IsValid() && hasFiniteValue && hasFiniteGradient;
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = minimum.NFcn();
-        ExitCondition = ExitConditionFrom(minimum);
+        ExitCondition = ExitConditionFrom(minimum, hasFiniteValue, hasFiniteGradient);
         
         Minimum = minimum;
     }
@@ -78,8 +82,15 @@ internal class MinimizationResult : IMinimizationResult
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
     
-    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum minimum)
+    private static MinimizationExitCondition ExitConditionFrom(
+        FunctionMinimum minimum, 
+        bool hasFiniteValue, 
+        bool hasFiniteGradient)
     {
+        if (!hasFiniteValue)
+            return NonFiniteValue;
+        if (!hasFiniteGradient)
+            return NonFiniteGradient;
         if (minimum.HasReachedCallLimit())
             return FunctionCallsExhausted;
         if (!minimum.IsAboveMaxEdm())

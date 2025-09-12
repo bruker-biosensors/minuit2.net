@@ -115,4 +115,33 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         var result = _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
         return HesseErrorCalculator.Refine(result, cost);
     }
+    
+    [TestCase(double.NaN)]
+    [TestCase(double.NegativeInfinity)]
+    [TestCase(double.PositiveInfinity)]
+    public void when_the_cost_function_gradient_returns_non_finite_values_during_a_minimization_process_yields_an_invalid_result_with_non_finite_gradient_exit_condition(
+        double nonFiniteValue)
+    {
+        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var cost = problem.Cost.WithGradient().Build().WithGradientSwitchingTo(_ => [nonFiniteValue, 1, 1]);
+        var parameterConfigurations = problem.ParameterConfigurations.Build();
+        
+        var result = _minimizer.Minimize(cost, parameterConfigurations);
+
+        result.Should()
+            .HaveIsValid(false).And
+            .HaveExitCondition(MinimizationExitCondition.NonFiniteGradient);
+    }
+    
+    [Test]
+    public void when_the_cost_function_gradient_throws_an_exception_during_a_minimization_process_forwards_that_exception()
+    {
+        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var cost = problem.Cost.WithGradient().Build().WithGradientSwitchingTo(_ => throw new TestException());
+        var parameterConfigurations = problem.ParameterConfigurations.Build();
+        
+        Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
+        
+        action.Should().ThrowExactly<TestException>();
+    }
 }
