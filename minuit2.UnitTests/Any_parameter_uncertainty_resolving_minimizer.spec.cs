@@ -127,11 +127,13 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         
         var result = _minimizer.Minimize(cost, parameterConfigurations);
-
-        result.Should()
-            .HaveIsValid(false).And
-            .HaveExitCondition(MinimizationExitCondition.NonFiniteGradient).And
-            .HaveFault(new MinimizationFault());
+        
+        result.Should().Satisfy<IMinimizationResult>(x =>
+        {
+            x.IsValid.Should().BeFalse();
+            x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteGradient);
+            x.Fault.Should().NotBeNull();
+        });
     }
     
     [Test]

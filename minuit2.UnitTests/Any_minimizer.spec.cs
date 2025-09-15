@@ -35,12 +35,14 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         // A minimal tolerance is used to enforce maximum accuracy (prevent early termination). 
         var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
         var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
-        result.Should()
-            //.HaveExitCondition(MinimizationExitCondition.Converged).And
-            //.HaveIsValid(true).And
-            .HaveFault(null).And
-            .HaveParameterValues(problem.OptimumParameterValues, relativeTolerance: 0.01).And
-            .Subject.CostValue.Should().BeLessThan(problem.InitialCostValue());
+        result.Should().Satisfy<IMinimizationResult>(x =>
+        {
+            //x.ExitCondition.Should().Be(MinimizationExitCondition.Converged);
+            //x.IsValid.Should().BeTrue();
+            x.CostValue.Should().BeLessThan(problem.InitialCostValue());
+            x.ParameterValues.Should().BeEquivalentTo(problem.OptimumParameterValues, options => options.WithRelativeDoubleTolerance(0.01));
+            x.Fault.Should().BeNull();
+        });
     }
     
     private static IEnumerable<TestCaseData> InvalidParameterConfigurationTestCases()
@@ -271,10 +273,12 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         var result = minimizer.Minimize(cost, parameterConfigurations);
 
-        result.Should()
-            .HaveIsValid(false).And
-            .HaveExitCondition(MinimizationExitCondition.NonFiniteValue).And
-            .HaveFault(new MinimizationFault());
+        result.Should().Satisfy<IMinimizationResult>(x =>
+        {
+            x.IsValid.Should().BeFalse();
+            x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
+            x.Fault.Should().NotBeNull();
+        });
     }
     
     [Test]
