@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using AwesomeAssertions.Execution;
 using minuit2.net;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
@@ -38,21 +37,24 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
-            result.Should()
-                .HaveExitCondition(Converged).And
-                .HaveIsValid(true).And
-                .HaveNumberOfVariables(4).And
-                .HaveNumberOfFunctionCallsCloseTo(expectedFunctionCalls).And
-                .HaveCostValue(12.49).And
-                .HaveParameters(["c0", "c1", "c2", "c3"]).And
-                .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
-                .HaveParameterCovarianceMatrix(new[,]
+            result.Should().Satisfy<IMinimizationResult>(x =>
+            {
+                x.ExitCondition.Should().Be(Converged);
+                x.IsValid.Should().BeTrue();
+                x.NumberOfVariables.Should().Be(4);
+                x.NumberOfFunctionCalls.Should().BeCloseTo(expectedFunctionCalls, 6);
+                x.CostValue.Should().BeApproximately(12.49).WithRelativeTolerance(0.001);
+                x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
+                x.ParameterValues.Should().BeEquivalentTo([9.974, -1.959, 0.9898, -0.09931], 
+                    options => options.WithRelativeDoubleTolerance(0.001));
+                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
                 {
                     { 0.005623, -0.004301, 0.000881, -5.271e-05 },
                     { -0.004301, 0.004923, -0.001177, 7.655e-05 },
                     { 0.000881, -0.001177, 0.0003037, -2.067e-05 },
                     { -5.271e-05, 7.655e-05, -2.067e-05, 1.45e-06 }
-                });
+                }, options => options.WithRelativeDoubleTolerance(0.001));
+            });
         }
 
         [TestCase(false, 31)]
@@ -65,22 +67,25 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 .WithParameter(3).Fixed().Build();
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
-
-            result.Should()
-                .HaveExitCondition(Converged).And
-                .HaveIsValid(true).And
-                .HaveNumberOfVariables(2).And
-                .HaveNumberOfFunctionCallsCloseTo(expectedFunctionCalls).And
-                .HaveCostValue(437.7).And
-                .HaveParameters(["c0", "c1", "c2", "c3"]).And
-                .HaveParameterValues([9.411, -1.97, 1.088, -0.11]).And
-                .HaveParameterCovarianceMatrix(new[,]
+            
+            result.Should().Satisfy<IMinimizationResult>(x =>
+            {
+                x.ExitCondition.Should().Be(Converged);
+                x.IsValid.Should().BeTrue();
+                x.NumberOfVariables.Should().Be(2);
+                x.NumberOfFunctionCalls.Should().BeCloseTo(expectedFunctionCalls, 6);
+                x.CostValue.Should().BeApproximately(437.7).WithRelativeTolerance(0.001);
+                x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
+                x.ParameterValues.Should().BeEquivalentTo([9.411, -1.97, 1.088, -0.11], 
+                    options => options.WithRelativeDoubleTolerance(0.001));
+                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
                 {
                     { 0.001092, 0.0, -1.918e-05, 0.0 },
                     { 0.0, 0.0, 0.0, 0.0 },
                     { -1.918e-05, 0.0, 6.211e-07, 0.0 },
                     { 0.0, 0.0, 0.0, 0.0 }
-                });
+                }, options => options.WithRelativeDoubleTolerance(0.001));
+            });
         }
         
         [Test]
@@ -92,22 +97,25 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 .WithParameter(3).WithLimits(null, -0.105).Build();
             
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
-
-            result.Should()
-                .HaveExitCondition(Converged).And
-                .HaveIsValid(true).And
-                .HaveNumberOfVariables(4).And
-                .HaveNumberOfFunctionCallsCloseTo(444).And
-                .HaveCostValue(62.34).And
-                .HaveParameters(["c0", "c1", "c2", "c3"]).And
-                .HaveParameterValues([10.5, -2.39, 1.082, -0.105]).And
-                .HaveParameterCovarianceMatrix(new[,]
+            
+            result.Should().Satisfy<IMinimizationResult>(x =>
+            {
+                x.ExitCondition.Should().Be(Converged);
+                x.IsValid.Should().BeTrue();
+                x.NumberOfVariables.Should().Be(4);
+                x.NumberOfFunctionCalls.Should().BeCloseTo(444, 6);
+                x.CostValue.Should().BeApproximately(62.34).WithRelativeTolerance(0.001);
+                x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
+                x.ParameterValues.Should().BeEquivalentTo([10.5, -2.39, 1.082, -0.105], 
+                    options => options.WithRelativeDoubleTolerance(0.001));
+                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
                 {
                     { 7.023e-09, -3.654e-09, 3.124e-10, -1.261e-14 },
                     { -3.654e-09, 0.0002602, -3.344e-05, 5.468e-09 },
                     { 3.124e-10, -3.344e-05, 4.594e-06, -1.873e-09 },
                     { -1.261e-14, 5.468e-09, -1.873e-09, 1.211e-10 }
-                }, relativeTolerance: 0.003);
+                }, options => options.WithRelativeDoubleTolerance(0.003));
+            });
         }
         
         [Test]
@@ -124,21 +132,24 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             // This is because, in contrast to proper convergence, in case of early termination at parameter limits the
             // assumption of local quadratic behavior (parabolic approximation) around the terminal cost value is
             // generally not fulfilled. Therefore, covariances are not fully robust.
-            result.Should()
-                .HaveExitCondition(Converged).And
-                .HaveIsValid(true).And
-                .HaveNumberOfVariables(4).And
-                .HaveNumberOfFunctionCallsCloseTo(156).And
-                .HaveCostValue(62.34).And
-                .HaveParameters(["c0", "c1", "c2", "c3"]).And
-                .HaveParameterValues([10.5, -2.39, 1.082, -0.105]).And
-                .HaveParameterCovarianceMatrix(new[,]
+            result.Should().Satisfy<IMinimizationResult>(x =>
+            {
+                x.ExitCondition.Should().Be(Converged);
+                x.IsValid.Should().BeTrue();
+                x.NumberOfVariables.Should().Be(4);
+                x.NumberOfFunctionCalls.Should().BeCloseTo(156, 6);
+                x.CostValue.Should().BeApproximately(62.34).WithRelativeTolerance(0.001);
+                x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
+                x.ParameterValues.Should().BeEquivalentTo([10.5, -2.39, 1.082, -0.105], 
+                    options => options.WithRelativeDoubleTolerance(0.001));
+                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
                 {
                     { 5.482e-09, -2.933e-09, 2.507e-10, -7.976e-15 },
                     { -2.933e-09, 0.0002602, -3.343e-05, 4.309e-09 },
                     { 2.507e-10, -3.343e-05, 4.589e-06, -1.476e-09 },
                     { -7.976e-15, 4.309e-09, -1.476e-09, 9.18e-11 }
-                });
+                }, options => options.WithRelativeDoubleTolerance(0.001));
+            });
         }
         
         [Test]
@@ -148,21 +159,24 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             var parameterConfigurations = _problem.ParameterConfigurations.Build();
             
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
-
-            result.Should()
-                .HaveExitCondition(Converged).And
-                .HaveIsValid(true).And
-                .HaveNumberOfVariables(4).And
-                .HaveCostValue(0.1249).And
-                .HaveParameters(["c0", "c1", "c2", "c3"]).And
-                .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
-                .HaveParameterCovarianceMatrix(new[,]
+            
+            result.Should().Satisfy<IMinimizationResult>(x =>
+            {
+                x.ExitCondition.Should().Be(Converged);
+                x.IsValid.Should().BeTrue();
+                x.NumberOfVariables.Should().Be(4);
+                x.CostValue.Should().BeApproximately(0.1249).WithRelativeTolerance(0.001);
+                x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
+                x.ParameterValues.Should().BeEquivalentTo([9.974, -1.959, 0.9898, -0.09931], 
+                    options => options.WithRelativeDoubleTolerance(0.001));
+                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
                 {
                     { 0.5623, -0.4301, 0.08809, -0.00527 },
                     { -0.4301, 0.4922, -0.1177, 0.007654 },
                     { 0.08809, -0.1177, 0.03036, -0.002067 },
                     { -0.00527, 0.007654, -0.002067, 0.000145 }
-                });
+                }, options => options.WithRelativeDoubleTolerance(0.001));
+            });
         }
         
         [Test]
@@ -173,21 +187,24 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             var parameterConfigurations = _problem.ParameterConfigurations.Build();
             
             var result = MinimizeAndRefineErrors(cost, parameterConfigurations);
-
-            result.Should()
-                .HaveExitCondition(Converged).And
-                .HaveIsValid(true).And
-                .HaveNumberOfVariables(4).And
-                .HaveCostValue(0.1249).And
-                .HaveParameters(["c0", "c1", "c2", "c3"]).And
-                .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
-                .HaveParameterCovarianceMatrix(new[,]
+            
+            result.Should().Satisfy<IMinimizationResult>(x =>
+            {
+                x.ExitCondition.Should().Be(Converged);
+                x.IsValid.Should().BeTrue();
+                x.NumberOfVariables.Should().Be(4);
+                x.CostValue.Should().BeApproximately(0.1249).WithRelativeTolerance(0.001);
+                x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
+                x.ParameterValues.Should().BeEquivalentTo([9.974, -1.959, 0.9898, -0.09931], 
+                    options => options.WithRelativeDoubleTolerance(0.001));
+                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
                 {
                     { 0.004391, -0.003358, 0.0006878, -4.115e-05 },
                     { -0.003358, 0.003843, -0.0009193, 5.977e-05 },
                     { 0.0006878, -0.0009193, 0.0002371, -1.614e-05 },
                     { -4.115e-05, 5.977e-05, -1.614e-05, 1.132e-06 }
-                });
+                }, options => options.WithRelativeDoubleTolerance(0.001));
+            });
         }
     }
 
@@ -214,16 +231,16 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             var component2Result = MinimizeAndRefineErrors(component2, parameterConfigurations2, minimizerConfiguration);
             var sumResult = MinimizeAndRefineErrors(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
-            using (new AssertionScope())
+            sumResult.Should().Satisfy<IMinimizationResult>(x =>
             {
-                sumResult.Should()
-                    .HaveCostValue(component1Result.CostValue + component2Result.CostValue).And
-                    .HaveParameterValues(component1Result.ParameterValues.Concat(component2Result.ParameterValues).ToArray());
-
-                sumResult.ParameterCovarianceMatrix.Should()
+                x.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue).WithRelativeTolerance(0.001);
+                x.ParameterValues.Should()
+                    .BeEquivalentTo(component1Result.ParameterValues.Concat(component2Result.ParameterValues),
+                        options => options.WithRelativeDoubleTolerance(0.001));
+                x.ParameterCovarianceMatrix.Should()
                     .BeEquivalentTo(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix), 
                         options => options.WithRelativeDoubleTolerance(0.004));
-            }
+            });
         }
 
         [TestCase(false, false, 182)]
@@ -243,16 +260,18 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                     .WithParameter(3).WithValue(-0.15).Build());
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations.ToArray());
-
-            result.Should()
-                .HaveExitCondition(Converged).And
-                .HaveIsValid(true).And
-                .HaveNumberOfVariables(6).And
-                .HaveNumberOfFunctionCallsCloseTo(expectedFunctionCalls).And
-                .HaveCostValue(24.99).And
-                .HaveParameters(["c0", "c1", "c2", "c3", "c1_1", "c3_1"]).And
-                .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931, -1.959, -0.09931]).And
-                .HaveParameterCovarianceMatrix(new[,]
+            
+            result.Should().Satisfy<IMinimizationResult>(x =>
+            {
+                x.ExitCondition.Should().Be(Converged);
+                x.IsValid.Should().BeTrue();
+                x.NumberOfVariables.Should().Be(6);
+                x.NumberOfFunctionCalls.Should().BeCloseTo(expectedFunctionCalls, 6);
+                x.CostValue.Should().BeApproximately(24.99).WithRelativeTolerance(0.001);
+                x.Parameters.Should().Equal("c0", "c1", "c2", "c3", "c1_1", "c3_1");
+                x.ParameterValues.Should().BeEquivalentTo([9.974, -1.959, 0.9898, -0.09931, -1.959, -0.09931], 
+                    options => options.WithRelativeDoubleTolerance(0.001));
+                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
                 {
                     { 0.002811, -0.00215, 0.0004404, -2.635e-05, -0.00215, -2.635e-05 },
                     { -0.00215, 0.002512, -0.0005887, 3.752e-05, 0.00241, 3.902e-05 },
@@ -260,7 +279,8 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                     { -2.635e-05, 3.752e-05, -1.033e-05, 7.383e-07, 3.902e-05, 7.12e-07 },
                     { -0.00215, 0.00241, -0.0005887, 3.902e-05, 0.002512, 3.752e-05 },
                     { -2.635e-05, 3.902e-05, -1.033e-05, 7.12e-07, 3.752e-05, 7.384e-07 }
-                });
+                }, options => options.WithRelativeDoubleTolerance(0.001));
+            });
         }
         
         [Test]
@@ -274,21 +294,24 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             var parameterConfigurations = _problem.ParameterConfigurations.Build();
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
-
-            result.Should()
-                .HaveExitCondition(Converged).And
-                .HaveIsValid(true).And
-                .HaveNumberOfVariables(4).And
-                .HaveCostValue(12.62).And
-                .HaveParameters(["c0", "c1", "c2", "c3"]).And
-                .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
-                .HaveParameterCovarianceMatrix(new[,]
+            
+            result.Should().Satisfy<IMinimizationResult>(x =>
+            {
+                x.ExitCondition.Should().Be(Converged);
+                x.IsValid.Should().BeTrue();
+                x.NumberOfVariables.Should().Be(4);
+                x.CostValue.Should().BeApproximately(12.62).WithRelativeTolerance(0.001);
+                x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
+                x.ParameterValues.Should().BeEquivalentTo([9.974, -1.959, 0.9898, -0.09931], 
+                    options => options.WithRelativeDoubleTolerance(0.001));
+                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
                 {
                     { 0.005567, -0.004258, 0.0008721, -5.218e-05 },
                     { -0.004258, 0.004873, -0.001166, 7.578e-05 },
                     { 0.0008721, -0.001166, 0.0003006, -2.046e-05 },
                     { -5.218e-05, 7.578e-05, -2.046e-05, 1.436e-06 }
-                });
+                }, options => options.WithRelativeDoubleTolerance(0.001));
+            });
         }
 
         [Test]
@@ -303,21 +326,24 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             var parameterConfigurations = _problem.ParameterConfigurations.Build();
 
             var result = MinimizeAndRefineErrors(cost, parameterConfigurations);
-
-            result.Should()
-                .HaveExitCondition(Converged).And
-                .HaveIsValid(true).And
-                .HaveNumberOfVariables(4).And
-                .HaveCostValue(12.62).And
-                .HaveParameters(["c0", "c1", "c2", "c3"]).And
-                .HaveParameterValues([9.974, -1.959, 0.9898, -0.09931]).And
-                .HaveParameterCovarianceMatrix(new[,]
+            
+            result.Should().Satisfy<IMinimizationResult>(x =>
+            {
+                x.ExitCondition.Should().Be(Converged);
+                x.IsValid.Should().BeTrue();
+                x.NumberOfVariables.Should().Be(4);
+                x.CostValue.Should().BeApproximately(12.62).WithRelativeTolerance(0.001);
+                x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
+                x.ParameterValues.Should().BeEquivalentTo([9.974, -1.959, 0.9898, -0.09931], 
+                    options => options.WithRelativeDoubleTolerance(0.001));
+                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
                 {
                     { 0.002465, -0.001886, 0.0003862, -2.311e-05 },
                     { -0.001886, 0.002158, -0.0005162, 3.356e-05 },
                     { 0.0003862, -0.0005162, 0.0001331, -9.062e-06 },
                     { -2.311e-05, 3.356e-05, -9.062e-06, 6.359e-07 }
-                });
+                }, options => options.WithRelativeDoubleTolerance(0.001));
+            });
         }
     }
 }

@@ -34,7 +34,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     { 
         // A minimal tolerance is used to enforce maximum accuracy (prevent early termination). 
         var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
+        
         var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+        
         result.Should().Satisfy<IMinimizationResult>(x =>
         {
             //x.ExitCondition.Should().Be(MinimizationExitCondition.Converged);
@@ -115,7 +117,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var resultForUnlimited = minimizer.Minimize(cost, unlimitedParameterConfigurations);
         var resultForInfiniteLimits = minimizer.Minimize(cost, parameterConfigurationsWithInfiniteLimits);
         
-        resultForInfiniteLimits.Should().HaveIsValid(true).And.BeEquivalentTo(resultForUnlimited);
+        resultForInfiniteLimits.Should().BeEquivalentTo(resultForUnlimited);
     }
     
     [TestCase(-1E15, 1E15)]
@@ -133,7 +135,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         var result = minimizer.Minimize(cost, parameterConfigurations);
         
-        result.Should().HaveIsValid(false);
+        result.IsValid.Should().BeFalse();
     }
 
     [Test]
@@ -191,9 +193,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var task = Task.Run(() => minimizer.Minimize(cost, parameterConfigurations, cancellationToken: cts.Token), CancellationToken.None);
         await cts.CancelAsync();
         resetEvent.Set();
-        
         var result = await task;
-        result.Should().HaveExitCondition(MinimizationExitCondition.ManuallyStopped);
+        
+        result.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
     }
     
     [Test]
@@ -205,7 +207,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         var result = minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
 
-        result.Should().HaveExitCondition(MinimizationExitCondition.FunctionCallsExhausted);
+        result.ExitCondition.Should().Be(MinimizationExitCondition.FunctionCallsExhausted);
     }
 
     [Test]
@@ -254,9 +256,11 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var component2Result = minimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
         var sumResult = minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
-        sumResult.Should()
-            .HaveCostValue(component1Result.CostValue + component2Result.CostValue).And
-            .HaveParameterValues(component1Result.ParameterValues.Concat(component2Result.ParameterValues).ToArray());
+        sumResult.Should().Satisfy<IMinimizationResult>(x =>
+        {
+            x.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue).WithRelativeTolerance(0.001);
+            x.ParameterValues.Should().BeEquivalentTo(component1Result.ParameterValues.Concat(component2Result.ParameterValues), options => options.WithRelativeDoubleTolerance(0.001));
+        });
     }
 
     [TestCase(double.NaN)]

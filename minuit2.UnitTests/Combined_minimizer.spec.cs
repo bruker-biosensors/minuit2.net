@@ -1,7 +1,8 @@
+using AwesomeAssertions;
 using minuit2.net;
 using minuit2.net.Minimizers;
-using minuit2.UnitTests.TestUtilities;
 using minuit2.UnitTests.MinimizationProblems;
+using minuit2.UnitTests.TestUtilities;
 
 namespace minuit2.UnitTests;
 
@@ -25,7 +26,6 @@ public class The_combined_minimizer() : Any_parameter_uncertainty_resolving_mini
         var result = CombinedMinimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
         var migradResult = Minimizer.Migrad.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
 
-        result.Should().BeEquivalentTo(migradResult, options => options
-            .WithRelativeDoubleTolerance(0.001));
+        result.Should().BeEquivalentTo(migradResult, options => options.WithRelativeDoubleTolerance(0.001));
     }
 }

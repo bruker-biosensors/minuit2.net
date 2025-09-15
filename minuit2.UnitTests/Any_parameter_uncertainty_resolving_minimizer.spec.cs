@@ -19,7 +19,9 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
     { 
         // A minimal tolerance is used to enforce maximum accuracy (prevent early termination).
         var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
+        
         var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+        
         result.ParameterValues.Select((value, index) => (value, index)).Should().AllSatisfy(p =>
         {
             var optimumValue = problem.OptimumParameterValues.ElementAt(p.index);

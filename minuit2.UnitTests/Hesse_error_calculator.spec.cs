@@ -16,6 +16,7 @@ public class The_hesse_error_calculator
         var unrelatedCostFunction = Any.InstanceOf<ICostFunction>();
         
         Action action = () => _ = HesseErrorCalculator.Refine(minimizationResult, unrelatedCostFunction);
+        
         action.Should().Throw<ArgumentException>();
     }
 
@@ -42,9 +43,9 @@ public class The_hesse_error_calculator
             var task = Task.Run(() => HesseErrorCalculator.Refine(_minimizationResult, cost, cancellationToken: cts.Token), CancellationToken.None);
             await cts.CancelAsync();
             resetEvent.Set();
-
             var result = await task;
-            result.Should().HaveExitCondition(MinimizationExitCondition.ManuallyStopped);
+            
+            result.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
         }
 
         [TestCase(double.NaN)]
@@ -54,17 +55,24 @@ public class The_hesse_error_calculator
             double nonFiniteValue)
         {
             var cost = _costFunction.WithValueSwitchingTo(_ => nonFiniteValue);
+            
             var result = HesseErrorCalculator.Refine(_minimizationResult, cost);
-            result.Should()
-                .HaveIsValid(false).And
-                .HaveExitCondition(MinimizationExitCondition.NonFiniteValue);
+
+            result.Should().Satisfy<IMinimizationResult>(x =>
+            {
+                x.IsValid.Should().BeFalse();
+                x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
+                x.Fault.Should().NotBeNull();
+            });
         }
 
         [Test]
         public void when_the_cost_function_value_calculation_throws_an_exception_during_the_process_forwards_that_exception()
         {
             var cost = _costFunction.WithValueSwitchingTo(_ => throw new TestException());
+            
             Action action = () => HesseErrorCalculator.Refine(_minimizationResult, cost);
+            
             action.Should().ThrowExactly<TestException>();
         }
     }
