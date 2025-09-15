@@ -22,7 +22,11 @@ internal class MinimizationResult : IMinimizationResult
             : costFunction.ValueFor(parameterValues);
 
         // Meta information
-        IsValid = minimum.IsValid() && costFunctionMonitor is { HasFiniteValue: true, HasFiniteGradient: true };
+        IsValid = minimum.IsValid() && costFunctionMonitor is
+        {
+            NonFiniteValueParametersValues: null,
+            NonFiniteGradientParameterValues: null
+        };
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = minimum.NFcn();
         ExitCondition = ExitConditionFrom(minimum, costFunctionMonitor);
@@ -85,9 +89,9 @@ internal class MinimizationResult : IMinimizationResult
         FunctionMinimum minimum, 
         ICostFunctionMonitor costFunctionMonitor)
     {
-        if (!costFunctionMonitor.HasFiniteValue)
+        if (costFunctionMonitor.NonFiniteValueParametersValues is not null)
             return NonFiniteValue;
-        if (!costFunctionMonitor.HasFiniteGradient)
+        if (costFunctionMonitor.NonFiniteGradientParameterValues is not null)
             return NonFiniteGradient;
         if (minimum.HasReachedCallLimit())
             return FunctionCallsExhausted;

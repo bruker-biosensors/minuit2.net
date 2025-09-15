@@ -14,19 +14,23 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     {
         cancellationToken.ThrowIfCancellationRequested();
         var value = function.ValueFor(parameterValues) / function.ErrorDefinition;
-        HasFiniteValue = double.IsFinite(value);
+        if (!double.IsFinite(value) && NonFiniteValueParametersValues is null)
+            NonFiniteValueParametersValues = parameterValues;
+        
         return value;
     }
 
     public override VectorDouble Gradient(VectorDouble parameterValues)
     {
         var gradients = new VectorDouble(function.GradientFor(parameterValues).Select(g => g / function.ErrorDefinition));
-        HasFiniteGradient = gradients.All(double.IsFinite);
+        if (!gradients.All(double.IsFinite) && NonFiniteGradientParameterValues is null)
+            NonFiniteGradientParameterValues = parameterValues;
+        
         return gradients;
     }
 
     public override bool HasGradient() => function.HasGradient;
-
-    public bool HasFiniteValue { get; private set; } = true;
-    public bool HasFiniteGradient { get; private set; } = true;
+    
+    public IEnumerable<double>? NonFiniteValueParametersValues { get; private set; }
+    public IEnumerable<double>? NonFiniteGradientParameterValues { get; private set; }
 }
