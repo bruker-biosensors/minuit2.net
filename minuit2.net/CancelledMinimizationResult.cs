@@ -13,4 +13,5 @@ internal class CancelledMinimizationResult : IMinimizationResult
     public int NumberOfVariables => 0;
     public int NumberOfFunctionCalls => 0;
     public MinimizationExitCondition ExitCondition => ManuallyStopped;
+    public MinimizationFault? Fault => null;
 }

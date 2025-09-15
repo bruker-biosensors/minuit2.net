@@ -38,6 +38,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         result.Should()
             //.HaveExitCondition(MinimizationExitCondition.Converged).And
             //.HaveIsValid(true).And
+            .HaveFault(null).And
             .HaveParameterValues(problem.OptimumParameterValues, relativeTolerance: 0.01).And
             .Subject.CostValue.Should().BeLessThan(problem.InitialCostValue());
     }
@@ -272,7 +273,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
         result.Should()
             .HaveIsValid(false).And
-            .HaveExitCondition(MinimizationExitCondition.NonFiniteValue);
+            .HaveExitCondition(MinimizationExitCondition.NonFiniteValue).And
+            .HaveFault(new MinimizationFault());
     }
     
     [Test]

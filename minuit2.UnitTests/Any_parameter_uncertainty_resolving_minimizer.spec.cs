@@ -130,7 +130,8 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
 
         result.Should()
             .HaveIsValid(false).And
-            .HaveExitCondition(MinimizationExitCondition.NonFiniteGradient);
+            .HaveExitCondition(MinimizationExitCondition.NonFiniteGradient).And
+            .HaveFault(new MinimizationFault());
     }
     
     [Test]

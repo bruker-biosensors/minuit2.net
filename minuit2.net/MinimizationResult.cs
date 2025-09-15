@@ -30,6 +30,7 @@ internal class MinimizationResult : IMinimizationResult
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = minimum.NFcn();
         ExitCondition = ExitConditionFrom(minimum, costFunctionMonitor);
+        Fault = FaultFrom(costFunctionMonitor);
         
         Minimum = minimum;
     }
@@ -50,7 +51,8 @@ internal class MinimizationResult : IMinimizationResult
     public int NumberOfVariables { get; }
     public int NumberOfFunctionCalls { get; }
     public MinimizationExitCondition ExitCondition { get; }
-    
+    public MinimizationFault? Fault { get; }
+
     private static List<string> VariablesFrom(IReadOnlyCollection<string> parameters, MnUserParameterState state)
     {
         var numberOfVariables = (int)state.VariableParameters();
@@ -99,6 +101,13 @@ internal class MinimizationResult : IMinimizationResult
             return Converged;
         
         return None;
+    }
+    
+    private static MinimizationFault? FaultFrom(ICostFunctionMonitor costFunctionMonitor)
+    {
+        return costFunctionMonitor is { NonFiniteValueParametersValues: not null } or { NonFiniteGradientParameterValues: not null }
+            ? new MinimizationFault()
+            : null;
     }
     
     internal FunctionMinimum Minimum { get; }

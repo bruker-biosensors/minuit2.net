@@ -65,4 +65,10 @@ internal class MinimizationResultAssertions(IMinimizationResult value)
         Subject.ExitCondition.Should().Be(exitCondition);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
+
+    public AndConstraint<MinimizationResultAssertions>  HaveFault(MinimizationFault? fault)
+    {
+        Subject.Fault.Should().Be(fault);
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
 }
