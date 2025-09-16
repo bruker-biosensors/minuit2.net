@@ -40,8 +40,8 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         var result = _minimizer.Minimize(cost, parameterConfigurations);
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
         
-        result.ParameterCovarianceMatrix.Should().BeEquivalentTo(referenceResult.ParameterCovarianceMatrix.MultipliedBy(cost.ErrorDefinition), 
-            options => options.WithRelativeDoubleTolerance(0.001));
+        result.ParameterCovarianceMatrix.Should()
+            .BeApproximately(referenceResult.ParameterCovarianceMatrix.MultipliedBy(cost.ErrorDefinition));
     }
     
     [Test]
@@ -57,8 +57,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         var componentResult = _minimizer.Minimize(component, parameterConfigurations, minimizerConfiguration);
         var sumResult = _minimizer.Minimize(sum, parameterConfigurations, minimizerConfiguration);
 
-        sumResult.ParameterCovarianceMatrix.Should().BeEquivalentTo(componentResult.ParameterCovarianceMatrix,
-            options => options.WithRelativeDoubleTolerance(0.001));
+        sumResult.ParameterCovarianceMatrix.Should().BeApproximately(componentResult.ParameterCovarianceMatrix);
     }
 
     [Test]
@@ -85,8 +84,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         var sumResult = _minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
         sumResult.ParameterCovarianceMatrix.Should()
-            .BeEquivalentTo(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix), 
-                options => options.WithRelativeDoubleTolerance(0.001));
+            .BeApproximately(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix));
     }
     
     [Test]
@@ -105,8 +103,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         var sumResult = MinimizeAndRefineErrors(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
         sumResult.ParameterCovarianceMatrix.Should()
-            .BeEquivalentTo(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix), 
-                options => options.WithRelativeDoubleTolerance(0.001));
+            .BeApproximately(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix));
     }
     
     private IMinimizationResult MinimizeAndRefineErrors(

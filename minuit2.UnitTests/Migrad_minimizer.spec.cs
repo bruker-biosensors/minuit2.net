@@ -46,13 +46,13 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.CostValue.Should().BeApproximately(12.49);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.ParameterValues.Should().BeApproximately([9.974, -1.959, 0.9898, -0.09931]);
-                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
+                x.ParameterCovarianceMatrix.Should().BeApproximately(new[,]
                 {
                     { 0.005623, -0.004301, 0.000881, -5.271e-05 },
                     { -0.004301, 0.004923, -0.001177, 7.655e-05 },
                     { 0.000881, -0.001177, 0.0003037, -2.067e-05 },
                     { -5.271e-05, 7.655e-05, -2.067e-05, 1.45e-06 }
-                }, options => options.WithRelativeDoubleTolerance(0.001));
+                });
             });
         }
 
@@ -76,13 +76,13 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.CostValue.Should().BeApproximately(437.7);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.ParameterValues.Should().BeApproximately([9.411, -1.97, 1.088, -0.11]);
-                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
+                x.ParameterCovarianceMatrix.Should().BeApproximately(new[,]
                 {
                     { 0.001092, 0.0, -1.918e-05, 0.0 },
                     { 0.0, 0.0, 0.0, 0.0 },
                     { -1.918e-05, 0.0, 6.211e-07, 0.0 },
                     { 0.0, 0.0, 0.0, 0.0 }
-                }, options => options.WithRelativeDoubleTolerance(0.001));
+                });
             });
         }
         
@@ -105,13 +105,13 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.CostValue.Should().BeApproximately(62.34);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.ParameterValues.Should().BeApproximately([10.5, -2.39, 1.082, -0.105]);
-                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
+                x.ParameterCovarianceMatrix.Should().BeApproximately(new[,]
                 {
                     { 7.023e-09, -3.654e-09, 3.124e-10, -1.261e-14 },
                     { -3.654e-09, 0.0002602, -3.344e-05, 5.468e-09 },
                     { 3.124e-10, -3.344e-05, 4.594e-06, -1.873e-09 },
                     { -1.261e-14, 5.468e-09, -1.873e-09, 1.211e-10 }
-                }, options => options.WithRelativeDoubleTolerance(0.003));
+                }, relativeTolerance: 0.003);
             });
         }
         
@@ -138,13 +138,13 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.CostValue.Should().BeApproximately(62.34);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.ParameterValues.Should().BeApproximately([10.5, -2.39, 1.082, -0.105]);
-                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
+                x.ParameterCovarianceMatrix.Should().BeApproximately(new[,]
                 {
                     { 5.482e-09, -2.933e-09, 2.507e-10, -7.976e-15 },
                     { -2.933e-09, 0.0002602, -3.343e-05, 4.309e-09 },
                     { 2.507e-10, -3.343e-05, 4.589e-06, -1.476e-09 },
                     { -7.976e-15, 4.309e-09, -1.476e-09, 9.18e-11 }
-                }, options => options.WithRelativeDoubleTolerance(0.001));
+                });
             });
         }
         
@@ -164,13 +164,13 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.CostValue.Should().BeApproximately(0.1249);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.ParameterValues.Should().BeApproximately([9.974, -1.959, 0.9898, -0.09931]); 
-                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
+                x.ParameterCovarianceMatrix.Should().BeApproximately(new[,]
                 {
                     { 0.5623, -0.4301, 0.08809, -0.00527 },
                     { -0.4301, 0.4922, -0.1177, 0.007654 },
                     { 0.08809, -0.1177, 0.03036, -0.002067 },
                     { -0.00527, 0.007654, -0.002067, 0.000145 }
-                }, options => options.WithRelativeDoubleTolerance(0.001));
+                });
             });
         }
         
@@ -191,13 +191,13 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.CostValue.Should().BeApproximately(0.1249);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.ParameterValues.Should().BeApproximately([9.974, -1.959, 0.9898, -0.09931]);
-                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
+                x.ParameterCovarianceMatrix.Should().BeApproximately(new[,]
                 {
                     { 0.004391, -0.003358, 0.0006878, -4.115e-05 },
                     { -0.003358, 0.003843, -0.0009193, 5.977e-05 },
                     { 0.0006878, -0.0009193, 0.0002371, -1.614e-05 },
                     { -4.115e-05, 5.977e-05, -1.614e-05, 1.132e-06 }
-                }, options => options.WithRelativeDoubleTolerance(0.001));
+                });
             });
         }
     }
@@ -230,8 +230,8 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue);
                 x.ParameterValues.Should().BeApproximately(component1Result.ParameterValues.Concat(component2Result.ParameterValues));
                 x.ParameterCovarianceMatrix.Should()
-                    .BeEquivalentTo(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix), 
-                        options => options.WithRelativeDoubleTolerance(0.004));
+                    .BeApproximately(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix), 
+                        relativeTolerance: 0.004);
             });
         }
 
@@ -262,7 +262,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.CostValue.Should().BeApproximately(24.99);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3", "c1_1", "c3_1");
                 x.ParameterValues.Should().BeApproximately([9.974, -1.959, 0.9898, -0.09931, -1.959, -0.09931]);
-                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
+                x.ParameterCovarianceMatrix.Should().BeApproximately(new[,]
                 {
                     { 0.002811, -0.00215, 0.0004404, -2.635e-05, -0.00215, -2.635e-05 },
                     { -0.00215, 0.002512, -0.0005887, 3.752e-05, 0.00241, 3.902e-05 },
@@ -270,7 +270,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                     { -2.635e-05, 3.752e-05, -1.033e-05, 7.383e-07, 3.902e-05, 7.12e-07 },
                     { -0.00215, 0.00241, -0.0005887, 3.902e-05, 0.002512, 3.752e-05 },
                     { -2.635e-05, 3.902e-05, -1.033e-05, 7.12e-07, 3.752e-05, 7.384e-07 }
-                }, options => options.WithRelativeDoubleTolerance(0.001));
+                });
             });
         }
         
@@ -294,13 +294,13 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.CostValue.Should().BeApproximately(12.62);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.ParameterValues.Should().BeApproximately([9.974, -1.959, 0.9898, -0.09931]);
-                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
+                x.ParameterCovarianceMatrix.Should().BeApproximately(new[,]
                 {
                     { 0.005567, -0.004258, 0.0008721, -5.218e-05 },
                     { -0.004258, 0.004873, -0.001166, 7.578e-05 },
                     { 0.0008721, -0.001166, 0.0003006, -2.046e-05 },
                     { -5.218e-05, 7.578e-05, -2.046e-05, 1.436e-06 }
-                }, options => options.WithRelativeDoubleTolerance(0.001));
+                });
             });
         }
 
@@ -325,13 +325,13 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.CostValue.Should().BeApproximately(12.62);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.ParameterValues.Should().BeApproximately([9.974, -1.959, 0.9898, -0.09931]);
-                x.ParameterCovarianceMatrix.Should().BeEquivalentTo(new[,]
+                x.ParameterCovarianceMatrix.Should().BeApproximately(new[,]
                 {
                     { 0.002465, -0.001886, 0.0003862, -2.311e-05 },
                     { -0.001886, 0.002158, -0.0005162, 3.356e-05 },
                     { 0.0003862, -0.0005162, 0.0001331, -9.062e-06 },
                     { -2.311e-05, 3.356e-05, -9.062e-06, 6.359e-07 }
-                }, options => options.WithRelativeDoubleTolerance(0.001));
+                });
             });
         }
     }
