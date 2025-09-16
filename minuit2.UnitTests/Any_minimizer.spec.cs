@@ -281,7 +281,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         {
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
-            x.FaultParameterValues.Should().NotBeNull();
+            x.FaultParameterValues.Should()
+                .NotBeNull().And
+                .Satisfy<IReadOnlyCollection<double>>(p => cost.ValueFor(p.ToList()).Should().Be(nonFiniteValue));
         });
     }
     
