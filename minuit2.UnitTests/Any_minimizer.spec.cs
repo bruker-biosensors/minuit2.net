@@ -42,7 +42,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             //x.ExitCondition.Should().Be(MinimizationExitCondition.Converged);
             //x.IsValid.Should().BeTrue();
             x.CostValue.Should().BeLessThan(problem.InitialCostValue());
-            x.ParameterValues.Should().BeEquivalentTo(problem.OptimumParameterValues, options => options.WithRelativeDoubleTolerance(0.01));
+            x.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues, relativeTolerance: 0.01);
             x.FaultParameterValues.Should().BeNull();
         });
     }
@@ -259,7 +259,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         sumResult.ShouldFulfill(x =>
         {
             x.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue);
-            x.ParameterValues.Should().BeEquivalentTo(component1Result.ParameterValues.Concat(component2Result.ParameterValues), options => options.WithRelativeDoubleTolerance(0.001));
+            x.ParameterValues.Should().BeApproximately(component1Result.ParameterValues.Concat(component2Result.ParameterValues));
         });
     }
 

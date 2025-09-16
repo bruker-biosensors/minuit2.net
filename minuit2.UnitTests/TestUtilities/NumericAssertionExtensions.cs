@@ -7,8 +7,8 @@ namespace minuit2.UnitTests.TestUtilities;
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global", Justification = "Adhere to convention")]
 internal static class NumericAssertionExtensions
 {
-    private const double DefaultRelativeDoubleTolerance = 0.001;
-    private const double DefaultMinimumDoubleTolerance = 1E-8;
+    internal const double DefaultRelativeDoubleTolerance = 0.001;
+    internal const double DefaultMinimumDoubleTolerance = 1E-8;
 
     public static AndConstraint<NumericAssertions<double>> BeApproximately(
         this NumericAssertions<double> parent, 
