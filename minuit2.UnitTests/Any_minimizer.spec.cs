@@ -153,7 +153,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var result = minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
         var referenceResult = minimizer.Minimize(referenceCost, parameterConfigurations, minimizerConfiguration);
         
-        result.CostValue.Should().BeApproximately(referenceResult.CostValue).WithRelativeTolerance(0.001);
+        result.CostValue.Should().BeApproximately(referenceResult.CostValue);
     }
     
     private static IEnumerable<TestCaseData> BestValueOutsideLimitsParameterConfigurations()
@@ -179,7 +179,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         var result = minimizer.Minimize(cost, parameterConfigurations);
         
-        result.ParameterValues.First().Should().BeApproximately(expectedValue).WithRelativeTolerance(0.001);
+        result.ParameterValues.First().Should().BeApproximately(expectedValue);
     }
     
     [Test]
@@ -258,7 +258,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
         sumResult.ShouldFulfill(x =>
         {
-            x.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue).WithRelativeTolerance(0.001);
+            x.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue);
             x.ParameterValues.Should().BeEquivalentTo(component1Result.ParameterValues.Concat(component2Result.ParameterValues), options => options.WithRelativeDoubleTolerance(0.001));
         });
     }

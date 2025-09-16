@@ -7,30 +7,33 @@ namespace minuit2.UnitTests.TestUtilities;
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global", Justification = "Adhere to convention")]
 internal static class NumericAssertionExtensions
 {
-    public static DoubleAssertionConfigurator BeApproximately(
-        this NumericAssertions<double> parent,
+    private const double DefaultRelativeDoubleTolerance = 0.001;
+    private const double DefaultMinimumDoubleTolerance = 1E-8;
+
+    public static AndConstraint<NumericAssertions<double>> BeApproximately(
+        this NumericAssertions<double> parent, 
         double expectedValue,
-        string because = "",
+        [StringSyntax("CompositeFormat")] string because = "", 
         params object[] becauseArgs)
     {
-        return new DoubleAssertionConfigurator(parent, expectedValue, because, becauseArgs);
+        return parent.BeApproximately(
+            expectedValue, 
+            DefaultRelativeDoubleTolerance, 
+            DefaultMinimumDoubleTolerance, 
+            because, 
+            becauseArgs);
     }
-
-    internal class DoubleAssertionConfigurator(
-            NumericAssertions<double> parent,
-            double expectedValue,
-            string because,
-            params object[] becauseArgs)
+    
+    
+    public static AndConstraint<NumericAssertions<double>> BeApproximately(
+        this NumericAssertions<double> parent, 
+        double expectedValue, 
+        double relativeTolerance,
+        double minimumTolerance,
+        [StringSyntax("CompositeFormat")] string because = "", 
+        params object[] becauseArgs)
     {
-        private AndConstraint<NumericAssertions<double>> WithTolerance(double tolerance) =>
-            parent.BeApproximately(expectedValue, tolerance, because, becauseArgs);
-
-        public AndConstraint<NumericAssertions<double>> WithRelativeTolerance(
-            double relativeTolerance, 
-            double minimumTolerance = 1E-8)
-        {
-            var tolerance = Math.Abs(expectedValue * relativeTolerance);
-            return WithTolerance(Math.Max(tolerance, minimumTolerance));
-        }
+        var tolerance = Math.Abs(expectedValue * relativeTolerance);
+        return parent.BeApproximately(expectedValue, Math.Max(tolerance, minimumTolerance), because, becauseArgs);
     }
 }
