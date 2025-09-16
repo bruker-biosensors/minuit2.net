@@ -133,7 +133,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteGradient);
             x.FaultParameterValues.Should()
                 .NotBeNull().And
-                .Fulfill(p => cost.GradientFor(p.ToList()).Should().Contain(nonFiniteValue));
+                .Fulfill(p => cost.GradientFor(p).Should().Contain(nonFiniteValue));
         });
     }
     
