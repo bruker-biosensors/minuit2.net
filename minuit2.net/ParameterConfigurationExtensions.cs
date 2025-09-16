@@ -26,7 +26,7 @@ internal static class ParameterConfigurationExtensions
 
     public static IEnumerable<ParameterConfiguration> ExtractInOrder(
         this IEnumerable<ParameterConfiguration> parameterConfigurations, 
-        IList<string> parameterNames)
+        IEnumerable<string> parameterNames)
     {
         return parameterNames.Select(name => parameterConfigurations.Single(p => p.Name == name));
     }

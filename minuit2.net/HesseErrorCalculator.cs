@@ -22,11 +22,20 @@ public static class HesseErrorCalculator
         using var hesse = new MnHesseWrap(strategy.AsMnStrategy());
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
         var minimum = minimizationResult.Minimum;
+        var initialState = minimum.UserState();
 
         try
         {
             hesse.Update(minimum, cost);
-            return new MinimizationResult(minimum, costFunction, cost);
+            return new MinimizationResult(minimum, costFunction);
+        }
+        catch (NonFiniteCostValueException)
+        {
+            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteValue, costFunction, cost, initialState);
+        }
+        catch (NonFiniteCostGradientException)
+        {
+            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteGradient, costFunction, cost, initialState);
         }
         catch (OperationCanceledException)
         {

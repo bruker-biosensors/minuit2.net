@@ -5,14 +5,11 @@ namespace minuit2.net;
 
 internal class MinimizationResult : IMinimizationResult
 {
-    internal MinimizationResult(
-        FunctionMinimum minimum, 
-        ICostFunction costFunction, 
-        ICostFunctionMonitor costFunctionMonitor)
+    internal MinimizationResult(FunctionMinimum minimum, ICostFunction costFunction)
     {
         var state = minimum.UserState();
         Parameters = costFunction.Parameters.ToList();
-        Variables = VariablesFrom(Parameters, state);
+        Variables = state.ExtractVariablesFrom(Parameters);
         var parameterValues = state.Params();
         ParameterValues = parameterValues.ToList();
         ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
@@ -22,22 +19,16 @@ internal class MinimizationResult : IMinimizationResult
             : costFunction.ValueFor(parameterValues);
 
         // Meta information
-        IsValid = minimum.IsValid() && costFunctionMonitor is
-        {
-            NonFiniteValueParametersValues: null,
-            NonFiniteGradientParameterValues: null
-        };
+        IsValid = minimum.IsValid();
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = minimum.NFcn();
-        ExitCondition = ExitConditionFrom(minimum, costFunctionMonitor);
-        FaultParameterValues = costFunctionMonitor.NonFiniteValueParametersValues ??
-                               costFunctionMonitor.NonFiniteGradientParameterValues;
-        
+        ExitCondition = ExitConditionFrom(minimum);
+        FaultParameterValues = null;
         Minimum = minimum;
     }
     
     public double CostValue { get; }
-
+    
     public IReadOnlyCollection<string> Parameters { get; }
     public IReadOnlyCollection<string> Variables { get; }
     public IReadOnlyCollection<double> ParameterValues { get; }
@@ -54,14 +45,6 @@ internal class MinimizationResult : IMinimizationResult
     public MinimizationExitCondition ExitCondition { get; }
     public IReadOnlyCollection<double>? FaultParameterValues { get; }
 
-    private static List<string> VariablesFrom(IReadOnlyCollection<string> parameters, MnUserParameterState state)
-    {
-        var numberOfVariables = (int)state.VariableParameters();
-        return Enumerable.Range(0, numberOfVariables).Select(VariableName).ToList();
-
-        string VariableName(int variableIndex) => parameters.ElementAt(state.ParameterIndexOf(variableIndex));
-    }
-    
     private static double[,] CovarianceMatrixFrom(MnUserParameterState state)
     {
         var covariancesOfVariables = state.Covariance().Data();  // can be empty (when covariance calculation fails)
@@ -88,14 +71,8 @@ internal class MinimizationResult : IMinimizationResult
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
     
-    private static MinimizationExitCondition ExitConditionFrom(
-        FunctionMinimum minimum, 
-        ICostFunctionMonitor costFunctionMonitor)
+    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum minimum)
     {
-        if (costFunctionMonitor.NonFiniteValueParametersValues is not null)
-            return NonFiniteValue;
-        if (costFunctionMonitor.NonFiniteGradientParameterValues is not null)
-            return NonFiniteGradient;
         if (minimum.HasReachedCallLimit())
             return FunctionCallsExhausted;
         if (!minimum.IsAboveMaxEdm())
@@ -105,10 +82,4 @@ internal class MinimizationResult : IMinimizationResult
     }
 
     internal FunctionMinimum Minimum { get; }
-}
-
-file static class UserStateExtensions
-{
-    public static int ParameterIndexOf(this MnUserParameterState state, int variableIndex) =>
-        (int)state.ExtOfInt((uint)variableIndex);
 }

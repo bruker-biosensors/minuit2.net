@@ -24,11 +24,19 @@ internal abstract class MnMinimizer : IMinimizer
         using var strategy = minimizerConfiguration.Strategy.AsMnStrategy();
         var maximumFunctionCalls = minimizerConfiguration.MaximumFunctionCalls;
         var tolerance = minimizerConfiguration.Tolerance;
-        
+
         try
         {
             var minimum = MnMinimize(cost, parameterState, strategy, maximumFunctionCalls, tolerance);
-            return new MinimizationResult(minimum, costFunction, cost);
+            return new MinimizationResult(minimum, costFunction);
+        }
+        catch (NonFiniteCostValueException)
+        {
+            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteValue, costFunction, cost, parameterState);
+        }
+        catch (NonFiniteCostGradientException)
+        {
+            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteGradient, costFunction, cost, parameterState);
         }
         catch (OperationCanceledException)
         {
