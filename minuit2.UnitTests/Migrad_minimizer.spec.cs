@@ -42,7 +42,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
                 x.NumberOfVariables.Should().Be(4);
-                x.NumberOfFunctionCalls.Should().BeCloseTo(expectedFunctionCalls, 6);
+                x.NumberOfFunctionCalls.Should().BeCloseTo(expectedFunctionCalls);
                 x.CostValue.Should().BeApproximately(12.49);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.ParameterValues.Should().BeApproximately([9.974, -1.959, 0.9898, -0.09931]);
@@ -72,7 +72,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
                 x.NumberOfVariables.Should().Be(2);
-                x.NumberOfFunctionCalls.Should().BeCloseTo(expectedFunctionCalls, 6);
+                x.NumberOfFunctionCalls.Should().BeCloseTo(expectedFunctionCalls);
                 x.CostValue.Should().BeApproximately(437.7);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.ParameterValues.Should().BeApproximately([9.411, -1.97, 1.088, -0.11]);
@@ -101,7 +101,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
                 x.NumberOfVariables.Should().Be(4);
-                x.NumberOfFunctionCalls.Should().BeCloseTo(444, 6);
+                x.NumberOfFunctionCalls.Should().BeCloseTo(444);
                 x.CostValue.Should().BeApproximately(62.34);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.ParameterValues.Should().BeApproximately([10.5, -2.39, 1.082, -0.105]);
@@ -134,7 +134,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
                 x.NumberOfVariables.Should().Be(4);
-                x.NumberOfFunctionCalls.Should().BeCloseTo(156, 6);
+                x.NumberOfFunctionCalls.Should().BeCloseTo(156);
                 x.CostValue.Should().BeApproximately(62.34);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.ParameterValues.Should().BeApproximately([10.5, -2.39, 1.082, -0.105]);
@@ -258,7 +258,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
                 x.NumberOfVariables.Should().Be(6);
-                x.NumberOfFunctionCalls.Should().BeCloseTo(expectedFunctionCalls, 6);
+                x.NumberOfFunctionCalls.Should().BeCloseTo(expectedFunctionCalls);
                 x.CostValue.Should().BeApproximately(24.99);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3", "c1_1", "c3_1");
                 x.ParameterValues.Should().BeApproximately([9.974, -1.959, 0.9898, -0.09931, -1.959, -0.09931]);
