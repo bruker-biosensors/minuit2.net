@@ -58,13 +58,13 @@ public class The_hesse_error_calculator
             
             var result = HesseErrorCalculator.Refine(_minimizationResult, cost);
 
-            result.Should().Satisfy<IMinimizationResult>(x =>
+            result.ShouldFulfill(x =>
             {
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
                 x.FaultParameterValues.Should()
                     .NotBeNull().And
-                    .Satisfy<IReadOnlyCollection<double>>(p => cost.ValueFor(p.ToList()).Should().Be(nonFiniteValue));
+                    .Fulfill(p => cost.ValueFor(p.ToList()).Should().Be(nonFiniteValue));
             });
         }
 

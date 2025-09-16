@@ -37,7 +37,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
         
-        result.Should().Satisfy<IMinimizationResult>(x =>
+        result.ShouldFulfill(x =>
         {
             //x.ExitCondition.Should().Be(MinimizationExitCondition.Converged);
             //x.IsValid.Should().BeTrue();
@@ -256,7 +256,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var component2Result = minimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
         var sumResult = minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
-        sumResult.Should().Satisfy<IMinimizationResult>(x =>
+        sumResult.ShouldFulfill(x =>
         {
             x.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue).WithRelativeTolerance(0.001);
             x.ParameterValues.Should().BeEquivalentTo(component1Result.ParameterValues.Concat(component2Result.ParameterValues), options => options.WithRelativeDoubleTolerance(0.001));
@@ -277,13 +277,13 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         var result = minimizer.Minimize(cost, parameterConfigurations);
 
-        result.Should().Satisfy<IMinimizationResult>(x =>
+        result.ShouldFulfill(x =>
         {
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
             x.FaultParameterValues.Should()
                 .NotBeNull().And
-                .Satisfy<IReadOnlyCollection<double>>(p => cost.ValueFor(p.ToList()).Should().Be(nonFiniteValue));
+                .Fulfill(p => cost.ValueFor(p.ToList()).Should().Be(nonFiniteValue));
         });
     }
     

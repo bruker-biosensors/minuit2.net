@@ -130,13 +130,13 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         
         var result = _minimizer.Minimize(cost, parameterConfigurations);
         
-        result.Should().Satisfy<IMinimizationResult>(x =>
+        result.ShouldFulfill(x =>
         {
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteGradient);
             x.FaultParameterValues.Should()
                 .NotBeNull().And
-                .Satisfy<IReadOnlyCollection<double>>(p => cost.GradientFor(p.ToList()).Should().Contain(nonFiniteValue));
+                .Fulfill(p => cost.GradientFor(p.ToList()).Should().Contain(nonFiniteValue));
         });
     }
     

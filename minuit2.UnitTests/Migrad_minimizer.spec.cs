@@ -37,7 +37,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
-            result.Should().Satisfy<IMinimizationResult>(x =>
+            result.ShouldFulfill(x =>
             {
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
@@ -68,7 +68,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
             
-            result.Should().Satisfy<IMinimizationResult>(x =>
+            result.ShouldFulfill(x =>
             {
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
@@ -98,7 +98,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
             
-            result.Should().Satisfy<IMinimizationResult>(x =>
+            result.ShouldFulfill(x =>
             {
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
@@ -132,7 +132,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             // This is because, in contrast to proper convergence, in case of early termination at parameter limits the
             // assumption of local quadratic behavior (parabolic approximation) around the terminal cost value is
             // generally not fulfilled. Therefore, covariances are not fully robust.
-            result.Should().Satisfy<IMinimizationResult>(x =>
+            result.ShouldFulfill(x =>
             {
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
@@ -160,7 +160,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
             
-            result.Should().Satisfy<IMinimizationResult>(x =>
+            result.ShouldFulfill(x =>
             {
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
@@ -188,7 +188,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             
             var result = MinimizeAndRefineErrors(cost, parameterConfigurations);
             
-            result.Should().Satisfy<IMinimizationResult>(x =>
+            result.ShouldFulfill(x =>
             {
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
@@ -231,7 +231,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             var component2Result = MinimizeAndRefineErrors(component2, parameterConfigurations2, minimizerConfiguration);
             var sumResult = MinimizeAndRefineErrors(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
-            sumResult.Should().Satisfy<IMinimizationResult>(x =>
+            sumResult.ShouldFulfill(x =>
             {
                 x.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue).WithRelativeTolerance(0.001);
                 x.ParameterValues.Should()
@@ -261,7 +261,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations.ToArray());
             
-            result.Should().Satisfy<IMinimizationResult>(x =>
+            result.ShouldFulfill(x =>
             {
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
@@ -295,7 +295,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
 
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
             
-            result.Should().Satisfy<IMinimizationResult>(x =>
+            result.ShouldFulfill(x =>
             {
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
@@ -327,7 +327,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
 
             var result = MinimizeAndRefineErrors(cost, parameterConfigurations);
             
-            result.Should().Satisfy<IMinimizationResult>(x =>
+            result.ShouldFulfill(x =>
             {
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
