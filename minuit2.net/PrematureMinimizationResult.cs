@@ -4,10 +4,12 @@ namespace minuit2.net;
 
 internal class PrematureMinimizationResult : IMinimizationResult
 {
-    public PrematureMinimizationResult(MinimizationExitCondition exitCondition,
+    public PrematureMinimizationResult(
+        MinimizationExitCondition exitCondition,
         ICostFunction costFunction,
-        ICostFunctionMonitor costFunctionMonitor, 
-        MnUserParameterState parameterState)
+        ICostFunctionMonitor costFunctionMonitor,
+        MnUserParameterState parameterState, 
+        int numberOfFunctionCallsCarryOver = 0)
     {
         var parametersValues = costFunctionMonitor.LastValidParameterValues.ToArray();
         CostValue = costFunction is ICompositeCostFunction compositeCostFunction
@@ -21,7 +23,7 @@ internal class PrematureMinimizationResult : IMinimizationResult
         // Meta information
         IsValid = false;
         NumberOfVariables = Variables.Count;
-        NumberOfFunctionCalls = costFunctionMonitor.NumberOfValidFunctionCalls;
+        NumberOfFunctionCalls = costFunctionMonitor.NumberOfValidFunctionCalls + numberOfFunctionCallsCarryOver;
         ExitCondition = exitCondition;
         FaultParameterValues = costFunctionMonitor.LastParameterValues.ToArray();
     }

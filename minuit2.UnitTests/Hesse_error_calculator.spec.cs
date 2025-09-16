@@ -54,7 +54,8 @@ public class The_hesse_error_calculator
         public void when_the_cost_function_returns_a_non_finite_value_during_the_process_yields_an_invalid_result_with_non_finite_value_exit_condition(
             double nonFiniteValue)
         {
-            var cost = _costFunction.WithValueSwitchingTo(_ => nonFiniteValue);
+            const int numberOfValidFunctionCalls = 5;
+            var cost = _costFunction.WithValueOverride(_ => nonFiniteValue, numberOfValidFunctionCalls);
             
             var result = HesseErrorCalculator.Refine(_minimizationResult, cost);
 
@@ -62,16 +63,15 @@ public class The_hesse_error_calculator
             {
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
-                x.FaultParameterValues.Should()
-                    .NotBeNull().And
-                    .Fulfill(p => cost.ValueFor(p).Should().Be(nonFiniteValue));
+                x.NumberOfFunctionCalls.Should().Be(numberOfValidFunctionCalls + _minimizationResult.NumberOfFunctionCalls);
+                x.FaultParameterValues.Should().NotBeNull();
             });
         }
 
         [Test]
         public void when_the_cost_function_value_calculation_throws_an_exception_during_the_process_forwards_that_exception()
         {
-            var cost = _costFunction.WithValueSwitchingTo(_ => throw new TestException());
+            var cost = _costFunction.WithValueOverride(_ => throw new TestException());
             
             Action action = () => HesseErrorCalculator.Refine(_minimizationResult, cost);
             

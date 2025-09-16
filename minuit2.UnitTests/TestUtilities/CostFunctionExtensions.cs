@@ -13,20 +13,28 @@ internal static class CostFunctionExtensions
     public static ICostFunction ListeningToResetEvent(this ICostFunction costFunction, ManualResetEvent resetEvent) =>
         new CostFunctionListeningToResetEvent(costFunction, resetEvent);
     
-    public static ICostFunction WithValueSwitchingTo(
+    public static ICostFunction WithValueOverride(
         this ICostFunction costFunction, 
         Func<IList<double>, double> valueOverride, 
-        int numberOfValueCallsBeforeSwitching = 10)
+        int numberOfFunctionCallsBeforeReturningOverride = 10)
     {
-        return new SwitchingCostFunction(costFunction, valueOverride, null, numberOfValueCallsBeforeSwitching);
+        return new CostFunctionReturningOverrides(
+            costFunction, 
+            valueOverride, 
+            null, 
+            numberOfFunctionCallsBeforeReturningOverride);
     }
     
-    public static ICostFunction WithGradientSwitchingTo(
+    public static ICostFunction WithGradientOverride(
         this ICostFunction costFunction, 
         Func<IList<double>, IList<double>> gradientOverride, 
-        int numberOfValueCallsBeforeSwitching = 10)
+        int numberOfFunctionCallsBeforeReturningOverride = 10)
     {
-        return new SwitchingCostFunction(costFunction, null, gradientOverride, numberOfValueCallsBeforeSwitching);
+        return new CostFunctionReturningOverrides(
+            costFunction, 
+            null, 
+            gradientOverride, 
+            numberOfFunctionCallsBeforeReturningOverride);
     }
 }
 
@@ -45,15 +53,15 @@ internal class CostFunctionListeningToResetEvent(ICostFunction wrapped, ManualRe
     public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
 }
 
-internal class SwitchingCostFunction(
+internal class CostFunctionReturningOverrides(
     ICostFunction wrapped, 
     Func<IList<double>, double>? valueOverride,
     Func<IList<double>, IList<double>>? gradientOverride,
-    int numberOfValueCallsBeforeSwitching)
+    int numberOfFunctionCallsBeforeReturningOverrides)
     : ICostFunction
 {
-    private int _numberOfValueCalls;
-    private bool HasSwitched => _numberOfValueCalls > numberOfValueCallsBeforeSwitching;
+    private int _numberOfFunctionCalls;
+    private bool HasSwitched => _numberOfFunctionCalls > numberOfFunctionCallsBeforeReturningOverrides;
 
     public IList<string> Parameters => wrapped.Parameters;
     public bool HasGradient => wrapped.HasGradient;
@@ -61,7 +69,7 @@ internal class SwitchingCostFunction(
     
     public double ValueFor(IList<double> parameterValues)
     {
-        _numberOfValueCalls++;
+        _numberOfFunctionCalls++;
         return HasSwitched && valueOverride != null 
             ? valueOverride(parameterValues) 
             : wrapped.ValueFor(parameterValues);

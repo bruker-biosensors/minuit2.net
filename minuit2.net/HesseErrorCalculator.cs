@@ -31,11 +31,11 @@ public static class HesseErrorCalculator
         }
         catch (NonFiniteCostValueException)
         {
-            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteValue, costFunction, cost, initialState);
+            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteValue, costFunction, cost, initialState, result.NumberOfFunctionCalls);
         }
         catch (NonFiniteCostGradientException)
         {
-            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteGradient, costFunction, cost, initialState);
+            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteGradient, costFunction, cost, initialState, result.NumberOfFunctionCalls);
         }
         catch (OperationCanceledException)
         {

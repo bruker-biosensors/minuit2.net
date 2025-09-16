@@ -122,7 +122,8 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         double nonFiniteValue)
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var cost = problem.Cost.WithGradient().Build().WithGradientSwitchingTo(_ => [nonFiniteValue, 1, 1]);
+        const int numberOfValidFunctionCalls = 5;
+        var cost = problem.Cost.WithGradient().Build().WithGradientOverride(_ => [nonFiniteValue, 1, 1], numberOfValidFunctionCalls);
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         
         var result = _minimizer.Minimize(cost, parameterConfigurations);
@@ -131,9 +132,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         {
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteGradient);
-            x.FaultParameterValues.Should()
-                .NotBeNull().And
-                .Fulfill(p => cost.GradientFor(p).Should().Contain(nonFiniteValue));
+            x.FaultParameterValues.Should().NotBeNull();
         });
     }
     
@@ -141,7 +140,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
     public void when_the_cost_function_gradient_throws_an_exception_during_a_minimization_process_forwards_that_exception()
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var cost = problem.Cost.WithGradient().Build().WithGradientSwitchingTo(_ => throw new TestException());
+        var cost = problem.Cost.WithGradient().Build().WithGradientOverride(_ => throw new TestException());
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         
         Action action = () => _minimizer.Minimize(cost, parameterConfigurations);

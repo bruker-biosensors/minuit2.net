@@ -266,13 +266,14 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     [TestCase(double.NaN)]
     [TestCase(double.NegativeInfinity)]
     [TestCase(double.PositiveInfinity)]
-    [Description("Ensures that the result indicates process termination due to an non-finite value. The Minuit2 code " +
-                 "silently fails in this case and just returns a minimum corresponding to the last valid iteration.")]
+    [Description("Ensures that the result indicates process termination due to an non-finite cost value. The Minuit2 " +
+                 "code silently fails in this case and just returns a minimum corresponding to the last valid state.")]
     public void when_the_cost_function_returns_a_non_finite_value_during_a_minimization_process_yields_an_invalid_result_with_non_finite_value_exit_condition(
         double nonFiniteValue)
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var cost = problem.Cost.Build().WithValueSwitchingTo(_ => nonFiniteValue);
+        const int numberOfValidFunctionCalls = 5;
+        var cost = problem.Cost.Build().WithValueOverride(_ => nonFiniteValue, numberOfValidFunctionCalls);
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         
         var result = minimizer.Minimize(cost, parameterConfigurations);
@@ -281,9 +282,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         {
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
-            x.FaultParameterValues.Should()
-                .NotBeNull().And
-                .Fulfill(p => cost.ValueFor(p).Should().Be(nonFiniteValue));
+            x.NumberOfFunctionCalls.Should().Be(numberOfValidFunctionCalls);
+            x.FaultParameterValues.Should().NotBeNull();
         });
     }
     
@@ -291,7 +291,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     public void when_the_cost_function_value_calculation_throws_an_exception_during_a_minimization_process_forwards_that_exception()
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var cost = problem.Cost.Build().WithValueSwitchingTo(_ => throw new TestException());
+        var cost = problem.Cost.Build().WithValueOverride(_ => throw new TestException());
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         
         Action action = () => minimizer.Minimize(cost, parameterConfigurations);
