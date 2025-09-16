@@ -62,7 +62,7 @@ public class The_hesse_error_calculator
             {
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
-                x.Fault.Should().NotBeNull();
+                x.FaultParameterValues.Should().NotBeNull();
             });
         }
 

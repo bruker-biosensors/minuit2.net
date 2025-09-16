@@ -11,5 +11,5 @@ public interface IMinimizationResult
     int NumberOfVariables { get; }
     int NumberOfFunctionCalls { get; }
     MinimizationExitCondition ExitCondition { get; }
-    MinimizationFault? Fault { get; }
+    IReadOnlyCollection<double>? FaultParameterValues { get; }
 }

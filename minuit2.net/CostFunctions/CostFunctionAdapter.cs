@@ -15,7 +15,7 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
         cancellationToken.ThrowIfCancellationRequested();
         var value = function.ValueFor(parameterValues) / function.ErrorDefinition;
         if (!double.IsFinite(value) && NonFiniteValueParametersValues is null)
-            NonFiniteValueParametersValues = parameterValues;
+            NonFiniteValueParametersValues = parameterValues.ToArray();
         
         return value;
     }
@@ -24,13 +24,13 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     {
         var gradients = new VectorDouble(function.GradientFor(parameterValues).Select(g => g / function.ErrorDefinition));
         if (!gradients.All(double.IsFinite) && NonFiniteGradientParameterValues is null)
-            NonFiniteGradientParameterValues = parameterValues;
+            NonFiniteGradientParameterValues = parameterValues.ToArray();
         
         return gradients;
     }
 
     public override bool HasGradient() => function.HasGradient;
     
-    public IEnumerable<double>? NonFiniteValueParametersValues { get; private set; }
-    public IEnumerable<double>? NonFiniteGradientParameterValues { get; private set; }
+    public IReadOnlyCollection<double>? NonFiniteValueParametersValues { get; private set; }
+    public IReadOnlyCollection<double>? NonFiniteGradientParameterValues { get; private set; }
 }

@@ -134,7 +134,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         {
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteGradient);
-            x.Fault.Should().NotBeNull();
+            x.FaultParameterValues.Should().NotBeNull();
         });
     }
     

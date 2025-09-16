@@ -2,6 +2,6 @@ namespace minuit2.net.CostFunctions;
 
 internal interface ICostFunctionMonitor
 {
-    IEnumerable<double>? NonFiniteValueParametersValues { get; }
-    IEnumerable<double>? NonFiniteGradientParameterValues { get; }
+    IReadOnlyCollection<double>? NonFiniteValueParametersValues { get; }
+    IReadOnlyCollection<double>? NonFiniteGradientParameterValues { get; }
 }
