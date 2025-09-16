@@ -13,25 +13,33 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     {
         cancellationToken.ThrowIfCancellationRequested();
         
-        LastParameterValues = parameterValues.ToArray();
         var value = function.ValueFor(parameterValues) / function.ErrorDefinition;
-        if (!double.IsFinite(value)) throw new NonFiniteCostValueException();
+        if (!double.IsFinite(value))
+        {
+            IssueParameterValues = parameterValues.ToArray();
+            throw new NonFiniteCostValueException();
+        }
         
-        NumberOfValidFunctionCalls++;
-        LastValidParameterValues = parameterValues.ToArray();
+        NumberOfFunctionCalls++;
+        LastParameterValues = parameterValues.ToArray();
         return value;
     }
 
     public override VectorDouble Gradient(VectorDouble parameterValues)
     {
-        LastParameterValues = parameterValues.ToArray();
         var gradients = new VectorDouble(function.GradientFor(parameterValues).Select(g => g / function.ErrorDefinition));
-        return gradients.All(double.IsFinite) ? gradients : throw new NonFiniteCostGradientException();
+        if (!gradients.All(double.IsFinite))
+        {
+            IssueParameterValues = parameterValues.ToArray();
+            throw new NonFiniteCostGradientException();
+        }
+
+        return gradients;
     }
 
     public override bool HasGradient() => function.HasGradient;
 
-    public IReadOnlyCollection<double> LastParameterValues { get; private set; } = [];
-    public IReadOnlyCollection<double> LastValidParameterValues { get; private set; } = [];
-    public int NumberOfValidFunctionCalls { get; private set; }
+    public int NumberOfFunctionCalls { get; private set; }
+    public IReadOnlyCollection<double>? LastParameterValues { get; private set; }
+    public IReadOnlyCollection<double>? IssueParameterValues { get; private set; }
 }

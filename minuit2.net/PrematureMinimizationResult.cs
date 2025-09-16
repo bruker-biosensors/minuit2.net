@@ -8,26 +8,24 @@ internal class PrematureMinimizationResult : IMinimizationResult
         MinimizationExitCondition exitCondition,
         ICostFunction costFunction,
         ICostFunctionMonitor costFunctionMonitor,
-        MnUserParameterState parameterState, 
+        MnUserParameterState initialState, 
         int numberOfFunctionCallsCarryOver = 0)
     {
-        var parametersValues = costFunctionMonitor.LastValidParameterValues.ToArray();
-        CostValue = costFunction is ICompositeCostFunction compositeCostFunction
-            ? compositeCostFunction.CompositeValueFor(parametersValues)
-            : costFunction.ValueFor(parametersValues);
+        var parameterValues = ParameterValuesFrom(costFunctionMonitor, initialState);
+        CostValue = CostValueFrom(costFunction, parameterValues);
         Parameters = costFunction.Parameters.ToArray();
-        Variables = parameterState.ExtractVariablesFrom(Parameters);
-        ParameterValues = parametersValues;
+        Variables = initialState.ExtractVariablesFrom(Parameters);
+        ParameterValues = parameterValues;
         ParameterCovarianceMatrix = new double[,] { };
         
         // Meta information
         IsValid = false;
         NumberOfVariables = Variables.Count;
-        NumberOfFunctionCalls = costFunctionMonitor.NumberOfValidFunctionCalls + numberOfFunctionCallsCarryOver;
+        NumberOfFunctionCalls = costFunctionMonitor.NumberOfFunctionCalls + numberOfFunctionCallsCarryOver;
         ExitCondition = exitCondition;
-        FaultParameterValues = costFunctionMonitor.LastParameterValues.ToArray();
+        FaultParameterValues = costFunctionMonitor.IssueParameterValues;
     }
-
+    
     public double CostValue { get; }
     public IReadOnlyCollection<string> Parameters { get; }
     public IReadOnlyCollection<string> Variables { get; }
@@ -38,4 +36,12 @@ internal class PrematureMinimizationResult : IMinimizationResult
     public int NumberOfFunctionCalls { get; }
     public MinimizationExitCondition ExitCondition { get; }
     public IReadOnlyCollection<double>? FaultParameterValues { get; }
+    
+    private static double[] ParameterValuesFrom(ICostFunctionMonitor monitor, MnUserParameterState initialState) => 
+        monitor.LastParameterValues?.ToArray() ?? initialState.Params().ToArray();
+    
+    private static double CostValueFrom(ICostFunction costFunction, double[] parameterValues) =>
+        costFunction is ICompositeCostFunction compositeCostFunction
+            ? compositeCostFunction.CompositeValueFor(parameterValues)
+            : costFunction.ValueFor(parameterValues);
 }

@@ -39,7 +39,7 @@ public static class HesseErrorCalculator
         }
         catch (OperationCanceledException)
         {
-            return new CancelledMinimizationResult();
+            return new PrematureMinimizationResult(MinimizationExitCondition.ManuallyStopped, costFunction, cost, initialState, result.NumberOfFunctionCalls);
         }
     }
 }

@@ -18,7 +18,7 @@ internal abstract class MnMinimizer : IMinimizer
             "minimization");
 
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
-        using var parameterState = parameterConfigurations.ExtractInOrder(costFunction.Parameters).AsState();
+        using var initialState = parameterConfigurations.ExtractInOrder(costFunction.Parameters).AsState();
         
         minimizerConfiguration ??= new MinimizerConfiguration();
         using var strategy = minimizerConfiguration.Strategy.AsMnStrategy();
@@ -27,20 +27,20 @@ internal abstract class MnMinimizer : IMinimizer
 
         try
         {
-            var minimum = MnMinimize(cost, parameterState, strategy, maximumFunctionCalls, tolerance);
+            var minimum = MnMinimize(cost, initialState, strategy, maximumFunctionCalls, tolerance);
             return new MinimizationResult(minimum, costFunction);
         }
         catch (NonFiniteCostValueException)
         {
-            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteValue, costFunction, cost, parameterState);
+            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteValue, costFunction, cost, initialState);
         }
         catch (NonFiniteCostGradientException)
         {
-            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteGradient, costFunction, cost, parameterState);
+            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteGradient, costFunction, cost, initialState);
         }
         catch (OperationCanceledException)
         {
-            return new CancelledMinimizationResult();
+            return new PrematureMinimizationResult(MinimizationExitCondition.ManuallyStopped, costFunction, cost, initialState);
         }
     }
 
