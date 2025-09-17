@@ -20,10 +20,8 @@ public class The_combined_minimizer() : Any_parameter_uncertainty_resolving_mini
         ConfiguredProblem problem, 
         Strategy strategy)
     {
-        var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
-
-        var result = CombinedMinimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
-        var migradResult = Minimizer.Migrad.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+        var result = CombinedMinimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
+        var migradResult = Minimizer.Migrad.Minimize(problem.Cost, problem.ParameterConfigurations);
 
         result.Should().BeEquivalentTo(migradResult, options => options.WithRelativeDoubleTolerance(0.001));
     }

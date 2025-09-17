@@ -20,9 +20,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         ConfiguredProblem problem,
         Strategy strategy)
     { 
-        var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
-        
-        var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+        var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
         
         result.ShouldFulfill(x =>
         {
@@ -38,9 +36,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         ConfiguredProblem problem,
         Strategy strategy)
     { 
-        var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
-        
-        var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+        var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
         
         result.ParameterValues.Select((value, index) => (value, index)).Should().AllSatisfy(p =>
         {
