@@ -13,6 +13,27 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
     private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialLeastSquaresProblem();
 
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
+    [Description("This test should apply to all minimizers. It was put here to exclude the Simplex minimizer that " +
+                 "occasionally reports non-convergence — even at the true minimum — due to its unreliable convergence " +
+                 "criteria (see the Minuit docs: '...it would not even know if it did converge').")]
+    public void when_minimizing_a_well_posed_problem_converges_to_a_valid_cost_function_minimum(
+        ConfiguredProblem problem,
+        Strategy strategy)
+    { 
+        var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
+        
+        var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+        
+        result.ShouldFulfill(x =>
+        {
+            x.IsValid.Should().BeTrue();
+            x.ExitCondition.Should().Be(MinimizationExitCondition.Converged);
+            x.CostValue.Should().BeLessThan(problem.InitialCostValue());
+            x.IssueParameterValues.Should().BeNull();
+        });
+    }
+    
+    [TestCaseSource(nameof(WellPosedMinimizationProblems))]
     public void when_minimizing_a_well_posed_problem_yields_parameter_values_that_agree_with_the_optimum_values_within_3_sigma_tolerance(
         ConfiguredProblem problem,
         Strategy strategy)

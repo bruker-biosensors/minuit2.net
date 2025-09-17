@@ -28,7 +28,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     }
 
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
-    public void when_minimizing_a_well_posed_problem_converges_to_a_valid_cost_function_minimum_representing_the_optimum_parameter_values(
+    public void when_minimizing_a_well_posed_problem_finds_the_optimum_parameter_values(
         ConfiguredProblem problem,
         Strategy strategy)
     { 
@@ -36,14 +36,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
         
-        result.ShouldFulfill(x =>
-        {
-            //x.ExitCondition.Should().Be(MinimizationExitCondition.Converged);
-            //x.IsValid.Should().BeTrue();
-            x.CostValue.Should().BeLessThan(problem.InitialCostValue());
-            x.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues, relativeTolerance: 0.01);
-            x.IssueParameterValues.Should().BeNull();
-        });
+        result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues, relativeTolerance: 0.01);
     }
     
     private static IEnumerable<TestCaseData> InvalidParameterConfigurationTestCases()
