@@ -3,6 +3,8 @@
 internal sealed class CostFunctionAdapter(ICostFunction function, CancellationToken cancellationToken)
     : FCNWrap, ICostFunctionMonitor
 {
+    private double _bestValue = double.PositiveInfinity;
+
     // We always forward a neutral error definition (Up) of 1 to the C++ code. Instead, we scale the output values of
     // the inner ValueFor() and GradientFor() by the error definition directly. This allows us to dynamically adjust
     // error definitions, e.g. to get meaningful parameter uncertainties for least squares cost functions with unknown
@@ -19,9 +21,14 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
             IssueParameterValues = parameterValues.ToArray();
             throw new NonFiniteCostValueException();
         }
+
+        if (value < _bestValue)
+        {
+            _bestValue = value;
+            BestParameterValues = parameterValues.ToArray();
+        }
         
         NumberOfFunctionCalls++;
-        LastParameterValues = parameterValues.ToArray();
         return value;
     }
 
@@ -39,7 +46,8 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
 
     public override bool HasGradient() => function.HasGradient;
 
+    // Monitoring
     public int NumberOfFunctionCalls { get; private set; }
-    public IReadOnlyCollection<double>? LastParameterValues { get; private set; }
+    public IReadOnlyCollection<double>? BestParameterValues { get; private set; }
     public IReadOnlyCollection<double>? IssueParameterValues { get; private set; }
 }

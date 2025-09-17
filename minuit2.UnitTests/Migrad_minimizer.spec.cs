@@ -227,8 +227,8 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 var initialCostValue = cost.ValueFor(parameterConfigurations);
                 x.CostValue.Should()
                     .BeFinite().And
-                    .Be(computedCostValue).And
-                    .NotBe(initialCostValue);
+                    .BeLessThanOrEqualTo(initialCostValue).And
+                    .Be(computedCostValue);
 
                 x.IssueParameterValues.Should()
                     .NotBeNull().And

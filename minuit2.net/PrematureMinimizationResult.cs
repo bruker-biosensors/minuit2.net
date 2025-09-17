@@ -38,7 +38,7 @@ internal class PrematureMinimizationResult : IMinimizationResult
     public IReadOnlyCollection<double>? IssueParameterValues { get; }
     
     private static double[] ParameterValuesFrom(ICostFunctionMonitor monitor, MnUserParameterState initialState) => 
-        monitor.LastParameterValues?.ToArray() ?? initialState.Params().ToArray();
+        monitor.BestParameterValues?.ToArray() ?? initialState.Params().ToArray();
     
     private static double CostValueFrom(ICostFunction costFunction, double[] parameterValues) =>
         costFunction is ICompositeCostFunction compositeCostFunction
