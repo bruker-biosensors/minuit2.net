@@ -122,8 +122,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         double nonFiniteValue)
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
-        const int numberOfValidFunctionCalls = 5;
-        var cost = problem.Cost.WithGradient().Build().WithGradientOverride(_ => [nonFiniteValue, 1, 1], numberOfValidFunctionCalls);
+        var cost = problem.Cost.WithGradient().Build().WithGradientOverride(_ => [nonFiniteValue, 1, 1]);
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         
         var result = _minimizer.Minimize(cost, parameterConfigurations);
