@@ -37,6 +37,12 @@ internal static class NumericAssertionExtensions
         return parent.BeApproximately(expectedValue, Math.Max(tolerance, minimumTolerance), because, becauseArgs);
     }
 
+    public static AndConstraint<NumericAssertions<double>> BeFinite(this NumericAssertions<double> parent) =>
+        parent.NotBeNaN().And.NotBe(double.PositiveInfinity).And.NotBe(double.NegativeInfinity);
+
+    public static AndConstraint<NumericAssertions<double>> NotBeFinite(this NumericAssertions<double> parent) =>
+        parent.BeOneOf(double.NaN, double.PositiveInfinity, double.NegativeInfinity);
+
     public static AndConstraint<NumericAssertions<int>> BeCloseTo(
         this NumericAssertions<int> parent,
         int expectedValue,

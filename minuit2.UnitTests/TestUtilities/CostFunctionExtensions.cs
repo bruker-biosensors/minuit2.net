@@ -1,9 +1,18 @@
+using minuit2.net;
 using minuit2.net.CostFunctions;
 
 namespace minuit2.UnitTests.TestUtilities;
 
 internal static class CostFunctionExtensions
 {
+    public static double ValueFor(this ICostFunction costFunction, IReadOnlyCollection<ParameterConfiguration> parameters)
+    {
+        var orderedParameterValues = parameters
+            .OrderBy(p => costFunction.Parameters.IndexOf(p.Name))
+            .Select(p => p.Value);
+        return costFunction.ValueFor(orderedParameterValues);
+    }
+
     public static double ValueFor(this ICostFunction costFunction, IEnumerable<double> parameterValues) =>
         costFunction.ValueFor(parameterValues.ToArray());
     

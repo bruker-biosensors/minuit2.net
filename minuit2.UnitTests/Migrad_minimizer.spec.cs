@@ -200,6 +200,41 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                 });
             });
         }
+        
+        [Test]
+        [Description("This is a concrete example where the minimizer exits the valid parameter space by assigning a " +
+                     "negative value a bell curve's variance, causing a NaN in the cost value. " +
+                     "The issue can be avoided by enforcing a lower bound of zero. If omitted, we still handle it " +
+                     "gracefully: return the last valid state and provide clear exit details.")]
+        public void leaving_the_valid_parameter_space_during_the_minimization_process_yields_an_invalid_result_with_non_finite_value_exit_condition()
+        {
+            var problem = new BellCurveLeastSquaresProblem();
+            var cost = problem.Cost.Build();
+            var parameterConfigurations = problem.ParameterConfigurations
+                .WithParameter(0).WithValue(6.41).And
+                .WithParameter(1).WithValue(1.42).Build();
+            var minimizerConfiguration = new MinimizerConfiguration(Strategy.Rigorous);
+        
+            var result = MigradMinimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
+        
+            result.ShouldFulfill(x =>
+            {
+                x.IsValid.Should().BeFalse();
+                x.ExitCondition.Should().Be(NonFiniteValue);
+                x.NumberOfFunctionCalls.Should().BeGreaterThan(0);
+            
+                var computedCostValue = cost.ValueFor(x.ParameterValues);
+                var initialCostValue = cost.ValueFor(parameterConfigurations);
+                x.CostValue.Should()
+                    .BeFinite().And
+                    .Be(computedCostValue).And
+                    .NotBe(initialCostValue);
+
+                x.IssueParameterValues.Should()
+                    .NotBeNull().And
+                    .Fulfill(p => cost.ValueFor(p).Should().NotBeFinite());
+            });
+        }
     }
 
     public class When_minimizing_a_sum_of_least_squares_cost_functions

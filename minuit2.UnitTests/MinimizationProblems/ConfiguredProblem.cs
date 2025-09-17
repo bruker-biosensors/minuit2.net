@@ -1,5 +1,6 @@
 using minuit2.net;
 using minuit2.net.CostFunctions;
+using minuit2.UnitTests.TestUtilities;
 
 namespace minuit2.UnitTests.MinimizationProblems;
 
@@ -8,13 +9,5 @@ public record ConfiguredProblem(
     IReadOnlyCollection<double> OptimumParameterValues,
     IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations)
 {
-    internal double InitialCostValue()
-    {
-        var orderedParameterValues = ParameterConfigurations
-            .OrderBy(p => Cost.Parameters.IndexOf(p.Name))
-            .Select(p => p.Value)
-            .ToArray();
-        
-        return Cost.ValueFor(orderedParameterValues);
-    }
+    internal double InitialCostValue() => Cost.ValueFor(ParameterConfigurations);
 }
