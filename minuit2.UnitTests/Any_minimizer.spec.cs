@@ -18,7 +18,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         {
             yield return TestCase(new QuadraticPolynomialLeastSquaresProblem().Configured(), nameof(QuadraticPolynomialLeastSquaresProblem));
             yield return TestCase(new CubicPolynomialLeastSquaresProblem().Configured(), nameof(CubicPolynomialLeastSquaresProblem));
-            yield return TestCase(new ExponentialDecayLeastSquaresProblem().Configured(), nameof(ExponentialDecayLeastSquaresProblem));
+            yield return TestCase(new ExponentialDecayLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(ExponentialDecayLeastSquaresProblem));
             yield return TestCase(new BellCurveLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveLeastSquaresProblem));
             continue;
 
