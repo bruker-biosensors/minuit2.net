@@ -7,9 +7,6 @@ internal static class CostFunctionExtensions
     public static double ValueFor(this ICostFunction costFunction, IEnumerable<double> parameterValues) =>
         costFunction.ValueFor(parameterValues.ToArray());
     
-    public static IList<double> GradientFor(this ICostFunction costFunction, IEnumerable<double> parameterValues) =>
-        costFunction.GradientFor(parameterValues.ToArray());
-    
     public static ICostFunction ListeningToResetEvent(this ICostFunction costFunction, ManualResetEvent resetEvent) =>
         new CostFunctionListeningToResetEvent(costFunction, resetEvent);
     
