@@ -23,7 +23,7 @@ internal class PrematureMinimizationResult : IMinimizationResult
         NumberOfVariables = Variables.Count;
         NumberOfFunctionCalls = costFunctionMonitor.NumberOfFunctionCalls + numberOfFunctionCallsCarryOver;
         ExitCondition = exitCondition;
-        FaultParameterValues = costFunctionMonitor.IssueParameterValues;
+        IssueParameterValues = costFunctionMonitor.IssueParameterValues;
     }
     
     public double CostValue { get; }
@@ -35,7 +35,7 @@ internal class PrematureMinimizationResult : IMinimizationResult
     public int NumberOfVariables { get; }
     public int NumberOfFunctionCalls { get; }
     public MinimizationExitCondition ExitCondition { get; }
-    public IReadOnlyCollection<double>? FaultParameterValues { get; }
+    public IReadOnlyCollection<double>? IssueParameterValues { get; }
     
     private static double[] ParameterValuesFrom(ICostFunctionMonitor monitor, MnUserParameterState initialState) => 
         monitor.LastParameterValues?.ToArray() ?? initialState.Params().ToArray();

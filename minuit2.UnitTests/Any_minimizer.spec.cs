@@ -43,7 +43,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             //x.IsValid.Should().BeTrue();
             x.CostValue.Should().BeLessThan(problem.InitialCostValue());
             x.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues, relativeTolerance: 0.01);
-            x.FaultParameterValues.Should().BeNull();
+            x.IssueParameterValues.Should().BeNull();
         });
     }
     
@@ -283,7 +283,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
             x.NumberOfFunctionCalls.Should().Be(numberOfValidFunctionCalls);
-            x.FaultParameterValues.Should().NotBeNull();
+            x.IssueParameterValues.Should().NotBeNull();
         });
     }
     
