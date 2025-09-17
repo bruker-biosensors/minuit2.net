@@ -32,8 +32,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         ConfiguredProblem problem,
         Strategy strategy)
     { 
-        // A minimal tolerance is used to enforce maximum accuracy (prevent early termination). 
-        var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
+        var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
         
         var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
         
@@ -250,7 +249,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var sum = CostFunction.Sum(component1, component2);
         var parameterConfigurations1 = problem.ParameterConfigurations.WithSuffix("1").Build();
         var parameterConfigurations2 = problem.ParameterConfigurations.WithSuffix("2").Build();
-        var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
+        var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
 
         var component1Result = minimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
         var component2Result = minimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);

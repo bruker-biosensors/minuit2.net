@@ -253,8 +253,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             var sum = CostFunction.Sum(component1, component2);
             var parameterConfigurations1 = _problem.ParameterConfigurations.WithSuffix("1").Build();
             var parameterConfigurations2 = _problem.ParameterConfigurations.WithSuffix("2").Build();
-            // A minimum tolerance is used to prevent premature termination (when using the fast strategy).
-            var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
+            var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
             
             var component1Result = MinimizeAndRefineErrors(component1, parameterConfigurations1, minimizerConfiguration);
             var component2Result = MinimizeAndRefineErrors(component2, parameterConfigurations2, minimizerConfiguration);

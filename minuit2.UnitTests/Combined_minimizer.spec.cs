@@ -20,8 +20,7 @@ public class The_combined_minimizer() : Any_parameter_uncertainty_resolving_mini
         ConfiguredProblem problem, 
         Strategy strategy)
     {
-        // A minimal tolerance is used to enforce maximum accuracy (prevent early termination). 
-        var minimizerConfiguration = new MinimizerConfiguration(strategy, Tolerance: 0);
+        var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
 
         var result = CombinedMinimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
         var migradResult = Minimizer.Migrad.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
