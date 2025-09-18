@@ -20,6 +20,7 @@
     <Import Project="../Build.targets"/>
 
     <ItemGroup>
+        <PackageReference Include="Castle.Core" Version="5.2.1" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
         <None Include="../README.md" Pack="true" PackagePath=""/>
         <None Include="../LICENSE" Pack="true" PackagePath=""/>
