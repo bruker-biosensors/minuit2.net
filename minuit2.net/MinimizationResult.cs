@@ -32,7 +32,7 @@ internal class MinimizationResult : IMinimizationResult
     public IReadOnlyCollection<string> Parameters { get; }
     public IReadOnlyCollection<string> Variables { get; }
     public IReadOnlyCollection<double> ParameterValues { get; }
-    public double[,] ParameterCovarianceMatrix { get; }
+    public double[,]? ParameterCovarianceMatrix { get; }
 
     // The result is considered valid if the minimizer did not run into any troubles. Reasons for an invalid result are: 
     // - the number of allowed function calls has been exhausted
@@ -45,9 +45,11 @@ internal class MinimizationResult : IMinimizationResult
     public MinimizationExitCondition ExitCondition { get; }
     public IReadOnlyCollection<double>? IssueParameterValues { get; }
 
-    private static double[,] CovarianceMatrixFrom(MnUserParameterState state)
+    private static double[,]? CovarianceMatrixFrom(MnUserParameterState state)
     {
-        var covariancesOfVariables = state.Covariance().Data();  // can be empty (when covariance calculation fails)
+        var covariancesOfVariables = state.Covariance().Data();
+        if (covariancesOfVariables.IsEmpty) return null;
+        
         var numberOfVariables = (int)state.VariableParameters();
         var indexMap = Enumerable.Range(0, numberOfVariables)
             .ToDictionary(state.ParameterIndexOf, variableIndex => variableIndex);
@@ -61,8 +63,8 @@ internal class MinimizationResult : IMinimizationResult
             {
                 if (!indexMap.TryGetValue(j, out var columnVariableIndex)) continue;
                 var flatIndex = FlatIndex(rowVariableIndex, columnVariableIndex);
-                covarianceMatrix[i, j] = covariancesOfVariables.ElementAtOrDefault(flatIndex, double.NaN);
-                covarianceMatrix[j, i] = covariancesOfVariables.ElementAtOrDefault(flatIndex, double.NaN);
+                covarianceMatrix[i, j] = covariancesOfVariables[flatIndex];
+                covarianceMatrix[j, i] = covariancesOfVariables[flatIndex];
             }
         }
 

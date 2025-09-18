@@ -2,8 +2,10 @@ namespace minuit2.UnitTests.TestUtilities;
 
 internal static class ParameterCovarianceMatrixExtensions
 {
-    public static double[,] MultipliedBy(this double[,] matrix, double factor)
+    public static double[,]? MultipliedBy(this double[,]? matrix, double factor)
     {
+        if (matrix is null) return null;
+        
         var rows = matrix.Rows();
         var columns = matrix.Columns();
         var scaledMatrix = new double[rows, columns];
@@ -15,8 +17,10 @@ internal static class ParameterCovarianceMatrixExtensions
         return scaledMatrix;
     }
 
-    public static double[,] BlockConcat(this double[,] matrix, double[,] otherMatrix)
+    public static double[,]? BlockConcat(this double[,]? matrix, double[,]? otherMatrix)
     {
+        if (matrix is null || otherMatrix is null) return null;
+        
         var combinedMatrix = new double[
             matrix.Rows() + otherMatrix.Rows(),
             matrix.Columns() + otherMatrix.Columns()];
@@ -32,7 +36,7 @@ internal static class ParameterCovarianceMatrixExtensions
 
         return combinedMatrix;
     }
-    
+
     private static int Rows(this double[,] matrix) => matrix.GetLength(0);
     
     private static int Columns(this double[,] matrix) => matrix.GetLength(1);

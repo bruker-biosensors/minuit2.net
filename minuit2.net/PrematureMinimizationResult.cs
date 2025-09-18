@@ -16,7 +16,7 @@ internal class PrematureMinimizationResult : IMinimizationResult
         Parameters = costFunction.Parameters.ToArray();
         Variables = initialState.ExtractVariablesFrom(Parameters);
         ParameterValues = parameterValues;
-        ParameterCovarianceMatrix = new double[,] { };
+        ParameterCovarianceMatrix = null;
         
         // Meta information
         IsValid = false;
@@ -30,7 +30,7 @@ internal class PrematureMinimizationResult : IMinimizationResult
     public IReadOnlyCollection<string> Parameters { get; }
     public IReadOnlyCollection<string> Variables { get; }
     public IReadOnlyCollection<double> ParameterValues { get; }
-    public double[,] ParameterCovarianceMatrix { get; }
+    public double[,]? ParameterCovarianceMatrix { get; }
     public bool IsValid { get; }
     public int NumberOfVariables { get; }
     public int NumberOfFunctionCalls { get; }

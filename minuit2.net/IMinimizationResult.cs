@@ -6,7 +6,7 @@ public interface IMinimizationResult
     IReadOnlyCollection<string> Parameters { get; }
     IReadOnlyCollection<string> Variables { get; }
     IReadOnlyCollection<double> ParameterValues { get; }
-    double[,] ParameterCovarianceMatrix { get; }
+    double[,]? ParameterCovarianceMatrix { get; }
     bool IsValid { get; }
     int NumberOfVariables { get; }
     int NumberOfFunctionCalls { get; }

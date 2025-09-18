@@ -13,24 +13,26 @@ internal static class ObjectAssertionExtensions
     
     public static AndConstraint<ObjectAssertions> BeApproximately(
         this ObjectAssertions parent, 
-        double[,] expectation, 
+        double[,]? expectation, 
         [StringSyntax("CompositeFormat")] string because = "", 
         params object[] becauseArgs)
     {
         return parent.BeApproximately(expectation, DefaultRelativeDoubleTolerance, because, becauseArgs);
     }
-    
+
     public static AndConstraint<ObjectAssertions> BeApproximately(
-        this ObjectAssertions parent, 
-        double[,] expectation, 
+        this ObjectAssertions parent,
+        double[,]? expectation,
         double relativeTolerance,
-        [StringSyntax("CompositeFormat")] string because = "", 
+        [StringSyntax("CompositeFormat")] string because = "",
         params object[] becauseArgs)
     {
-        return parent.BeEquivalentTo(
-            expectation, 
-            options => options.WithRelativeDoubleTolerance(relativeTolerance), 
-            because,
-            becauseArgs);
+        return expectation is null
+            ? parent.BeNull()
+            : parent.BeEquivalentTo(
+                expectation,
+                options => options.WithRelativeDoubleTolerance(relativeTolerance),
+                because,
+                becauseArgs);
     }
 }

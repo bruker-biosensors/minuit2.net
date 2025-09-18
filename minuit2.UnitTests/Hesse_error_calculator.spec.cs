@@ -34,7 +34,7 @@ public class The_hesse_error_calculator
         }
 
         [Test]
-        public void when_the_process_is_cancelled_yields_an_invalid_result_with_manually_stopped_exit_condition_representing_the_last_state_of_the_process()
+        public void when_the_process_is_cancelled_yields_an_invalid_result_with_manually_stopped_exit_condition_and_undefined_covariances_representing_the_last_state_of_the_process()
         {
             var cts = new CancellationTokenSource();
             const int numberOfFunctionCallsBeforeCancellation = 10;
@@ -46,16 +46,17 @@ public class The_hesse_error_calculator
             {
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
-                x.NumberOfFunctionCalls.Should().Be(numberOfFunctionCallsBeforeCancellation + _minimizationResult.NumberOfFunctionCalls);
-                x.CostValue.Should().Be(cost.ValueFor(x.ParameterValues));
                 x.IssueParameterValues.Should().BeNull();
+                x.ParameterCovarianceMatrix.Should().BeNull();
+                x.NumberOfFunctionCalls.Should().Be(numberOfFunctionCallsBeforeCancellation + _minimizationResult.NumberOfFunctionCalls);
+                x.CostValue.Should().BeFinite().And.Be(cost.ValueFor(x.ParameterValues));
             });
         }
 
         [TestCase(double.NaN)]
         [TestCase(double.NegativeInfinity)]
         [TestCase(double.PositiveInfinity)]
-        public void when_the_cost_function_returns_a_non_finite_value_during_the_process_yields_an_invalid_result_with_non_finite_value_exit_condition(
+        public void when_the_cost_function_returns_a_non_finite_value_during_the_process_yields_an_invalid_result_with_non_finite_value_exit_condition_and_undefined_covariances(
             double nonFiniteValue)
         {
             const int numberOfValidFunctionCalls = 5;
@@ -67,8 +68,9 @@ public class The_hesse_error_calculator
             {
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
-                x.NumberOfFunctionCalls.Should().Be(numberOfValidFunctionCalls + _minimizationResult.NumberOfFunctionCalls);
                 x.IssueParameterValues.Should().NotBeNull();
+                x.ParameterCovarianceMatrix.Should().BeNull();
+                x.NumberOfFunctionCalls.Should().Be(numberOfValidFunctionCalls + _minimizationResult.NumberOfFunctionCalls);
             });
         }
 

@@ -37,11 +37,11 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         Strategy strategy)
     { 
         var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
-        
+
         result.ParameterValues.Select((value, index) => (value, index)).Should().AllSatisfy(p =>
         {
             var optimumValue = problem.OptimumParameterValues.ElementAt(p.index);
-            var tolerance = 3 * Math.Sqrt(result.ParameterCovarianceMatrix[p.index, p.index]);
+            var tolerance = 3 * Math.Sqrt(result.ParameterCovarianceMatrix?[p.index, p.index] ?? double.NaN);
             p.value.Should().BeApproximately(optimumValue, tolerance);
         });
     }
@@ -57,6 +57,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
         
         result.ParameterCovarianceMatrix.Should()
+            .NotBeNull().And
             .BeApproximately(referenceResult.ParameterCovarianceMatrix.MultipliedBy(cost.ErrorDefinition));
     }
     
@@ -73,7 +74,9 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         var componentResult = _minimizer.Minimize(component, parameterConfigurations, minimizerConfiguration);
         var sumResult = _minimizer.Minimize(sum, parameterConfigurations, minimizerConfiguration);
 
-        sumResult.ParameterCovarianceMatrix.Should().BeApproximately(componentResult.ParameterCovarianceMatrix);
+        sumResult.ParameterCovarianceMatrix.Should()
+            .NotBeNull().And
+            .BeApproximately(componentResult.ParameterCovarianceMatrix);
     }
 
     [Test]
@@ -100,6 +103,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         var sumResult = _minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
         sumResult.ParameterCovarianceMatrix.Should()
+            .NotBeNull().And
             .BeApproximately(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix));
     }
     
@@ -119,6 +123,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         var sumResult = MinimizeAndRefineErrors(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
 
         sumResult.ParameterCovarianceMatrix.Should()
+            .NotBeNull().And
             .BeApproximately(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix));
     }
     
@@ -134,7 +139,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
     [TestCase(double.NaN)]
     [TestCase(double.NegativeInfinity)]
     [TestCase(double.PositiveInfinity)]
-    public void when_the_cost_function_gradient_returns_non_finite_values_during_a_minimization_process_yields_an_invalid_result_with_non_finite_gradient_exit_condition(
+    public void when_the_cost_function_gradient_returns_non_finite_values_during_a_minimization_process_yields_an_invalid_result_with_non_finite_gradient_exit_condition_and_undefined_covariances(
         double nonFiniteValue)
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
@@ -148,6 +153,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteGradient);
             x.IssueParameterValues.Should().NotBeNull();
+            x.ParameterCovarianceMatrix.Should().BeNull();
         });
     }
     

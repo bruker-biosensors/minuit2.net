@@ -206,7 +206,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                      "negative value a bell curve's variance, causing a NaN in the cost value. " +
                      "The issue can be avoided by enforcing a lower bound of zero. If omitted, we still handle it " +
                      "gracefully: return the last valid state and provide clear exit details.")]
-        public void leaving_the_valid_parameter_space_during_the_minimization_process_yields_an_invalid_result_with_non_finite_value_exit_condition()
+        public void leaving_the_valid_parameter_space_during_the_minimization_process_yields_an_invalid_result_with_non_finite_value_exit_condition_and_undefined_covariances_representing_the_last_valid_state_of_the_process()
         {
             var problem = new BellCurveLeastSquaresProblem();
             var cost = problem.Cost.Build();
@@ -221,6 +221,10 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             {
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(NonFiniteValue);
+                x.IssueParameterValues.Should()
+                    .NotBeNull().And
+                    .Fulfill(p => cost.ValueFor(p).Should().NotBeFinite());
+                x.ParameterCovarianceMatrix.Should().BeNull();
                 x.NumberOfFunctionCalls.Should().BeGreaterThan(0);
             
                 var computedCostValue = cost.ValueFor(x.ParameterValues);
@@ -229,10 +233,6 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                     .BeFinite().And
                     .BeLessThanOrEqualTo(initialCostValue).And
                     .Be(computedCostValue);
-
-                x.IssueParameterValues.Should()
-                    .NotBeNull().And
-                    .Fulfill(p => cost.ValueFor(p).Should().NotBeFinite());
             });
         }
     }
