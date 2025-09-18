@@ -33,7 +33,7 @@ internal static class CostFunctionExtensions
         Func<IList<double>, double> valueOverride, 
         int numberOfFunctionCallsBeforeReturningOverride = 10)
     {
-        return new CostFunctionReturningOverrides(
+        return new CostFunctionWithOverrides(
             costFunction, 
             valueOverride, 
             null, 
@@ -45,7 +45,7 @@ internal static class CostFunctionExtensions
         Func<IList<double>, IList<double>> gradientOverride, 
         int numberOfFunctionCallsBeforeReturningOverride = 10)
     {
-        return new CostFunctionReturningOverrides(
+        return new CostFunctionWithOverrides(
             costFunction, 
             null, 
             gradientOverride, 
@@ -76,7 +76,7 @@ internal class CostFunctionWithAutoCancellation(
     public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
 }
 
-internal class CostFunctionReturningOverrides(
+internal class CostFunctionWithOverrides(
     ICostFunction wrapped, 
     Func<IList<double>, double>? valueOverride,
     Func<IList<double>, IList<double>>? gradientOverride,
