@@ -175,19 +175,29 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     }
     
     [Test]
-    public async Task when_cancelled_during_a_minimization_process_yields_a_result_with_manually_stopped_exit_condition()
+    public void when_cancelled_during_a_minimization_process_yields_an_invalid_result_with_manually_stopped_exit_condition_representing_the_last_state_of_the_minimization()
     {
-        var resetEvent = new ManualResetEvent(false);
-        var cost = _defaultProblem.Cost.Build().ListeningToResetEvent(resetEvent);
-        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
-        
         var cts = new CancellationTokenSource();
-        var task = Task.Run(() => minimizer.Minimize(cost, parameterConfigurations, cancellationToken: cts.Token), CancellationToken.None);
-        await cts.CancelAsync();
-        resetEvent.Set();
-        var result = await task;
-        
-        result.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
+        const int numberOfFunctionCallsBeforeCancellation = 10;
+        var cost = _defaultProblem.Cost.Build().WithAutoCancellation(cts, numberOfFunctionCallsBeforeCancellation);
+        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
+
+        var result = minimizer.Minimize(cost, parameterConfigurations, cancellationToken: cts.Token);
+
+        result.ShouldFulfill(x =>
+        {
+            x.IsValid.Should().BeFalse();
+            x.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
+            x.NumberOfFunctionCalls.Should().Be(numberOfFunctionCallsBeforeCancellation);
+            
+            var computedCostValue = cost.ValueFor(x.ParameterValues);
+            var initialCostValue = cost.ValueFor(parameterConfigurations);
+            x.CostValue.Should()
+                .BeLessThanOrEqualTo(initialCostValue).And
+                .Be(computedCostValue);
+            
+            x.IssueParameterValues.Should().BeNull();
+        });
     }
     
     [Test]

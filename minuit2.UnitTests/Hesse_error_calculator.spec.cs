@@ -34,18 +34,22 @@ public class The_hesse_error_calculator
         }
 
         [Test]
-        public async Task when_the_process_is_cancelled_yields_a_result_with_manually_stopped_exit_condition()
+        public void when_the_process_is_cancelled_yields_an_invalid_result_with_manually_stopped_exit_condition_representing_the_last_state_of_the_process()
         {
-            var resetEvent = new ManualResetEvent(false);
-            var cost = _costFunction.ListeningToResetEvent(resetEvent);
-            
             var cts = new CancellationTokenSource();
-            var task = Task.Run(() => HesseErrorCalculator.Refine(_minimizationResult, cost, cancellationToken: cts.Token), CancellationToken.None);
-            await cts.CancelAsync();
-            resetEvent.Set();
-            var result = await task;
-            
-            result.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
+            const int numberOfFunctionCallsBeforeCancellation = 10;
+            var cost = _costFunction.WithAutoCancellation(cts, numberOfFunctionCallsBeforeCancellation);
+
+            var result = HesseErrorCalculator.Refine(_minimizationResult, cost, cancellationToken: cts.Token);
+
+            result.ShouldFulfill(x =>
+            {
+                x.IsValid.Should().BeFalse();
+                x.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
+                x.NumberOfFunctionCalls.Should().Be(numberOfFunctionCallsBeforeCancellation + _minimizationResult.NumberOfFunctionCalls);
+                x.CostValue.Should().Be(cost.ValueFor(x.ParameterValues));
+                x.IssueParameterValues.Should().BeNull();
+            });
         }
 
         [TestCase(double.NaN)]
