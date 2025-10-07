@@ -30,15 +30,17 @@ public class ParameterConfiguration
     
     private void ThrowIfValueViolatesLimits()
     {
-        var valueMustBe = $"Value of '{Name}' ({Value}) must be";
+        var valueMustBe = $"The value ({Value}) must be";
 
         if (LowerLimit is { } lower && lower >= Value)
-            throw new ArgumentException($"{valueMustBe} greater than its lower limit ({lower}), but " +
-                                        (Value < lower ? "it is smaller." : "both are equal."));
+            throw new ParameterConfigurationException(Name,
+                $"{valueMustBe} greater than the lower limit ({lower}), but " +
+                (Value < lower ? "it is smaller." : "both are equal."));
         
         if (UpperLimit is { } upper && upper <= Value)
-            throw new ArgumentException($"{valueMustBe} smaller than its upper limit ({upper}), but " +
-                                        (Value > upper ? "it is greater." : "both are equal."));
+            throw new ParameterConfigurationException(Name, 
+                $"{valueMustBe} smaller than the upper limit ({upper}), but " + 
+                (Value > upper ? "it is greater." : "both are equal."));
     }
     
     private void ThrowIfValueProjectionIsNumericallyUnstable()
@@ -59,9 +61,9 @@ public class ParameterConfiguration
             var internalValue = InternalValueFor(value, LowerLimit, UpperLimit);
             var roundTripValue = ExternalValueFor(internalValue, LowerLimit, UpperLimit);
             if (Math.Abs((value - roundTripValue) / value) > relativeProjectionRoundtripBiasTolerance)
-                throw new ArgumentException($"Parameter '{Name}': The combination of value ({Value}) and limits " +
-                                            $"({LowerLimit}, {UpperLimit}) leads to numerical instability in the " +
-                                            $"internal parameter projection. Reduce the limits relative to the value.");
+                throw new ParameterConfigurationException(Name,
+                    $"The combination of value ({Value}) and limits ({LowerLimit}, {UpperLimit}) leads to numerical " +
+                    $"instability in the internal parameter projection. Reduce the limits relative to the value.");
         }
     }
     
