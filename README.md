@@ -91,7 +91,7 @@ The following basic example shows how to fit a sine model to observed data:
 
 ```csharp
 // Define the cost function
-var cost = new LeastSquares(
+var cost = CostFunction.LeastSquares( 
     x: ...,
     y: ...,
     parameters: ["amp", "freq", "offset"],
@@ -105,6 +105,9 @@ var parameterConfigurations = new[]
     ParameterConfiguration.Fixed("offset", 1)
 };
 
+// Specify the minimizer
+var minimizer = Minimizer.Migrad;
+
 // Minimize the cost function for the given configuration
-var minimum = MigradMinimizer.Minimize(cost, parameterConfigurations);
+var minimum = minimizer.Minimize(cost, parameterConfigurations);
 ```
