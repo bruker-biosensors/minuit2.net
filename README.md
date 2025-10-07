@@ -75,7 +75,10 @@ The build process is automated through MSBuild targets and will:
 
 ### Platform Configuration
 
-**Important**: You must specify a platform target (x64, x86, ARM64). AnyCPU will default to the x64 version of the C++ dll.
+**Important**: You must specify a platform target (x64, x86 or ARM64). AnyCPU will default to the x64 version of the C++ dll.
+
+> [!NOTE] This applies only to local builds. When the library is installed via NuGet, the appropriate platform target 
+> is automatically resolved based on the consuming project's configuration.
 
 ## Dependencies
 
