@@ -111,24 +111,6 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         resultForInfiniteLimits.Should().BeEquivalentTo(resultForUnlimited);
     }
-    
-    [TestCase(-1E15, 1E15)]
-    [TestCase(null, 1E15)]
-    [TestCase(-1E15, null)]
-    [Description("In the presence of parameter limits, parameter values are projected to internal values for the " +
-                 "minimization (see Minuit docs). This projection runs into numeric problems when one or both limits " +
-                 "become very large compared to the value. In such a case, we expect the result to be invalid.")]
-    public void when_minimizing_a_cost_function_for_extreme_parameter_limits_causing_numerical_issues_in_the_internal_parameter_projection_yields_an_invalid_result(
-        double? lowerLimit, 
-        double? upperLimit)
-    {
-        var cost = _defaultProblem.Cost.Build();
-        var parameterConfigurations = _defaultProblem.ParameterConfigurations.WithLimits(lowerLimit, upperLimit).Build();
-        
-        var result = minimizer.Minimize(cost, parameterConfigurations);
-        
-        result.IsValid.Should().BeFalse();
-    }
 
     [Test]
     [Description("Ensures that the minimum cost value is independent of the error definition. This holds only if the " +

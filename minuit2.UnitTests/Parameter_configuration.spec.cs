@@ -91,6 +91,26 @@ public class A_parameter_configuration
             Action action = () => _ = TestVariable(value, lowerLimit, upperLimit);
             action.Should().Throw<ArgumentException>();
         }
+        
+        [TestCase(1, -1E15, 1E15)]
+        [TestCase(1, null, 1E15)]
+        [TestCase(1, -1E15, null)]
+        [TestCase(0, -1E15, 1E15)]
+        [TestCase(0, null, 1E15)]
+        [TestCase(0, -1E15, null)]
+        [Description("In the presence of parameter limits, parameter values are projected to internal values for the " +
+                     "minimization (see Minuit documentation). This projection runs into numeric issues when one or " +
+                     "both limits become very large compared to the value. In this case, the minimization terminates " +
+                     "prematurely with an undefined exit condition. To avoid this, we proactively check for " +
+                     "projection-related issues during parameter configuration.")]
+        public void with_extreme_parameter_limits_causing_numerical_issues_in_the_internal_parameter_projection_throws_an_exception(        
+            double value,
+            double? lowerLimit, 
+            double? upperLimit)
+        {
+            Action action = () => _ = TestVariable(value, lowerLimit, upperLimit);
+            action.Should().Throw<ArgumentException>();
+        }
     }
 
     public class When_constructed_as_a_constant
