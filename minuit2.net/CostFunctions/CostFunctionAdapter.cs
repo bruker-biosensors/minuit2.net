@@ -1,4 +1,6 @@
-﻿namespace minuit2.net.CostFunctions;
+﻿using minuit2.net.Exceptions;
+
+namespace minuit2.net.CostFunctions;
 
 internal sealed class CostFunctionAdapter(ICostFunction function, CancellationToken cancellationToken)
     : FCNWrap, ICostFunctionMonitor

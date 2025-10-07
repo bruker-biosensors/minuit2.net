@@ -1,4 +1,6 @@
-﻿namespace minuit2.net;
+﻿using minuit2.net.Exceptions;
+
+namespace minuit2.net;
 
 public class ParameterConfiguration
 {

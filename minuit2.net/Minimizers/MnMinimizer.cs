@@ -1,4 +1,5 @@
 using minuit2.net.CostFunctions;
+using minuit2.net.Exceptions;
 using static minuit2.net.ParameterMappingGuard;
 
 namespace minuit2.net.Minimizers;
