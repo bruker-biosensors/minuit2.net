@@ -80,7 +80,7 @@ jobs:
             -p:FileVersion=${{ needs.determine-version.outputs.assembly-sem-file-ver }} `
             -p:AssemblyVersion=${{ needs.determine-version.outputs.assembly-sem-ver }} `
             -p:AssemblyInformationalVersion=${{ needs.determine-version.outputs.assembly-informational-version }} `
-            -p:ID=${{ matrix.package.PACKAGE_NAME }}
+            -p:ID=${{ matrix.package.PACKAGE_NAME }} `
             --disable-build-servers `
             --configuration Release `
             --output ./bin `
