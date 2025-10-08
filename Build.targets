@@ -77,7 +77,7 @@
       <CmakeArchitecture Condition="'$(Platform)' == 'ARM64'">ARM64</CmakeArchitecture>
       <CmakeArchitecture Condition="'$(Platform)' == 'AnyCPU'">x64</CmakeArchitecture>
       <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(CmakeArchitecture)</CmakeBuildDir>
-      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputDir) -DROOT_PATH=$(RootGitPath) -DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeBuildCommand>
+      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputDir) -DROOT_PATH=$(RootGitPath) -DSWIG_EXECUTABLE=$(SwigExecutable) -Dminuit2_omp=FALSE</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
