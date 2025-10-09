@@ -8,7 +8,6 @@ namespace minuit2.UnitTests;
 public class A_cost_function
 {
     [Test, Description("Ensures correct parameter-configuration-to-cost-function-parameter mapping.")]
-    [Ignore("Test failes after enabling openmp")]
     public void when_minimized_yields_the_same_result_independent_of_the_order_parameter_configurations_are_provided_in()
     {
         var cost = CubicPolynomial.LeastSquaresCost.Build();

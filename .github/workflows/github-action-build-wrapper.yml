@@ -1,5 +1,5 @@
 env:
-  use-openmp: ON
+  use-openmp: OFF
 
 name: Build ROOT::Minuit2 C# Wrapper
 run-name: ${{ github.actor }} is creating a new wrapper 🚀
