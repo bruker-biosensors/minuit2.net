@@ -20,7 +20,7 @@ internal class PrematureMinimizationResult : IMinimizationResult
         IsValid = false;
         NumberOfVariables = Variables.Count;
         NumberOfFunctionCalls = null;
-        ExitCondition = ExitConditionFor(exit);
+        ExitCondition = exit.ExitCondition;
     }
     
     public double CostValue { get; }
@@ -37,12 +37,4 @@ internal class PrematureMinimizationResult : IMinimizationResult
         costFunction is ICompositeCostFunction compositeCostFunction
             ? compositeCostFunction.CompositeValueFor(parameterValues)
             : costFunction.ValueFor(parameterValues);
-    
-    private static MinimizationExitCondition ExitConditionFor(IPrematureMinimizationExit exit) => exit switch
-    {
-        MinimizationCancelledException => MinimizationExitCondition.ManuallyStopped,
-        NonFiniteCostValueException => MinimizationExitCondition.NonFiniteValue,
-        NonFiniteCostGradientException => MinimizationExitCondition.NonFiniteGradient,
-        _ => throw new ArgumentOutOfRangeException(nameof(exit), $"No exit condition defined for {exit.GetType().FullName}")
-    };
 }
