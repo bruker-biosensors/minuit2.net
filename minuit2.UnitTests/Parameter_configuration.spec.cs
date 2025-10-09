@@ -1,6 +1,5 @@
 using AwesomeAssertions;
 using minuit2.net;
-using minuit2.net.Exceptions;
 using minuit2.UnitTests.TestUtilities;
 
 namespace minuit2.UnitTests;
@@ -74,7 +73,7 @@ public class A_parameter_configuration
             double value, double lowerLimit, double? upperLimit)
         {
             Action action = () => _ = TestVariable(value, lowerLimit, upperLimit);
-            action.Should().Throw<ParameterConfigurationException>();
+            action.Should().Throw<ArgumentException>();
         }
 
         private static IEnumerable<TestCaseData> InvalidUpperLimitTestCases()
@@ -90,7 +89,7 @@ public class A_parameter_configuration
             double value, double? lowerLimit, double upperLimit)
         {
             Action action = () => _ = TestVariable(value, lowerLimit, upperLimit);
-            action.Should().Throw<ParameterConfigurationException>();
+            action.Should().Throw<ArgumentException>();
         }
     }
 

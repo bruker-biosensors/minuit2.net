@@ -1,6 +1,4 @@
-﻿using minuit2.net.Exceptions;
-
-namespace minuit2.net;
+﻿namespace minuit2.net;
 
 public class ParameterConfiguration
 {
@@ -31,16 +29,14 @@ public class ParameterConfiguration
     
     private void ThrowIfValueViolatesLimits()
     {
-        var valueMustBe = $"The value ({Value}) must be";
+        var valueMustBe = $"Value of parameter '{Name}' ({Value}) must be";
 
         if (LowerLimit is { } lower && lower >= Value)
-            throw new ParameterConfigurationException(Name,
-                $"{valueMustBe} greater than the lower limit ({lower}), but " +
-                (Value < lower ? "it is smaller." : "both are equal."));
+            throw new ArgumentException($"{valueMustBe} greater than its lower limit ({lower}), but " +
+                                        (Value < lower ? "it is smaller." : "both are equal."));
         
         if (UpperLimit is { } upper && upper <= Value)
-            throw new ParameterConfigurationException(Name, 
-                $"{valueMustBe} smaller than the upper limit ({upper}), but " + 
-                (Value > upper ? "it is greater." : "both are equal."));
+            throw new ArgumentException($"{valueMustBe} smaller than its upper limit ({upper}), but " + 
+                                        (Value > upper ? "it is greater." : "both are equal."));
     }
 }
