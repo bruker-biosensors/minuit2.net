@@ -25,7 +25,7 @@ internal class QuadraticPolynomialLeastSquaresProblem : ConfigurableLeastSquares
     
     // Since the model is linear in its coefficients, the optimal parameter values are fully determined by the
     // closed-form solution of a linear regression (here, rounded to 2-digit precision)
-    public override IReadOnlyCollection<double> OptimumParameterValues { get; } = [10, -5, 0.5];
+    protected override IReadOnlyCollection<double> OptimumParameterValues { get; } = [10, -5, 0.5];
     
     protected override IReadOnlyCollection<double> DefaultInitialParameterValues { get; } = [10.9, -6.06, 0.58];
 }

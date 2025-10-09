@@ -15,7 +15,7 @@ internal abstract class ConfigurableLeastSquaresProblem
     protected abstract IReadOnlyCollection<double> YValues { get; }
     protected abstract double YError { get; }
 
-    public abstract IReadOnlyCollection<double> OptimumParameterValues { get; }
+    protected abstract IReadOnlyCollection<double> OptimumParameterValues { get; }
     protected abstract IReadOnlyCollection<double> DefaultInitialParameterValues { get; }
     
     public LeastSquaresCostBuilder Cost => new(XValues, YValues, YError, Model, ModelGradient, ParameterNames);

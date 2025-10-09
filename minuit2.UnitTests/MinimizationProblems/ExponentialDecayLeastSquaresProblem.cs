@@ -31,7 +31,7 @@ internal class ExponentialDecayLeastSquaresProblem : ConfigurableLeastSquaresPro
 
     // Since the standard deviation of the noise overlying the data is chosen small enough, the optimal parameter
     // values are approximately equal to the values used to generate the data
-    public override IReadOnlyCollection<double> OptimumParameterValues { get; } = [3, 2, 1];
+    protected override IReadOnlyCollection<double> OptimumParameterValues { get; } = [3, 2, 1];
 
     protected override IReadOnlyCollection<double> DefaultInitialParameterValues { get; } = [2, 1, 0];
 }

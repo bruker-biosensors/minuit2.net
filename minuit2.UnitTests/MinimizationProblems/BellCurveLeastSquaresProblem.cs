@@ -39,7 +39,7 @@ internal class BellCurveLeastSquaresProblem : ConfigurableLeastSquaresProblem
 
     // Since the standard deviation of the noise overlying the data is chosen small enough, the optimal parameter
     // values are approximately equal to the values used to generate the data
-    public override IReadOnlyCollection<double> OptimumParameterValues { get; } = [5, 2];
+    protected override IReadOnlyCollection<double> OptimumParameterValues { get; } = [5, 2];
 
     protected override IReadOnlyCollection<double> DefaultInitialParameterValues { get; } = [4, 3];
 }
