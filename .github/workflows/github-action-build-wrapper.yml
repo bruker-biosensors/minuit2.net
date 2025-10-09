@@ -1,3 +1,6 @@
+env:
+  use-openmp: ON
+
 name: Build ROOT::Minuit2 C# Wrapper
 run-name: ${{ github.actor }} is creating a new wrapper 🚀
 
@@ -38,13 +41,6 @@ jobs:
     name: Build Project
     needs: determine-version
     runs-on: windows-latest
-    strategy:
-      matrix:
-        package:
-          - OMP: ON
-            PACKAGE_NAME: minuit2.net.mp
-          - OMP: OFF
-            PACKAGE_NAME: minuit2.net
 
     permissions:
       packages: write
@@ -58,22 +54,18 @@ jobs:
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: |
-            8.0.x
-            6.0.x
 
       - name: Build x86 library
-        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x86 -p:UseOpenMP=${{ matrix.package.OMP }}
+        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x86 -p:UseOpenMP=${{ use-openmp }}
 
       - name: Build x64 library
-        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x64 -p:UseOpenMP=${{ matrix.package.OMP }}
+        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x64 -p:UseOpenMP=${{ use-openmp }}
 
       - name: Build ARM64 library
-        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=ARM64 -p:UseOpenMP=${{ matrix.package.OMP }}
+        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=ARM64 -p:UseOpenMP=${{ use-openmp }}
 
       - name: Test
-        run: dotnet test ./minuit2.net/ --configuration Release
+        run: dotnet test ./minuit2.net/ --configuration Release  -p:UseOpenMP=${{ use-openmp }}
 
       - name: Build NuGet Package
         shell: pwsh
@@ -84,7 +76,6 @@ jobs:
             -p:FileVersion=${{ needs.determine-version.outputs.assembly-sem-file-ver }} `
             -p:AssemblyVersion=${{ needs.determine-version.outputs.assembly-sem-ver }} `
             -p:AssemblyInformationalVersion=${{ needs.determine-version.outputs.assembly-informational-version }} `
-            -p:ID=${{ matrix.package.PACKAGE_NAME }} `
             --disable-build-servers `
             --configuration Release `
             --output ./bin `
@@ -96,7 +87,7 @@ jobs:
         if: github.ref_type != 'tag'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.package.PACKAGE_NAME }}
+          name: library
           path: ./bin/
           if-no-files-found: error
 
@@ -108,7 +99,7 @@ jobs:
           prerelease: ${{ needs.determine-version.outputs.pre-release-label != '' }}
 
       - name: Install dotnet-validate
-        run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.304
+        run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.537
 
       - name: Validate NuGet package
         run: dotnet-validate package local **/bin/minuit2.net.*.nupkg
