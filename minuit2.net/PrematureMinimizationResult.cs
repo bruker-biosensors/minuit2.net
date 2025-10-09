@@ -1,26 +1,26 @@
 using minuit2.net.CostFunctions;
+using minuit2.net.Exceptions;
 
 namespace minuit2.net;
 
 internal class PrematureMinimizationResult : IMinimizationResult
 {
     public PrematureMinimizationResult(
-        MinimizationExitCondition exitCondition,
-        ICostFunction costFunction,
-        MnUserParameterState parameterState, 
-        IReadOnlyCollection<double> lastParameterValues)
+        IPrematureMinimizationExit exit, 
+        ICostFunction costFunction, 
+        MnUserParameterState parameterState)
     {
-        CostValue = CostValueFrom(costFunction, lastParameterValues.ToArray());
+        CostValue = CostValueFrom(costFunction, exit.LastParameterValues.ToArray());
         Parameters = costFunction.Parameters.ToArray();
         Variables = parameterState.ExtractVariablesFrom(Parameters);
-        ParameterValues = lastParameterValues;
+        ParameterValues = exit.LastParameterValues;
         ParameterCovarianceMatrix = null;
         
         // Meta information
         IsValid = false;
         NumberOfVariables = Variables.Count;
         NumberOfFunctionCalls = null;
-        ExitCondition = exitCondition;
+        ExitCondition = ExitConditionFor(exit);
     }
     
     public double CostValue { get; }
@@ -37,4 +37,12 @@ internal class PrematureMinimizationResult : IMinimizationResult
         costFunction is ICompositeCostFunction compositeCostFunction
             ? compositeCostFunction.CompositeValueFor(parameterValues)
             : costFunction.ValueFor(parameterValues);
+    
+    private static MinimizationExitCondition ExitConditionFor(IPrematureMinimizationExit exit) => exit switch
+    {
+        MinimizationCancelledException => MinimizationExitCondition.ManuallyStopped,
+        NonFiniteCostValueException => MinimizationExitCondition.NonFiniteValue,
+        NonFiniteCostGradientException => MinimizationExitCondition.NonFiniteGradient,
+        _ => throw new ArgumentOutOfRangeException(nameof(exit), $"No exit condition defined for {exit.GetType().FullName}")
+    };
 }
