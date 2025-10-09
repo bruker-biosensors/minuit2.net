@@ -181,8 +181,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     public void when_cancelled_during_a_minimization_process_yields_an_invalid_result_with_manually_stopped_exit_condition_and_undefined_covariances_representing_the_last_state_of_the_process()
     {
         var cts = new CancellationTokenSource();
-        const int numberOfFunctionCallsBeforeCancellation = 10;
-        var cost = _defaultProblem.Cost.Build().WithAutoCancellation(cts, numberOfFunctionCallsBeforeCancellation);
+        var cost = _defaultProblem.Cost.Build().WithAutoCancellation(cts, numberOfFunctionCallsBeforeCancellation: 10);
         var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
 
         var result = minimizer.Minimize(cost, parameterConfigurations, cancellationToken: cts.Token);
@@ -191,15 +190,13 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         {
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
-            x.IssueParameterValues.Should().BeNull();
             x.ParameterCovarianceMatrix.Should().BeNull();
-            x.NumberOfFunctionCalls.Should().Be(numberOfFunctionCallsBeforeCancellation);
             
             var computedCostValue = cost.ValueFor(x.ParameterValues);
             var initialCostValue = cost.ValueFor(parameterConfigurations);
             x.CostValue.Should()
-                .BeLessThanOrEqualTo(initialCostValue).And
-                .Be(computedCostValue);
+                .Be(computedCostValue).And
+                .BeLessThanOrEqualTo(initialCostValue);
         });
     }
     
@@ -272,13 +269,12 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     [TestCase(double.NegativeInfinity)]
     [TestCase(double.PositiveInfinity)]
     [Description("Ensures that the result indicates process termination due to an non-finite cost value. The Minuit2 " +
-                 "code silently fails in this case and just returns a minimum corresponding to the last valid state.")]
+                 "code silently fails in this case with an undefined exit condition.")]
     public void when_the_cost_function_returns_a_non_finite_value_during_a_minimization_process_yields_an_invalid_result_with_non_finite_value_exit_condition_and_undefined_covariances(
         double nonFiniteValue)
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
-        const int numberOfValidFunctionCalls = 5;
-        var cost = problem.Cost.Build().WithValueOverride(_ => nonFiniteValue, numberOfValidFunctionCalls);
+        var cost = problem.Cost.Build().WithValueOverride(_ => nonFiniteValue, numberOfFunctionCallsBeforeReturningOverride: 5);
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         
         var result = minimizer.Minimize(cost, parameterConfigurations);
@@ -287,9 +283,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         {
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
-            x.IssueParameterValues.Should().NotBeNull();
             x.ParameterCovarianceMatrix.Should().BeNull();
-            x.NumberOfFunctionCalls.Should().Be(numberOfValidFunctionCalls);
         });
     }
     

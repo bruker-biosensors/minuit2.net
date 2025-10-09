@@ -1,5 +1,6 @@
 using minuit2.net.CostFunctions;
 using minuit2.net.Exceptions;
+using static minuit2.net.MinimizationExitCondition;
 using static minuit2.net.ParameterMappingGuard;
 
 namespace minuit2.net;
@@ -23,24 +24,24 @@ public static class HesseErrorCalculator
         using var hesse = new MnHesseWrap(strategy.AsMnStrategy());
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
         var minimum = minimizationResult.Minimum;
-        var initialState = minimum.UserState();
+        var parameterState = minimum.UserState();
 
         try
         {
             hesse.Update(minimum, cost);
             return new MinimizationResult(minimum, costFunction);
         }
-        catch (NonFiniteCostValueException)
+        catch (NonFiniteCostValueException e)
         {
-            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteValue, costFunction, cost, initialState, result.NumberOfFunctionCalls);
+            return new PrematureMinimizationResult(NonFiniteValue, costFunction, parameterState, e.LastParameterValues);
         }
-        catch (NonFiniteCostGradientException)
+        catch (NonFiniteCostGradientException e)
         {
-            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteGradient, costFunction, cost, initialState, result.NumberOfFunctionCalls);
+            return new PrematureMinimizationResult(NonFiniteGradient, costFunction, parameterState, e.LastParameterValues);
         }
-        catch (OperationCanceledException)
+        catch (MinimizationCancelledException e)
         {
-            return new PrematureMinimizationResult(MinimizationExitCondition.ManuallyStopped, costFunction, cost, initialState, result.NumberOfFunctionCalls);
+            return new PrematureMinimizationResult(ManuallyStopped, costFunction, parameterState, e.LastParameterValues);
         }
     }
 }

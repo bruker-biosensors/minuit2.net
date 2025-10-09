@@ -23,7 +23,6 @@ internal class MinimizationResult : IMinimizationResult
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = minimum.NFcn();
         ExitCondition = ExitConditionFrom(minimum);
-        IssueParameterValues = null;
         Minimum = minimum;
     }
     
@@ -41,9 +40,8 @@ internal class MinimizationResult : IMinimizationResult
     // source: https://root.cern.ch/doc/master/Minuit2Page.html
     public bool IsValid { get; }
     public int NumberOfVariables { get; }
-    public int NumberOfFunctionCalls { get; }
+    public int? NumberOfFunctionCalls { get; }
     public MinimizationExitCondition ExitCondition { get; }
-    public IReadOnlyCollection<double>? IssueParameterValues { get; }
 
     private static double[,]? CovarianceMatrixFrom(MnUserParameterState state)
     {

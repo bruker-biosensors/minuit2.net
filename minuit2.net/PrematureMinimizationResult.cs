@@ -7,23 +7,20 @@ internal class PrematureMinimizationResult : IMinimizationResult
     public PrematureMinimizationResult(
         MinimizationExitCondition exitCondition,
         ICostFunction costFunction,
-        ICostFunctionMonitor costFunctionMonitor,
-        MnUserParameterState initialState, 
-        int numberOfFunctionCallsCarryOver = 0)
+        MnUserParameterState parameterState, 
+        IReadOnlyCollection<double> lastParameterValues)
     {
-        var parameterValues = ParameterValuesFrom(costFunctionMonitor, initialState);
-        CostValue = CostValueFrom(costFunction, parameterValues);
+        CostValue = CostValueFrom(costFunction, lastParameterValues.ToArray());
         Parameters = costFunction.Parameters.ToArray();
-        Variables = initialState.ExtractVariablesFrom(Parameters);
-        ParameterValues = parameterValues;
+        Variables = parameterState.ExtractVariablesFrom(Parameters);
+        ParameterValues = lastParameterValues;
         ParameterCovarianceMatrix = null;
         
         // Meta information
         IsValid = false;
         NumberOfVariables = Variables.Count;
-        NumberOfFunctionCalls = costFunctionMonitor.NumberOfFunctionCalls + numberOfFunctionCallsCarryOver;
+        NumberOfFunctionCalls = null;
         ExitCondition = exitCondition;
-        IssueParameterValues = costFunctionMonitor.IssueParameterValues;
     }
     
     public double CostValue { get; }
@@ -33,14 +30,10 @@ internal class PrematureMinimizationResult : IMinimizationResult
     public double[,]? ParameterCovarianceMatrix { get; }
     public bool IsValid { get; }
     public int NumberOfVariables { get; }
-    public int NumberOfFunctionCalls { get; }
+    public int? NumberOfFunctionCalls { get; }
     public MinimizationExitCondition ExitCondition { get; }
-    public IReadOnlyCollection<double>? IssueParameterValues { get; }
-    
-    private static double[] ParameterValuesFrom(ICostFunctionMonitor monitor, MnUserParameterState initialState) => 
-        monitor.BestParameterValues?.ToArray() ?? initialState.Params().ToArray();
-    
-    private static double CostValueFrom(ICostFunction costFunction, double[] parameterValues) =>
+
+    private static double CostValueFrom(ICostFunction costFunction, IList<double> parameterValues) =>
         costFunction is ICompositeCostFunction compositeCostFunction
             ? compositeCostFunction.CompositeValueFor(parameterValues)
             : costFunction.ValueFor(parameterValues);

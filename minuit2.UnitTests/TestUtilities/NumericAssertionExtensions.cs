@@ -9,7 +9,7 @@ internal static class NumericAssertionExtensions
 {
     internal const double DefaultRelativeDoubleTolerance = 0.001;
     internal const double DefaultMinimumDoubleTolerance = 1E-8;
-    private const uint DefaultIntegerTolerance = 6;
+    private const int DefaultIntegerTolerance = 6;
     
     public static AndConstraint<NumericAssertions<double>> BeApproximately(
         this NumericAssertions<double> parent, 
@@ -43,12 +43,14 @@ internal static class NumericAssertionExtensions
     public static AndConstraint<NumericAssertions<double>> NotBeFinite(this NumericAssertions<double> parent) =>
         parent.BeOneOf(double.NaN, double.PositiveInfinity, double.NegativeInfinity);
 
-    public static AndConstraint<NumericAssertions<int>> BeCloseTo(
-        this NumericAssertions<int> parent,
+    public static AndConstraint<NullableNumericAssertions<int>> BeCloseTo(
+        this NullableNumericAssertions<int> parent,
         int expectedValue,
         [StringSyntax("CompositeFormat")] string because = "",
         params object[] becauseArgs)
     {
-        return parent.BeCloseTo(expectedValue, DefaultIntegerTolerance, because, becauseArgs);
+        var expectedMinimum = expectedValue - DefaultIntegerTolerance;
+        var expectedMaximum = expectedValue + DefaultIntegerTolerance;
+        return parent.BeInRange(expectedMinimum, expectedMaximum, because, becauseArgs);
     }
 }

@@ -9,7 +9,6 @@ public interface IMinimizationResult
     double[,]? ParameterCovarianceMatrix { get; }
     bool IsValid { get; }
     int NumberOfVariables { get; }
-    int NumberOfFunctionCalls { get; }
+    int? NumberOfFunctionCalls { get; }
     MinimizationExitCondition ExitCondition { get; }
-    IReadOnlyCollection<double>? IssueParameterValues { get; }
 }

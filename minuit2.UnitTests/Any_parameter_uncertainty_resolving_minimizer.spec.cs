@@ -27,7 +27,6 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
             x.IsValid.Should().BeTrue();
             x.ExitCondition.Should().Be(MinimizationExitCondition.Converged);
             x.CostValue.Should().BeLessThan(problem.InitialCostValue());
-            x.IssueParameterValues.Should().BeNull();
         });
     }
     
@@ -152,7 +151,6 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
         {
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteGradient);
-            x.IssueParameterValues.Should().NotBeNull();
             x.ParameterCovarianceMatrix.Should().BeNull();
         });
     }

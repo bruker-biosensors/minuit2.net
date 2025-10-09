@@ -1,5 +1,6 @@
 using minuit2.net.CostFunctions;
 using minuit2.net.Exceptions;
+using static minuit2.net.MinimizationExitCondition;
 using static minuit2.net.ParameterMappingGuard;
 
 namespace minuit2.net.Minimizers;
@@ -19,7 +20,7 @@ internal abstract class MnMinimizer : IMinimizer
             "minimization");
 
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
-        using var initialState = parameterConfigurations.ExtractInOrder(costFunction.Parameters).AsState();
+        using var parameterState = parameterConfigurations.ExtractInOrder(costFunction.Parameters).AsState();
         
         minimizerConfiguration ??= new MinimizerConfiguration();
         using var strategy = minimizerConfiguration.Strategy.AsMnStrategy();
@@ -28,20 +29,20 @@ internal abstract class MnMinimizer : IMinimizer
 
         try
         {
-            var minimum = MnMinimize(cost, initialState, strategy, maximumFunctionCalls, tolerance);
+            var minimum = MnMinimize(cost, parameterState, strategy, maximumFunctionCalls, tolerance);
             return new MinimizationResult(minimum, costFunction);
         }
-        catch (NonFiniteCostValueException)
+        catch (NonFiniteCostValueException e)
         {
-            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteValue, costFunction, cost, initialState);
+            return new PrematureMinimizationResult(NonFiniteValue, costFunction, parameterState, e.LastParameterValues);
         }
-        catch (NonFiniteCostGradientException)
+        catch (NonFiniteCostGradientException e)
         {
-            return new PrematureMinimizationResult(MinimizationExitCondition.NonFiniteGradient, costFunction, cost, initialState);
+            return new PrematureMinimizationResult(NonFiniteGradient, costFunction, parameterState, e.LastParameterValues);
         }
-        catch (OperationCanceledException)
+        catch (MinimizationCancelledException e)
         {
-            return new PrematureMinimizationResult(MinimizationExitCondition.ManuallyStopped, costFunction, cost, initialState);
+            return new PrematureMinimizationResult(ManuallyStopped, costFunction, parameterState, e.LastParameterValues);
         }
     }
 
