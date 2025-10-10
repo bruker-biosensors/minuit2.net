@@ -27,8 +27,7 @@ It extends the original library with:
 - Support for cancelling active minimization processes
 
 Unlike the original library, which exposes a stateful and imperative API, Minuit2.NET adopts a functional approach 
-centered on statelessness and referential transparency. Shared mutable state and side effects are avoided to enhance 
-testability, composability, and predictability, aligning with modern .NET functional programming practices.
+centered on statelessness and referential transparency.
 
 ## Project Structure
 
@@ -79,10 +78,8 @@ The build process is automated through MSBuild targets and will:
 
 ### Platform Configuration
 
-**Important**: You must specify a platform target (x64, x86 or ARM64). AnyCPU will default to the x64 version of the C++ dll.
-
-> [!NOTE] This applies only to local builds. When the library is installed via NuGet, the appropriate platform target 
-> is automatically resolved based on the consuming project's configuration.
+**Important**: You must specify a platform target (x64, x86 or ARM64). 
+AnyCPU will default to the x64 version of the C++ dll.
 
 ## Dependencies
 
