@@ -2,19 +2,19 @@
 
 internal class LeastSquares : ICostFunction
 {
-    private readonly IList<double> _x;
-    private readonly IList<double> _y;
-    private readonly IList<double> _yError;
-    private readonly Func<double, IList<double>, double> _model;
-    private readonly Func<double, IList<double>, IList<double>>? _modelGradient;
+    private readonly IReadOnlyList<double> _x;
+    private readonly IReadOnlyList<double> _y;
+    private readonly IReadOnlyList<double> _yError;
+    private readonly Func<double, IReadOnlyList<double>, double> _model;
+    private readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? _modelGradient;
     
     public LeastSquares(
-        IList<double> x,
-        IList<double> y,
-        IList<double> yError,
-        IList<string> parameters,
-        Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<double> yError,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
         if (x.Count != y.Count || x.Count != yError.Count)
@@ -31,11 +31,11 @@ internal class LeastSquares : ICostFunction
         ErrorDefinition = ErrorDefinitionFor(errorDefinitionInSigma);
     }
 
-    public IList<string> Parameters { get; }
+    public IReadOnlyList<string> Parameters { get; }
     public bool HasGradient { get; }
     public double ErrorDefinition { get; }
     
-    public double ValueFor(IList<double> parameterValues)
+    public double ValueFor(IReadOnlyList<double> parameterValues)
     {
         double sum = 0;
         for (var i = 0; i < _x.Count; i++)
@@ -47,7 +47,7 @@ internal class LeastSquares : ICostFunction
         return sum;
     }
 
-    public IList<double> GradientFor(IList<double> parameterValues)
+    public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
     {
         var gradientSums = new double[Parameters.Count];
         for (var i = 0; i < _x.Count; i++)
@@ -61,7 +61,7 @@ internal class LeastSquares : ICostFunction
         return gradientSums;
     }
 
-    private double ResidualFor(int i, IList<double> parameterValues) =>
+    private double ResidualFor(int i, IReadOnlyList<double> parameterValues) =>
         (_y[i] - _model(_x[i], parameterValues)) / _yError[i];
     
     // For least squares fits, an error definition of 1 corresponds to 1-sigma parameter errors

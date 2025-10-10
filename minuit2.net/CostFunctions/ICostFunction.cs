@@ -2,10 +2,10 @@ namespace minuit2.net.CostFunctions;
 
 public interface ICostFunction
 {
-    IList<string> Parameters { get; }
+    IReadOnlyList<string> Parameters { get; }
     bool HasGradient { get; }
     double ErrorDefinition { get; }
     
-    double ValueFor(IList<double> parameterValues);
-    IList<double> GradientFor(IList<double> parameterValues);
+    double ValueFor(IReadOnlyList<double> parameterValues);
+    IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues);
 }

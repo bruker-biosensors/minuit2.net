@@ -7,13 +7,13 @@ internal static class CostFunctionExtensions
 {
     public static double ValueFor(this ICostFunction costFunction, IReadOnlyCollection<ParameterConfiguration> parameters)
     {
-        var orderedParameterValues = parameters
-            .OrderBy(p => costFunction.Parameters.IndexOf(p.Name))
-            .Select(p => p.Value);
+        var orderedParameterValues = costFunction.Parameters.Select(Value);
         return costFunction.ValueFor(orderedParameterValues);
+
+        double Value(string parameterName) => parameters.Single(config => config.Name == parameterName).Value;
     }
 
-    public static double ValueFor(this ICostFunction costFunction, IEnumerable<double> parameterValues) =>
+    private static double ValueFor(this ICostFunction costFunction, IEnumerable<double> parameterValues) =>
         costFunction.ValueFor(parameterValues.ToArray());
 
     public static ICostFunction WithAutoCancellation(
@@ -29,8 +29,8 @@ internal static class CostFunctionExtensions
 
 
     public static ICostFunction WithValueOverride(
-        this ICostFunction costFunction, 
-        Func<IList<double>, double> valueOverride, 
+        this ICostFunction costFunction,
+        Func<IReadOnlyList<double>, double> valueOverride,
         int numberOfFunctionCallsBeforeReturningOverride = 10)
     {
         return new CostFunctionWithOverrides(
@@ -41,8 +41,8 @@ internal static class CostFunctionExtensions
     }
     
     public static ICostFunction WithGradientOverride(
-        this ICostFunction costFunction, 
-        Func<IList<double>, IList<double>> gradientOverride, 
+        this ICostFunction costFunction,
+        Func<IReadOnlyList<double>, IReadOnlyList<double>> gradientOverride,
         int numberOfFunctionCallsBeforeReturningOverride = 10)
     {
         return new CostFunctionWithOverrides(
@@ -61,10 +61,10 @@ internal class CostFunctionWithAutoCancellation(
 {
     private int _numberOfFunctionCalls;
 
-    public IList<string> Parameters => wrapped.Parameters;
+    public IReadOnlyList<string> Parameters => wrapped.Parameters;
     public bool HasGradient => wrapped.HasGradient;
     public double ErrorDefinition => wrapped.ErrorDefinition;
-    public double ValueFor(IList<double> parameterValues)
+    public double ValueFor(IReadOnlyList<double> parameterValues)
     {
         _numberOfFunctionCalls++;
         if (_numberOfFunctionCalls >= numberOfFunctionCallsBeforeCancellation)  // >= because cancellation is checked before this method call
@@ -73,24 +73,25 @@ internal class CostFunctionWithAutoCancellation(
         return wrapped.ValueFor(parameterValues);
     }
 
-    public IList<double> GradientFor(IList<double> parameterValues) => wrapped.GradientFor(parameterValues);
+    public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues) =>
+        wrapped.GradientFor(parameterValues);
 }
 
 internal class CostFunctionWithOverrides(
-    ICostFunction wrapped, 
-    Func<IList<double>, double>? valueOverride,
-    Func<IList<double>, IList<double>>? gradientOverride,
+    ICostFunction wrapped,
+    Func<IReadOnlyList<double>, double>? valueOverride,
+    Func<IReadOnlyList<double>, IReadOnlyList<double>>? gradientOverride,
     int numberOfFunctionCallsBeforeReturningOverrides)
     : ICostFunction
 {
     private int _numberOfFunctionCalls;
     private bool HasSwitched => _numberOfFunctionCalls > numberOfFunctionCallsBeforeReturningOverrides;
 
-    public IList<string> Parameters => wrapped.Parameters;
+    public IReadOnlyList<string> Parameters => wrapped.Parameters;
     public bool HasGradient => wrapped.HasGradient;
     public double ErrorDefinition => wrapped.ErrorDefinition;
     
-    public double ValueFor(IList<double> parameterValues)
+    public double ValueFor(IReadOnlyList<double> parameterValues)
     {
         _numberOfFunctionCalls++;
         return HasSwitched && valueOverride != null 
@@ -98,7 +99,10 @@ internal class CostFunctionWithOverrides(
             : wrapped.ValueFor(parameterValues);
     }
     
-    public IList<double> GradientFor(IList<double> parameterValues) => HasSwitched && gradientOverride != null 
-        ? gradientOverride(parameterValues) 
-        : wrapped.GradientFor(parameterValues);
+    public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
+    {
+        return HasSwitched && gradientOverride != null
+            ? gradientOverride(parameterValues)
+            : wrapped.GradientFor(parameterValues);
+    }
 }

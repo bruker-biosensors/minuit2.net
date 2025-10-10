@@ -2,19 +2,19 @@ namespace minuit2.net.CostFunctions;
 
 internal class LeastSquaresWithUniformYError : ICostFunction
 {
-    protected readonly IList<double> X;
-    protected readonly IList<double> Y;
+    protected readonly IReadOnlyList<double> X;
+    protected readonly IReadOnlyList<double> Y;
     private readonly double _yError;
-    protected readonly Func<double, IList<double>, double> Model;
-    protected readonly Func<double, IList<double>, IList<double>>? ModelGradient;
+    protected readonly Func<double, IReadOnlyList<double>, double> Model;
+    protected readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? ModelGradient;
 
     public LeastSquaresWithUniformYError(
-        IList<double> x,
-        IList<double> y,
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
         double yError,
-        IList<string> parameters,
-        Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
         if (x.Count != y.Count)
@@ -31,11 +31,11 @@ internal class LeastSquaresWithUniformYError : ICostFunction
         ErrorDefinition = LeastSquares.ErrorDefinitionFor(errorDefinitionInSigma);
     }
     
-    public IList<string> Parameters { get; }
+    public IReadOnlyList<string> Parameters { get; }
     public bool HasGradient { get; }
     public double ErrorDefinition { get; protected init; }
     
-    public double ValueFor(IList<double> parameterValues)
+    public double ValueFor(IReadOnlyList<double> parameterValues)
     {
         double sum = 0;
         for (var i = 0; i < X.Count; i++)
@@ -47,7 +47,7 @@ internal class LeastSquaresWithUniformYError : ICostFunction
         return sum;
     }
     
-    public IList<double> GradientFor(IList<double> parameterValues)
+    public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
     {
         var gradientSums = new double[Parameters.Count];
         for (var i = 0; i < X.Count; i++)
@@ -60,6 +60,7 @@ internal class LeastSquaresWithUniformYError : ICostFunction
         
         return gradientSums;
     }
-    
-    private double ResidualFor(int i, IList<double> parameterValues) => (Y[i] - Model(X[i], parameterValues)) / _yError;
+
+    private double ResidualFor(int i, IReadOnlyList<double> parameterValues) =>
+        (Y[i] - Model(X[i], parameterValues)) / _yError;
 }

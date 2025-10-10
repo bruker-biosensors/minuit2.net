@@ -5,11 +5,11 @@ internal class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError, IC
     private readonly double _errorDefinitionInSigma;
 
     public LeastSquaresWithUnknownYError(
-        IList<double> x,
-        IList<double> y,
-        IList<string> parameters,
-        Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1,
         double errorDefinitionScaling = 1) 
         : base(x, y, 1, parameters, model, modelGradient, errorDefinitionInSigma)
@@ -18,7 +18,9 @@ internal class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError, IC
         ErrorDefinition = LeastSquares.ErrorDefinitionFor(errorDefinitionInSigma) * errorDefinitionScaling;
     }
     
-    public ICostFunctionRequiringErrorDefinitionAdjustment WithErrorDefinitionAdjustedBasedOn(IList<double> parameterValues, IList<string> variables)
+    public ICostFunctionRequiringErrorDefinitionAdjustment WithErrorDefinitionAdjustedBasedOn(
+        IReadOnlyList<double> parameterValues, 
+        IReadOnlyList<string> variables)
     {
         // Auto-adjust the error definition such that a re-evaluation -- e.g., by a subsequent minimization or accurate
         // covariance computation (Hesse algorithm) -- yields the same parameter covariances that would be obtained
@@ -34,6 +36,13 @@ internal class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError, IC
         
         var degreesOfFreedom = X.Count - variables.Count;
         var reducedChiSquared = ValueFor(parameterValues) / degreesOfFreedom;
-        return new LeastSquaresWithUnknownYError(X, Y, Parameters, Model, ModelGradient, _errorDefinitionInSigma, reducedChiSquared);
+        return new LeastSquaresWithUnknownYError(
+            X,
+            Y,
+            Parameters,
+            Model,
+            ModelGradient,
+            _errorDefinitionInSigma,
+            reducedChiSquared);
     }
 }

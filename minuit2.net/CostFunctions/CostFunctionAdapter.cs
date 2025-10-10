@@ -18,15 +18,21 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
         if (cancellationToken.IsCancellationRequested)
             throw new MinimizationAbort(ManuallyStopped, parameterValues);
         
-        var value = function.ValueFor(parameterValues) / function.ErrorDefinition;
+        var value = ValueFor(parameterValues);
         return double.IsFinite(value) ? value : throw new MinimizationAbort(NonFiniteValue, parameterValues);
     }
-
+    
     public override VectorDouble Gradient(VectorDouble parameterValues)
     {
-        var gradients = new VectorDouble(function.GradientFor(parameterValues).Select(g => g / function.ErrorDefinition));
-        return gradients.All(double.IsFinite) ? gradients : throw new MinimizationAbort(NonFiniteGradient, parameterValues);
+        var gradient = GradientFor(parameterValues);
+        return gradient.All(double.IsFinite) ? gradient : throw new MinimizationAbort(NonFiniteGradient, parameterValues);
     }
-
+    
     public override bool HasGradient() => function.HasGradient;
+
+    private double ValueFor(VectorDouble parameterValues) =>
+        function.ValueFor(parameterValues.AsReadOnly()) / function.ErrorDefinition;
+
+    private VectorDouble GradientFor(VectorDouble parameterValues) =>
+        new(function.GradientFor(parameterValues.AsReadOnly()).Select(g => g / function.ErrorDefinition));
 }

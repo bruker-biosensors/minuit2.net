@@ -4,5 +4,5 @@ internal class MinimizationAbort(MinimizationExitCondition exitCondition, IEnume
     : Exception
 {
     public MinimizationExitCondition ExitCondition { get; } = exitCondition;
-    public IReadOnlyCollection<double> ParameterValues { get; } = parameterValues.ToArray();
+    public IReadOnlyList<double> ParameterValues { get; } = parameterValues.ToArray();
 }

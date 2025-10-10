@@ -3,35 +3,35 @@ namespace minuit2.net.CostFunctions;
 public static class CostFunction
 {
     public static ICostFunction LeastSquares(
-        IList<double> x,
-        IList<double> y,
-        IList<string> parameters,
-        Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
         return new LeastSquaresWithUnknownYError(x, y, parameters, model, modelGradient, errorDefinitionInSigma);
     }
     
     public static ICostFunction LeastSquares(
-        IList<double> x,
-        IList<double> y,
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
         double yError,
-        IList<string> parameters,
-        Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
         return new LeastSquaresWithUniformYError(x, y, yError, parameters, model, modelGradient, errorDefinitionInSigma);
     }
     
     public static ICostFunction LeastSquares(
-        IList<double> x,
-        IList<double> y,
-        IList<double> yErrors,
-        IList<string> parameters,
-        Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>>? modelGradient = null, 
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<double> yErrors,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
         return new LeastSquares(x, y, yErrors, parameters, model, modelGradient, errorDefinitionInSigma);
@@ -44,10 +44,10 @@ public static class CostFunction
             : new CostFunctionSum(components);
     }
     
-    internal static ICostFunction Component(ICostFunction costFunction, IList<string> parameters)
+    internal static ICostFunction Component(ICostFunction costFunction, IList<string> compositeParameters)
     {
         return costFunction is ICostFunctionRequiringErrorDefinitionAdjustment cost
-            ? new ComponentCostFunctionRequiringErrorDefinitionAdjustment(cost, parameters)
-            : new ComponentCostFunction(costFunction, parameters);
+            ? new ComponentCostFunctionRequiringErrorDefinitionAdjustment(cost, compositeParameters)
+            : new ComponentCostFunction(costFunction, compositeParameters);
     }
 }

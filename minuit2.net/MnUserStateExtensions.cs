@@ -2,18 +2,14 @@ namespace minuit2.net;
 
 internal static class MnUserStateExtensions
 {
-    public static IReadOnlyCollection<string> ExtractVariablesFrom(
+    public static IReadOnlyList<string> ExtractVariablesFrom(
         this MnUserParameterState state, 
-        IReadOnlyCollection<string> parameters)
+        IReadOnlyList<string> parameters)
     {
         var numberOfVariables = (int)state.VariableParameters();
         return Enumerable.Range(0, numberOfVariables).Select(VariableName).ToArray();
 
-        string VariableName(int variableIndex)
-        {
-            var parameterIndex = state.ParameterIndexOf(variableIndex);
-            return parameters.ElementAt(parameterIndex);
-        }
+        string VariableName(int variableIndex) => parameters[state.ParameterIndexOf(variableIndex)];
     }
 
     public static int ParameterIndexOf(this MnUserParameterState state, int variableIndex) =>

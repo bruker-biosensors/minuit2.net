@@ -8,10 +8,10 @@ internal class MinimizationResult : IMinimizationResult
     internal MinimizationResult(FunctionMinimum minimum, ICostFunction costFunction)
     {
         var state = minimum.UserState();
-        Parameters = costFunction.Parameters.ToList();
+        Parameters = costFunction.Parameters;
         Variables = state.ExtractVariablesFrom(Parameters);
-        var parameterValues = state.Params();
-        ParameterValues = parameterValues.ToList();
+        var parameterValues = state.Params().ToArray();
+        ParameterValues = parameterValues;
         ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
 
         CostValue = costFunction is ICompositeCostFunction compositeCostFunction
@@ -28,9 +28,9 @@ internal class MinimizationResult : IMinimizationResult
     
     public double CostValue { get; }
     
-    public IReadOnlyCollection<string> Parameters { get; }
-    public IReadOnlyCollection<string> Variables { get; }
-    public IReadOnlyCollection<double> ParameterValues { get; }
+    public IReadOnlyList<string> Parameters { get; }
+    public IReadOnlyList<string> Variables { get; }
+    public IReadOnlyList<double> ParameterValues { get; }
     public double[,]? ParameterCovarianceMatrix { get; }
 
     // The result is considered valid if the minimizer did not run into any troubles. Reasons for an invalid result are: 

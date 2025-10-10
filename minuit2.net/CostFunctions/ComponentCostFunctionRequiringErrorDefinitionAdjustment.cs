@@ -5,11 +5,11 @@ internal class ComponentCostFunctionRequiringErrorDefinitionAdjustment(
     IList<string> compositeParameters)
     : ComponentCostFunction(inner, compositeParameters), ICostFunctionRequiringErrorDefinitionAdjustment
 {
-    private string[] Belonging(IList<string> variables) => variables.Where(var => Parameters.Contains(var)).ToArray();
+    private string[] Belonging(IReadOnlyList<string> variables) => variables.Where(x => Parameters.Contains(x)).ToArray();
 
     public ICostFunctionRequiringErrorDefinitionAdjustment WithErrorDefinitionAdjustedBasedOn(
-        IList<double> parameterValues, 
-        IList<string> variables)
+        IReadOnlyList<double> parameterValues,
+        IReadOnlyList<string> variables)
     {
         return new ComponentCostFunctionRequiringErrorDefinitionAdjustment(
             inner.WithErrorDefinitionAdjustedBasedOn(Belonging(parameterValues), Belonging(variables)),

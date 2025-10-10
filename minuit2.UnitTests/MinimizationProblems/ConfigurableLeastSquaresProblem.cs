@@ -7,29 +7,27 @@ namespace minuit2.UnitTests.MinimizationProblems;
 
 internal abstract class ConfigurableLeastSquaresProblem
 {
-    protected abstract Func<double, IList<double>, double> Model { get; }
-    protected abstract Func<double, IList<double>, IList<double>> ModelGradient { get; }
-    protected abstract IReadOnlyCollection<string> ParameterNames { get; }
+    protected abstract Func<double, IReadOnlyList<double>, double> Model { get; }
+    protected abstract Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; }
+    protected abstract IReadOnlyList<string> ParameterNames { get; }
     
-    protected abstract IReadOnlyCollection<double> XValues { get; }
-    protected abstract IReadOnlyCollection<double> YValues { get; }
+    protected abstract IReadOnlyList<double> XValues { get; }
+    protected abstract IReadOnlyList<double> YValues { get; }
     protected abstract double YError { get; }
 
-    protected abstract IReadOnlyCollection<double> OptimumParameterValues { get; }
-    protected abstract IReadOnlyCollection<double> DefaultInitialParameterValues { get; }
+    protected abstract IReadOnlyList<double> OptimumParameterValues { get; }
+    protected abstract IReadOnlyList<double> DefaultInitialParameterValues { get; }
     
     public LeastSquaresCostBuilder Cost => new(XValues, YValues, YError, Model, ModelGradient, ParameterNames);
     
     public class LeastSquaresCostBuilder(
-        IReadOnlyCollection<double> xValues, 
-        IReadOnlyCollection<double> yValues,
+        IReadOnlyList<double> xValues, 
+        IReadOnlyList<double> yValues,
         double yError,
-        Func<double, IList<double>, double> model,
-        Func<double, IList<double>, IList<double>> modelGradient,
-        IReadOnlyCollection<string> parameterNames)
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+        IReadOnlyList<string> parameterNames)
     {
-        private readonly IList<double> _xValues = xValues.ToArray();
-        private readonly IList<double> _yValues = yValues.ToArray();
         private readonly string[] _parameterNames = parameterNames.ToArray();
         
         private bool _hasYErrors = true;
@@ -38,10 +36,10 @@ internal abstract class ConfigurableLeastSquaresProblem
 
         public ICostFunction Build() => _hasYErrors switch
         {
-            true when _hasGradient => CostFunction.LeastSquares(_xValues, _yValues, yError, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
-            true when !_hasGradient => CostFunction.LeastSquares(_xValues, _yValues, yError, _parameterNames, model, null, _errorDefinitionInSigma),
-            false when _hasGradient => CostFunction.LeastSquares(_xValues, _yValues, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
-            _ => CostFunction.LeastSquares(_xValues, _yValues, _parameterNames, model, null, _errorDefinitionInSigma)
+            true when _hasGradient => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
+            true when !_hasGradient => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, null, _errorDefinitionInSigma),
+            false when _hasGradient => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
+            _ => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, null, _errorDefinitionInSigma)
         };
 
         public LeastSquaresCostBuilder WithUnknownYErrors()
@@ -75,9 +73,9 @@ internal abstract class ConfigurableLeastSquaresProblem
         new(ParameterNames, DefaultInitialParameterValues, OptimumParameterValues);
     
     public class ParameterConfigurationsBuilder(
-        IReadOnlyCollection<string> parameterNames, 
-        IReadOnlyCollection<double> defaultInitialParameterValues,
-        IReadOnlyCollection<double> optimumParameterValues)
+        IReadOnlyList<string> parameterNames, 
+        IReadOnlyList<double> defaultInitialParameterValues,
+        IReadOnlyList<double> optimumParameterValues)
     {
         private ParameterConfiguration[] _configs = parameterNames.Zip(defaultInitialParameterValues, 
             (name, value) => ParameterConfiguration.Variable(name, value)).ToArray();

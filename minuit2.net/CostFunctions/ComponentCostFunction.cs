@@ -9,27 +9,27 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> composit
     // Yet doing so requires re-scaling of the final function values (after minimization). This must be done by the
     // hosting composite cost function.
     
-    private readonly List<int> _parameterIndices = inner.Parameters.Select(compositeParameters.IndexOf).ToList();
+    private readonly int[] _parameterIndices = inner.Parameters.Select(compositeParameters.IndexOf).ToArray();
     
     protected readonly IList<string> CompositeParameters = compositeParameters;
     
-    protected double[] Belonging(IList<double> parameterValues)
+    protected double[] Belonging(IReadOnlyList<double> parameterValues)
     {
-        var belonging = new double[_parameterIndices.Count];
-        for (var i = 0; i < _parameterIndices.Count; i++) 
+        var belonging = new double[_parameterIndices.Length];
+        for (var i = 0; i < _parameterIndices.Length; i++) 
             belonging[i] = parameterValues[_parameterIndices[i]];
         
         return belonging;
     }
 
-    public IList<string> Parameters => inner.Parameters;
+    public IReadOnlyList<string> Parameters => inner.Parameters;
     public bool HasGradient => inner.HasGradient;
     public double ErrorDefinition => inner.ErrorDefinition;
 
-    public double ValueFor(IList<double> compositeParameterValues) =>
+    public double ValueFor(IReadOnlyList<double> compositeParameterValues) =>
         inner.ValueFor(Belonging(compositeParameterValues)) / ErrorDefinition;
 
-    public IList<double> GradientFor(IList<double> compositeParameterValues)
+    public IReadOnlyList<double> GradientFor(IReadOnlyList<double> compositeParameterValues)
     {
         var gradients = inner.GradientFor(Belonging(compositeParameterValues));
         var expandedGradients = new double[CompositeParameters.Count];
