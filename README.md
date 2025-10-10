@@ -90,22 +90,22 @@ The build process is automated through MSBuild targets and will:
 
 ## Usage
 
-The following basic example shows how to fit a sine model to observed data:
+The following basic example shows how to fit an exponential decay model to observed data:
 
 ```csharp
 // Define the cost function
 var cost = CostFunction.LeastSquares( 
-    x: ...,
-    y: ...,
-    parameters: ["amp", "freq", "offset"],
-    model: (x, p) => p[0] * Math.Sin(p[1] * x) + p[2]);
+    x: [...],
+    y: [...],
+    parameters: ["amplitude", "rate", "offset"],
+    model: (x, p) => p[0] * Math.Exp(-p[1] * x) + p[2]);
 
 // Configure parameters with initial values and constraints
 var parameterConfigurations = new[]
 {
-    ParameterConfiguration.Variable("amp", 1),
-    ParameterConfiguration.Variable("freq", 1, lowerLimit: 0),
-    ParameterConfiguration.Fixed("offset", 1)
+    ParameterConfiguration.Variable("amplitude", 1),
+    ParameterConfiguration.Variable("rate", 0.1, lowerLimit: 0),
+    ParameterConfiguration.Fixed("offset", 0)
 };
 
 // Specify the minimizer
