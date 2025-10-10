@@ -1,16 +1,17 @@
+using minuit2.net.CostFunctions;
 using static minuit2.net.MinimizationExitCondition;
 
 namespace minuit2.net;
 
 internal class MinimizationResult : IMinimizationResult
 {
-    internal MinimizationResult(FunctionMinimum minimum, ICostFunction costFunction, double edmThreshold)
+    internal MinimizationResult(FunctionMinimum minimum, ICostFunction costFunction)
     {
         var state = minimum.UserState();
-        Parameters = costFunction.Parameters.ToList();
-        Variables = VariablesFrom(Parameters, state);
-        var parameterValues = state.Params();
-        ParameterValues = parameterValues.ToList();
+        Parameters = costFunction.Parameters;
+        Variables = state.ExtractVariablesFrom(Parameters);
+        var parameterValues = state.Params().ToArray();
+        ParameterValues = parameterValues;
         ParameterCovarianceMatrix = CovarianceMatrixFrom(state);
 
         CostValue = costFunction is ICompositeCostFunction compositeCostFunction
@@ -21,17 +22,16 @@ internal class MinimizationResult : IMinimizationResult
         IsValid = minimum.IsValid();
         NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = minimum.NFcn();
-        ExitCondition = ExitConditionFrom(minimum, edmThreshold);
-        
+        ExitCondition = ExitConditionFrom(minimum);
         Minimum = minimum;
     }
     
     public double CostValue { get; }
-
-    public IReadOnlyCollection<string> Parameters { get; }
-    public IReadOnlyCollection<string> Variables { get; }
-    public IReadOnlyCollection<double> ParameterValues { get; }
-    public double[,] ParameterCovarianceMatrix { get; private set; }
+    
+    public IReadOnlyList<string> Parameters { get; }
+    public IReadOnlyList<string> Variables { get; }
+    public IReadOnlyList<double> ParameterValues { get; }
+    public double[,]? ParameterCovarianceMatrix { get; }
 
     // The result is considered valid if the minimizer did not run into any troubles. Reasons for an invalid result are: 
     // - the number of allowed function calls has been exhausted
@@ -40,20 +40,14 @@ internal class MinimizationResult : IMinimizationResult
     // source: https://root.cern.ch/doc/master/Minuit2Page.html
     public bool IsValid { get; }
     public int NumberOfVariables { get; }
-    public int NumberOfFunctionCalls { get; }
+    public int? NumberOfFunctionCalls { get; }
     public MinimizationExitCondition ExitCondition { get; }
-    
-    private static List<string> VariablesFrom(IReadOnlyCollection<string> parameters, MnUserParameterState state)
-    {
-        var numberOfVariables = (int)state.VariableParameters();
-        return Enumerable.Range(0, numberOfVariables).Select(VariableName).ToList();
 
-        string VariableName(int variableIndex) => parameters.ElementAt(state.ParameterIndexOf(variableIndex));
-    }
-    
-    private static double[,] CovarianceMatrixFrom(MnUserParameterState state)
+    private static double[,]? CovarianceMatrixFrom(MnUserParameterState state)
     {
-        var covariancesOfVariables = state.Covariance().Data();  // can be empty (when covariance calculation fails)
+        var covariancesOfVariables = state.Covariance().Data();
+        if (covariancesOfVariables.IsEmpty) return null;
+        
         var numberOfVariables = (int)state.VariableParameters();
         var indexMap = Enumerable.Range(0, numberOfVariables)
             .ToDictionary(state.ParameterIndexOf, variableIndex => variableIndex);
@@ -67,8 +61,8 @@ internal class MinimizationResult : IMinimizationResult
             {
                 if (!indexMap.TryGetValue(j, out var columnVariableIndex)) continue;
                 var flatIndex = FlatIndex(rowVariableIndex, columnVariableIndex);
-                covarianceMatrix[i, j] = covariancesOfVariables.ElementAtOrDefault(flatIndex, double.NaN);
-                covarianceMatrix[j, i] = covariancesOfVariables.ElementAtOrDefault(flatIndex, double.NaN);
+                covarianceMatrix[i, j] = covariancesOfVariables[flatIndex];
+                covarianceMatrix[j, i] = covariancesOfVariables[flatIndex];
             }
         }
 
@@ -77,24 +71,15 @@ internal class MinimizationResult : IMinimizationResult
         int FlatIndex(int rowIndex, int columnIndex) => rowIndex * (rowIndex + 1) / 2 + columnIndex;
     }
     
-    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum minimum, double edmThreshold)
+    private static MinimizationExitCondition ExitConditionFrom(FunctionMinimum minimum)
     {
-        if (minimum.Edm() < edmThreshold)
-            return Converged;
         if (minimum.HasReachedCallLimit())
             return FunctionCallsExhausted;
+        if (!minimum.IsAboveMaxEdm())
+            return Converged;
         
         return None;
     }
-    
+
     internal FunctionMinimum Minimum { get; }
-
-    internal void UpdateParameterCovariancesWith(FunctionMinimum minimum) =>
-        ParameterCovarianceMatrix = CovarianceMatrixFrom(minimum.UserState());
-}
-
-file static class UserStateExtensions
-{
-    public static int ParameterIndexOf(this MnUserParameterState state, int variableIndex) =>
-        (int)state.ExtOfInt((uint)variableIndex);
 }

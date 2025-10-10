@@ -26,6 +26,10 @@ It extends the original library with:
 - Support for data with unknown uncertainties
 - Support for cancelling active minimization processes
 
+Unlike the original library, which exposes a stateful and imperative API, Minuit2.NET adopts a functional approach 
+centered on statelessness and referential transparency. Shared mutable state and side effects are avoided to enhance 
+testability, composability, and predictability, aligning with modern .NET functional programming practices.
+
 ## Project Structure
 
 - **minuit2.net/**: Main C# library containing the .NET API
@@ -75,7 +79,10 @@ The build process is automated through MSBuild targets and will:
 
 ### Platform Configuration
 
-**Important**: You must specify a platform target (x64, x86, ARM64). AnyCPU will default to the x64 version of the C++ dll.
+**Important**: You must specify a platform target (x64, x86 or ARM64). AnyCPU will default to the x64 version of the C++ dll.
+
+> [!NOTE] This applies only to local builds. When the library is installed via NuGet, the appropriate platform target 
+> is automatically resolved based on the consuming project's configuration.
 
 ## Dependencies
 
@@ -87,24 +94,27 @@ The build process is automated through MSBuild targets and will:
 
 ## Usage
 
-The following basic example shows how to fit a sine model to observed data:
+The following basic example shows how to fit an exponential decay model to observed data:
 
 ```csharp
 // Define the cost function
-var cost = new LeastSquares(
-    x: ...,
-    y: ...,
-    parameters: ["amp", "freq", "offset"],
-    model: (x, p) => p[0] * Math.Sin(p[1] * x) + p[2]);
+var cost = CostFunction.LeastSquares( 
+    x: [...],
+    y: [...],
+    parameters: ["amplitude", "rate", "offset"],
+    model: (x, p) => p[0] * Math.Exp(-p[1] * x) + p[2]);
 
 // Configure parameters with initial values and constraints
 var parameterConfigurations = new[]
 {
-    ParameterConfiguration.Variable("amp", 1),
-    ParameterConfiguration.Variable("freq", 1, lowerLimit: 0),
-    ParameterConfiguration.Fixed("offset", 1)
+    ParameterConfiguration.Variable("amplitude", 1),
+    ParameterConfiguration.Variable("rate", 0.1, lowerLimit: 0),
+    ParameterConfiguration.Fixed("offset", 0)
 };
 
+// Specify the minimizer
+var minimizer = Minimizer.Migrad;
+
 // Minimize the cost function for the given configuration
-var minimum = MigradMinimizer.Minimize(cost, parameterConfigurations);
+var minimum = minimizer.Minimize(cost, parameterConfigurations);
 ```

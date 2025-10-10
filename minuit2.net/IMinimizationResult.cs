@@ -3,12 +3,12 @@ namespace minuit2.net;
 public interface IMinimizationResult
 {
     double CostValue { get; }
-    IReadOnlyCollection<string> Parameters { get; }
-    IReadOnlyCollection<string> Variables { get; }
-    IReadOnlyCollection<double> ParameterValues { get; }
-    double[,] ParameterCovarianceMatrix { get; }
+    IReadOnlyList<string> Parameters { get; }
+    IReadOnlyList<string> Variables { get; }
+    IReadOnlyList<double> ParameterValues { get; }
+    double[,]? ParameterCovarianceMatrix { get; }
     bool IsValid { get; }
     int NumberOfVariables { get; }
-    int NumberOfFunctionCalls { get; }
+    int? NumberOfFunctionCalls { get; }
     MinimizationExitCondition ExitCondition { get; }
 }
