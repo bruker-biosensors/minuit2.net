@@ -27,8 +27,7 @@ It extends the original library with:
 - Support for cancelling active minimization processes
 
 Unlike the original library, which exposes a stateful and imperative API, Minuit2.NET adopts a functional approach 
-centered on statelessness and referential transparency. Shared mutable state and side effects are avoided to enhance 
-testability, composability, and predictability, aligning with modern .NET functional programming practices.
+centered on statelessness and referential transparency.
 
 ## Project Structure
 
