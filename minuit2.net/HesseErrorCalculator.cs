@@ -1,5 +1,4 @@
 using minuit2.net.CostFunctions;
-using minuit2.net.Exceptions;
 using static minuit2.net.ParameterMappingGuard;
 
 namespace minuit2.net;
@@ -30,11 +29,9 @@ public static class HesseErrorCalculator
             hesse.Update(minimum, cost);
             return new MinimizationResult(minimum, costFunction);
         }
-        catch (Exception e)
+        catch (MinimizationAbort abort)
         {
-            if (e is IPrematureMinimizationExit exit)
-                return new PrematureMinimizationResult(exit, costFunction, parameterState);
-            throw;
+            return new AbortedMinimizationResult(abort, costFunction, parameterState);
         }
     }
 }

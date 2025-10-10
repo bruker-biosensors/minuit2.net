@@ -1,26 +1,25 @@
 using minuit2.net.CostFunctions;
-using minuit2.net.Exceptions;
 
 namespace minuit2.net;
 
-internal class PrematureMinimizationResult : IMinimizationResult
+internal class AbortedMinimizationResult : IMinimizationResult
 {
-    public PrematureMinimizationResult(
-        IPrematureMinimizationExit exit, 
+    public AbortedMinimizationResult(
+        MinimizationAbort abort, 
         ICostFunction costFunction, 
         MnUserParameterState parameterState)
     {
-        CostValue = CostValueFrom(costFunction, exit.LastParameterValues.ToArray());
+        CostValue = CostValueFrom(costFunction, abort.ParameterValues.ToArray());
         Parameters = costFunction.Parameters.ToArray();
         Variables = parameterState.ExtractVariablesFrom(Parameters);
-        ParameterValues = exit.LastParameterValues;
+        ParameterValues = abort.ParameterValues;
         ParameterCovarianceMatrix = null;
         
         // Meta information
         IsValid = false;
         NumberOfVariables = Variables.Count;
         NumberOfFunctionCalls = null;
-        ExitCondition = exit.ExitCondition;
+        ExitCondition = abort.ExitCondition;
     }
     
     public double CostValue { get; }

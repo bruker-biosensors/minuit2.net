@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using minuit2.net.Exceptions;
+using static minuit2.net.MinimizationExitCondition;
 
 namespace minuit2.net.CostFunctions;
 
@@ -16,16 +16,16 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     public override double Cost(VectorDouble parameterValues)
     {
         if (cancellationToken.IsCancellationRequested)
-            throw new MinimizationCancelledException(parameterValues);
+            throw new MinimizationAbort(ManuallyStopped, parameterValues);
         
         var value = function.ValueFor(parameterValues) / function.ErrorDefinition;
-        return double.IsFinite(value) ? value : throw new NonFiniteCostValueException(parameterValues);
+        return double.IsFinite(value) ? value : throw new MinimizationAbort(NonFiniteValue, parameterValues);
     }
 
     public override VectorDouble Gradient(VectorDouble parameterValues)
     {
         var gradients = new VectorDouble(function.GradientFor(parameterValues).Select(g => g / function.ErrorDefinition));
-        return gradients.All(double.IsFinite) ? gradients : throw new NonFiniteCostGradientException(parameterValues);
+        return gradients.All(double.IsFinite) ? gradients : throw new MinimizationAbort(NonFiniteGradient, parameterValues);
     }
 
     public override bool HasGradient() => function.HasGradient;
