@@ -7,6 +7,8 @@ namespace minuit2.net.CostFunctions;
     Justification = "Cancellation token is stored for use in runtime cancellation checks across multiple method calls.")]
 internal sealed class CostFunctionAdapter(ICostFunction function, CancellationToken cancellationToken) : FCNWrap
 {
+    private int _numberOfFunctionCalls;
+    
     // We always forward a neutral error definition (Up) of 1 to the C++ code. Instead, we scale the output values of
     // the inner ValueFor() and GradientFor() by the error definition directly. This allows us to dynamically adjust
     // error definitions, e.g. to get meaningful parameter uncertainties for least squares cost functions with unknown
@@ -15,17 +17,23 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
 
     public override double Cost(VectorDouble parameterValues)
     {
+        Interlocked.Increment(ref _numberOfFunctionCalls);
+        
         if (cancellationToken.IsCancellationRequested)
-            throw new MinimizationAbort(ManuallyStopped, parameterValues);
+            throw new MinimizationAbort(ManuallyStopped, parameterValues, _numberOfFunctionCalls);
         
         var value = ValueFor(parameterValues);
-        return double.IsFinite(value) ? value : throw new MinimizationAbort(NonFiniteValue, parameterValues);
+        return double.IsFinite(value)
+            ? value
+            : throw new MinimizationAbort(NonFiniteValue, parameterValues, _numberOfFunctionCalls);
     }
     
     public override VectorDouble Gradient(VectorDouble parameterValues)
     {
         var gradient = GradientFor(parameterValues);
-        return gradient.All(double.IsFinite) ? gradient : throw new MinimizationAbort(NonFiniteGradient, parameterValues);
+        return gradient.All(double.IsFinite)
+            ? gradient
+            : throw new MinimizationAbort(NonFiniteGradient, parameterValues, _numberOfFunctionCalls);
     }
     
     public override bool HasGradient() => function.HasGradient;

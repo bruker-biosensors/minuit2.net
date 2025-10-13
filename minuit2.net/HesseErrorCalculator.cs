@@ -31,7 +31,7 @@ public static class HesseErrorCalculator
         }
         catch (MinimizationAbort abort)
         {
-            return new AbortedMinimizationResult(abort, costFunction, parameterState);
+            return new AbortedMinimizationResult(abort, costFunction, parameterState, result.NumberOfFunctionCalls);
         }
     }
 }

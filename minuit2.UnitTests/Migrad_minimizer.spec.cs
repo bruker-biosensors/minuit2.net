@@ -221,6 +221,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             {
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(NonFiniteValue);
+                x.NumberOfFunctionCalls.Should().BeGreaterThan(0);
                 x.ParameterCovarianceMatrix.Should().BeNull();
                 x.CostValue.Should().Be(cost.ValueFor(x.ParameterValues)).And.NotBeFinite();
             });

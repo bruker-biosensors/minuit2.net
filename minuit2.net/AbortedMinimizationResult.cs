@@ -5,9 +5,10 @@ namespace minuit2.net;
 internal class AbortedMinimizationResult : IMinimizationResult
 {
     public AbortedMinimizationResult(
-        MinimizationAbort abort, 
-        ICostFunction costFunction, 
-        MnUserParameterState parameterState)
+        MinimizationAbort abort,
+        ICostFunction costFunction,
+        MnUserParameterState parameterState,
+        int numberOfFunctionCallsCarryOver = 0)
     {
         CostValue = CostValueFrom(costFunction, abort.ParameterValues);
         Parameters = costFunction.Parameters.ToArray();
@@ -18,7 +19,7 @@ internal class AbortedMinimizationResult : IMinimizationResult
         // Meta information
         IsValid = false;
         NumberOfVariables = Variables.Count;
-        NumberOfFunctionCalls = null;
+        NumberOfFunctionCalls = abort.NumberOfFunctionCalls + numberOfFunctionCallsCarryOver;
         ExitCondition = abort.ExitCondition;
     }
     
@@ -29,7 +30,7 @@ internal class AbortedMinimizationResult : IMinimizationResult
     public double[,]? ParameterCovarianceMatrix { get; }
     public bool IsValid { get; }
     public int NumberOfVariables { get; }
-    public int? NumberOfFunctionCalls { get; }
+    public int NumberOfFunctionCalls { get; }
     public MinimizationExitCondition ExitCondition { get; }
 
     private static double CostValueFrom(ICostFunction costFunction, IReadOnlyList<double> parameterValues) =>

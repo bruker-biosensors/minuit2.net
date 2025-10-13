@@ -40,7 +40,7 @@ internal class MinimizationResult : IMinimizationResult
     // source: https://root.cern.ch/doc/master/Minuit2Page.html
     public bool IsValid { get; }
     public int NumberOfVariables { get; }
-    public int? NumberOfFunctionCalls { get; }
+    public int NumberOfFunctionCalls { get; }
     public MinimizationExitCondition ExitCondition { get; }
 
     private static double[,]? CovarianceMatrixFrom(MnUserParameterState state)

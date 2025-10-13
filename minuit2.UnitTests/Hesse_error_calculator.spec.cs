@@ -37,7 +37,8 @@ public class The_hesse_error_calculator
         public void when_the_process_is_cancelled_yields_an_invalid_result_with_manually_stopped_exit_condition_and_undefined_covariances_representing_the_last_state_of_the_process()
         {
             var cts = new CancellationTokenSource();
-            var cost = _costFunction.WithAutoCancellation(cts, numberOfFunctionCallsBeforeCancellation: 10);
+            const int numberOfFunctionCallsBeforeCancellation = 10;
+            var cost = _costFunction.WithAutoCancellation(cts, numberOfFunctionCallsBeforeCancellation);
 
             var result = HesseErrorCalculator.Refine(_minimizationResult, cost, cancellationToken: cts.Token);
 
@@ -45,6 +46,7 @@ public class The_hesse_error_calculator
             {
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
+                x.NumberOfFunctionCalls.Should().Be(_minimizationResult.NumberOfFunctionCalls + numberOfFunctionCallsBeforeCancellation + 1);
                 x.ParameterCovarianceMatrix.Should().BeNull();
                 x.CostValue.Should().BeFinite().And.Be(cost.ValueFor(x.ParameterValues));
             });
@@ -65,6 +67,7 @@ public class The_hesse_error_calculator
             {
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
+                x.NumberOfFunctionCalls.Should().Be(_minimizationResult.NumberOfFunctionCalls + numberOfValidFunctionCalls + 1);
                 x.ParameterCovarianceMatrix.Should().BeNull();
             });
         }

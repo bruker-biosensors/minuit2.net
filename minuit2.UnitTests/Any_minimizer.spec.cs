@@ -181,7 +181,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     public void when_cancelled_during_a_minimization_process_yields_an_invalid_result_with_manually_stopped_exit_condition_and_undefined_covariances_representing_the_last_state_of_the_process()
     {
         var cts = new CancellationTokenSource();
-        var cost = _defaultProblem.Cost.Build().WithAutoCancellation(cts, numberOfFunctionCallsBeforeCancellation: 10);
+        const int numberOfFunctionCallsBeforeCancellation = 10;
+        var cost = _defaultProblem.Cost.Build().WithAutoCancellation(cts, numberOfFunctionCallsBeforeCancellation);
         var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
 
         var result = minimizer.Minimize(cost, parameterConfigurations, cancellationToken: cts.Token);
@@ -190,6 +191,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         {
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
+            x.NumberOfFunctionCalls.Should().Be(numberOfFunctionCallsBeforeCancellation + 1);
             x.ParameterCovarianceMatrix.Should().BeNull();
             
             var computedCostValue = cost.ValueFor(x.ParameterValues);
@@ -274,7 +276,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         double nonFiniteValue)
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var cost = problem.Cost.Build().WithValueOverride(_ => nonFiniteValue, numberOfFunctionCallsBeforeReturningOverride: 5);
+        const int numberOfValidFunctionCalls = 5;
+        var cost = problem.Cost.Build().WithValueOverride(_ => nonFiniteValue, numberOfValidFunctionCalls);
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         
         var result = minimizer.Minimize(cost, parameterConfigurations);
@@ -283,6 +286,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         {
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
+            x.NumberOfFunctionCalls.Should().Be(numberOfValidFunctionCalls + 1);
             x.ParameterCovarianceMatrix.Should().BeNull();
         });
     }
