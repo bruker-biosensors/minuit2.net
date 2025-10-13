@@ -8,7 +8,6 @@ public interface IMinimizationResult
     IReadOnlyList<double> ParameterValues { get; }
     double[,]? ParameterCovarianceMatrix { get; }
     bool IsValid { get; }
-    int NumberOfVariables { get; }
     int NumberOfFunctionCalls { get; }
     MinimizationExitCondition ExitCondition { get; }
 }

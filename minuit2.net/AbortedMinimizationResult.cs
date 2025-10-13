@@ -17,7 +17,6 @@ internal class AbortedMinimizationResult(
 
     // Meta information
     public bool IsValid => false;
-    public int NumberOfVariables { get; } = variables.Count;
     public int NumberOfFunctionCalls { get; } = abort.NumberOfFunctionCalls + numberOfFunctionCallsCarryOver;
     public MinimizationExitCondition ExitCondition { get; } = abort.ExitCondition;
 

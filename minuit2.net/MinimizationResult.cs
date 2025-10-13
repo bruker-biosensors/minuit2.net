@@ -20,7 +20,6 @@ internal class MinimizationResult : IMinimizationResult
 
         // Meta information
         IsValid = minimum.IsValid();
-        NumberOfVariables = (int)state.VariableParameters();
         NumberOfFunctionCalls = minimum.NFcn();
         ExitCondition = ExitConditionFrom(minimum);
         Minimum = minimum;
@@ -39,7 +38,6 @@ internal class MinimizationResult : IMinimizationResult
     // - a problem with the calculation of the covariance matrix
     // source: https://root.cern.ch/doc/master/Minuit2Page.html
     public bool IsValid { get; }
-    public int NumberOfVariables { get; }
     public int NumberOfFunctionCalls { get; }
     public MinimizationExitCondition ExitCondition { get; }
 
