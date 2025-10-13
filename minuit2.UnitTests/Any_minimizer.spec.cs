@@ -47,7 +47,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         yield return new TestCaseData(cost, missing)
             .SetName("Missing parameter configurations");
         
-        var duplicates = cost.Parameters.Select(AnyConfig).Concat([AnyConfig(cost.Parameters.First())]);
+        var duplicates = cost.Parameters.Select(AnyConfig).Concat([AnyConfig(cost.Parameters[0])]);
         yield return new TestCaseData(cost, duplicates)
             .SetName("Matching parameter configurations with additional duplicate configuration");
         
@@ -174,7 +174,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         var result = minimizer.Minimize(cost, parameterConfigurations);
         
-        result.ParameterValues.First().Should().BeApproximately(expectedValue);
+        result.ParameterValues[0].Should().BeApproximately(expectedValue);
     }
     
     [Test]
