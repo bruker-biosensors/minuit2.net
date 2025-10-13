@@ -32,7 +32,8 @@ internal abstract class MnMinimizer : IMinimizer
         }
         catch (MinimizationAbort abort)
         {
-            return new AbortedMinimizationResult(abort, costFunction, parameterState);
+            var variables = parameterState.ExtractVariablesFrom(costFunction.Parameters);
+            return new AbortedMinimizationResult(abort, costFunction, variables);
         }
     }
 

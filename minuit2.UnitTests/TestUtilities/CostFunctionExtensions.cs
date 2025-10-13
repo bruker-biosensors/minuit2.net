@@ -66,8 +66,9 @@ internal class CostFunctionWithAutoCancellation(
     public double ErrorDefinition => wrapped.ErrorDefinition;
     public double ValueFor(IReadOnlyList<double> parameterValues)
     {
-        _numberOfFunctionCalls++;
-        if (_numberOfFunctionCalls >= numberOfFunctionCallsBeforeCancellation)  // >= because cancellation is checked before this method call
+        Interlocked.Increment(ref _numberOfFunctionCalls);
+        
+        if (_numberOfFunctionCalls >= numberOfFunctionCallsBeforeCancellation)
             cancellationTokenSource.Cancel();
         
         return wrapped.ValueFor(parameterValues);
@@ -93,7 +94,8 @@ internal class CostFunctionWithOverrides(
     
     public double ValueFor(IReadOnlyList<double> parameterValues)
     {
-        _numberOfFunctionCalls++;
+        Interlocked.Increment(ref _numberOfFunctionCalls);
+        
         return HasSwitched && valueOverride != null 
             ? valueOverride(parameterValues) 
             : wrapped.ValueFor(parameterValues);
