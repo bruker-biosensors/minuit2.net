@@ -22,8 +22,7 @@ public static class HesseErrorCalculator
         using var hesse = new MnHesseWrap(strategy.AsMnStrategy());
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
         var minimum = minimizationResult.Minimum;
-        var parameterState = minimum.UserState();
-
+        
         try
         {
             hesse.Update(minimum, cost);
@@ -31,7 +30,7 @@ public static class HesseErrorCalculator
         }
         catch (MinimizationAbort abort)
         {
-            return new AbortedMinimizationResult(abort, costFunction, parameterState, result.NumberOfFunctionCalls);
+            return new AbortedMinimizationResult(abort, costFunction, result.Variables, result.NumberOfFunctionCalls);
         }
     }
 }
