@@ -38,18 +38,14 @@ double ROOT::Minuit2::FCNWrap::Up() const
 
 void ROOT::Minuit2::FCNWrap::Abort(bool expected, std::string const &reason)
 {
-    {
         abort = { true, expected, reason };
-    }
 }
 
 void ROOT::Minuit2::FCNWrap::ThrowAbortExeceptionIfRequired() const {
-    if (abort.ShouldAbort && abort.IsExpected)
-    {
-        throw OperationCancelledException(abort.Reason.c_str());
-    }
+    if (!abort.ShouldAbort) return;
 
-    if (abort.ShouldAbort && !abort.IsExpected) {
-        throw std::exception(abort.Reason.c_str());
-    }
+    if (abort.IsExpected)
+         throw OperationCancelledException(abort.Reason.c_str());
+    else
+         throw std::exception(abort.Reason.c_str());
 }

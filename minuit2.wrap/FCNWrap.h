@@ -10,9 +10,7 @@ namespace ROOT
         class FCNWrap : public FCNBase
         {
         public:
-            FCNWrap()
-            {
-            }
+            FCNWrap(){}
 
             virtual double Cost(std::vector<double> const &parameterValues) const;
 
@@ -30,12 +28,14 @@ namespace ROOT
 
             virtual ~FCNWrap() {}
         private:
+
             struct AbortCommand
                 {
-                bool ShouldAbort = false;
-                bool IsExpected = false;
-                std::string Reason;
+                    bool ShouldAbort = false;
+                    bool IsExpected = false;
+                    std::string Reason;
                 };
+
             AbortCommand abort = AbortCommand();
 
             void ThrowAbortExeceptionIfRequired() const;
