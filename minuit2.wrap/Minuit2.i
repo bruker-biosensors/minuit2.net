@@ -14,20 +14,6 @@ namespace std {
     %template(VectorDouble) vector<double>;
 };
 
-%exception {
-    try {
-        $action
-    }
-    catch(OperationCancelledException &e){
-        SWIG_CSharpSetPendingException(SWIG_CSharpApplicationException, e.what());
-        return $null;
-    }
-    catch (std::exception &e) {
-        SWIG_CSharpSetPendingException(SWIG_CSharpSystemException, e.what());
-        return $null;
-    }
-}
-
 %{
     #include "ROOT/RSpan.hxx"
     #include "Minuit2/FCNBase.h"
@@ -35,13 +21,16 @@ namespace std {
     #include "Minuit2/FunctionMinimum.h"
     #include "Minuit2/MnUserCovariance.h"
     #include "Minuit2/MnStrategy.h"
+    #include "Minuit2/MnApplication.h"
     #include "Minuit2/MnUserParameterState.h"
     #include "MnMigradWrap.h"
     #include "MnSimplexWrap.h"
     #include "MnMinimizeWrap.h"
     #include "MnHesseWrap.h"
     #include "OperationCancelledException.h"
+    #include "MinimizationRunner.h"
     #include <exception>
+    #include <optional>
 
     using namespace ROOT::Minuit2;
 %}
@@ -50,10 +39,12 @@ namespace std {
 %feature("director") FCNWrap;
 %ignore ROOT::Minuit2::FCNWrap::Gradient;
 %include "FCNWrap.h"
+%include "MinimizationRunner.h"
 %include "Minuit2/MnUserCovariance.h"
 %include "Minuit2/MnUserParameterState.h"
 %include "Minuit2/FCNBase.h"
 %include "Minuit2/FunctionMinimum.h"
+%include "Minuit2/MnApplication.h"
 %include "MnMigradWrap.h"
 %include "MnSimplexWrap.h"
 %include "MnMinimizeWrap.h"

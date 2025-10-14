@@ -3,6 +3,7 @@
 
 #include "minuit2/MnHesse.h"
 #include "FCNWrap.h"
+#include <MinimizationRunner.h>
 
 namespace ROOT
 {
@@ -16,7 +17,11 @@ namespace ROOT
             {
             }
 
-            void Update(FunctionMinimum &minimum, const FCNWrap &function, unsigned int maximumFunctionCalls = 0) const;
+            MinimizationRunner::RunnerResult Update(FunctionMinimum &minimum, const FCNWrap &function, unsigned int maximumFunctionCalls = 0);
+            std::string GetErrorMessage() const { return errorMessage; }
+
+        private:
+            std::string errorMessage;
         };
     }
 }

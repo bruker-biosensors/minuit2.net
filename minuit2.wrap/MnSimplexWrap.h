@@ -9,15 +9,15 @@ namespace ROOT
 {
     namespace Minuit2
     {
-        class MnSimplexWrap : public MnSimplex
+        class MnSimplexWrap : public MnSimplex, public MinimizationRunner
         {
         public:
             MnSimplexWrap(const FCNWrap &function, const MnUserParameterState &parameterState, const MnStrategy &strategy = MnStrategy(1))
                 : MnSimplex(function, parameterState, strategy)
             {
             }
-
-            FunctionMinimum Run(unsigned int maximumFunctionCalls = 0, double tolerance = 0.1);
+        protected:
+            ROOT::Minuit2::MnApplication& GetApplication() { return *this; }
         };
     }
 }

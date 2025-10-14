@@ -25,28 +25,25 @@ internal abstract class MnMinimizer : IMinimizer
         var maximumFunctionCalls = minimizerConfiguration.MaximumFunctionCalls;
         var tolerance = minimizerConfiguration.Tolerance;
 
-        try
+        var runner = BuildMinimizer(cost, parameterState, strategy);
+        switch (runner.Run(maximumFunctionCalls, tolerance))
         {
-            var minimum = MnMinimize(cost, parameterState, strategy, maximumFunctionCalls, tolerance);
-            return new MinimizationResult(minimum, costFunction);
-        }
-        catch (ApplicationException)
-        {
-            var variables = parameterState.ExtractVariablesFrom(costFunction.Parameters);
-            return new AbortedMinimizationResult(
-                cost.AbortReason ?? new MinimizationAbort(MinimizationExitCondition.None, [], 0), costFunction,
-                variables);
-        }
-        catch (SystemException ex)
-        {
-            throw new CostFunctionException(ex.Message);
+            case MinimizationRunner.RunnerResult.Cancelled:
+                var variables = parameterState.ExtractVariablesFrom(costFunction.Parameters);
+                return new AbortedMinimizationResult(
+                    cost.AbortReason ?? new MinimizationAbort(MinimizationExitCondition.None, [], 0), costFunction,
+                    variables);
+            case MinimizationRunner.RunnerResult.Error:
+                throw new CostFunctionException(runner.GetErrorMessage());
+            case MinimizationRunner.RunnerResult.Success:
+                return new MinimizationResult(runner.GetFunctionMinimum(), costFunction);
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
-    protected abstract FunctionMinimum MnMinimize(
+    protected abstract MinimizationRunner BuildMinimizer(
         FCNWrap costFunction,
         MnUserParameterState parameterState,
-        MnStrategy strategy,
-        uint maximumFunctionCalls,
-        double tolerance);
+        MnStrategy strategy);
 }

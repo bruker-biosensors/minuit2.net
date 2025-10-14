@@ -9,7 +9,7 @@ namespace ROOT
 {
     namespace Minuit2
     {
-        class MnMinimizeWrap : public MnMinimize
+        class MnMinimizeWrap : public MnMinimize, public MinimizationRunner
         {
         public:
             MnMinimizeWrap(const FCNWrap &function, const MnUserParameterState &parameterState, const MnStrategy &strategy = MnStrategy(1))
@@ -17,7 +17,8 @@ namespace ROOT
             {
             }
 
-            FunctionMinimum Run(unsigned int maximumFunctionCalls = 0, double tolerance = 0.1);
+        protected:
+            ROOT::Minuit2::MnApplication& GetApplication() { return *this; }
         };
     }
 }
