@@ -6,19 +6,27 @@
 %include "std_vector.i"
 %include "std_string.i"
 %include "typemaps.i"
-//%include "cpointer.i"
-//%pointer_class(double ,doubleP);
 %include "carrays.i"
 %array_class(double, DoubleArray);
 
-
-//%interface_impl(ROOT::Minuit2::GenericFunction);
-//%interface_impl(ROOT::Minuit2::FCNBase);
-//%typemap(csinterfacemodifiers) FCNBase "internal interface"
 %include "Minuit2/MnStrategy.h"
 namespace std {
     %template(VectorDouble) vector<double>;
 };
+
+%exception {
+    try {
+        $action
+    }
+    catch(OperationCancelledException &e){
+        SWIG_CSharpSetPendingException(SWIG_CSharpApplicationException, e.what());
+        return $null;
+    }
+    catch (std::exception &e) {
+        SWIG_CSharpSetPendingException(SWIG_CSharpSystemException, e.what());
+        return $null;
+    }
+}
 
 %{
     #include "ROOT/RSpan.hxx"
@@ -32,11 +40,15 @@ namespace std {
     #include "MnSimplexWrap.h"
     #include "MnMinimizeWrap.h"
     #include "MnHesseWrap.h"
+    #include "OperationCancelledException.h"
+    #include <exception>
 
     using namespace ROOT::Minuit2;
 %}
 
+
 %feature("director") FCNWrap;
+%ignore ROOT::Minuit2::FCNWrap::Gradient;
 %include "FCNWrap.h"
 %include "Minuit2/MnUserCovariance.h"
 %include "Minuit2/MnUserParameterState.h"

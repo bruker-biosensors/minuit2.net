@@ -25,6 +25,7 @@ set(HEADER_FILES
   MnSimplexWrap.h
   MnMinimizeWrap.h
   MnHesseWrap.h
+  OperationCancelledException.h
 )
 
 cmake_path(ABSOLUTE_PATH MINUIT2NET_PATH NORMALIZE)

@@ -16,7 +16,9 @@ namespace ROOT
 
             virtual double Cost(std::vector<double> const &parameterValues) const;
 
-            virtual std::vector<double> Gradient(std::vector<double> const &) const override;
+            virtual std::vector<double> Gradient(std::vector<double> const &) const final;
+
+            virtual std::vector<double> CalculateGradient(std::vector<double> const &) const;
 
             virtual bool HasGradient() const override;
 
@@ -24,7 +26,20 @@ namespace ROOT
 
             double operator()(std::vector<double> const &parameterValues) const;
 
+            void Abort(bool expected, std::string const& reason);
+
             virtual ~FCNWrap() {}
+        private:
+            struct AbortCommand
+                {
+                bool ShouldAbort = false;
+                bool IsExpected = false;
+                std::string Reason;
+                };
+            AbortCommand abort = AbortCommand();
+
+            void ThrowAbortExeceptionIfRequired() const;
+
         };
     }
 }
