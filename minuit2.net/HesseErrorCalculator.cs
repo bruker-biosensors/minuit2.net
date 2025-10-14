@@ -28,7 +28,7 @@ public static class HesseErrorCalculator
             hesse.Update(minimum, cost);
             return new MinimizationResult(minimum, costFunction);
         }
-        catch (ApplicationException abort)
+        catch (ApplicationException)
         {
             return new AbortedMinimizationResult(
                 cost.AbortReason ?? new MinimizationAbort(MinimizationExitCondition.None, [], 0), costFunction,

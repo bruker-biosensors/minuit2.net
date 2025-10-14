@@ -30,7 +30,7 @@ internal abstract class MnMinimizer : IMinimizer
             var minimum = MnMinimize(cost, parameterState, strategy, maximumFunctionCalls, tolerance);
             return new MinimizationResult(minimum, costFunction);
         }
-        catch (ApplicationException ex)
+        catch (ApplicationException)
         {
             var variables = parameterState.ExtractVariablesFrom(costFunction.Parameters);
             return new AbortedMinimizationResult(
