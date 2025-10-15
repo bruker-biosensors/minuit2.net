@@ -5,7 +5,9 @@
 double ROOT::Minuit2::FCNWrap::operator()(std::vector<double> const &parameterValues) const
 {
     ThrowAbortExeceptionIfRequired();
-    return Cost(parameterValues);
+    double cost =  Cost(parameterValues);
+    ThrowAbortExeceptionIfRequired();
+    return cost;
 }
 
 double ROOT::Minuit2::FCNWrap::Cost(std::vector<double> const &parameterValues) const
@@ -13,14 +15,14 @@ double ROOT::Minuit2::FCNWrap::Cost(std::vector<double> const &parameterValues) 
     return 0;
 }
 
-// Gradient function is called by the Minimizer, but will not be exposed to the C# API.
 std::vector<double> ROOT::Minuit2::FCNWrap::Gradient(std::vector<double> const &v) const
 {
     ThrowAbortExeceptionIfRequired();
-    return CalculateGradient(v);
+    std::vector<double> result =  CalculateGradient(v);
+    ThrowAbortExeceptionIfRequired();
+    return result;
 }
 
-// Gradient function exposed to the C# API.
 std::vector<double> ROOT::Minuit2::FCNWrap::CalculateGradient(std::vector<double> const &v) const
 {
     return std::vector<double>(v.size(), 0);
