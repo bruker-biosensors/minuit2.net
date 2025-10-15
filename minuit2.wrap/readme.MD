@@ -21,23 +21,35 @@ Dont forget, the SWIG Wrapper is C and any state within that wrapper is shared b
 
 ## Example of exception propagation
 
+Below is an example of how the exception propagation works. Between the C-Sharp and Minuit2 C++ are the SWIG C#, C and C++ wrapper classes facilitating communication.
+
 ``` mermaid
 sequenceDiagram
 
+box C-Sharp
     participant MnMinimizer
     participant ICostFunction
     participant CostFunctionAdapter
-    participant SWIGLayer
+    end
+
+box Minuit2 C++
     participant FCNWrap
     participant MinimizationRunner
+    end
+
 
     MnMinimizer->>MinimizationRunner: start Minimization
+    activate MnMinimizer
+    activate MinimizationRunner
     MinimizationRunner->>FCNWrap: calls operator()
-    FCNWrap-->>FCNWrap: calls Cost()
-    FCNWrap->>ICostFunction: call ValueFor()
+    activate FCNWrap
+    FCNWrap->>CostFunctionAdapter: call ValueFor()
+    CostFunctionAdapter->>ICostFunction: calls ValueFor()
     ICostFunction->>CostFunctionAdapter: throws Exception
     CostFunctionAdapter->>FCNWrap: catches Exception and calls Abort
     FCNWrap->>MinimizationRunner: throws Exception
+    deactivate FCNWrap
     MinimizationRunner->>MnMinimizer: catches Exception and returns RunnerResult
-    MnMinimizer-->>MnMinimizer: evaluates Result and throws Exception
+    deactivate MinimizationRunner
+    deactivate MnMinimizer
 ```
