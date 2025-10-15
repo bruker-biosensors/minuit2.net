@@ -5,7 +5,7 @@ To facilitate the use of Minuit2, some wrapper classes have been introduced.
 
 ## FCNWrap
 FCNWrap is responsible to convert the `Minuit2::FCNBase` class into a C# class.
-SWIG uses a [Director](https://www.swig.org/Doc4.0/SWIGPlus.html#SWIGPlus_director_classes_introduction) to override the C++ methods of `FCNBase` from C# - allowing the implementation of custom cost functions..
+SWIG uses a [Director](https://www.swig.org/Doc4.0/SWIGPlus.html#SWIGPlus_director_classes_introduction) to override the C++ methods of `FCNBase` from C# - allowing the implementation of custom cost functions.
 Unfurtunately, SWIGs Director implementation for C# does not support propagating Exceptions. As FCNWrap is bidirectional (`Cost` and `Gradient` are called from the Minimizer on the C++ side), an exception raised in C# has to be propagated **THROUGH** the C++ code to work as expected.
 If this this not properly handled, the exception will circumvent the C++ code and the bubble up on the C# without any handling of the exception on the C++ side. This can lead to memory leaks.
 
