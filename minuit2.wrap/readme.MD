@@ -5,12 +5,13 @@ To facilitate the use of Minuit2, some wrapper classes have been introduced.
 
 ## FCNWrap
 FCNWrap is responsible to convert the `Minuit2::FCNBase` class into a C# class.
-SWIG uses a [Director](https://www.swig.org/Doc4.0/SWIGPlus.html#SWIGPlus_director_classes_introduction) to override the C++ methods of `FCNBase` from C# - allowing the implementation of custom cost functions.
-Unfurtunately, SWIGs Director implementation for C# does not support propagating Exceptions. As FCNWrap is bidirectional (`Cost` and `Gradient` are called from the Minimizer on the C++ side), an exception raised in C# has to be propagated **THROUGH** the C++ code to work as expected.
-If this this not properly handled, the exception will circumvent the C++ code and the bubble up on the C# without any handling of the exception on the C++ side. This can lead to memory leaks.
-
-To facilitate correct exception handling behavior, the `CostFunctionAdapter` class in C# is responsible to catch any exception raised in C# and propagate them via the ``FCNWrap::Abort`` method. This method will than throw a C++ exception which will be caught by the MinimizationRunner.
-
+SWIG uses a [Director](https://www.swig.org/Doc4.0/SWIGPlus.html#SWIGPlus_director_classes_introduction). The director feature allows overriding cirtual C++ methods via C#.
+Unfortunately, SWIGs Director implementation for C# does not support propagating Exceptions. As FCNWrap is bidirectional (`Cost` and `Gradient` are called from the Minimizer on the C++ side), an exception raised in C# has to be propagated **THROUGH** the C++ code to work as expected.
+If C# exceptions are not properly handled, exceptions will bypass the C++ cleanup code and bubble directly to C#, potentially leaving C++ objects in an inconsistent state and causing memory leaks.
+The correct exception handling is implemented in the `CostFunctionAdapter` class.
+The CostFunctionAdapter is a C# helper class that wraps user-defined cost functions and interfaces with the FCNWrap C++ class.
+FCNWrap inherits from MINUIT2's FCNBase via the SWIG Director feature.
+The CostFunctionAdapter is responsible is responsible for catching any exception raised in C# and propagate them via the C++ ``FCNWrap::Abort`` method to the C++ code.
 
 ## MinimizationRunner
 The MinimizationRunner class provides a simple way to interact with the Minuit2 minimizers. As every Minuit2 minimizer inherits from `ROOT::Minuit2::MnApplication`,
