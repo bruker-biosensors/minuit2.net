@@ -156,7 +156,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
     }
 
     [Test]
-    public void when_the_cost_function_gradient_throws_an_exception_during_a_minimization_process_forwards_that_exception()
+    public void when_the_cost_function_gradient_throws_an_exception_during_a_minimization_process_raises_a_CostFunctionException()
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
         var cost = problem.Cost.WithGradient().Build().WithGradientOverride(_ => throw new TestException());

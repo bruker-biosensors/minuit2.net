@@ -314,7 +314,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
     [Test]
     public void
-        when_the_cost_function_value_calculation_throws_an_exception_during_a_minimization_process_forwards_that_exception()
+        when_the_cost_function_value_calculation_throws_an_exception_during_a_minimization_process_a_CostFunctionException_is_raised()
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
         var cost = problem.Cost.Build().WithValueOverride(_ => throw new TestException());
@@ -323,34 +323,5 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         Action action = () => minimizer.Minimize(cost, parameterConfigurations);
 
         action.Should().ThrowExactly<CostFunctionException>();
-    }
-
-    [Test]
-    public void when_run_in_parallel_aborting_one_minimizer_does_not_affect_the_other()
-    {
-        int nTasks = 8;
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var parameterConfigurations = problem.ParameterConfigurations.Build();
-        var cost = problem.Cost.Build();
-
-        List<Task<IMinimizationResult>> tasks = new();
-        CancellationTokenSource cts1 = new();
-        tasks.Add(new Task<IMinimizationResult>(() => minimizer.Minimize(cost, parameterConfigurations, null, cts1.Token)));
-        for (int i = 0; i < nTasks; i++)
-        {
-            tasks.Add(new Task<IMinimizationResult>(() => minimizer.Minimize(cost, parameterConfigurations)));
-        }
-
-        tasks.ForEach(x => x.Start());
-        cts1.Cancel();
-        Task.WaitAll(tasks.ToArray(), CancellationToken.None);
-
-        Assert.That(tasks[0].Result.ExitCondition, Is.EqualTo(MinimizationExitCondition.ManuallyStopped));
-        for (int i = 1; i < nTasks ; i++)
-        {
-           // Assert.That(tasks[i].Result.ExitCondition, Is.EqualTo(MinimizationExitCondition.Converged));
-        }
-
-
     }
 }

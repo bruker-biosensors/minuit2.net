@@ -73,7 +73,7 @@ public class The_hesse_error_calculator
         }
 
         [Test]
-        public void when_the_cost_function_value_calculation_throws_an_exception_during_the_process_forwards_that_exception()
+        public void when_the_cost_function_value_calculation_throws_an_exception_during_the_process_raises_a_CostFunctionException()
         {
             var cost = _costFunction.WithValueOverride(_ => throw new TestException());
 
