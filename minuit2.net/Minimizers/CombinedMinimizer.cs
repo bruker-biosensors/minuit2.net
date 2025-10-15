@@ -2,14 +2,11 @@ namespace minuit2.net.Minimizers;
 
 internal class CombinedMinimizer : MnMinimizer
 {
-    protected override FunctionMinimum MnMinimize(
-        FCNWrap costFunction, 
-        MnUserParameterState parameterState, 
-        MnStrategy strategy,
-        uint maximumFunctionCalls, 
-        double tolerance)
+    protected override MinimizationRunner BuildMinimizer(
+        FCNWrap costFunction,
+        MnUserParameterState parameterState,
+        MnStrategy strategy)
     {
-        using var combined = new MnMinimizeWrap(costFunction, parameterState, strategy);
-        return combined.Run(maximumFunctionCalls, tolerance);
+        return new MnMinimizeWrap(costFunction, parameterState, strategy);
     }
 }

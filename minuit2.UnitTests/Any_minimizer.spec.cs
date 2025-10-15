@@ -11,15 +11,21 @@ namespace minuit2.UnitTests;
 public abstract class Any_minimizer(IMinimizer minimizer)
 {
     private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialLeastSquaresProblem();
-    
+
     protected static IEnumerable<TestCaseData> WellPosedMinimizationProblems()
     {
         foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
         {
-            yield return TestCase(new QuadraticPolynomialLeastSquaresProblem().Configured(), nameof(QuadraticPolynomialLeastSquaresProblem));
-            yield return TestCase(new CubicPolynomialLeastSquaresProblem().Configured(), nameof(CubicPolynomialLeastSquaresProblem));
-            yield return TestCase(new ExponentialDecayLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(ExponentialDecayLeastSquaresProblem));
-            yield return TestCase(new BellCurveLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveLeastSquaresProblem));
+            yield return TestCase(new QuadraticPolynomialLeastSquaresProblem().Configured(),
+                nameof(QuadraticPolynomialLeastSquaresProblem));
+            yield return TestCase(new CubicPolynomialLeastSquaresProblem().Configured(),
+                nameof(CubicPolynomialLeastSquaresProblem));
+            yield return TestCase(
+                new ExponentialDecayLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)),
+                nameof(ExponentialDecayLeastSquaresProblem));
+            yield return TestCase(
+                new BellCurveLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)),
+                nameof(BellCurveLeastSquaresProblem));
             continue;
 
             TestCaseData TestCase(ConfiguredProblem problem, string problemName) =>
@@ -31,14 +37,14 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     public void when_minimizing_a_well_posed_problem_finds_the_optimum_parameter_values(
         ConfiguredProblem problem,
         Strategy strategy)
-    { 
+    {
         var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
-        
+
         var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
-        
+
         result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues, relativeTolerance: 0.01);
     }
-    
+
     private static IEnumerable<TestCaseData> InvalidParameterConfigurationTestCases()
     {
         var cost = Any.InstanceOf<ICostFunction>();
@@ -46,11 +52,11 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var missing = cost.Parameters.Skip(1).Select(AnyConfig);
         yield return new TestCaseData(cost, missing)
             .SetName("Missing parameter configurations");
-        
+
         var duplicates = cost.Parameters.Select(AnyConfig).Concat([AnyConfig(cost.Parameters[0])]);
         yield return new TestCaseData(cost, duplicates)
             .SetName("Matching parameter configurations with additional duplicate configuration");
-        
+
         var mismatching = cost.Parameters.Select(name => AnyConfig(name + Any.String()));
         yield return new TestCaseData(cost, mismatching)
             .SetName("Matching number of parameter configurations but mismatching names");
@@ -60,7 +66,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
     [TestCaseSource(nameof(InvalidParameterConfigurationTestCases))]
     public void when_asked_to_minimize_a_cost_function_with_invalid_parameter_configurations_throws_an_exception(
-        ICostFunction cost, 
+        ICostFunction cost,
         IEnumerable<ParameterConfiguration> mismatchingParameterConfigurations)
     {
         Action action = () => _ = minimizer.Minimize(cost, mismatchingParameterConfigurations.ToList());
@@ -68,7 +74,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     }
 
     [Test]
-    public void when_minimizing_a_cost_function_with_parameter_configurations_that_contain_unique_matches_for_all_cost_parameters_ignores_any_excess_configurations()
+    public void
+        when_minimizing_a_cost_function_with_parameter_configurations_that_contain_unique_matches_for_all_cost_parameters_ignores_any_excess_configurations()
     {
         var costFunction = _defaultProblem.Cost.Build();
         var matchingParameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
@@ -82,36 +89,39 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
     [Test]
     [Description("Ensures correct parameter-configuration-to-cost-function-parameter mapping.")]
-    public void when_minimizing_a_cost_function_yields_the_same_result_independent_of_the_order_parameter_configurations_are_provided_in()
+    public void
+        when_minimizing_a_cost_function_yields_the_same_result_independent_of_the_order_parameter_configurations_are_provided_in()
     {
         var cost = _defaultProblem.Cost.Build();
-        var orderedConfigurations = _defaultProblem.ParameterConfigurations.Build(); 
+        var orderedConfigurations = _defaultProblem.ParameterConfigurations.Build();
         var disorderedConfigurations = _defaultProblem.ParameterConfigurations.InRandomOrder().Build();
-        
+
         var resultForOrderedConfigurations = minimizer.Minimize(cost, orderedConfigurations);
         var resultForDisorderedConfigurations = minimizer.Minimize(cost, disorderedConfigurations);
-        
+
         resultForDisorderedConfigurations.Should().BeEquivalentTo(resultForOrderedConfigurations);
     }
-    
+
     [TestCase(double.NegativeInfinity, double.PositiveInfinity)]
     [TestCase(double.NaN, double.PositiveInfinity)]
     [TestCase(double.NegativeInfinity, double.NaN)]
     [TestCase(double.NaN, double.NaN)]
-    public void when_minimizing_a_cost_function_yields_the_same_result_for_unlimited_parameters_and_parameters_with_infinite_limits(
-        double lowerLimit, 
-        double upperLimit)
+    public void
+        when_minimizing_a_cost_function_yields_the_same_result_for_unlimited_parameters_and_parameters_with_infinite_limits(
+            double lowerLimit,
+            double upperLimit)
     {
         var cost = _defaultProblem.Cost.Build();
         var unlimitedParameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
-        var parameterConfigurationsWithInfiniteLimits = _defaultProblem.ParameterConfigurations.WithLimits(lowerLimit, upperLimit).Build();
+        var parameterConfigurationsWithInfiniteLimits =
+            _defaultProblem.ParameterConfigurations.WithLimits(lowerLimit, upperLimit).Build();
 
         var resultForUnlimited = minimizer.Minimize(cost, unlimitedParameterConfigurations);
         var resultForInfiniteLimits = minimizer.Minimize(cost, parameterConfigurationsWithInfiniteLimits);
-        
+
         resultForInfiniteLimits.Should().BeEquivalentTo(resultForUnlimited);
     }
-    
+
     [TestCase(-1E15, 1E15)]
     [TestCase(null, 1E15)]
     [TestCase(-1E15, null)]
@@ -121,15 +131,17 @@ public abstract class Any_minimizer(IMinimizer minimizer)
                  "instability when one or both limits are extremely large compared to the parameter value, or — under " +
                  "double-sided limits — when the optimal value lies disproportionately close to one of the bounds. " +
                  "In such cases, we expect an invalid minimization result.")]
-    public void when_minimizing_a_cost_function_for_extreme_parameter_limits_causing_numerical_issues_in_the_internal_parameter_projection_yields_an_invalid_result(
-        double? lowerLimit, 
-        double? upperLimit)
+    public void
+        when_minimizing_a_cost_function_for_extreme_parameter_limits_causing_numerical_issues_in_the_internal_parameter_projection_yields_an_invalid_result(
+            double? lowerLimit,
+            double? upperLimit)
     {
         var cost = _defaultProblem.Cost.Build();
-        var parameterConfigurations = _defaultProblem.ParameterConfigurations.WithLimits(lowerLimit, upperLimit).Build();
-        
+        var parameterConfigurations =
+            _defaultProblem.ParameterConfigurations.WithLimits(lowerLimit, upperLimit).Build();
+
         var result = minimizer.Minimize(cost, parameterConfigurations);
-        
+
         result.IsValid.Should().BeFalse();
     }
 
@@ -147,10 +159,10 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
         var result = minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
         var referenceResult = minimizer.Minimize(referenceCost, parameterConfigurations, minimizerConfiguration);
-        
+
         result.CostValue.Should().BeApproximately(referenceResult.CostValue);
     }
-    
+
     private static IEnumerable<TestCaseData> BestValueOutsideLimitsParameterConfigurations()
     {
         // optimum value for parameter c0 is 10 (see CubicPolynomialLeastSquaresProblem.cs)
@@ -161,24 +173,26 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     }
 
     [TestCaseSource(nameof(BestValueOutsideLimitsParameterConfigurations))]
-    public void when_minimizing_a_cost_function_with_optimal_parameter_values_located_outside_the_provided_parameters_limits_yields_a_result_with_the_affected_parameters_at_their_next_best_limit(
-        double initialValue, 
-        double? lowerLimit, 
-        double? upperLimit, 
-        double expectedValue)
+    public void
+        when_minimizing_a_cost_function_with_optimal_parameter_values_located_outside_the_provided_parameters_limits_yields_a_result_with_the_affected_parameters_at_their_next_best_limit(
+            double initialValue,
+            double? lowerLimit,
+            double? upperLimit,
+            double expectedValue)
     {
         var cost = _defaultProblem.Cost.Build();
         var parameterConfigurations = _defaultProblem.ParameterConfigurations
             .WithParameter(0).WithValue(initialValue).WithLimits(lowerLimit, upperLimit)
             .Build();
-        
+
         var result = minimizer.Minimize(cost, parameterConfigurations);
-        
+
         result.ParameterValues[0].Should().BeApproximately(expectedValue);
     }
-    
+
     [Test]
-    public void when_cancelled_during_a_minimization_process_yields_an_invalid_result_with_manually_stopped_exit_condition_and_undefined_covariances_representing_the_last_state_of_the_process()
+    public void
+        when_cancelled_during_a_minimization_process_yields_an_invalid_result_with_manually_stopped_exit_condition_and_undefined_covariances_representing_the_last_state_of_the_process()
     {
         var cts = new CancellationTokenSource();
         const int numberOfFunctionCallsBeforeCancellation = 10;
@@ -193,7 +207,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             x.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
             x.NumberOfFunctionCalls.Should().Be(numberOfFunctionCallsBeforeCancellation + 1);
             x.ParameterCovarianceMatrix.Should().BeNull();
-            
+
             var computedCostValue = cost.ValueFor(x.ParameterValues);
             var initialCostValue = cost.ValueFor(parameterConfigurations);
             x.CostValue.Should()
@@ -201,14 +215,15 @@ public abstract class Any_minimizer(IMinimizer minimizer)
                 .BeLessThanOrEqualTo(initialCostValue);
         });
     }
-    
+
     [Test]
-    public void when_running_into_the_function_call_limit_during_a_minimization_process_yields_a_result_with_function_calls_exhausted_exit_condition()
+    public void
+        when_running_into_the_function_call_limit_during_a_minimization_process_yields_a_result_with_function_calls_exhausted_exit_condition()
     {
         var cost = _defaultProblem.Cost.Build();
         var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
         var minimizerConfiguration = new MinimizerConfiguration(MaximumFunctionCalls: 1);
-        
+
         var result = minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
 
         result.ExitCondition.Should().Be(MinimizationExitCondition.FunctionCallsExhausted);
@@ -217,9 +232,10 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     [Test]
     [Description("Ensures that the inner scaling of gradients by the error definition in the component cost function " +
                  "and the final rescaling works.")]
-    public void when_minimizing_a_cost_function_sum_with_a_single_component_yields_a_result_equivalent_to_the_result_for_the_isolated_component(
-        [Values] bool hasGradient, 
-        [Values] Strategy strategy)
+    public void
+        when_minimizing_a_cost_function_sum_with_a_single_component_yields_a_result_equivalent_to_the_result_for_the_isolated_component(
+            [Values] bool hasGradient,
+            [Values] Strategy strategy)
     {
         var component = _defaultProblem.Cost.WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component);
@@ -228,7 +244,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
         var componentResult = minimizer.Minimize(component, parameterConfigurations, minimizerConfiguration);
         var sumResult = minimizer.Minimize(sum, parameterConfigurations, minimizerConfiguration);
-        
+
         sumResult.Should().BeEquivalentTo(componentResult, options => options
             .Excluding(x => x.NumberOfFunctionCalls)
             .Excluding(x => x.ParameterCovarianceMatrix)
@@ -244,13 +260,15 @@ public abstract class Any_minimizer(IMinimizer minimizer)
                  "described as 'largely fantasy'). Users should be aware of this limitation and are advised to " +
                  "either choose alternative minimizers or apply additional minimization cycles when strict " +
                  "convergence and accurate results are required.")]
-    public void when_minimizing_a_cost_function_sum_of_independent_components_with_different_error_definitions_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
+    public void
+        when_minimizing_a_cost_function_sum_of_independent_components_with_different_error_definitions_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
             [Values] bool hasGradient,
             [Values] Strategy strategy)
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
         var component1 = problem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
-        var component2 = problem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
+        var component2 = problem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithErrorDefinition(2)
+            .Build();
         var sum = CostFunction.Sum(component1, component2);
         var parameterConfigurations1 = problem.ParameterConfigurations.WithSuffix("1").Build();
         var parameterConfigurations2 = problem.ParameterConfigurations.WithSuffix("2").Build();
@@ -258,12 +276,14 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
         var component1Result = minimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
         var component2Result = minimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
-        var sumResult = minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
+        var sumResult = minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(),
+            minimizerConfiguration);
 
         sumResult.ShouldFulfill(x =>
         {
             x.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue);
-            x.ParameterValues.Should().BeApproximately(component1Result.ParameterValues.Concat(component2Result.ParameterValues));
+            x.ParameterValues.Should()
+                .BeApproximately(component1Result.ParameterValues.Concat(component2Result.ParameterValues));
         });
     }
 
@@ -272,14 +292,15 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     [TestCase(double.PositiveInfinity)]
     [Description("Ensures that the result indicates process termination due to an non-finite cost value. The Minuit2 " +
                  "code silently fails in this case with an undefined exit condition.")]
-    public void when_the_cost_function_returns_a_non_finite_value_during_a_minimization_process_yields_an_invalid_result_with_non_finite_value_exit_condition_and_undefined_covariances(
-        double nonFiniteValue)
+    public void
+        when_the_cost_function_returns_a_non_finite_value_during_a_minimization_process_yields_an_invalid_result_with_non_finite_value_exit_condition_and_undefined_covariances(
+            double nonFiniteValue)
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
         const int numberOfValidFunctionCalls = 5;
         var cost = problem.Cost.Build().WithValueOverride(_ => nonFiniteValue, numberOfValidFunctionCalls);
         var parameterConfigurations = problem.ParameterConfigurations.Build();
-        
+
         var result = minimizer.Minimize(cost, parameterConfigurations);
 
         result.ShouldFulfill(x =>
@@ -290,16 +311,17 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             x.ParameterCovarianceMatrix.Should().BeNull();
         });
     }
-    
+
     [Test]
-    public void when_the_cost_function_value_calculation_throws_an_exception_during_a_minimization_process_forwards_that_exception()
+    public void
+        when_the_cost_function_value_calculation_throws_an_exception_during_a_minimization_process_a_CostFunctionException_is_raised()
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
         var cost = problem.Cost.Build().WithValueOverride(_ => throw new TestException());
         var parameterConfigurations = problem.ParameterConfigurations.Build();
-        
+
         Action action = () => minimizer.Minimize(cost, parameterConfigurations);
-        
-        action.Should().ThrowExactly<TestException>();
+
+        action.Should().ThrowExactly<CostFunctionException>();
     }
 }
