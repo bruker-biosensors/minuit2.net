@@ -48,10 +48,13 @@ box Minuit2 C++
     FCNWrap->>CostFunctionAdapter: call ValueFor()
     CostFunctionAdapter->>ICostFunction: calls ValueFor()
     ICostFunction->>CostFunctionAdapter: throws Exception
-    CostFunctionAdapter->>FCNWrap: catches Exception and calls Abort
+    CostFunctionAdapter-->>CostFunctionAdapter: catches Exception
+    CostFunctionAdapter->>FCNWrap: calls Abort
     FCNWrap->>MinimizationRunner: throws Exception
     deactivate FCNWrap
-    MinimizationRunner->>MnMinimizer: catches Exception and returns RunnerResult
+    MinimizationRunner-->>MinimizationRunner: catches Exception
+    MinimizationRunner->>MnMinimizer: returns RunnerResult
     deactivate MinimizationRunner
+    MnMinimizer-->>MnMinimizer: Checks RunnerResult & throws Exception
     deactivate MnMinimizer
 ```
