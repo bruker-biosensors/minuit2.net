@@ -2,7 +2,6 @@
 
 // make all SWIG generated C# wrappers internal so that they arent exposed to the outside.
 %typemap(csclassmodifiers) SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE &&, SWIGTYPE [], SWIGTYPE (CLASS::*) "internal class"
-%typemap(csinterfacemodifiers) SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE &&, SWIGTYPE [], SWIGTYPE (CLASS::*) "internal interface"
 %pragma(csharp) moduleclassmodifiers="internal class"
 
 //Adds translation of standard C++ types to C#

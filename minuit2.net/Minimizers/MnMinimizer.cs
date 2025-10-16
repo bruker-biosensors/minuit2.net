@@ -42,7 +42,7 @@ internal abstract class MnMinimizer : IMinimizer
         }
     }
 
-    public IMinimizationResult Minimize(
+    public void Minimize(
         IReadOnlyCollection<double> x,
         IReadOnlyCollection<double> y,
         IReadOnlyCollection<double> err,
@@ -50,7 +50,7 @@ internal abstract class MnMinimizer : IMinimizer
         MinimizerConfiguration? minimizerConfiguration = null)
     {
         using var parameterState = parameterConfigurations.AsState();
-        using var cost = new NativeMinimizationFcn();
+        using var cost = new NativeMinimizationFcn(new VectorDouble(x),new VectorDouble(y),new VectorDouble(err), false);
         minimizerConfiguration ??= new MinimizerConfiguration();
         using var strategy = minimizerConfiguration.Strategy.AsMnStrategy();
         var runner = BuildMinimizer(cost, parameterState, strategy);
@@ -59,15 +59,17 @@ internal abstract class MnMinimizer : IMinimizer
         switch (runner.Run(maximumFunctionCalls, tolerance))
         {
             case MinimizationRunner.RunnerResult.Cancelled:
-                var variables =
-                    parameterState.ExtractVariablesFrom(parameterConfigurations.Select(p => p.Name).ToList());
-                return new AbortedMinimizationResult(
-                    new MinimizationAbort(MinimizationExitCondition.None, [], 0), null,
-                    variables);
+                return;
+                // var variables =
+                //     parameterState.ExtractVariablesFrom(parameterConfigurations.Select(p => p.Name).ToList());
+                // return new AbortedMinimizationResult(
+                //     new MinimizationAbort(MinimizationExitCondition.None, [], 0), null,
+                //     variables);
             case MinimizationRunner.RunnerResult.Error:
                 throw new CostFunctionException(runner.GetErrorMessage());
             case MinimizationRunner.RunnerResult.Success:
-                return new MinimizationResult(runner.GetFunctionMinimum(), null);
+                return;
+                //return new MinimizationResult(runner.GetFunctionMinimum(), null);
             default:
                 throw new ArgumentOutOfRangeException();
         }

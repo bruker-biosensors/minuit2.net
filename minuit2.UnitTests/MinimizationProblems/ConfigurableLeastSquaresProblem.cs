@@ -7,21 +7,23 @@ namespace minuit2.UnitTests.MinimizationProblems;
 
 internal abstract class ConfigurableLeastSquaresProblem
 {
+    public IReadOnlyList<double> X => XValues;
+    public IReadOnlyList<double> Y => YValues;
+    public IReadOnlyList<double> Error => Enumerable.Repeat(YError, YValues.Count).ToList();
     protected abstract Func<double, IReadOnlyList<double>, double> Model { get; }
     protected abstract Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; }
     protected abstract IReadOnlyList<string> ParameterNames { get; }
-    
     protected abstract IReadOnlyList<double> XValues { get; }
     protected abstract IReadOnlyList<double> YValues { get; }
     protected abstract double YError { get; }
 
     protected abstract IReadOnlyList<double> OptimumParameterValues { get; }
     protected abstract IReadOnlyList<double> DefaultInitialParameterValues { get; }
-    
+
     public LeastSquaresCostBuilder Cost => new(XValues, YValues, YError, Model, ModelGradient, ParameterNames);
-    
+
     public class LeastSquaresCostBuilder(
-        IReadOnlyList<double> xValues, 
+        IReadOnlyList<double> xValues,
         IReadOnlyList<double> yValues,
         double yError,
         Func<double, IReadOnlyList<double>, double> model,
@@ -29,7 +31,7 @@ internal abstract class ConfigurableLeastSquaresProblem
         IReadOnlyList<string> parameterNames)
     {
         private readonly string[] _parameterNames = parameterNames.ToArray();
-        
+
         private bool _hasYErrors = true;
         private bool _hasGradient;
         private double _errorDefinitionInSigma = 1;
@@ -53,7 +55,7 @@ internal abstract class ConfigurableLeastSquaresProblem
             _hasGradient = hasGradient;
             return this;
         }
-        
+
         public LeastSquaresCostBuilder WithErrorDefinition(double sigma)
         {
             _errorDefinitionInSigma = sigma;
@@ -71,26 +73,26 @@ internal abstract class ConfigurableLeastSquaresProblem
 
     public ParameterConfigurationsBuilder ParameterConfigurations =>
         new(ParameterNames, DefaultInitialParameterValues, OptimumParameterValues);
-    
+
     public class ParameterConfigurationsBuilder(
-        IReadOnlyList<string> parameterNames, 
+        IReadOnlyList<string> parameterNames,
         IReadOnlyList<double> defaultInitialParameterValues,
         IReadOnlyList<double> optimumParameterValues)
     {
-        private ParameterConfiguration[] _configs = parameterNames.Zip(defaultInitialParameterValues, 
+        private ParameterConfiguration[] _configs = parameterNames.Zip(defaultInitialParameterValues,
             (name, value) => ParameterConfiguration.Variable(name, value)).ToArray();
-        
+
         public ParameterConfiguration[] Build() => _configs;
-        
+
         public ParameterConfigurationsBuilder WithSuffix(string suffix)
         {
             _configs = _configs.Select(c => c.WithSuffix(suffix)).ToArray();
             return this;
         }
-        
+
         public ParameterConfigurationsBuilder WithAnyValuesCloseToOptimumValues(double maximumRelativeBias)
         {
-            _configs = _configs.Zip(optimumParameterValues, (c, optimumValue) => 
+            _configs = _configs.Zip(optimumParameterValues, (c, optimumValue) =>
                 c.WithValue(AnyValueCloseTo(optimumValue, maximumRelativeBias))).ToArray();
             return this;
         }
@@ -114,7 +116,7 @@ internal abstract class ConfigurableLeastSquaresProblem
         }
 
         public ParameterConfigurationsWithSpecialParameterBuilder WithParameter(int index) => new(this, index);
-        
+
         public class ParameterConfigurationsWithSpecialParameterBuilder(ParameterConfigurationsBuilder outer, int index)
         {
             private ParameterConfiguration Config
@@ -122,11 +124,11 @@ internal abstract class ConfigurableLeastSquaresProblem
                 get => outer._configs[index];
                 set => outer._configs[index] = value;
             }
-            
+
             public ParameterConfiguration[] Build() => outer.Build();
-            
+
             public ParameterConfigurationsBuilder And => outer;
-            
+
             public ParameterConfigurationsWithSpecialParameterBuilder WithValue(double value)
             {
                 Config = Config.WithValue(value);
