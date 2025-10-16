@@ -1,11 +1,12 @@
 #include "MnHesseWrap.h"
 #include "OperationCancelledException.h"
 #include <exception>
-
-MinimizationRunner::RunnerResult ROOT::Minuit2::MnHesseWrap::Update(FunctionMinimum &minimum, const FCNWrap &function, unsigned int maximumFunctionCalls)
+#include "FcnFacadeWrapper.h"
+MinimizationRunner::RunnerResult ROOT::Minuit2::MnHesseWrap::Update(FunctionMinimum &minimum, const FcnFacade&function, unsigned int maximumFunctionCalls)
 {
     try {
-        this->operator()(function, minimum, maximumFunctionCalls);
+        auto wrap = FcnFacadeWrapper(function);
+        this->operator()(wrap, minimum, maximumFunctionCalls);
         return MinimizationRunner::Success;
     }
     catch (OperationCancelledException& e) {
@@ -16,5 +17,7 @@ MinimizationRunner::RunnerResult ROOT::Minuit2::MnHesseWrap::Update(FunctionMini
         errorMessage = e.what();
         return MinimizationRunner::Error;
     }
+
+    return MinimizationRunner::Success;
 
 }

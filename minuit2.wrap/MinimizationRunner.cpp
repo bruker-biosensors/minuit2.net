@@ -1,6 +1,7 @@
 #include "MinimizationRunner.h"
 #include "OperationCancelledException.h"
 #include <exception>
+#include <iostream>
 
 MinimizationRunner::RunnerResult MinimizationRunner::Run(unsigned int maximumFunctionCalls, double tolerance)
 {
@@ -10,6 +11,7 @@ MinimizationRunner::RunnerResult MinimizationRunner::Run(unsigned int maximumFun
         return RunnerResult::Success;
     }
     catch(OperationCancelledException &e){
+        std::cout << e.what() << std::endl;
         errorMessage = e.what();
         return RunnerResult::Cancelled;
     }

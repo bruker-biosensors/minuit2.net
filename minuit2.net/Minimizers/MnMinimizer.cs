@@ -42,8 +42,39 @@ internal abstract class MnMinimizer : IMinimizer
         }
     }
 
+    public IMinimizationResult Minimize(
+        IReadOnlyCollection<double> x,
+        IReadOnlyCollection<double> y,
+        IReadOnlyCollection<double> err,
+        IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
+        MinimizerConfiguration? minimizerConfiguration = null)
+    {
+        using var parameterState = parameterConfigurations.AsState();
+        using var cost = new NativeMinimizationFcn();
+        minimizerConfiguration ??= new MinimizerConfiguration();
+        using var strategy = minimizerConfiguration.Strategy.AsMnStrategy();
+        var runner = BuildMinimizer(cost, parameterState, strategy);
+        var maximumFunctionCalls = minimizerConfiguration.MaximumFunctionCalls;
+        var tolerance = minimizerConfiguration.Tolerance;
+        switch (runner.Run(maximumFunctionCalls, tolerance))
+        {
+            case MinimizationRunner.RunnerResult.Cancelled:
+                var variables =
+                    parameterState.ExtractVariablesFrom(parameterConfigurations.Select(p => p.Name).ToList());
+                return new AbortedMinimizationResult(
+                    new MinimizationAbort(MinimizationExitCondition.None, [], 0), null,
+                    variables);
+            case MinimizationRunner.RunnerResult.Error:
+                throw new CostFunctionException(runner.GetErrorMessage());
+            case MinimizationRunner.RunnerResult.Success:
+                return new MinimizationResult(runner.GetFunctionMinimum(), null);
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
     protected abstract MinimizationRunner BuildMinimizer(
-        FCNWrap costFunction,
+        FcnFacade costFunction,
         MnUserParameterState parameterState,
         MnStrategy strategy);
 }

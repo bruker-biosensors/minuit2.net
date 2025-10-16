@@ -17,7 +17,7 @@ public class The_combined_minimizer() : Any_parameter_uncertainty_resolving_mini
                  "Migrad shouldn't face issues, there should be no difference between results obtained by Migrad and " +
                  "the combined minimizer.")]
     public void when_minimizing_a_well_posed_problem_yields_the_same_result_as_the_migrad_minimizer(
-        ConfiguredProblem problem, 
+        ConfiguredProblem problem,
         Strategy strategy)
     {
         var result = CombinedMinimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
