@@ -10,6 +10,7 @@ public interface IMinimizer
         MinimizerConfiguration? minimizerConfiguration = null,
         CancellationToken cancellationToken = default);
 
+    // TODO: define interface for c++ defined cost functions
     public void Minimize(
         IReadOnlyCollection<double> x,
         IReadOnlyCollection<double> y,
