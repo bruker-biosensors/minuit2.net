@@ -17,7 +17,7 @@ namespace ROOT
             {
             }
 
-            MinimizationRunner::RunnerResult Update(FunctionMinimum &minimum, const FCNWrap &function, unsigned int maximumFunctionCalls = 0);
+            MinimizationRunner::RunnerResult Update(FunctionMinimum &minimum, const FcnFacade& function, unsigned int maximumFunctionCalls = 0);
             std::string GetErrorMessage() const { return errorMessage; }
 
         private:

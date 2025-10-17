@@ -14,6 +14,7 @@ set(SOURCE_FILES
   FCNWrap.cpp
   MnHesseWrap.cpp
   MinimizationRunner.cpp
+  NativeMinimizationFcn.cpp
   Minuit2.i
 )
 
@@ -25,6 +26,9 @@ set(HEADER_FILES
   MnHesseWrap.h
   MinimizationRunner.h
   OperationCancelledException.h
+  NativeMinimizationFcn.h
+  FcnFacadeWrapper.h
+  FcnFacade.h
 )
 
 cmake_path(ABSOLUTE_PATH MINUIT2NET_PATH NORMALIZE)

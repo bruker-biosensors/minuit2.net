@@ -5,6 +5,8 @@
 #include "minuit2/FunctionMinimum.h"
 #include "FCNWrap.h"
 #include "MinimizationRunner.h"
+#include "NativeMinimizationFcn.h"
+#include <FcnFacadeWrapper.h>
 
 namespace ROOT
 {
@@ -13,13 +15,16 @@ namespace ROOT
         class MnMigradWrap : public MnMigrad, public MinimizationRunner
         {
         public:
-            MnMigradWrap(const FCNWrap &function, const MnUserParameterState &parameterState, const MnStrategy &strategy = MnStrategy(1))
-                : MnMigrad(function, parameterState, strategy), MinimizationRunner()
+            MnMigradWrap(const FcnFacade&function, const MnUserParameterState &parameterState, const MnStrategy &strategy = MnStrategy(1))
+                :_wrapper(FcnFacadeWrapper(function)), MnMigrad(_wrapper, parameterState, strategy), MinimizationRunner()
             {
             }
 
         protected:
             ROOT::Minuit2::MnApplication& GetApplication() { return *this; }
+
+        private:
+            FcnFacadeWrapper _wrapper;
         };
     }
 }

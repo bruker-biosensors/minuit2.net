@@ -5,8 +5,16 @@ namespace minuit2.net.Minimizers;
 public interface IMinimizer
 {
     IMinimizationResult Minimize(
-        ICostFunction costFunction, 
+        ICostFunction costFunction,
         IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
-        MinimizerConfiguration? minimizerConfiguration = null, 
+        MinimizerConfiguration? minimizerConfiguration = null,
         CancellationToken cancellationToken = default);
+
+    // TODO: define interface for c++ defined cost functions
+    public void Minimize(
+        IReadOnlyCollection<double> x,
+        IReadOnlyCollection<double> y,
+        IReadOnlyCollection<double> err,
+        IReadOnlyCollection<ParameterConfiguration> parameterConfigurations,
+        MinimizerConfiguration? minimizerConfiguration = null);
 }

@@ -13,14 +13,21 @@ namespace minuit2.UnitTests;
 public class Benchmarks
 {
     private readonly IMinimizer _minimizer = Minimizer.Migrad;
-    
+
+    [Benchmark]
+    public void SimpleMinimizationProblemNative()
+    {
+        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        _minimizer.Minimize(problem.X, problem.Y, problem.Error, problem.Configured().ParameterConfigurations);
+    }
+
     [Benchmark]
     public void SimpleMinimizationProblem()
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem().Configured();
         _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
     }
-    
+
     [Benchmark]
     public void MoreComplexMinimizationProblem()
     {
@@ -35,7 +42,7 @@ public class Benchmarks
             .Concat(problem3.ParameterConfigurations)
             .Concat(problem4.ParameterConfigurations)
             .ToArray();
-        
+
         _minimizer.Minimize(cost, parameterConfigurations);
     }
 

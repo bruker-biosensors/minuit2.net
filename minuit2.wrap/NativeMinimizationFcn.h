@@ -1,20 +1,15 @@
-#ifndef FCN_WRAP_H_
-#define FCN_WRAP_H_
+#ifndef _NATIVE_MINIMIZER_H_
+#define _NATIVE_MINIMIZER_H_
 
 #include "FcnFacade.h"
-
 namespace ROOT
 {
     namespace Minuit2
     {
-/***
-Wrapper around the FCNBase class to allow for the use of the C# API.
-This class is exposed via a Director (see SWIG documentation) which allows overriding of the virtual methods.
-**/
-        class FCNWrap : public FcnFacade
+        class NativeMinimizationFcn : public FcnFacade
         {
         public:
-            FCNWrap(){}
+            NativeMinimizationFcn(std::vector<double> x, std::vector<double> y, std::vector<double> z, bool useGradient) : _x(x), _y(y), _error(z), _useGradient(useGradient){}
 
             virtual double Cost(std::vector<double> const& parameterValues) const override;
             /**
@@ -27,9 +22,15 @@ This class is exposed via a Director (see SWIG documentation) which allows overr
 
             virtual bool HasGradient() const override;
 
-            virtual ~FCNWrap() {}
-            
 
+            virtual ~NativeMinimizationFcn() {}
+
+        private:
+            double ROOT::Minuit2::NativeMinimizationFcn::ResidualFor(int i, std::vector <double> const& parameterValues) const;
+            std::vector<double> _x;
+            std::vector<double> _y;
+            std::vector<double> _error;
+            bool _useGradient;
         };
     }
 }
