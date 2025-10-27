@@ -22,19 +22,15 @@ public static class HesseErrorCalculator
         using var hesse = new MnHesseWrap(strategy.AsMnStrategy());
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
         var minimum = minimizationResult.Minimum;
-
-        switch (hesse.Update(minimum, cost))
+        
+        try
         {
-            case MinimizationRunner.RunnerResult.Cancelled:
-                return new AbortedMinimizationResult(
-                    cost.AbortReason ?? new MinimizationAbort(MinimizationExitCondition.None, [], 0), costFunction,
-                    result.Variables, result.NumberOfFunctionCalls);
-            case MinimizationRunner.RunnerResult.Error:
-                throw new CostFunctionException(hesse.GetErrorMessage());
-            case MinimizationRunner.RunnerResult.Success:
-                return new MinimizationResult(minimum, costFunction);
-            default:
-                throw new ArgumentOutOfRangeException();
+            hesse.Update(minimum, cost);
+            return new MinimizationResult(minimum, costFunction);
+        }
+        catch (MinimizationAbort abort)
+        {
+            return new AbortedMinimizationResult(abort, costFunction, result.Variables, result.NumberOfFunctionCalls);
         }
     }
 }

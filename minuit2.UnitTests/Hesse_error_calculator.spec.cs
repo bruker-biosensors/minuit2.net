@@ -14,9 +14,9 @@ public class The_hesse_error_calculator
     {
         var minimizationResult = Any.InstanceOf<IMinimizationResult>();
         var unrelatedCostFunction = Any.InstanceOf<ICostFunction>();
-
+        
         Action action = () => _ = HesseErrorCalculator.Refine(minimizationResult, unrelatedCostFunction);
-
+        
         action.Should().Throw<ArgumentException>();
     }
 
@@ -60,7 +60,7 @@ public class The_hesse_error_calculator
         {
             const int numberOfValidFunctionCalls = 5;
             var cost = _costFunction.WithValueOverride(_ => nonFiniteValue, numberOfValidFunctionCalls);
-
+            
             var result = HesseErrorCalculator.Refine(_minimizationResult, cost);
 
             result.ShouldFulfill(x =>
@@ -73,13 +73,13 @@ public class The_hesse_error_calculator
         }
 
         [Test]
-        public void when_the_cost_function_value_calculation_throws_an_exception_during_the_process_raises_a_CostFunctionException()
+        public void when_the_cost_function_value_calculation_throws_an_exception_during_the_process_forwards_that_exception()
         {
             var cost = _costFunction.WithValueOverride(_ => throw new TestException());
-
+            
             Action action = () => HesseErrorCalculator.Refine(_minimizationResult, cost);
-
-            action.Should().ThrowExactly<CostFunctionException>();
+            
+            action.Should().ThrowExactly<TestException>();
         }
     }
 }

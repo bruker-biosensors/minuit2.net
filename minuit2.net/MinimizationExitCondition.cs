@@ -5,7 +5,6 @@ public enum MinimizationExitCondition
     None,
     Converged,
     FunctionCallsExhausted,
-    MinimizationError,
     ManuallyStopped,
     NonFiniteValue,
     NonFiniteGradient
