@@ -25,16 +25,16 @@ internal abstract class MnMinimizer : IMinimizer
         var maximumFunctionCalls = minimizerConfiguration.MaximumFunctionCalls;
         var tolerance = minimizerConfiguration.Tolerance;
 
-        try
-        {
-            var minimum = MnMinimize(cost, parameterState, strategy, maximumFunctionCalls, tolerance);
+        var minimum = MnMinimize(cost, parameterState, strategy, maximumFunctionCalls, tolerance);
+
+        if (!cost.Exceptions.TryDequeue(out var exception))
             return new MinimizationResult(minimum, costFunction);
-        }
-        catch (MinimizationAbort abort)
-        {
-            var variables = parameterState.ExtractVariablesFrom(costFunction.Parameters);
-            return new AbortedMinimizationResult(abort, costFunction, variables);
-        }
+
+        if (exception is not MinimizationAbort abort)
+            throw exception;
+
+        var variables = parameterState.ExtractVariablesFrom(costFunction.Parameters);
+        return new AbortedMinimizationResult(abort, costFunction, variables);
     }
 
     protected abstract FunctionMinimum MnMinimize(
