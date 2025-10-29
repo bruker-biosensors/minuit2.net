@@ -14,7 +14,7 @@ namespace ROOT
             {
             }
 
-            double operator()(std::vector<double> const &parameterValues) const override;
+            double operator()(std::vector<double> const &parameterValues) const override final;
 
             virtual double Cost(std::vector<double> const &parameterValues) const;
 
