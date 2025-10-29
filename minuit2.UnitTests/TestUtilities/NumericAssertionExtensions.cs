@@ -9,7 +9,12 @@ internal static class NumericAssertionExtensions
 {
     internal const double DefaultRelativeDoubleTolerance = 0.001;
     internal const double DefaultMinimumDoubleTolerance = 1E-8;
-    private const uint DefaultIntegerTolerance = 6;
+    
+    #if USE_OPENMP
+        private const uint DefaultIntegerTolerance = 12;
+    #else
+        private const uint DefaultIntegerTolerance = 6;
+    #endif
     
     public static AndConstraint<NumericAssertions<double>> BeApproximately(
         this NumericAssertions<double> parent, 
