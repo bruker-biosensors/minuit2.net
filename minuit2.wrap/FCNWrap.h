@@ -14,6 +14,8 @@ namespace ROOT
             {
             }
 
+            double operator()(std::vector<double> const &parameterValues) const override;
+
             virtual double Cost(std::vector<double> const &parameterValues) const;
 
             virtual std::vector<double> Gradient(std::vector<double> const &) const override;
@@ -22,7 +24,6 @@ namespace ROOT
 
             virtual double Up() const;
 
-            double operator()(std::vector<double> const &parameterValues) const;
 
             virtual ~FCNWrap() {}
         };
