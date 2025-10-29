@@ -37,6 +37,7 @@ namespace std {
 %}
 
 %feature("director") FCNWrap;
+%ignore ROOT::Minuit2::FCNWrap::Gradient;
 %include "FCNWrap.h"
 %include "Minuit2/MnUserCovariance.h"
 %include "Minuit2/MnUserParameterState.h"

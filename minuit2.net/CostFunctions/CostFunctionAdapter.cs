@@ -8,11 +8,8 @@ namespace minuit2.net.CostFunctions;
     Justification = "Cancellation token is stored for use in runtime cancellation checks across multiple method calls.")]
 internal sealed class CostFunctionAdapter(ICostFunction function, CancellationToken cancellationToken) : FCNWrap
 {
-    private const double AbortValue = double.NaN;  // Non-finite return values trigger termination of the C++ process.
-    
     private int _numberOfFunctionCalls;
-    private int _numberOfExceptions;
-
+    
     public ConcurrentQueue<Exception> Exceptions { get; } = new();
 
     // We always forward a neutral error definition (Up) of 1 to the C++ code. Instead, we scale the output values of
@@ -21,17 +18,14 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     // data errors (see LeastSquaresWithUnknownYError.cs).
     public override double Up() => 1;
 
-    public override double Cost(VectorDouble parameterValues)
+    public override double CalculateValue(VectorDouble parameterValues)
     {
-        // Ensures abort on non-finite gradients and skips cost evaluation for any post-abort calls.
-        if (_numberOfExceptions > 0) return AbortValue; 
-        
         Interlocked.Increment(ref _numberOfFunctionCalls);
-
+        
         if (cancellationToken.IsCancellationRequested)
         {
-            Register(new MinimizationAbort(ManuallyStopped, parameterValues, _numberOfFunctionCalls));
-            return AbortValue;
+            AbortWith(new MinimizationAbort(ManuallyStopped, parameterValues, _numberOfFunctionCalls));
+            return double.NaN;  // return directly to skip (potentially expensive) value evaluation
         }
         
         try
@@ -39,40 +33,34 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
             var value = ValueFor(parameterValues);
             if (double.IsFinite(value)) return value;
             
-            Register(new MinimizationAbort(NonFiniteValue, parameterValues, _numberOfFunctionCalls));
-            return AbortValue;
+            AbortWith(new MinimizationAbort(NonFiniteValue, parameterValues, _numberOfFunctionCalls));
         }
         catch (Exception exception)
         {
-            Register(exception);
-            return AbortValue;
+            AbortWith(exception);
         }
+
+        return double.NaN;
     }
 
-    public override VectorDouble Gradient(VectorDouble parameterValues)
+    public override VectorDouble CalculateGradient(VectorDouble parameterValues)
     {
         try
         {
             var gradient = GradientFor(parameterValues);
             if (gradient.All(double.IsFinite)) return gradient;
 
-            Register(new MinimizationAbort(NonFiniteGradient, parameterValues, _numberOfFunctionCalls));
-            return AbortGradientFor(parameterValues);
+            AbortWith(new MinimizationAbort(NonFiniteGradient, parameterValues, _numberOfFunctionCalls));
         }
         catch (Exception exception)
         {
-            Register(exception);
-            return AbortGradientFor(parameterValues);
+            AbortWith(exception);
         }
+
+        return VectorDouble.Repeat(double.NaN, parameterValues.Count);
     }
     
     public override bool HasGradient() => function.HasGradient;
-
-    private void Register(Exception exception)
-    {
-        Interlocked.Increment(ref _numberOfExceptions);
-        Exceptions.Enqueue(exception);
-    }
     
     private double ValueFor(VectorDouble parameterValues) =>
         function.ValueFor(parameterValues.AsReadOnly()) / function.ErrorDefinition;
@@ -80,6 +68,9 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     private VectorDouble GradientFor(VectorDouble parameterValues) =>
         new(function.GradientFor(parameterValues.AsReadOnly()).Select(g => g / function.ErrorDefinition));
     
-    private static VectorDouble AbortGradientFor(VectorDouble parameterValues) => 
-        VectorDouble.Repeat(AbortValue, parameterValues.Count);
+    private void AbortWith(Exception exception)
+    {
+        Exceptions.Enqueue(exception);
+        Abort();
+    }
 }
