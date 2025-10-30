@@ -6,15 +6,10 @@
 %include "std_vector.i"
 %include "std_string.i"
 %include "typemaps.i"
-//%include "cpointer.i"
-//%pointer_class(double ,doubleP);
 %include "carrays.i"
 %array_class(double, DoubleArray);
 
 
-//%interface_impl(ROOT::Minuit2::GenericFunction);
-//%interface_impl(ROOT::Minuit2::FCNBase);
-//%typemap(csinterfacemodifiers) FCNBase "internal interface"
 %include "Minuit2/MnStrategy.h"
 namespace std {
     %template(VectorDouble) vector<double>;
