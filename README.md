@@ -8,6 +8,16 @@ A .NET wrapper for the [Minuit2](https://root.cern.ch/doc/master/Minuit2Page.htm
 > ROOT is licensed under the GNU Lesser General Public License v2.1 (LGPL v2.1).
 > Use or distribution of this library in combination with Minuit2 requires adherence to the LGPL terms.
 
+## NuGet Versions
+
+- [minuit2.net](https://www.nuget.org/packages/minuit2.net/) – The standard synchronous version. 
+    Suitable for single-threaded applications or environments where deterministic execution is preferred.
+
+- [minuit2.net.openmp](https://www.nuget.org/packages/minuit2.net.openmp/) – A performance-enhanced variant that 
+  leverages OpenMP-based multi-threading. Ideal for compute-intensive tasks that benefit from concurrent execution.
+
+Both packages share the same API and can be used interchangeably depending on your performance and threading requirements.
+
 ## Overview
 
 [Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) is a well-established nonlinear minimization C++ library that has been used in high-energy physics for decades.
@@ -35,6 +45,7 @@ centered on statelessness and referential transparency.
 - **minuit2.wrap/**: C++ wrapper layer using SWIG for interoperability
 - **minuit2.UnitTests/**: Comprehensive unit tests for the library
 - **Build.targets**: MSBuild targets for automated building of native components
+- **Directory.Build.props**: MSBuild properties used to enable/disable OpenMP-based multi-threading support
 
 ## Prerequisites
 
