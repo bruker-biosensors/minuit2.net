@@ -39,9 +39,9 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
 
             result.ShouldFulfill(x =>
             {
+                x.Should().HaveNumberOfFunctionCallsCloseTo(expectedFunctionCalls);
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
-                x.NumberOfFunctionCalls.Should().BeCloseTo(expectedFunctionCalls);
                 x.CostValue.Should().BeApproximately(12.49);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.Variables.Should().Equal("c0", "c1", "c2", "c3");
@@ -69,9 +69,9 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             
             result.ShouldFulfill(x =>
             {
+                x.Should().HaveNumberOfFunctionCallsCloseTo(expectedFunctionCalls);
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
-                x.NumberOfFunctionCalls.Should().BeCloseTo(expectedFunctionCalls);
                 x.CostValue.Should().BeApproximately(437.7);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.Variables.Should().Equal("c0", "c2");
@@ -98,9 +98,9 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             
             result.ShouldFulfill(x =>
             {
+                x.Should().HaveNumberOfFunctionCallsCloseTo(444);
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
-                x.NumberOfFunctionCalls.Should().BeCloseTo(444);
                 x.CostValue.Should().BeApproximately(62.34);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.Variables.Should().Equal("c0", "c1", "c2", "c3");
@@ -131,9 +131,9 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             // generally not fulfilled. Therefore, covariances are not fully robust.
             result.ShouldFulfill(x =>
             {
+                x.Should().HaveNumberOfFunctionCallsCloseTo(156);
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
-                x.NumberOfFunctionCalls.Should().BeCloseTo(156);
                 x.CostValue.Should().BeApproximately(62.34);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3");
                 x.Variables.Should().Equal("c0", "c1", "c2", "c3");
@@ -280,9 +280,9 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             
             result.ShouldFulfill(x =>
             {
+                x.Should().HaveNumberOfFunctionCallsCloseTo(expectedFunctionCalls);
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
-                x.NumberOfFunctionCalls.Should().BeCloseTo(expectedFunctionCalls);
                 x.CostValue.Should().BeApproximately(24.99);
                 x.Parameters.Should().Equal("c0", "c1", "c2", "c3", "c1_1", "c3_1");
                 x.Variables.Should().Equal("c0", "c1", "c2", "c3", "c1_1", "c3_1");
