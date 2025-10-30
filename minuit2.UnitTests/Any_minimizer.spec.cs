@@ -189,9 +189,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
         result.ShouldFulfill(x =>
         {
+            x.Should().HaveNumberOfFunctionCalls(numberOfFunctionCallsBeforeCancellation + 1);
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
-            x.NumberOfFunctionCalls.Should().Be(numberOfFunctionCallsBeforeCancellation + 1);
             x.ParameterCovarianceMatrix.Should().BeNull();
             
             var computedCostValue = cost.ValueFor(x.ParameterValues);
@@ -284,9 +284,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
         result.ShouldFulfill(x =>
         {
+            x.Should().HaveNumberOfFunctionCalls(numberOfValidFunctionCalls + 1);
             x.IsValid.Should().BeFalse();
             x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
-            x.NumberOfFunctionCalls.Should().Be(numberOfValidFunctionCalls + 1);
             x.ParameterCovarianceMatrix.Should().BeNull();
         });
     }

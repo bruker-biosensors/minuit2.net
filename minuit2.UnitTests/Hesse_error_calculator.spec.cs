@@ -44,9 +44,9 @@ public class The_hesse_error_calculator
 
             result.ShouldFulfill(x =>
             {
+                x.Should().HaveNumberOfFunctionCalls(_minimizationResult.NumberOfFunctionCalls + numberOfFunctionCallsBeforeCancellation + 1);
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
-                x.NumberOfFunctionCalls.Should().Be(_minimizationResult.NumberOfFunctionCalls + numberOfFunctionCallsBeforeCancellation + 1);
                 x.ParameterCovarianceMatrix.Should().BeNull();
                 x.CostValue.Should().BeFinite().And.Be(cost.ValueFor(x.ParameterValues));
             });
@@ -65,9 +65,9 @@ public class The_hesse_error_calculator
 
             result.ShouldFulfill(x =>
             {
+                x.Should().HaveNumberOfFunctionCalls(_minimizationResult.NumberOfFunctionCalls + numberOfValidFunctionCalls + 1);
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
-                x.NumberOfFunctionCalls.Should().Be(_minimizationResult.NumberOfFunctionCalls + numberOfValidFunctionCalls + 1);
                 x.ParameterCovarianceMatrix.Should().BeNull();
             });
         }
