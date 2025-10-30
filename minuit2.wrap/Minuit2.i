@@ -19,7 +19,6 @@
 %array_class(double, DoubleArray)
 
 // Instantiate std::vector<double> as VectorDouble for C# use
-%include "Minuit2/MnStrategy.h"
 namespace std {
     %template(VectorDouble) vector<double>;
 };
@@ -49,6 +48,7 @@ namespace std {
 %feature("director") FCNWrap;
 %ignore ROOT::Minuit2::FCNWrap::Gradient;
 %include "FCNWrap.h"
+%include "Minuit2/MnStrategy.h"
 %include "Minuit2/MnUserCovariance.h"
 %include "Minuit2/MnUserParameterState.h"
 %include "Minuit2/FCNBase.h"
