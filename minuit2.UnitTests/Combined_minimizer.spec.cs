@@ -1,4 +1,3 @@
-using AwesomeAssertions;
 using minuit2.net;
 using minuit2.net.Minimizers;
 using minuit2.UnitTests.MinimizationProblems;
