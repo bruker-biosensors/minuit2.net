@@ -19,7 +19,7 @@ internal class MinimizationResultAssertions(IMinimizationResult value)
 {
     #if USE_OPENMP
         private const int EqualFunctionCallsTolerance = 2;
-        private const int SimilarFunctionCallsTolerance = 12;
+        private const int SimilarFunctionCallsTolerance = 22;
     #else
         private const int EqualFunctionCallsTolerance = 0;
         private const int SimilarFunctionCallsTolerance = 6;

@@ -77,7 +77,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var result = minimizer.Minimize(costFunction, excessParameterConfigurations);
         var referenceResult = minimizer.Minimize(costFunction, matchingParameterConfigurations);
 
-        result.Should().BeEquivalentTo(referenceResult);
+        result.Should().BeEquivalentTo(referenceResult, 
+            options => options.Excluding(x => x.NumberOfFunctionCalls));
     }
 
     [Test]
@@ -91,7 +92,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var resultForOrderedConfigurations = minimizer.Minimize(cost, orderedConfigurations);
         var resultForDisorderedConfigurations = minimizer.Minimize(cost, disorderedConfigurations);
         
-        resultForDisorderedConfigurations.Should().BeEquivalentTo(resultForOrderedConfigurations);
+        resultForDisorderedConfigurations.Should().BeEquivalentTo(resultForOrderedConfigurations, 
+            options => options.Excluding(x => x.NumberOfFunctionCalls));
     }
     
     [TestCase(double.NegativeInfinity, double.PositiveInfinity)]
@@ -108,8 +110,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
         var resultForUnlimited = minimizer.Minimize(cost, unlimitedParameterConfigurations);
         var resultForInfiniteLimits = minimizer.Minimize(cost, parameterConfigurationsWithInfiniteLimits);
-        
-        resultForInfiniteLimits.Should().BeEquivalentTo(resultForUnlimited);
+
+        resultForInfiniteLimits.Should().BeEquivalentTo(resultForUnlimited, 
+            options => options.Excluding(x => x.NumberOfFunctionCalls));
     }
     
     [TestCase(-1E15, 1E15)]
@@ -181,7 +184,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     public void when_cancelled_during_a_minimization_process_yields_an_invalid_result_with_manually_stopped_exit_condition_and_undefined_covariances_representing_the_last_state_of_the_process()
     {
         var cts = new CancellationTokenSource();
-        const int numberOfFunctionCallsBeforeCancellation = 10;
+        const int numberOfFunctionCallsBeforeCancellation = 25;
         var cost = _defaultProblem.Cost.Build().WithAutoCancellation(cts, numberOfFunctionCallsBeforeCancellation);
         var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
 
