@@ -4,22 +4,20 @@
 #include "minuit2/MnMigrad.h"
 #include "minuit2/FunctionMinimum.h"
 #include "FCNWrap.h"
-#include "MinimizationRunner.h"
 
 namespace ROOT
 {
     namespace Minuit2
     {
-        class MnMigradWrap : public MnMigrad, public MinimizationRunner
+        class MnMigradWrap : public MnMigrad
         {
         public:
             MnMigradWrap(const FCNWrap &function, const MnUserParameterState &parameterState, const MnStrategy &strategy = MnStrategy(1))
-                : MnMigrad(function, parameterState, strategy), MinimizationRunner()
+                : MnMigrad(function, parameterState, strategy)
             {
             }
 
-        protected:
-            ROOT::Minuit2::MnApplication& GetApplication() { return *this; }
+            FunctionMinimum Run(unsigned int maximumFunctionCalls = 0, double tolerance = 0.1);
         };
     }
 }

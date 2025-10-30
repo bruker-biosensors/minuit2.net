@@ -2,11 +2,14 @@ namespace minuit2.net.Minimizers;
 
 internal class SimplexMinimizer : MnMinimizer
 {
-    protected override MinimizationRunner BuildMinimizer(
-        FCNWrap costFunction,
-        MnUserParameterState parameterState,
-        MnStrategy strategy)
+    protected override FunctionMinimum MnMinimize(
+        FCNWrap costFunction, 
+        MnUserParameterState parameterState, 
+        MnStrategy strategy,
+        uint maximumFunctionCalls, 
+        double tolerance)
     {
-        return new MnSimplexWrap(costFunction, parameterState, strategy);
+        using var simplex = new MnSimplexWrap(costFunction, parameterState, strategy);
+        return simplex.Run(maximumFunctionCalls, tolerance);
     }
 }

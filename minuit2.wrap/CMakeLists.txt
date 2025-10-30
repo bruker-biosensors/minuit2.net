@@ -12,8 +12,10 @@ SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES CPLUSPLUS ON)
 
 set(SOURCE_FILES
   FCNWrap.cpp
+  MnMigradWrap.cpp
+  MnSimplexWrap.cpp
+  MnMinimizeWrap.cpp
   MnHesseWrap.cpp
-  MinimizationRunner.cpp
   Minuit2.i
 )
 
@@ -23,8 +25,6 @@ set(HEADER_FILES
   MnSimplexWrap.h
   MnMinimizeWrap.h
   MnHesseWrap.h
-  MinimizationRunner.h
-  OperationCancelledException.h
 )
 
 cmake_path(ABSOLUTE_PATH MINUIT2NET_PATH NORMALIZE)

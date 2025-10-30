@@ -2,11 +2,14 @@ namespace minuit2.net.Minimizers;
 
 internal class MigradMinimizer : MnMinimizer
 {
-    protected sealed override MinimizationRunner BuildMinimizer(
-        FCNWrap costFunction,
-        MnUserParameterState parameterState,
-        MnStrategy strategy)
+    protected sealed override FunctionMinimum MnMinimize(
+        FCNWrap costFunction, 
+        MnUserParameterState parameterState, 
+        MnStrategy strategy, 
+        uint maximumFunctionCalls, 
+        double tolerance)
     {
-        return new MnMigradWrap(costFunction, parameterState, strategy);
+        using var migrad = new MnMigradWrap(costFunction, parameterState, strategy);
+        return migrad.Run(maximumFunctionCalls, tolerance);
     }
 }

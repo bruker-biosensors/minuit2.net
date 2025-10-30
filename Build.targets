@@ -5,8 +5,6 @@
     <SwigToolsPath>$(MSBuildThisFileDirectory)minuit2.net/packages/swigwintools.4.2.0/tools</SwigToolsPath>
     <SwigToolsPathAlt>$(USERPROFILE)/.nuget/packages/swigwintools/4.2.0/tools</SwigToolsPathAlt>
     <RootGitPath>$(MSBuildThisFileDirectory)minuit2.net/obj/root</RootGitPath>
-    <UseOpenMP>OFF</UseOpenMP>
-
   </PropertyGroup>
 
   <ItemGroup>

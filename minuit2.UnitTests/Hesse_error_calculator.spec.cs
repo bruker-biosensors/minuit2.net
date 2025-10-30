@@ -14,9 +14,9 @@ public class The_hesse_error_calculator
     {
         var minimizationResult = Any.InstanceOf<IMinimizationResult>();
         var unrelatedCostFunction = Any.InstanceOf<ICostFunction>();
-
+        
         Action action = () => _ = HesseErrorCalculator.Refine(minimizationResult, unrelatedCostFunction);
-
+        
         action.Should().Throw<ArgumentException>();
     }
 
@@ -44,9 +44,9 @@ public class The_hesse_error_calculator
 
             result.ShouldFulfill(x =>
             {
+                x.Should().HaveNumberOfFunctionCalls(_minimizationResult.NumberOfFunctionCalls + numberOfFunctionCallsBeforeCancellation + 1);
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(MinimizationExitCondition.ManuallyStopped);
-                x.NumberOfFunctionCalls.Should().Be(_minimizationResult.NumberOfFunctionCalls + numberOfFunctionCallsBeforeCancellation + 1);
                 x.ParameterCovarianceMatrix.Should().BeNull();
                 x.CostValue.Should().BeFinite().And.Be(cost.ValueFor(x.ParameterValues));
             });
@@ -60,26 +60,26 @@ public class The_hesse_error_calculator
         {
             const int numberOfValidFunctionCalls = 5;
             var cost = _costFunction.WithValueOverride(_ => nonFiniteValue, numberOfValidFunctionCalls);
-
+            
             var result = HesseErrorCalculator.Refine(_minimizationResult, cost);
 
             result.ShouldFulfill(x =>
             {
+                x.Should().HaveNumberOfFunctionCalls(_minimizationResult.NumberOfFunctionCalls + numberOfValidFunctionCalls + 1);
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteValue);
-                x.NumberOfFunctionCalls.Should().Be(_minimizationResult.NumberOfFunctionCalls + numberOfValidFunctionCalls + 1);
                 x.ParameterCovarianceMatrix.Should().BeNull();
             });
         }
 
         [Test]
-        public void when_the_cost_function_value_calculation_throws_an_exception_during_the_process_raises_a_CostFunctionException()
+        public void when_the_cost_function_value_calculation_throws_an_exception_during_the_process_forwards_that_exception()
         {
             var cost = _costFunction.WithValueOverride(_ => throw new TestException());
-
+            
             Action action = () => HesseErrorCalculator.Refine(_minimizationResult, cost);
-
-            action.Should().ThrowExactly<CostFunctionException>();
+            
+            action.Should().ThrowExactly<TestException>();
         }
     }
 }

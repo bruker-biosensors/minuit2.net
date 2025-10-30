@@ -1,28 +1,31 @@
+// Enable SWIG directors for polymorphic behavior across C++ and C#
 %module(directors="1") Minuit2
 
-// make all SWIG generated C# wrappers internal so that they arent exposed to the outside.
+// Make all generated C# classes internal to limit API surface
 %typemap(csclassmodifiers) SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE &&, SWIGTYPE [], SWIGTYPE (CLASS::*) "internal class"
 %pragma(csharp) moduleclassmodifiers="internal class"
 
-//Adds translation of standard C++ types to C#
+
+
+// Include SWIG helpers and enable support for common C++ STL types
 %include <swiginterface.i>
 %include "stl.i"
 %include "std_vector.i"
 %include "std_string.i"
 %include "typemaps.i"
+
+// Enable array support for double[] in C#
 %include "carrays.i"
-// Specify the C# class name for double arrays translated to C#
-%array_class(double, DoubleArray);
+%array_class(double, DoubleArray)
 
-%include "Minuit2/MnStrategy.h"
-
-// Specify the C# class name for double vectors translated to C#
+// Instantiate std::vector<double> as VectorDouble for C# use
 namespace std {
     %template(VectorDouble) vector<double>;
 };
 
-// Includes required by the C-Wrapper.
-// These statements are verbatim copied into Minuit2CSHARP_wrap.c
+
+
+// Inject required C++ headers into the wrapper (SWIG preprocessor block)
 %{
     #include "ROOT/RSpan.hxx"
     #include "Minuit2/FCNBase.h"
@@ -30,33 +33,26 @@ namespace std {
     #include "Minuit2/FunctionMinimum.h"
     #include "Minuit2/MnUserCovariance.h"
     #include "Minuit2/MnStrategy.h"
-    #include "Minuit2/MnApplication.h"
     #include "Minuit2/MnUserParameterState.h"
     #include "MnMigradWrap.h"
     #include "MnSimplexWrap.h"
     #include "MnMinimizeWrap.h"
     #include "MnHesseWrap.h"
-    #include "OperationCancelledException.h"
-    #include "MinimizationRunner.h"
-    #include <exception>
-    #include <optional>
 
     using namespace ROOT::Minuit2;
 %}
 
-// Definition of classes which should be translated
-// FCNWrap will be managed via SWIG director feature to allow overriding of methods
-%feature("director") FCNWrap;
 
-// Do not translate the FcnWrap Gradient method - this method should not be able to be changed from the C# side.
+
+// Declare C++ types to be wrapped and made accessible in C# (SWIG binding generation)
+%feature("director") FCNWrap;
 %ignore ROOT::Minuit2::FCNWrap::Gradient;
 %include "FCNWrap.h"
-%include "MinimizationRunner.h"
+%include "Minuit2/MnStrategy.h"
 %include "Minuit2/MnUserCovariance.h"
 %include "Minuit2/MnUserParameterState.h"
 %include "Minuit2/FCNBase.h"
 %include "Minuit2/FunctionMinimum.h"
-%include "Minuit2/MnApplication.h"
 %include "MnMigradWrap.h"
 %include "MnSimplexWrap.h"
 %include "MnMinimizeWrap.h"
