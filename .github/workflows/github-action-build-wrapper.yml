@@ -49,10 +49,6 @@ jobs:
               "use-openmp": "OFF",
               "package-id": "minuit2.net"
           }
-
-    permissions:
-      packages: write
-      contents: write
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -129,6 +125,9 @@ jobs:
     needs: publish
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
+    permissions:
+      packages: write
+      contents: write
     steps:
       - name: Create a Release
         uses: softprops/action-gh-release@v2
