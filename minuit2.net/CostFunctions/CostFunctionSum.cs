@@ -19,7 +19,7 @@ internal class CostFunctionSum : ICompositeCostFunction
     {
         return costFunction is ComponentCostFunction
             ? costFunction
-            : CostFunction.Component(costFunction, _compositeParameters);
+            : new ComponentCostFunction(costFunction, _compositeParameters);
     }
 
     public IReadOnlyList<string> Parameters { get; }

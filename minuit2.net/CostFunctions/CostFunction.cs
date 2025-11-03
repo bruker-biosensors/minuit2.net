@@ -39,7 +39,4 @@ public static class CostFunction
     
     public static ICostFunction Sum(params ICostFunction[] components) => 
         new CostFunctionSum(components);
-
-    internal static ICostFunction Component(ICostFunction costFunction, IList<string> compositeParameters) =>
-        new ComponentCostFunction(costFunction, compositeParameters);
 }
