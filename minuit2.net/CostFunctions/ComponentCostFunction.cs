@@ -37,6 +37,9 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> composit
         return expandedGradients;
     }
 
-    public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) =>
-        new ComponentCostFunction(inner.WithErrorDefinitionRecalculatedBasedOnValid(result), compositeParameters);
+    public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result)
+    {
+        var newInner = inner.WithErrorDefinitionRecalculatedBasedOnValid(result);
+        return newInner == inner ? this : new ComponentCostFunction(newInner, compositeParameters);
+    }
 }
