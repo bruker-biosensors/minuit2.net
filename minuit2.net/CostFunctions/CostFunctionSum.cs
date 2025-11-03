@@ -37,16 +37,16 @@ internal class CostFunctionSum : ICompositeCostFunction
 
         return gradients;
     }
-
-    public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) =>
-        new CostFunctionSum(_components.Select(c => c.WithErrorDefinitionRecalculatedBasedOnValid(result)).ToArray());
-
+    
     private void Add(IReadOnlyList<double> componentGradients, double[] gradients)
     {
         for (var i = 0; i < Parameters.Count; i++) 
             gradients[i] += componentGradients[i];
     }
 
+    public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) =>
+        new CostFunctionSum(_components.Select(c => c.WithErrorDefinitionRecalculatedBasedOnValid(result)).ToArray());
+    
     public double CompositeValueFor(IReadOnlyList<double> parameterValues) =>
         _components.Select(c => c.ValueFor(parameterValues) * c.ErrorDefinition).Sum();
 }
