@@ -37,17 +37,9 @@ public static class CostFunction
         return new LeastSquares(x, y, yErrors, parameters, model, modelGradient, errorDefinitionInSigma);
     }
     
-    public static ICostFunction Sum(params ICostFunction[] components)
-    {
-        return components.Any(c => c is ICostFunctionRequiringErrorDefinitionAdjustment) 
-            ? new CostFunctionSumRequiringErrorDefinitionAdjustment(components) 
-            : new CostFunctionSum(components);
-    }
-    
-    internal static ICostFunction Component(ICostFunction costFunction, IList<string> compositeParameters)
-    {
-        return costFunction is ICostFunctionRequiringErrorDefinitionAdjustment cost
-            ? new ComponentCostFunctionRequiringErrorDefinitionAdjustment(cost, compositeParameters)
-            : new ComponentCostFunction(costFunction, compositeParameters);
-    }
+    public static ICostFunction Sum(params ICostFunction[] components) => 
+        new CostFunctionSum(components);
+
+    internal static ICostFunction Component(ICostFunction costFunction, IList<string> compositeParameters) =>
+        new ComponentCostFunction(costFunction, compositeParameters);
 }

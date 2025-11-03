@@ -20,7 +20,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
         MinimizerConfiguration? minimizerConfiguration = null)
     {
         var result = MigradMinimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
-        var adjustedCost = cost.WithErrorDefinitionAdjustedWhereRequiredBasedOn(result);
+        var adjustedCost = cost.WithErrorDefinitionRecalculatedBasedOnValid(result);
         return HesseErrorCalculator.Refine(result, adjustedCost);
     }
     

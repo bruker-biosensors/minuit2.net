@@ -2,7 +2,7 @@ namespace minuit2.net.CostFunctions;
 
 internal class CostFunctionSum : ICompositeCostFunction
 {
-    protected readonly ICostFunction[] Components;
+    private readonly ICostFunction[] _components;
     private readonly string[] _compositeParameters;
 
     public CostFunctionSum(params ICostFunction[] components)
@@ -12,7 +12,7 @@ internal class CostFunctionSum : ICompositeCostFunction
         HasGradient = components.All(c => c.HasGradient);
         ErrorDefinition = 1;  // Neutral element; Scaling is performed within the components since factors may differ.
         
-        Components = components.Select(AsComponentCostFunction).ToArray();
+        _components = components.Select(AsComponentCostFunction).ToArray();
     }
 
     private ICostFunction AsComponentCostFunction(ICostFunction costFunction)
@@ -27,16 +27,19 @@ internal class CostFunctionSum : ICompositeCostFunction
     public double ErrorDefinition { get; }
 
     public double ValueFor(IReadOnlyList<double> parameterValues) =>
-        Components.Select(c => c.ValueFor(parameterValues)).Sum();
+        _components.Select(c => c.ValueFor(parameterValues)).Sum();
 
     public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
     {
         var gradients = new double[Parameters.Count];
-        foreach (var componentGradients in Components.Select(c => c.GradientFor(parameterValues))) 
+        foreach (var componentGradients in _components.Select(c => c.GradientFor(parameterValues))) 
             Add(componentGradients, gradients);
 
         return gradients;
     }
+
+    public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) =>
+        new CostFunctionSum(_components.Select(c => c.WithErrorDefinitionRecalculatedBasedOnValid(result)).ToArray());
 
     private void Add(IReadOnlyList<double> componentGradients, double[] gradients)
     {
@@ -45,5 +48,5 @@ internal class CostFunctionSum : ICompositeCostFunction
     }
 
     public double CompositeValueFor(IReadOnlyList<double> parameterValues) =>
-        Components.Select(c => c.ValueFor(parameterValues) * c.ErrorDefinition).Sum();
+        _components.Select(c => c.ValueFor(parameterValues) * c.ErrorDefinition).Sum();
 }

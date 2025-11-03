@@ -10,10 +10,8 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> composit
     // hosting composite cost function.
     
     private readonly int[] _parameterIndices = inner.Parameters.Select(compositeParameters.IndexOf).ToArray();
-    
-    protected readonly IList<string> CompositeParameters = compositeParameters;
-    
-    protected double[] Belonging(IReadOnlyList<double> parameterValues)
+
+    private double[] Belonging(IReadOnlyList<double> parameterValues)
     {
         var belonging = new double[_parameterIndices.Length];
         for (var i = 0; i < _parameterIndices.Length; i++) 
@@ -32,10 +30,13 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> composit
     public IReadOnlyList<double> GradientFor(IReadOnlyList<double> compositeParameterValues)
     {
         var gradients = inner.GradientFor(Belonging(compositeParameterValues));
-        var expandedGradients = new double[CompositeParameters.Count];
+        var expandedGradients = new double[compositeParameters.Count];
         for (var i = 0; i < gradients.Count; i++)
             expandedGradients[_parameterIndices[i]] = gradients[i] / ErrorDefinition;
         
         return expandedGradients;
     }
+
+    public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) =>
+        new ComponentCostFunction(inner.WithErrorDefinitionRecalculatedBasedOnValid(result), compositeParameters);
 }
