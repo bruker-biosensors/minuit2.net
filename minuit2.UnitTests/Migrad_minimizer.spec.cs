@@ -111,7 +111,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
                     { -3.654e-09, 0.0002602, -3.344e-05, 5.468e-09 },
                     { 3.124e-10, -3.344e-05, 4.594e-06, -1.873e-09 },
                     { -1.261e-14, 5.468e-09, -1.873e-09, 1.211e-10 }
-                }, relativeTolerance: 0.003);
+                });
             });
         }
         
@@ -126,8 +126,8 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
             var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
 
             // Covariances are slightly different from the numerical-gradient case (above).
-            // This is because, in contrast to proper convergence, in case of early termination at parameter limits the
-            // assumption of local quadratic behavior (parabolic approximation) around the terminal cost value is
+            // This is because, in contrast to proper convergence, in the case of early termination at parameter limits,
+            // the assumption of local quadratic behavior (parabolic approximation) around the terminal cost value is
             // generally not fulfilled. Therefore, covariances are not fully robust.
             result.ShouldFulfill(x =>
             {
@@ -175,7 +175,13 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
         }
         
         [Test]
-        public void with_unknown_data_errors_and_subsequently_applying_error_refinement_yields_the_expected_result(
+        [Description("Assuming the initial minimization yields an ideal result — meaning the fitted model accurately " +
+                     "describes the data apart from the superimposed noise — we recalculate the parameter " +
+                     "uncertainties using the corresponding reduced chi-squared value for the error definition. " +
+                     "Under this assumption, the resulting uncertainties are equivalent to those obtained by " +
+                     "minimizing the cost function with correctly specified y-errors (i.e., the true standard " +
+                     "deviation of the noise affecting the data).")]
+        public void with_unknown_data_errors_and_subsequently_applying_error_definition_recalculation_followed_by_error_refinement_yields_the_expected_result(
             [Values] bool hasGradient)
         {
             var cost = _problem.Cost.WithUnknownYErrors().WithGradient(hasGradient).Build();
@@ -233,7 +239,7 @@ public class The_migrad_minimizer() : Any_parameter_uncertainty_resolving_minimi
         private readonly ConfigurableLeastSquaresProblem _problem = new CubicPolynomialLeastSquaresProblem();
 
         [Test]
-        [Description("Ensures that auto-adjustment of the error definition for least squares cost functions with " +
+        [Description("Ensures that recalculation of the error definition for least squares cost functions with " +
                      "unknown y-errors and, hence, parameter covariances works (on a per-cost basis).")]
         public void not_sharing_any_parameters_where_some_have_unknown_data_errors_and_subsequently_applying_error_refinement_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
                 [Values] bool hasGradient, 
