@@ -1,6 +1,6 @@
 namespace minuit2.net.CostFunctions;
 
-internal class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError, ICostFunctionRequiringErrorDefinitionAdjustment
+internal class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError
 {
     private readonly double _errorDefinitionInSigma;
 
@@ -17,10 +17,8 @@ internal class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError, IC
         _errorDefinitionInSigma = errorDefinitionInSigma;
         ErrorDefinition = LeastSquares.ErrorDefinitionFor(errorDefinitionInSigma) * errorDefinitionScaling;
     }
-    
-    public ICostFunctionRequiringErrorDefinitionAdjustment WithErrorDefinitionAdjustedBasedOn(
-        IReadOnlyList<double> parameterValues, 
-        IReadOnlyList<string> variables)
+
+    public override ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result)
     {
         // Auto-adjust the error definition such that a re-evaluation -- e.g., by a subsequent minimization or accurate
         // covariance computation (Hesse algorithm) -- yields the same parameter covariances that would be obtained
@@ -33,8 +31,12 @@ internal class LeastSquaresWithUnknownYError : LeastSquaresWithUniformYError, IC
         
         // This is equivalent to the default behavior in lmfit:
         // https://lmfit.github.io/lmfit-py/fitting.html#uncertainties-in-variable-parameters-and-their-correlations
+
+        var resultParameters = result.Parameters.ToList();
+        var parameterValues = Parameters.Select(p => result.ParameterValues[resultParameters.IndexOf(p)]).ToArray();
+        var numberOfVariables = Parameters.Count(p => result.Variables.Contains(p));
         
-        var degreesOfFreedom = X.Count - variables.Count;
+        var degreesOfFreedom = X.Count - numberOfVariables;
         var reducedChiSquared = ValueFor(parameterValues) / degreesOfFreedom;
         return new LeastSquaresWithUnknownYError(
             X,

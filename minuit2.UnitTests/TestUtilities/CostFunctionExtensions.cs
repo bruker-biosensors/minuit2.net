@@ -76,6 +76,9 @@ internal class CostFunctionWithAutoCancellation(
 
     public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues) =>
         wrapped.GradientFor(parameterValues);
+
+    public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) =>
+        wrapped.WithErrorDefinitionRecalculatedBasedOnValid(result);
 }
 
 internal class CostFunctionWithOverrides(
@@ -107,4 +110,7 @@ internal class CostFunctionWithOverrides(
             ? gradientOverride(parameterValues)
             : wrapped.GradientFor(parameterValues);
     }
+
+    public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) =>
+        wrapped.WithErrorDefinitionRecalculatedBasedOnValid(result);
 }

@@ -61,6 +61,8 @@ internal class LeastSquares : ICostFunction
         return gradientSums;
     }
 
+    public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) => this;
+
     private double ResidualFor(int i, IReadOnlyList<double> parameterValues) =>
         (_y[i] - _model(_x[i], parameterValues)) / _yError[i];
     

@@ -8,4 +8,6 @@ public interface ICostFunction
     
     double ValueFor(IReadOnlyList<double> parameterValues);
     IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues);
+
+    ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result);
 }

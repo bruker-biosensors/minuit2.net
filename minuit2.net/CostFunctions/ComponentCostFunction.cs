@@ -2,18 +2,9 @@ namespace minuit2.net.CostFunctions;
 
 internal class ComponentCostFunction(ICostFunction inner, IList<string> compositeParameters) : ICostFunction
 {
-    // To achieve proper scaling of component gradients (both analytical and numerically approximated), the function
-    // values and gradients have to be scaled by 1 / ErrorDefinition within the local ValueFor and GradientFor methods.
-    // This is because different components may have different ErrorDefinitions, so there is no global scaling that
-    // could be applied by the hosting composite cost function.
-    // Yet doing so requires re-scaling of the final function values (after minimization). This must be done by the
-    // hosting composite cost function.
-    
     private readonly int[] _parameterIndices = inner.Parameters.Select(compositeParameters.IndexOf).ToArray();
-    
-    protected readonly IList<string> CompositeParameters = compositeParameters;
-    
-    protected double[] Belonging(IReadOnlyList<double> parameterValues)
+
+    private double[] Belonging(IReadOnlyList<double> parameterValues)
     {
         var belonging = new double[_parameterIndices.Length];
         for (var i = 0; i < _parameterIndices.Length; i++) 
@@ -26,16 +17,18 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> composit
     public bool HasGradient => inner.HasGradient;
     public double ErrorDefinition => inner.ErrorDefinition;
 
-    public double ValueFor(IReadOnlyList<double> compositeParameterValues) =>
-        inner.ValueFor(Belonging(compositeParameterValues)) / ErrorDefinition;
+    public double ValueFor(IReadOnlyList<double> parameterValues) => inner.ValueFor(Belonging(parameterValues));
 
-    public IReadOnlyList<double> GradientFor(IReadOnlyList<double> compositeParameterValues)
+    public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
     {
-        var gradients = inner.GradientFor(Belonging(compositeParameterValues));
-        var expandedGradients = new double[CompositeParameters.Count];
+        var gradients = inner.GradientFor(Belonging(parameterValues));
+        var expandedGradients = new double[compositeParameters.Count];
         for (var i = 0; i < gradients.Count; i++)
-            expandedGradients[_parameterIndices[i]] = gradients[i] / ErrorDefinition;
+            expandedGradients[_parameterIndices[i]] = gradients[i];
         
         return expandedGradients;
     }
+
+    public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) => 
+        inner.WithErrorDefinitionRecalculatedBasedOnValid(result);
 }
