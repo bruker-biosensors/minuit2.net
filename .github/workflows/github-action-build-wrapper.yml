@@ -81,7 +81,7 @@ jobs:
             -p:AssemblyVersion=${{ needs.determine-version.outputs.assembly-sem-ver }} `
             -p:AssemblyInformationalVersion=${{ needs.determine-version.outputs.assembly-informational-version }} `
             -p:PackageId=${{ matrix.build.package-id }} `
-            --disable-build-servers `
+            --no-build `
             --configuration Release `
             --output ./bin `
             --warnaserror `
