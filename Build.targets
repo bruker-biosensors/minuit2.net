@@ -77,7 +77,7 @@
       <CmakeArchitecture Condition="'$(Platform)' == 'AnyCPU'">x64</CmakeArchitecture>
       <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(CmakeArchitecture)</CmakeBuildDir>
       <!-- Map MSBuild property to CMake TRUE/FALSE -->
-      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputDir) -DROOT_PATH=$(RootGitPath) -DSWIG_EXECUTABLE=$(SwigExecutable) -Dminuit2_omp=$(UseOpenMP)</CmakeBuildCommand>
+      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputDir) -DROOT_PATH=$(RootGitPath) -DSWIG_EXECUTABLE=$(SwigExecutable) -Dminuit2_omp=$(UseOpenMP) -Dassembly_suffix=$(AssemblySuffix)</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
@@ -107,7 +107,7 @@
   <!-- Copy native DLL to output directory -->
   <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary">
     <ItemGroup>
-      <NativeDlls Include="$(CmakeBuildDir)/minuit2.wrap/Release/minuit2.wrap.dll" Visible="false"/>
+      <NativeDlls Include="$(CmakeBuildDir)/minuit2.wrap/Release/minuit2.wrap$(AssemblySuffix).dll" Visible="false"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -121,13 +121,13 @@
 
   <Target Name="CopyNativeBinariesForNuGet" AfterTargets="CopyWrapperDll" Condition="'$(Platform)' != 'AnyCPU' AND '$(PlatformTarget)'!= 'AnyCPU'">
     <ItemGroup>
-      <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'x64'" Visible="false"/>
-      <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'ARM64'" Visible="false"/>
-      <NativeBinaries Include="$(OutputPath)minuit2.wrap.dll" Condition="'$(Platform)' == 'x86'" Visible="false"/>
+      <NativeBinaries Include="$(OutputPath)minuit2.wrap$(AssemblySuffix).dll" Condition="'$(Platform)' == 'x64'" Visible="false"/>
+      <NativeBinaries Include="$(OutputPath)minuit2.wrap$(AssemblySuffix).dll" Condition="'$(Platform)' == 'ARM64'" Visible="false"/>
+      <NativeBinaries Include="$(OutputPath)minuit2.wrap$(AssemblySuffix).dll" Condition="'$(Platform)' == 'x86'" Visible="false"/>
     </ItemGroup>
     <Copy
       SourceFiles="@(NativeDlls)"
-      DestinationFiles="@(NativeDlls->'$(ProjectDir)runtimes/win-$(Platform)/native/minuit2.wrap.dll')"
+      DestinationFiles="@(NativeDlls->'$(ProjectDir)runtimes/win-$(Platform)/native/minuit2.wrap$(AssemblySuffix).dll')"
       SkipUnchangedFiles="true"
       Condition="Exists('%(NativeDlls.Identity)')"/>
 
@@ -140,9 +140,9 @@
 
     <ItemGroup>
       <!-- Check for native DLLs for each required platform -->
-      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x64/native/minuit2.wrap.dll"/>
-      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x86/native/minuit2.wrap.dll"/>
-      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-ARM64/native/minuit2.wrap.dll"/>
+      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x64/native/minuit2.wrap$(AssemblySuffix).dll"/>
+      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x86/native/minuit2.wrap$(AssemblySuffix).dll"/>
+      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-ARM64/native/minuit2.wrap$(AssemblySuffix).dll"/>
     </ItemGroup>
 
     <!-- Check each required native DLL exists -->

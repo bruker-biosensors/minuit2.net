@@ -43,10 +43,12 @@ jobs:
         build:
           - {
               "use-openmp": "ON",
+              "assembly-name": "minuit2.net.openmp",
               "package-id": "minuit2.net.openmp"
           }
           - {
               "use-openmp": "OFF",
+              "assembly-name": "minuit2.net",
               "package-id": "minuit2.net"
           }
     steps:
@@ -78,9 +80,11 @@ jobs:
           dotnet pack `
             -p:Version=${{ needs.determine-version.outputs.sem-ver }} `
             -p:FileVersion=${{ needs.determine-version.outputs.assembly-sem-file-ver }} `
+            -p:AssemblyName=${{ matrix.build.assembly-name }} `
             -p:AssemblyVersion=${{ needs.determine-version.outputs.assembly-sem-ver }} `
             -p:AssemblyInformationalVersion=${{ needs.determine-version.outputs.assembly-informational-version }} `
             -p:PackageId=${{ matrix.build.package-id }} `
+            -p:UseOpenMP=${{ matrix.build.use-openmp }} `
             --no-build `
             --configuration Release `
             --output ./bin `

@@ -15,6 +15,7 @@
         <Company/>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <DebugType>embedded</DebugType>
+        <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
     </PropertyGroup>
 
     <Import Project="../Build.targets"/>
@@ -26,9 +27,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="runtimes/win-x64/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x64/native/" Visible="false"/>
-      <None Include="runtimes/win-x86/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-x86/native/" Visible="false"/>
-      <None Include="runtimes/win-ARM64/native/minuit2.wrap.dll" Pack="true" PackagePath="runtimes/win-ARM64/native/" Visible="false"/>
+      <None Include="runtimes/win-x64/native/minuit2.wrap$(AssemblySuffix).dll" Pack="true" PackagePath="runtimes/win-x64/native/" Visible="false"/>
+      <None Include="runtimes/win-x86/native/minuit2.wrap$(AssemblySuffix).dll" Pack="true" PackagePath="runtimes/win-x86/native/" Visible="false"/>
+      <None Include="runtimes/win-ARM64/native/minuit2.wrap$(AssemblySuffix).dll" Pack="true" PackagePath="runtimes/win-ARM64/native/" Visible="false"/>
     </ItemGroup>
 
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
