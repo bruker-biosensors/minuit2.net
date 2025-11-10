@@ -30,16 +30,16 @@ set(HEADER_FILES
 cmake_path(ABSOLUTE_PATH MINUIT2NET_PATH NORMALIZE)
 cmake_path(ABSOLUTE_PATH CMAKE_CURRENT_SOURCE_DIR NORMALIZE)
 
-SWIG_ADD_LIBRARY(minuit2.wrap${assembly_suffix}
+SWIG_ADD_LIBRARY(${target_name}
   LANGUAGE csharp
   OUTPUT_DIR ${MINUIT2NET_PATH}
   SOURCES ${SOURCE_FILES} ${HEADER_FILES})
 
-target_include_directories(minuit2.wrap${assembly_suffix} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-set_target_properties(minuit2.wrap${assembly_suffix} PROPERTIES
+target_include_directories(${target_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set_target_properties(${target_name} PROPERTIES
   SWIG_USE_TARGET_INCLUDE_DIRECTORIES ON
   POSITION_INDEPENDENT_CODE ON)
 
-target_include_directories(minuit2.wrap${assembly_suffix} PRIVATE ${root_minuit2_SOURCE_DIR}/Core/Foundation/inc)
+target_include_directories(${target_name} PRIVATE ${root_minuit2_SOURCE_DIR}/Core/Foundation/inc)
 
-TARGET_LINK_LIBRARIES(minuit2.wrap${assembly_suffix} PRIVATE Minuit2::Minuit2)
+TARGET_LINK_LIBRARIES(${target_name} PRIVATE Minuit2::Minuit2)
