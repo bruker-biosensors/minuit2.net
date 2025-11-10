@@ -5,7 +5,7 @@
     <SwigToolsPath>$(MSBuildThisFileDirectory)minuit2.net/packages/swigwintools.4.2.0/tools</SwigToolsPath>
     <SwigToolsPathAlt>$(USERPROFILE)/.nuget/packages/swigwintools/4.2.0/tools</SwigToolsPathAlt>
     <RootGitPath>$(MSBuildThisFileDirectory)minuit2.net/obj/root</RootGitPath>
-    <SwigOutputDir>$(MSBuildThisFileDirectory)/minuit2.net/obj/gen/</SwigOutputDir>
+    <SwigOutputPath>$(MSBuildThisFileDirectory)/minuit2.net/obj/gen/</SwigOutputPath>
     <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
   </PropertyGroup>
 
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <Target Name="CleanGeneratedDirectories" BeforeTargets="Clean">
-    <RemoveDir Directories="$(MSBuildThisFileDirectory)/minuit2.wrap/build;$(SwigOutputDir)"/>
+    <RemoveDir Directories="$(MSBuildThisFileDirectory)/minuit2.wrap/build;$(SwigOutputPath)"/>
     <Exec Command="git clean -fdx"
           WorkingDirectory="$(RootGitPath)"
           ContinueOnError="false"
@@ -46,7 +46,7 @@
 
   <!-- Ensure build directory exists -->
   <Target Name="CreateBuildDirectories" BeforeTargets="BeforeBuild">
-    <MakeDir Directories="$(BuildDir);$(SwigOutputDir);$(CmakeBuildDir)"/>
+    <MakeDir Directories="$(BuildDir);$(SwigOutputPath);$(CmakeBuildDir)"/>
   </Target>
 
   <!-- Run CMake Configure -->
@@ -58,7 +58,7 @@
       <CmakeArchitecture Condition="'$(Platform)' == 'AnyCPU'">x64</CmakeArchitecture>
       <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(CmakeArchitecture)</CmakeBuildDir>
       <!-- Map MSBuild property to CMake TRUE/FALSE -->
-      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputDir) -DROOT_PATH=$(RootGitPath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
+      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootGitPath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
