@@ -2,8 +2,6 @@
 
     <PropertyGroup>
         <UseOpenMP>OFF</UseOpenMP>
-        <AssemblySuffix Condition="'$(UseOpenMP)' == 'ON'">.openmp</AssemblySuffix>
-        <AssemblySuffix Condition="'$(UseOpenMP)' != 'ON'"/>
     </PropertyGroup>
     
 </Project>
