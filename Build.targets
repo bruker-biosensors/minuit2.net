@@ -5,6 +5,7 @@
     <SwigToolsPath>$(MSBuildThisFileDirectory)minuit2.net/packages/swigwintools.4.2.0/tools</SwigToolsPath>
     <SwigToolsPathAlt>$(USERPROFILE)/.nuget/packages/swigwintools/4.2.0/tools</SwigToolsPathAlt>
     <RootGitPath>$(MSBuildThisFileDirectory)minuit2.net/obj/root</RootGitPath>
+    <SwigOutputDir>$(MSBuildThisFileDirectory)/minuit2.net/obj/gen/</SwigOutputDir>
     <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
   </PropertyGroup>
 
@@ -18,27 +19,6 @@
           WorkingDirectory="$(RootGitPath)"
           ContinueOnError="false"
           Condition="Exists('$(RootGitPath)')"/>
-  </Target>
-
-  <Target Name="FindSwigExecutable" BeforeTargets="CreateBuildDirectories">
-    <ItemGroup>
-      <!-- Try common NuGet package locations -->
-      <PossibleSwigPaths Include="$(MSBuildProjectDirectory)/packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
-      <PossibleSwigPaths Include="$(MSBuildThisFileDirectory)/packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
-      <PossibleSwigPaths Include="$(NuGetPackageRoot)/swigwintools/*/tools/swigwin-*/swig.exe"/>
-      <PossibleSwigPaths Include="$(USERPROFILE)/.nuget/packages/swigwintools/*/tools/swigwin-*/swig.exe"/>
-      <PossibleSwigPaths Include="$(MSBuildProjectDirectory)/../packages/swigwintools.*/tools/swigwin-*/swig.exe"/>
-    </ItemGroup>
-
-    <!-- Find first existing SWIG executable -->
-    <ItemGroup>
-      <FoundSwigExe Include="@(PossibleSwigPaths)"/>
-    </ItemGroup>
-
-    <PropertyGroup>
-      <SwigOutputDir>$(MSBuildThisFileDirectory)/minuit2.net/obj/gen/</SwigOutputDir>
-      <SwigExecutable>%(FoundSwigExe.Identity)</SwigExecutable>
-    </PropertyGroup>
   </Target>
 
   <Target Name="Fetch Minuit" BeforeTargets="BeforeBuild" Condition="!Exists('$(RootGitPath)')">
@@ -78,7 +58,7 @@
       <CmakeArchitecture Condition="'$(Platform)' == 'AnyCPU'">x64</CmakeArchitecture>
       <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(CmakeArchitecture)</CmakeBuildDir>
       <!-- Map MSBuild property to CMake TRUE/FALSE -->
-      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputDir) -DROOT_PATH=$(RootGitPath) -DSWIG_EXECUTABLE=$(SwigExecutable) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
+      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputDir) -DROOT_PATH=$(RootGitPath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
