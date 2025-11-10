@@ -126,7 +126,7 @@ jobs:
 
   release:
     name: Release Packages
-    needs: publish
+    needs: [publish, determine-version]
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
     permissions:
@@ -136,5 +136,5 @@ jobs:
       - name: Create a Release
         uses: softprops/action-gh-release@v2
         with:
-          name: "${{ steps.determine-version.outputs.sem-ver }}"
+          name: "${{ needs.determine-version.outputs.sem-ver }}"
           prerelease: ${{ needs.determine-version.outputs.pre-release-label != '' }}
