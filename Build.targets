@@ -1,7 +1,6 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <Minuit2Wrapper>$(MSBuildThisFileDirectory)</Minuit2Wrapper>
     <SwigToolsPath>$(MSBuildThisFileDirectory)minuit2.net/packages/swigwintools.4.2.0/tools</SwigToolsPath>
     <SwigToolsPathAlt>$(USERPROFILE)/.nuget/packages/swigwintools/4.2.0/tools</SwigToolsPathAlt>
     <RootGitPath>$(MSBuildThisFileDirectory)minuit2.net/obj/root</RootGitPath>
@@ -58,7 +57,7 @@
       <CmakeArchitecture Condition="'$(Platform)' == 'AnyCPU'">x64</CmakeArchitecture>
       <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(CmakeArchitecture)</CmakeBuildDir>
       <!-- Map MSBuild property to CMake TRUE/FALSE -->
-      <CmakeBuildCommand>cmake -S $(Minuit2Wrapper) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootGitPath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
+      <CmakeBuildCommand>cmake -S $(MSBuildThisFileDirectory) -B $(CmakeBuildDir) -A $(CmakeArchitecture) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootGitPath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
