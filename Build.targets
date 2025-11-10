@@ -3,7 +3,6 @@
   <PropertyGroup>
     <RootGitPath>$(MSBuildThisFileDirectory)minuit2.net/obj/root</RootGitPath>
     <SwigOutputPath>$(MSBuildThisFileDirectory)/minuit2.net/obj/gen</SwigOutputPath>
-    <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -16,6 +16,7 @@
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <DebugType>embedded</DebugType>
         <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
+        <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
     </PropertyGroup>
 
     <Import Project="../Build.targets"/>
