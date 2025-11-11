@@ -1,5 +1,5 @@
-name: Build ROOT::Minuit2 C# Wrapper
-run-name: ${{ github.actor }} is creating a new wrapper 🚀
+name: Minuit2.NET CI/CD Pipeline
+run-name: ${{ github.actor }} is creating a new version of Minuit2.NET 🚀
 
 on:
   push:
@@ -50,7 +50,7 @@ jobs:
               "package-id": "minuit2.net"
           }
     steps:
-      - name: Check out repository code
+      - name: Check Out Repository Code
         uses: actions/checkout@v4
         with:
           submodules: recursive
@@ -59,13 +59,13 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
 
-      - name: Build x86 library
+      - name: Build x86 Library
         run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x86 -p:UseOpenMP=${{ matrix.build.use-openmp }}
 
-      - name: Build x64 library
+      - name: Build x64 Library
         run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x64 -p:UseOpenMP=${{ matrix.build.use-openmp }}
 
-      - name: Build ARM64 library
+      - name: Build ARM64 Library
         run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=ARM64 -p:UseOpenMP=${{ matrix.build.use-openmp }}
 
       - name: Test
@@ -107,7 +107,7 @@ jobs:
       - name: Install dotnet-validate
         run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.537
 
-      - name: Validate NuGet package
+      - name: Validate NuGet Package
         run: dotnet-validate package local **/bin/minuit2.net.*.nupkg
 
       - name: Upload Artifacts
@@ -145,7 +145,7 @@ jobs:
       packages: write
       contents: write
     steps:
-      - name: Create a Release
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           name: "${{ needs.determine-version.outputs.sem-ver }}"
