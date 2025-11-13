@@ -17,6 +17,8 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     // error definitions, e.g. to get meaningful parameter uncertainties for least squares cost functions with unknown
     // data errors (see LeastSquaresWithUnknownYError.cs).
     public override double Up() => 1;
+    
+    public override bool HasGradient() => function.HasGradient;
 
     public override double CalculateValue(VectorDouble parameterValues)
     {
@@ -45,8 +47,6 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
             return VectorDouble.Repeat(double.NaN, parameterValues.Count);
         }
     }
-    
-    public override bool HasGradient() => function.HasGradient;
     
     private double ValueFor(VectorDouble parameterValues)
     {
