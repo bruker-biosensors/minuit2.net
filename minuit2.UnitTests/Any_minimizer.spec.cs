@@ -22,14 +22,14 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             yield return TestCase(new BellCurveLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveLeastSquaresProblem));
             continue;
 
-            TestCaseData TestCase(ConfiguredProblem problem, string problemName) =>
+            TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
                 new TestCaseData(problem, strategy).SetArgDisplayNames(problemName, strategy.ToString());
         }
     }
 
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
     public void when_minimizing_a_well_posed_problem_finds_the_optimum_parameter_values(
-        ConfiguredProblem problem,
+        IConfiguredProblem problem,
         Strategy strategy)
     { 
         var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
