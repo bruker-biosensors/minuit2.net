@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using minuit2.net.CostFunctions;
 using minuit2.UnitTests.TestUtilities;
+using static minuit2.net.CostFunctions.CostFunction;
 
 namespace minuit2.UnitTests;
 
@@ -16,7 +17,7 @@ public class A_least_squares_cost_function
         var xCount = AnyCount(10, 50);
         var yCount = xCount + countBiasDirection * AnyCount(1, 10);
         
-        Action action = () => _ = CostFunction.LeastSquares(AnyValues(xCount), AnyValues(yCount), [], (_, _) => 0);
+        Action action = () => _ = LeastSquares(AnyValues(xCount), AnyValues(yCount), [], (_, _) => 0);
         
         action.Should().Throw<ArgumentException>();
     }
@@ -28,21 +29,32 @@ public class A_least_squares_cost_function
         var valueCount = AnyCount(10, 50);
         var errorCount = valueCount + countBiasDirection * AnyCount(1, 10);
         
-        Action action = () => _ = CostFunction.LeastSquares(AnyValues(valueCount), AnyValues(valueCount), AnyValues(errorCount), [], (_, _) => 0);
+        Action action = () => _ = LeastSquares(AnyValues(valueCount), AnyValues(valueCount), AnyValues(errorCount), [], (_, _) => 0);
         
         action.Should().Throw<ArgumentException>();
     }
-    
-    [Test]
-    public void with_a_uniform_y_error_when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals()
+
+    private static IEnumerable<TestCaseData> ConstantLevelCostFunctionWithUniformYErrorTestCases()
     {
-        var constantModelLevel = Any.Double();
         var valueCount = AnyCount();
         var xValues = AnyValues(valueCount);
         var yValues = AnyValues(valueCount);
-        var yError = Any.Double();
+        double yError = Any.Double();
         
-        var cost = CostFunction.LeastSquares(xValues, yValues, yError, ["level"], (_, p) => p[0]);
+        yield return Case(LeastSquares(xValues, yValues, yError, ["level"], (_, p) => p[0]));
+        yield return Case(LeastSquares(xValues, yValues, yError, ["level"], (_, p) => Enumerable.Repeat(p[0], valueCount).ToArray()));
+        yield break;
+
+        TestCaseData Case(ICostFunction cost) => new(cost, yValues, yError);
+    }
+    
+    [TestCaseSource(nameof(ConstantLevelCostFunctionWithUniformYErrorTestCases))]
+    public void with_a_uniform_y_error_when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals(
+        ICostFunction cost, 
+        IReadOnlyList<double> yValues, 
+        double yError)
+    {
+        var constantModelLevel = Any.Double();
         
         var expectedValue = yValues
             .Select(y => (y - constantModelLevel) / yError)
@@ -51,16 +63,27 @@ public class A_least_squares_cost_function
         cost.ValueFor([constantModelLevel]).Should().Be(expectedValue);
     }
     
-    [Test]
-    public void with_individual_y_errors_when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals()
+    private static IEnumerable<TestCaseData> ConstantLevelCostFunctionWithIndividualYErrorsTestCases()
     {
-        var constantModelLevel = Any.Double();
         var valueCount = AnyCount();
         var xValues = AnyValues(valueCount);
         var yValues = AnyValues(valueCount);
         var yErrors = AnyValues(valueCount);
-        
-        var cost = CostFunction.LeastSquares(xValues, yValues, yErrors, ["level"], (_, p) => p[0]);
+
+        yield return Case(LeastSquares(xValues, yValues, yErrors, ["level"], (_, p) => p[0]));
+        yield return Case(LeastSquares(xValues, yValues, yErrors, ["level"], (_, p) => Enumerable.Repeat(p[0], valueCount).ToArray()));
+        yield break;
+
+        TestCaseData Case(ICostFunction cost) => new(cost, yValues, yErrors);
+    }
+    
+    [TestCaseSource(nameof(ConstantLevelCostFunctionWithIndividualYErrorsTestCases))]
+    public void with_individual_y_errors_when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals(
+        ICostFunction cost, 
+        IReadOnlyList<double> yValues, 
+        IReadOnlyList<double> yErrors)
+    {
+        var constantModelLevel = Any.Double();
         
         var expectedValue = yValues
                 .Zip(yErrors, (y, yError) => (y - constantModelLevel) / yError)
@@ -68,16 +91,26 @@ public class A_least_squares_cost_function
                 .Sum();
         cost.ValueFor([constantModelLevel]).Should().Be(expectedValue);
     }
-
-    [Test]
-    public void without_y_errors_when_asked_for_its_cost_value_returns_the_sum_of_squared_unweighted_residuals()
+    
+    private static IEnumerable<TestCaseData> ConstantLevelCostFunctionWithUnknownYErrorTestCases()
     {
-        var constantModelLevel = Any.Double();
         var valueCount = AnyCount();
         var xValues = AnyValues(valueCount);
         var yValues = AnyValues(valueCount);
-        
-        var cost = CostFunction.LeastSquares(xValues, yValues, ["level"], (_, p) => p[0]);
+
+        yield return Case(LeastSquares(xValues, yValues, ["level"], (_, p) => p[0]));
+        yield return Case(LeastSquares(xValues, yValues, ["level"], (_, p) => Enumerable.Repeat(p[0], valueCount).ToArray()));
+        yield break;
+
+        TestCaseData Case(ICostFunction cost) => new(cost, yValues);
+    }
+
+    [TestCaseSource(nameof(ConstantLevelCostFunctionWithUnknownYErrorTestCases))]
+    public void without_y_errors_when_asked_for_its_cost_value_returns_the_sum_of_squared_unweighted_residuals(
+        ICostFunction cost, 
+        IReadOnlyList<double> yValues)
+    {
+        var constantModelLevel = Any.Double();
         
         var expectedValue = yValues
             .Select(y => y - constantModelLevel)
@@ -89,7 +122,7 @@ public class A_least_squares_cost_function
     [Test]
     public void has_a_default_error_definition_of_one()
     {
-        var cost = CostFunction.LeastSquares(x: AnyValues(10), y: AnyValues(10), parameters: [], model: (_, _) => 0);
+        var cost = LeastSquares(x: AnyValues(10), y: AnyValues(10), parameters: [], model: (_, _) => 0);
         
         cost.ErrorDefinition.Should().Be(1);
     }
@@ -99,7 +132,7 @@ public class A_least_squares_cost_function
     {
         var errorDefinitionInSigma = Any.Double().Between(2, 5);
         
-        var cost = CostFunction.LeastSquares(
+        var cost = LeastSquares(
             x: AnyValues(10), 
             y: AnyValues(10), 
             parameters: [], 
