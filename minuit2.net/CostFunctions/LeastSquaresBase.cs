@@ -1,24 +1,72 @@
 namespace minuit2.net.CostFunctions;
 
-internal abstract class LeastSquaresBase(
-    IReadOnlyList<string> parameters,
-    bool hasGradient,
-    double errorDefinitionInSigma,
-    double errorDefinitionScaling = 1)
-    : ICostFunction
+internal abstract class LeastSquaresBase : ICostFunction
 {
-    public IReadOnlyList<string> Parameters { get; } = parameters;
-    public bool HasGradient { get; } = hasGradient;
-    public double ErrorDefinition { get; } = ErrorDefinitionFor(errorDefinitionInSigma) * errorDefinitionScaling;
+    protected readonly IReadOnlyList<double> X;
+    protected readonly IReadOnlyList<double> Y;
+    protected readonly Func<double, IReadOnlyList<double>, double> Model;
+    protected readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? ModelGradient;
+    protected readonly double ErrorDefinitionInSigma;
 
-    public abstract double ValueFor(IReadOnlyList<double> parameterValues);
+    protected LeastSquaresBase(IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
+        double errorDefinitionInSigma,
+        double errorDefinitionScaling = 1)
+    {
+        if (x.Count != y.Count)
+            throw new ArgumentException($"{nameof(x)} and {nameof(y)} must have the same length");
+        
+        X = x;
+        Y = y;
+        Model = model;
+        ModelGradient = modelGradient;
+        ErrorDefinitionInSigma = errorDefinitionInSigma;
 
-    public abstract IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues);
+        Parameters = parameters;
+        HasGradient = modelGradient != null;
+        
+        // For least squares fits, an error definition of 1 corresponds to 1-sigma parameter errors
+        // (4 would correspond to 2-sigma errors, 9 would correspond to 3-sigma errors etc.)
+        ErrorDefinition = errorDefinitionInSigma * errorDefinitionInSigma * errorDefinitionScaling;
+    }
+
+    public IReadOnlyList<string> Parameters { get; }
+    public bool HasGradient { get; }
+    public double ErrorDefinition { get; }
+
+    public double ValueFor(IReadOnlyList<double> parameterValues)
+    {
+        double sum = 0;
+        for (var i = 0; i < X.Count; i++)
+        {
+            var residual = ResidualFor(parameterValues, i);
+            sum += residual * residual;
+        }
+
+        return sum;
+    }
+    
+    public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
+    {
+        var gradientSums = new double[Parameters.Count];
+        for (var i = 0; i < X.Count; i++)
+        {
+            var residual = ResidualFor(parameterValues, i);
+            var gradients = ModelGradient!(X[i], parameterValues);
+            for (var j = 0; j < Parameters.Count; j++) 
+                gradientSums[j] -= 2 * residual * gradients[j] / YErrorFor(i);
+        }
+
+        return gradientSums;
+    }
+    
+    private double ResidualFor(IReadOnlyList<double> parameterValues, int index) =>
+        (Y[index] - Model(X[index], parameterValues)) / YErrorFor(index);
+
+    protected abstract double YErrorFor(int index);
 
     public virtual ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) => this;
-
-    // For least squares fits, an error definition of 1 corresponds to 1-sigma parameter errors
-    // (4 would correspond to 2-sigma errors, 9 would correspond to 3-sigma errors etc.)
-    private static double ErrorDefinitionFor(double errorDefinitionInSigma) =>
-        errorDefinitionInSigma * errorDefinitionInSigma;
 }
