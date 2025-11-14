@@ -2,8 +2,6 @@
 
 internal class LeastSquares : LeastSquaresBase
 {
-    private readonly IReadOnlyList<double> _yError;
-
     public LeastSquares(
         IReadOnlyList<double> x,
         IReadOnlyList<double> y,
@@ -12,13 +10,9 @@ internal class LeastSquares : LeastSquaresBase
         Func<double, IReadOnlyList<double>, double> model,
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
         double errorDefinitionInSigma)
-        : base(x, y, parameters, model, modelGradient, errorDefinitionInSigma)
+        : base(x, y, i => yError[i], parameters, model, modelGradient, errorDefinitionInSigma)
     {
         if (y.Count != yError.Count)
             throw new ArgumentException($"{nameof(y)} and {nameof(yError)} must have the same length");
-
-        _yError = yError;
     }
-
-    protected override double YErrorFor(int index) => _yError[index];
 }

@@ -4,12 +4,15 @@ internal abstract class LeastSquaresBase : ICostFunction
 {
     protected readonly IReadOnlyList<double> X;
     protected readonly IReadOnlyList<double> Y;
+    protected readonly Func<int, double> YErrorForIndex;
     protected readonly Func<double, IReadOnlyList<double>, double> Model;
     protected readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? ModelGradient;
     protected readonly double ErrorDefinitionInSigma;
 
-    protected LeastSquaresBase(IReadOnlyList<double> x,
+    protected LeastSquaresBase(
+        IReadOnlyList<double> x,
         IReadOnlyList<double> y,
+        Func<int, double> yErrorForIndex,
         IReadOnlyList<string> parameters,
         Func<double, IReadOnlyList<double>, double> model,
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
@@ -21,6 +24,7 @@ internal abstract class LeastSquaresBase : ICostFunction
         
         X = x;
         Y = y;
+        YErrorForIndex = yErrorForIndex;
         Model = model;
         ModelGradient = modelGradient;
         ErrorDefinitionInSigma = errorDefinitionInSigma;
@@ -57,16 +61,14 @@ internal abstract class LeastSquaresBase : ICostFunction
             var residual = ResidualFor(parameterValues, i);
             var gradients = ModelGradient!(X[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++) 
-                gradientSums[j] -= 2 * residual * gradients[j] / YErrorFor(i);
+                gradientSums[j] -= 2 * residual * gradients[j] / YErrorForIndex(i);
         }
 
         return gradientSums;
     }
     
     private double ResidualFor(IReadOnlyList<double> parameterValues, int index) =>
-        (Y[index] - Model(X[index], parameterValues)) / YErrorFor(index);
-
-    protected abstract double YErrorFor(int index);
-
+        (Y[index] - Model(X[index], parameterValues)) / YErrorForIndex(index);
+    
     public virtual ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) => this;
 }

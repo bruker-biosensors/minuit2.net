@@ -8,10 +8,8 @@ internal class LeastSquaresWithUnknownYError(
     Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
     double errorDefinitionInSigma,
     double errorDefinitionScaling = 1)
-    : LeastSquaresBase(x, y, parameters, model, modelGradient, errorDefinitionInSigma, errorDefinitionScaling)
+    : LeastSquaresBase(x, y, _ => 1, parameters, model, modelGradient, errorDefinitionInSigma, errorDefinitionScaling)
 {
-    protected override double YErrorFor(int index) => 1;
-
     public override ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result)
     {
         // Auto-scale the error definition such that a re-evaluation -- e.g., by a following minimization or accurate
