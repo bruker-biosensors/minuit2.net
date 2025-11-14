@@ -43,6 +43,5 @@ public static class CostFunction
         double IndividualYError(int index) => yErrors[index];
     }
 
-    public static ICostFunction Sum(params ICostFunction[] components) =>
-        new CostFunctionSum(components);
+    public static ICostFunction Sum(params ICostFunction[] components) => new CostFunctionSum(components);
 }
