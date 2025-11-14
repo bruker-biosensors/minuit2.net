@@ -10,7 +10,7 @@ internal class LeastSquaresBase : ICostFunction
     private readonly double _errorDefinitionInSigma;
     private readonly bool _isErrorDefinitionRecalculationEnabled;
 
-    protected LeastSquaresBase(
+    public LeastSquaresBase(
         IReadOnlyList<double> x,
         IReadOnlyList<double> y,
         Func<int, double> yErrorForIndex,
@@ -18,8 +18,19 @@ internal class LeastSquaresBase : ICostFunction
         Func<double, IReadOnlyList<double>, double> model,
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
         double errorDefinitionInSigma,
-        double errorDefinitionScaling = 1,
-        bool isErrorDefinitionRecalculationEnabled = false)
+        bool isErrorDefinitionRecalculationEnabled)
+        : this(x, y, yErrorForIndex, parameters, model, modelGradient, errorDefinitionInSigma, isErrorDefinitionRecalculationEnabled, 1) { }
+
+    private LeastSquaresBase(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        Func<int, double> yErrorForIndex,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
+        double errorDefinitionInSigma,
+        bool isErrorDefinitionRecalculationEnabled,
+        double errorDefinitionScaling)
     {
         if (x.Count != y.Count)
             throw new ArgumentException($"{nameof(x)} and {nameof(y)} must have the same length");
@@ -100,8 +111,8 @@ internal class LeastSquaresBase : ICostFunction
             Parameters,
             _model,
             _modelGradient,
-            _errorDefinitionInSigma, 
-            reducedChiSquared,
-            _isErrorDefinitionRecalculationEnabled);
+            _errorDefinitionInSigma,
+            _isErrorDefinitionRecalculationEnabled,
+            reducedChiSquared);
     }
 }

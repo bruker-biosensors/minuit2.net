@@ -10,9 +10,10 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
-        return new LeastSquaresWithUnknownYError(x, y, parameters, model, modelGradient, errorDefinitionInSigma);
+        return new LeastSquaresBase(x, y, NoYError, parameters, model, modelGradient, errorDefinitionInSigma, true);
+        static double NoYError(int _) => 1;
     }
-    
+
     public static ICostFunction LeastSquares(
         IReadOnlyList<double> x,
         IReadOnlyList<double> y,
@@ -22,9 +23,10 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
-        return new LeastSquaresWithUniformYError(x, y, yError, parameters, model, modelGradient, errorDefinitionInSigma);
+        return new LeastSquaresBase(x, y, UniformYError, parameters, model, modelGradient, errorDefinitionInSigma, false);
+        double UniformYError(int _) => yError;
     }
-    
+
     public static ICostFunction LeastSquares(
         IReadOnlyList<double> x,
         IReadOnlyList<double> y,
@@ -34,9 +36,13 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
-        return new LeastSquares(x, y, yErrors, parameters, model, modelGradient, errorDefinitionInSigma);
+        return y.Count == yErrors.Count
+            ? new LeastSquaresBase(x, y, IndividualYError, parameters, model, modelGradient, errorDefinitionInSigma, false)
+            : throw new ArgumentException($"{nameof(y)} and {nameof(yErrors)} must have the same length");
+
+        double IndividualYError(int index) => yErrors[index];
     }
-    
-    public static ICostFunction Sum(params ICostFunction[] components) => 
+
+    public static ICostFunction Sum(params ICostFunction[] components) =>
         new CostFunctionSum(components);
 }
