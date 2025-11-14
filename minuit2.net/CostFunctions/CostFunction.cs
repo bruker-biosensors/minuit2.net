@@ -10,9 +10,10 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
-        return new LeastSquaresWithUnknownYError(x, y, parameters, model, modelGradient, errorDefinitionInSigma);
+        return new LeastSquares(x, y, NoYError, parameters, model, modelGradient, errorDefinitionInSigma, true);
+        static double NoYError(int _) => 1;
     }
-    
+
     public static ICostFunction LeastSquares(
         IReadOnlyList<double> x,
         IReadOnlyList<double> y,
@@ -22,21 +23,63 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
-        return new LeastSquaresWithUniformYError(x, y, yError, parameters, model, modelGradient, errorDefinitionInSigma);
+        return new LeastSquares(x, y, UniformYError, parameters, model, modelGradient, errorDefinitionInSigma, false);
+        double UniformYError(int _) => yError;
     }
-    
+
     public static ICostFunction LeastSquares(
         IReadOnlyList<double> x,
         IReadOnlyList<double> y,
-        IReadOnlyList<double> yErrors,
+        IReadOnlyList<double> yError,
         IReadOnlyList<string> parameters,
         Func<double, IReadOnlyList<double>, double> model,
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
-        return new LeastSquares(x, y, yErrors, parameters, model, modelGradient, errorDefinitionInSigma);
+        if (y.Count != yError.Count)
+            throw new ArgumentException($"{nameof(y)} and {nameof(yError)} must have the same length");
+
+        return new LeastSquares(x, y, IndividualYError, parameters, model, modelGradient, errorDefinitionInSigma, false);
+        double IndividualYError(int index) => yError[index];
     }
-    
-    public static ICostFunction Sum(params ICostFunction[] components) => 
-        new CostFunctionSum(components);
+
+    public static ICostFunction LeastSquares(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<string> parameters,
+        Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>> model,
+        double errorDefinitionInSigma = 1)
+    {
+        return new LeastSquares2(x, y, NoYError, parameters, model, errorDefinitionInSigma, true);
+        static double NoYError(int _) => 1;
+    }
+
+    public static ICostFunction LeastSquares(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        double yError,
+        IReadOnlyList<string> parameters,
+        Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>> model,
+        double errorDefinitionInSigma = 1)
+    {
+        return new LeastSquares2(x, y, UniformYError, parameters, model, errorDefinitionInSigma, false);
+        double UniformYError(int _) => yError;
+    }
+
+    public static ICostFunction LeastSquares(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<double> yError,
+        IReadOnlyList<string> parameters,
+        Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>> model,
+        double errorDefinitionInSigma = 1)
+    {
+        if (y.Count != yError.Count)
+            throw new ArgumentException($"{nameof(y)} and {nameof(yError)} must have the same length");
+
+        return new LeastSquares2(x, y, IndividualYError, parameters, model, errorDefinitionInSigma, false);
+        double IndividualYError(int index) => yError[index];
+    }
+
+    public static ICostFunction Sum(params ICostFunction[] components) => new CostFunctionSum(components);
 }

@@ -1,33 +1,32 @@
 namespace minuit2.net.CostFunctions;
 
-internal class LeastSquares : ICostFunction
+internal class LeastSquares2 : ICostFunction
 {
     private readonly IReadOnlyList<double> _x;
     private readonly IReadOnlyList<double> _y;
     private readonly Func<int, double> _yErrorForIndex;
-    private readonly Func<double, IReadOnlyList<double>, double> _model;
-    private readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? _modelGradient;
+    private readonly Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>> _model;
     private readonly double _errorDefinitionInSigma;
     private readonly bool _isErrorDefinitionRecalculationEnabled;
 
-    public LeastSquares(
+    public LeastSquares2(
         IReadOnlyList<double> x,
         IReadOnlyList<double> y,
         Func<int, double> yErrorForIndex,
         IReadOnlyList<string> parameters,
-        Func<double, IReadOnlyList<double>, double> model,
-        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
+        Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>> model,
         double errorDefinitionInSigma,
         bool isErrorDefinitionRecalculationEnabled)
-        : this(x, y, yErrorForIndex, parameters, model, modelGradient, errorDefinitionInSigma, isErrorDefinitionRecalculationEnabled, 1) { }
+        : this(x, y, yErrorForIndex, parameters, model, errorDefinitionInSigma, isErrorDefinitionRecalculationEnabled, 1)
+    {
+    }
 
-    private LeastSquares(
+    private LeastSquares2(
         IReadOnlyList<double> x,
         IReadOnlyList<double> y,
         Func<int, double> yErrorForIndex,
         IReadOnlyList<string> parameters,
-        Func<double, IReadOnlyList<double>, double> model,
-        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
+        Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>> model,
         double errorDefinitionInSigma,
         bool isErrorDefinitionRecalculationEnabled,
         double errorDefinitionScaling)
@@ -39,12 +38,11 @@ internal class LeastSquares : ICostFunction
         _y = y;
         _yErrorForIndex = yErrorForIndex;
         _model = model;
-        _modelGradient = modelGradient;
         _errorDefinitionInSigma = errorDefinitionInSigma;
         _isErrorDefinitionRecalculationEnabled = isErrorDefinitionRecalculationEnabled;
 
         Parameters = parameters;
-        HasGradient = modelGradient != null;
+        HasGradient = false;
 
         // For least squares fits, an error definition of 1 corresponds to 1-sigma parameter errors
         // (4 would correspond to 2-sigma errors, 9 would correspond to 3-sigma errors etc.)
@@ -58,9 +56,10 @@ internal class LeastSquares : ICostFunction
     public double ValueFor(IReadOnlyList<double> parameterValues)
     {
         double sum = 0;
+        var yModel = _model(_x, parameterValues);
         for (var i = 0; i < _x.Count; i++)
         {
-            var residual = ResidualFor(parameterValues, i);
+            var residual = (_y[i] - yModel[i]) / _yErrorForIndex(i);
             sum += residual * residual;
         }
 
@@ -69,20 +68,8 @@ internal class LeastSquares : ICostFunction
 
     public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
     {
-        var gradientSums = new double[Parameters.Count];
-        for (var i = 0; i < _x.Count; i++)
-        {
-            var residual = ResidualFor(parameterValues, i);
-            var gradients = _modelGradient!(_x[i], parameterValues);
-            for (var j = 0; j < Parameters.Count; j++)
-                gradientSums[j] -= 2 * residual * gradients[j] / _yErrorForIndex(i);
-        }
-
-        return gradientSums;
+        throw new NotImplementedException();
     }
-
-    private double ResidualFor(IReadOnlyList<double> parameterValues, int index) =>
-        (_y[index] - _model(_x[index], parameterValues)) / _yErrorForIndex(index);
 
     public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result)
     {
@@ -104,13 +91,12 @@ internal class LeastSquares : ICostFunction
 
         var degreesOfFreedom = _x.Count - numberOfVariables;
         var reducedChiSquared = ValueFor(parameterValues) / degreesOfFreedom;
-        return new LeastSquares(
+        return new LeastSquares2(
             _x,
             _y,
             _yErrorForIndex,
             Parameters,
             _model,
-            _modelGradient,
             _errorDefinitionInSigma,
             _isErrorDefinitionRecalculationEnabled,
             reducedChiSquared);

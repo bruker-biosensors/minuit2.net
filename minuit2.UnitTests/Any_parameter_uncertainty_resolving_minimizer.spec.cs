@@ -17,7 +17,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
                  "occasionally reports non-convergence — even at the true minimum — due to its unreliable convergence " +
                  "criteria (see the Minuit docs: '...it would not even know if it did converge').")]
     public void when_minimizing_a_well_posed_problem_converges_to_a_valid_cost_function_minimum(
-        ConfiguredProblem problem,
+        IConfiguredProblem problem,
         Strategy strategy)
     { 
         var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
@@ -32,7 +32,7 @@ public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer m
     
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
     public void when_minimizing_a_well_posed_problem_yields_parameter_values_that_agree_with_the_optimum_values_within_3_sigma_tolerance(
-        ConfiguredProblem problem,
+        IConfiguredProblem problem,
         Strategy strategy)
     { 
         var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);

@@ -20,16 +20,17 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             yield return TestCase(new CubicPolynomialLeastSquaresProblem().Configured(), nameof(CubicPolynomialLeastSquaresProblem));
             yield return TestCase(new ExponentialDecayLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(ExponentialDecayLeastSquaresProblem));
             yield return TestCase(new BellCurveLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveLeastSquaresProblem));
+            yield return TestCase(new NumericalPendulumLeastSquaresProblem(), nameof(NumericalPendulumLeastSquaresProblem));
             continue;
 
-            TestCaseData TestCase(ConfiguredProblem problem, string problemName) =>
+            TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
                 new TestCaseData(problem, strategy).SetArgDisplayNames(problemName, strategy.ToString());
         }
     }
 
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
     public void when_minimizing_a_well_posed_problem_finds_the_optimum_parameter_values(
-        ConfiguredProblem problem,
+        IConfiguredProblem problem,
         Strategy strategy)
     { 
         var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
@@ -156,7 +157,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     
     private static IEnumerable<TestCaseData> BestValueOutsideLimitsParameterConfigurations()
     {
-        // optimum value for parameter c0 is 10 (see CubicPolynomialLeastSquaresProblem.cs)
+        // the optimum value for parameter c0 is 10 (see CubicPolynomialLeastSquaresProblem.cs)
         yield return new TestCaseData(11.0, 10.5, 12.0, 10.5);
         yield return new TestCaseData(11.0, 10.5, null, 10.5);
         yield return new TestCaseData(9.0, 8.0, 9.5, 9.5);
