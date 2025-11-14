@@ -10,7 +10,7 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
-        return new LeastSquaresBase(x, y, NoYError, parameters, model, modelGradient, errorDefinitionInSigma, true);
+        return new LeastSquares(x, y, NoYError, parameters, model, modelGradient, errorDefinitionInSigma, true);
         static double NoYError(int _) => 1;
     }
 
@@ -23,7 +23,7 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
-        return new LeastSquaresBase(x, y, UniformYError, parameters, model, modelGradient, errorDefinitionInSigma, false);
+        return new LeastSquares(x, y, UniformYError, parameters, model, modelGradient, errorDefinitionInSigma, false);
         double UniformYError(int _) => yError;
     }
 
@@ -37,7 +37,7 @@ public static class CostFunction
         double errorDefinitionInSigma = 1)
     {
         return y.Count == yErrors.Count
-            ? new LeastSquaresBase(x, y, IndividualYError, parameters, model, modelGradient, errorDefinitionInSigma, false)
+            ? new LeastSquares(x, y, IndividualYError, parameters, model, modelGradient, errorDefinitionInSigma, false)
             : throw new ArgumentException($"{nameof(y)} and {nameof(yErrors)} must have the same length");
 
         double IndividualYError(int index) => yErrors[index];

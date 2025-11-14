@@ -1,6 +1,6 @@
 namespace minuit2.net.CostFunctions;
 
-internal class LeastSquaresBase : ICostFunction
+internal class LeastSquares : ICostFunction
 {
     private readonly IReadOnlyList<double> _x;
     private readonly IReadOnlyList<double> _y;
@@ -10,7 +10,7 @@ internal class LeastSquaresBase : ICostFunction
     private readonly double _errorDefinitionInSigma;
     private readonly bool _isErrorDefinitionRecalculationEnabled;
 
-    public LeastSquaresBase(
+    public LeastSquares(
         IReadOnlyList<double> x,
         IReadOnlyList<double> y,
         Func<int, double> yErrorForIndex,
@@ -21,7 +21,7 @@ internal class LeastSquaresBase : ICostFunction
         bool isErrorDefinitionRecalculationEnabled)
         : this(x, y, yErrorForIndex, parameters, model, modelGradient, errorDefinitionInSigma, isErrorDefinitionRecalculationEnabled, 1) { }
 
-    private LeastSquaresBase(
+    private LeastSquares(
         IReadOnlyList<double> x,
         IReadOnlyList<double> y,
         Func<int, double> yErrorForIndex,
@@ -104,7 +104,7 @@ internal class LeastSquaresBase : ICostFunction
 
         var degreesOfFreedom = _x.Count - numberOfVariables;
         var reducedChiSquared = ValueFor(parameterValues) / degreesOfFreedom;
-        return new LeastSquaresBase(
+        return new LeastSquares(
             _x,
             _y,
             _yErrorForIndex,
