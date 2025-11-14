@@ -30,17 +30,17 @@ public static class CostFunction
     public static ICostFunction LeastSquares(
         IReadOnlyList<double> x,
         IReadOnlyList<double> y,
-        IReadOnlyList<double> yErrors,
+        IReadOnlyList<double> yError,
         IReadOnlyList<string> parameters,
         Func<double, IReadOnlyList<double>, double> model,
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
-        return y.Count == yErrors.Count
+        return y.Count == yError.Count
             ? new LeastSquares(x, y, IndividualYError, parameters, model, modelGradient, errorDefinitionInSigma, false)
-            : throw new ArgumentException($"{nameof(y)} and {nameof(yErrors)} must have the same length");
+            : throw new ArgumentException($"{nameof(y)} and {nameof(yError)} must have the same length");
 
-        double IndividualYError(int index) => yErrors[index];
+        double IndividualYError(int index) => yError[index];
     }
 
     public static ICostFunction Sum(params ICostFunction[] components) => new CostFunctionSum(components);
