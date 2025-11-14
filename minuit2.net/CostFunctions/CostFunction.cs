@@ -36,10 +36,10 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
         double errorDefinitionInSigma = 1)
     {
-        return y.Count == yError.Count
-            ? new LeastSquares(x, y, IndividualYError, parameters, model, modelGradient, errorDefinitionInSigma, false)
-            : throw new ArgumentException($"{nameof(y)} and {nameof(yError)} must have the same length");
-
+        if (y.Count != yError.Count)
+            throw new ArgumentException($"{nameof(y)} and {nameof(yError)} must have the same length");
+        
+        return new LeastSquares(x, y, IndividualYError, parameters, model, modelGradient, errorDefinitionInSigma, false);
         double IndividualYError(int index) => yError[index];
     }
 
