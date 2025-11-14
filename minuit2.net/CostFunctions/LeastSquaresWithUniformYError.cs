@@ -6,8 +6,8 @@ internal class LeastSquaresWithUniformYError(
     double yError,
     IReadOnlyList<string> parameters,
     Func<double, IReadOnlyList<double>, double> model,
-    Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
-    double errorDefinitionInSigma = 1)
+    Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
+    double errorDefinitionInSigma)
     : LeastSquaresBase(x, y, parameters, model, modelGradient, errorDefinitionInSigma)
 {
     protected override double YErrorFor(int index) => yError;

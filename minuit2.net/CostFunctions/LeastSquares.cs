@@ -10,8 +10,8 @@ internal class LeastSquares : LeastSquaresBase
         IReadOnlyList<double> yError,
         IReadOnlyList<string> parameters,
         Func<double, IReadOnlyList<double>, double> model,
-        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
-        double errorDefinitionInSigma = 1)
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
+        double errorDefinitionInSigma)
         : base(x, y, parameters, model, modelGradient, errorDefinitionInSigma)
     {
         if (y.Count != yError.Count)

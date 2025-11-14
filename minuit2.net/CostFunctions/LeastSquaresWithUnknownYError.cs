@@ -5,8 +5,8 @@ internal class LeastSquaresWithUnknownYError(
     IReadOnlyList<double> y,
     IReadOnlyList<string> parameters,
     Func<double, IReadOnlyList<double>, double> model,
-    Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
-    double errorDefinitionInSigma = 1,
+    Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
+    double errorDefinitionInSigma,
     double errorDefinitionScaling = 1)
     : LeastSquaresBase(x, y, parameters, model, modelGradient, errorDefinitionInSigma, errorDefinitionScaling)
 {
