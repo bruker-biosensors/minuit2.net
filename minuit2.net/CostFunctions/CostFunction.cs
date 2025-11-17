@@ -13,8 +13,7 @@ public static class CostFunction
         double errorDefinitionInSigma = 1)
     {
         ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
-        return new LeastSquares(x, y, NoYError, parameters, model, modelGradient, errorDefinitionInSigma, true);
-        static double NoYError(int _) => 1;
+        return new LeastSquares(x, y, _ => 1, parameters, model, modelGradient, errorDefinitionInSigma, true);
     }
 
     public static ICostFunction LeastSquares(
@@ -27,8 +26,7 @@ public static class CostFunction
         double errorDefinitionInSigma = 1)
     {
         ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
-        return new LeastSquares(x, y, UniformYError, parameters, model, modelGradient, errorDefinitionInSigma, false);
-        double UniformYError(int _) => yError;
+        return new LeastSquares(x, y, _ => yError, parameters, model, modelGradient, errorDefinitionInSigma, false);
     }
 
     public static ICostFunction LeastSquares(
@@ -41,8 +39,7 @@ public static class CostFunction
         double errorDefinitionInSigma = 1)
     {
         ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)), (yError, nameof(yError)));
-        return new LeastSquares(x, y, IndividualYError, parameters, model, modelGradient, errorDefinitionInSigma, false);
-        double IndividualYError(int index) => yError[index];
+        return new LeastSquares(x, y, index => yError[index], parameters, model, modelGradient, errorDefinitionInSigma, false);
     }
 
     public static ICostFunction LeastSquares(
@@ -53,8 +50,7 @@ public static class CostFunction
         double errorDefinitionInSigma = 1)
     {
         ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
-        return new LeastSquaresWithBatchEvaluationModel(x, y, NoYError, parameters, model, errorDefinitionInSigma, true);
-        static double NoYError(int _) => 1;
+        return new LeastSquaresWithBatchEvaluationModel(x, y, _ => 1, parameters, model, errorDefinitionInSigma, true);
     }
 
     public static ICostFunction LeastSquares(
@@ -66,8 +62,7 @@ public static class CostFunction
         double errorDefinitionInSigma = 1)
     {
         ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
-        return new LeastSquaresWithBatchEvaluationModel(x, y, UniformYError, parameters, model, errorDefinitionInSigma, false);
-        double UniformYError(int _) => yError;
+        return new LeastSquaresWithBatchEvaluationModel(x, y, _ => yError, parameters, model, errorDefinitionInSigma, false);
     }
 
     public static ICostFunction LeastSquares(
@@ -79,8 +74,7 @@ public static class CostFunction
         double errorDefinitionInSigma = 1)
     {
         ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)), (yError, nameof(yError)));
-        return new LeastSquaresWithBatchEvaluationModel(x, y, IndividualYError, parameters, model, errorDefinitionInSigma, false);
-        double IndividualYError(int index) => yError[index];
+        return new LeastSquaresWithBatchEvaluationModel(x, y, index => yError[index], parameters, model, errorDefinitionInSigma, false);
     }
 
     public static ICostFunction Sum(params ICostFunction[] components) => new CostFunctionSum(components);
