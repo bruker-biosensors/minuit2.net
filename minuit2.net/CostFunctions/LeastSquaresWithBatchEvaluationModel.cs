@@ -1,27 +1,27 @@
 namespace minuit2.net.CostFunctions;
 
-internal class LeastSquares(
+internal class LeastSquaresWithBatchEvaluationModel(
     IReadOnlyList<double> x,
     IReadOnlyList<double> y,
     Func<int, double> yErrorForIndex,
     IReadOnlyList<string> parameters,
-    Func<double, IReadOnlyList<double>, double> model,
-    Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
+    Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>> model,
     double errorDefinitionInSigma,
     bool isErrorDefinitionRecalculationEnabled,
     double errorDefinitionScaling = 1)
     : LeastSquaresBase(
         x.Count,
         parameters,
-        modelGradient != null,
+        false,
         ErrorDefinitionFor(errorDefinitionInSigma, errorDefinitionScaling))
 {
     public override double ValueFor(IReadOnlyList<double> parameterValues)
     {
         double sum = 0;
+        var yModel = model(x, parameterValues);
         for (var i = 0; i < x.Count; i++)
         {
-            var residual = ResidualFor(parameterValues, i);
+            var residual = (y[i] - yModel[i]) / yErrorForIndex(i);
             sum += residual * residual;
         }
 
@@ -30,32 +30,19 @@ internal class LeastSquares(
 
     public override IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
     {
-        var gradientSums = new double[Parameters.Count];
-        for (var i = 0; i < x.Count; i++)
-        {
-            var residual = ResidualFor(parameterValues, i);
-            var gradients = modelGradient!(x[i], parameterValues);
-            for (var j = 0; j < Parameters.Count; j++)
-                gradientSums[j] -= 2 * residual * gradients[j] / yErrorForIndex(i);
-        }
-
-        return gradientSums;
+        throw new NotImplementedException();
     }
-
-    private double ResidualFor(IReadOnlyList<double> parameterValues, int index) =>
-        (y[index] - model(x[index], parameterValues)) / yErrorForIndex(index);
 
     protected override ICostFunction CopyWith(double errorDefinitionScaling)
     {
         if (!isErrorDefinitionRecalculationEnabled) return this;
 
-        return new LeastSquares(
+        return new LeastSquaresWithBatchEvaluationModel(
             x,
             y,
             yErrorForIndex,
             Parameters,
             model,
-            modelGradient,
             errorDefinitionInSigma,
             isErrorDefinitionRecalculationEnabled,
             errorDefinitionScaling);
