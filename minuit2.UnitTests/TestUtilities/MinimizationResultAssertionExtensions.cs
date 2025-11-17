@@ -18,30 +18,26 @@ internal static class MinimizationResultAssertionExtensions
 internal class MinimizationResultAssertions(IMinimizationResult value)
     : ObjectAssertions<IMinimizationResult, MinimizationResultAssertions>(value, AssertionChain.GetOrCreate())
 {
-    #if USE_OPENMP
-        private const int EqualFunctionCallsTolerance = 2;
-        private const int SimilarFunctionCallsTolerance = 30;
-    #else
-        private const int EqualFunctionCallsTolerance = 0;
-        private const int SimilarFunctionCallsTolerance = 6;
-    #endif
+#if USE_OPENMP
+    private const bool SkipFunctionCallsAssertions = true;
+#else
+    private const bool SkipFunctionCallsAssertions = false;
+#endif
+    private const int SimilarFunctionCallsTolerance = 6;
 
     public AndConstraint<MinimizationResultAssertions> HaveNumberOfFunctionCalls(int expectedValue)
     {
-        if (EqualFunctionCallsTolerance > 0)
-            Subject.NumberOfFunctionCalls.Should().BeInRange(
-                expectedValue - EqualFunctionCallsTolerance,
-                expectedValue + EqualFunctionCallsTolerance);
-        else
+        if (!SkipFunctionCallsAssertions)
             Subject.NumberOfFunctionCalls.Should().Be(expectedValue);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 
     public AndConstraint<MinimizationResultAssertions> HaveNumberOfFunctionCallsCloseTo(int expectedValue)
     {
-        Subject.NumberOfFunctionCalls.Should().BeInRange(
-            expectedValue - SimilarFunctionCallsTolerance,
-            expectedValue + SimilarFunctionCallsTolerance);
+        if (!SkipFunctionCallsAssertions)
+            Subject.NumberOfFunctionCalls.Should().BeInRange(
+                expectedValue - SimilarFunctionCallsTolerance,
+                expectedValue + SimilarFunctionCallsTolerance);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 }

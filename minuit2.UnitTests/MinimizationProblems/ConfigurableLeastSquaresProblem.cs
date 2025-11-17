@@ -147,7 +147,7 @@ internal abstract class ConfigurableLeastSquaresProblem
         }
     }
 
-    internal ConfiguredProblem Configured(
+    internal IConfiguredProblem Configured(
         Func<ParameterConfigurationsBuilder, ParameterConfigurationsWithSpecialParameterBuilder>? customization = null)
     {
         var configBuilder = ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1);
