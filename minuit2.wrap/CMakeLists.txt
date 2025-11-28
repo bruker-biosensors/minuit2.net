@@ -11,7 +11,6 @@ include(UseSWIG)
 SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES CPLUSPLUS ON)
 
 set(SOURCE_FILES
-  FCNWrap.cpp
   Minuit2.i
 )
 

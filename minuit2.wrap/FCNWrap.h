@@ -1,8 +1,9 @@
 #ifndef FCN_WRAP_H_
 #define FCN_WRAP_H_
 
-#include "minuit2/FCNBase.h"
+#include "Minuit2/FCNBase.h"
 #include <atomic>
+#include <limits>
 
 namespace ROOT
 {
@@ -14,23 +15,37 @@ namespace ROOT
             std::atomic<bool> shouldAbort = false;
 
         public:
-            FCNWrap()
+            FCNWrap() {}
+
+            double operator()(std::vector<double> const &parameterValues) const override final
             {
+                if (shouldAbort.load())
+                {
+                    return std::numeric_limits<double>::quiet_NaN();
+                }
+                
+                return CalculateValue(parameterValues);
             }
 
-            virtual double operator()(std::vector<double> const &parameterValues) const override final;
+            virtual double CalculateValue(std::vector<double> const &parameterValues) const = 0;
 
-            virtual double CalculateValue(std::vector<double> const &parameterValues) const;
+            std::vector<double> Gradient(std::vector<double> const &parameterValues) const override final
+            {
+                if (shouldAbort.load())
+                {
+                    return std::vector<double>(parameterValues.size(), std::numeric_limits<double>::quiet_NaN());
+                }
+                
+                return CalculateGradient(parameterValues);
+            }
 
-            virtual std::vector<double> Gradient(std::vector<double> const &parameterValues) const override final;
+            virtual std::vector<double> CalculateGradient(std::vector<double> const &parameterValues) const = 0;
 
-            virtual std::vector<double> CalculateGradient(std::vector<double> const &parameterValues) const;
+			virtual bool HasGradient() const override { return false; }
 
-            virtual bool HasGradient() const override;
+			virtual double Up() const override { return 1.0; }
 
-            virtual double Up() const override;
-
-            void Abort();
+            void Abort() { shouldAbort.store(true); }
 
             virtual ~FCNWrap() {}
         };
