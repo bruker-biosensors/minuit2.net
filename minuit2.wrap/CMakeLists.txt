@@ -12,13 +12,11 @@ SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES CPLUSPLUS ON)
 
 set(SOURCE_FILES
   FCNWrap.cpp
-  MnHesseWrap.cpp
   Minuit2.i
 )
 
 set(HEADER_FILES
   FCNWrap.h
-  MnHesseWrap.h
 )
 
 cmake_path(ABSOLUTE_PATH MINUIT2NET_PATH NORMALIZE)

@@ -1,7 +1,7 @@
 #ifndef MN_HESSE_WRAP_H_
 #define MN_HESSE_WRAP_H_
 
-#include "minuit2/MnHesse.h"
+#include "Minuit2/MnHesse.h"
 #include "FCNWrap.h"
 
 namespace ROOT
@@ -12,11 +12,14 @@ namespace ROOT
         {
         public:
             MnHesseWrap(const MnStrategy &strategy = MnStrategy(1))
-                : MnHesse(strategy)
-            {
-            }
+                : MnHesse(strategy) {}
 
-            void Update(FunctionMinimum &minimum, const FCNWrap &function, unsigned int maximumFunctionCalls = 0) const;
+            void Update(FunctionMinimum &minimum,
+                        const FCNWrap &function,
+                        unsigned int maximumFunctionCalls = 0) const
+            {
+                this->operator()(function, minimum, maximumFunctionCalls);
+            }
         };
     }
 }
