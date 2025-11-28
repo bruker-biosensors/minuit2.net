@@ -34,10 +34,12 @@ namespace std {
     #include "Minuit2/MnUserCovariance.h"
     #include "Minuit2/MnStrategy.h"
     #include "Minuit2/MnUserParameterState.h"
-    #include "MnMigradWrap.h"
-    #include "MnSimplexWrap.h"
-    #include "MnMinimizeWrap.h"
     #include "MnHesseWrap.h"
+
+    #include "Minuit2/MnMigrad.h"
+    #include "Minuit2/MnSimplex.h"
+    #include "Minuit2/MnMinimize.h"
+    #include "MnApplicationWrap.h"
 
     using namespace ROOT::Minuit2;
 %}
@@ -53,7 +55,13 @@ namespace std {
 %include "Minuit2/MnUserParameterState.h"
 %include "Minuit2/FCNBase.h"
 %include "Minuit2/FunctionMinimum.h"
-%include "MnMigradWrap.h"
-%include "MnSimplexWrap.h"
-%include "MnMinimizeWrap.h"
 %include "MnHesseWrap.h"
+
+%include "MnApplicationWrap.h"
+namespace ROOT {
+  namespace Minuit2 {
+    %template(MnMigradWrap) MnApplicationWrap<MnMigrad>;
+    %template(MnSimplexWrap) MnApplicationWrap<MnSimplex>;
+    %template(MnMinimizeWrap) MnApplicationWrap<MnMinimize>;
+  }
+}
