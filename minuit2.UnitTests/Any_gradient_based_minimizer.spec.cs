@@ -81,9 +81,9 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     public void when_minimizing_a_cost_function_with_an_analytical_gradient_that_returns_non_finite_values_during_the_process_yields_an_invalid_result_with_non_finite_gradient_exit_condition_and_undefined_covariances(
         double nonFiniteValue)
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var cost = problem.Cost.WithGradient().Build().WithGradientOverride(_ => [nonFiniteValue, 1, 1]);
-        var parameterConfigurations = problem.ParameterConfigurations.Build();
+        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
+        var cost = _defaultProblem.Cost.WithGradient().Build().WithGradientOverride(_ =>
+            Enumerable.Repeat(1.0, parameterConfigurations.Length - 1).Concat([nonFiniteValue]).ToArray());
         
         var result = _minimizer.Minimize(cost, parameterConfigurations);
         
@@ -98,9 +98,8 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     [Test]
     public void when_minimizing_a_cost_function_with_an_analytical_gradient_that_throws_an_exception_during_the_process_forwards_that_exception()
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var cost = problem.Cost.WithGradient().Build().WithGradientOverride(_ => throw new TestException());
-        var parameterConfigurations = problem.ParameterConfigurations.Build();
+        var cost = _defaultProblem.Cost.WithGradient().Build().WithGradientOverride(_ => throw new TestException());
+        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
         
         Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
         
