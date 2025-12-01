@@ -6,7 +6,7 @@ using minuit2.UnitTests.TestUtilities;
 namespace minuit2.UnitTests;
 
 [TestFixture]
-public class The_combined_minimizer() : Any_parameter_uncertainty_resolving_minimizer(CombinedMinimizer)
+public class The_combined_minimizer() : Any_gradient_based_minimizer(CombinedMinimizer)
 {
     private static readonly IMinimizer CombinedMinimizer = Minimizer.Combined;
 

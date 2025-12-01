@@ -7,7 +7,7 @@ using minuit2.UnitTests.TestUtilities;
 
 namespace minuit2.UnitTests;
 
-public abstract class Any_parameter_uncertainty_resolving_minimizer(IMinimizer minimizer) : Any_minimizer(minimizer)
+public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_minimizer(minimizer)
 {
     private readonly IMinimizer _minimizer = minimizer;
     private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialLeastSquaresProblem();
