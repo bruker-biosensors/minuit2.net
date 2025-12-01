@@ -75,6 +75,38 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
             options.Excluding(x => x.NumberOfFunctionCalls).WithRelativeDoubleTolerance(0.001));
     }
     
+    [TestCase(double.NaN)]
+    [TestCase(double.NegativeInfinity)]
+    [TestCase(double.PositiveInfinity)]
+    public void when_minimizing_a_cost_function_with_an_analytical_gradient_that_returns_non_finite_values_during_the_process_yields_an_invalid_result_with_non_finite_gradient_exit_condition_and_undefined_covariances(
+        double nonFiniteValue)
+    {
+        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var cost = problem.Cost.WithGradient().Build().WithGradientOverride(_ => [nonFiniteValue, 1, 1]);
+        var parameterConfigurations = problem.ParameterConfigurations.Build();
+        
+        var result = _minimizer.Minimize(cost, parameterConfigurations);
+        
+        result.ShouldFulfill(x =>
+        {
+            x.IsValid.Should().BeFalse();
+            x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteGradient);
+            x.ParameterCovarianceMatrix.Should().BeNull();
+        });
+    }
+    
+    [Test]
+    public void when_minimizing_a_cost_function_with_an_analytical_gradient_that_throws_an_exception_during_the_process_forwards_that_exception()
+    {
+        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var cost = problem.Cost.WithGradient().Build().WithGradientOverride(_ => throw new TestException());
+        var parameterConfigurations = problem.ParameterConfigurations.Build();
+        
+        Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
+        
+        action.Should().ThrowExactly<TestException>();
+    }
+    
     [Test]
     public void when_minimizing_a_cost_function_sum_with_a_single_component_yields_parameter_covariances_equal_to_those_for_the_isolated_component(
         [Values] bool hasGradient, 
@@ -148,37 +180,5 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     {
         var result = _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
         return HesseErrorCalculator.Refine(result, cost);
-    }
-    
-    [TestCase(double.NaN)]
-    [TestCase(double.NegativeInfinity)]
-    [TestCase(double.PositiveInfinity)]
-    public void when_the_cost_function_gradient_returns_non_finite_values_during_a_minimization_process_yields_an_invalid_result_with_non_finite_gradient_exit_condition_and_undefined_covariances(
-        double nonFiniteValue)
-    {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var cost = problem.Cost.WithGradient().Build().WithGradientOverride(_ => [nonFiniteValue, 1, 1]);
-        var parameterConfigurations = problem.ParameterConfigurations.Build();
-        
-        var result = _minimizer.Minimize(cost, parameterConfigurations);
-        
-        result.ShouldFulfill(x =>
-        {
-            x.IsValid.Should().BeFalse();
-            x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteGradient);
-            x.ParameterCovarianceMatrix.Should().BeNull();
-        });
-    }
-    
-    [Test]
-    public void when_the_cost_function_gradient_throws_an_exception_during_a_minimization_process_forwards_that_exception()
-    {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var cost = problem.Cost.WithGradient().Build().WithGradientOverride(_ => throw new TestException());
-        var parameterConfigurations = problem.ParameterConfigurations.Build();
-        
-        Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
-        
-        action.Should().ThrowExactly<TestException>();
     }
 }
