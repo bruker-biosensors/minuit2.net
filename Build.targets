@@ -1,6 +1,7 @@
 ﻿<Project>
 
   <PropertyGroup>
+    <RootRevision>b5fd6643c1cc36fa95297c6a5cda4140573006d5</RootRevision>
     <RootGitPath>$(MSBuildThisFileDirectory)minuit2.net/obj/root</RootGitPath>
     <SwigOutputPath>$(MSBuildThisFileDirectory)/minuit2.net/obj/gen</SwigOutputPath>
   </PropertyGroup>
@@ -30,12 +31,12 @@
           ContinueOnError="false"/>
 
     <!-- Fetch only the specific commit without history -->
-    <Exec Command="git fetch --depth 1 --no-tags origin 33baee86336174a3e5bf675fc2c4c39662cbc243"
+    <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
           WorkingDirectory="$(RootGitPath)"
           ContinueOnError="false"/>
 
     <!-- Checkout the fetched commit -->
-    <Exec Command="git checkout 33baee86336174a3e5bf675fc2c4c39662cbc243"
+    <Exec Command="git checkout $(RootRevision)"
           WorkingDirectory="$(RootGitPath)"
           ContinueOnError="false"/>
   </Target>

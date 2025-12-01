@@ -10,30 +10,13 @@ include(UseSWIG)
 
 SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES CPLUSPLUS ON)
 
-set(SOURCE_FILES
-  FCNWrap.cpp
-  MnMigradWrap.cpp
-  MnSimplexWrap.cpp
-  MnMinimizeWrap.cpp
-  MnHesseWrap.cpp
-  Minuit2.i
-)
-
-set(HEADER_FILES
-  FCNWrap.h
-  MnMigradWrap.h
-  MnSimplexWrap.h
-  MnMinimizeWrap.h
-  MnHesseWrap.h
-)
-
 cmake_path(ABSOLUTE_PATH MINUIT2NET_PATH NORMALIZE)
 cmake_path(ABSOLUTE_PATH CMAKE_CURRENT_SOURCE_DIR NORMALIZE)
 
 SWIG_ADD_LIBRARY(${target_name}
   LANGUAGE csharp
   OUTPUT_DIR ${MINUIT2NET_PATH}
-  SOURCES ${SOURCE_FILES} ${HEADER_FILES})
+  SOURCES Minuit2.i)
 
 target_include_directories(${target_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(${target_name} PROPERTIES
