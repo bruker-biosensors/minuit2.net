@@ -59,6 +59,21 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
             .NotBeNull().And
             .BeApproximately(referenceResult.ParameterCovarianceMatrix.MultipliedBy(cost.ErrorDefinition));
     }
+
+    [Test]
+    public void when_minimizing_a_cost_function_with_an_analytical_gradient_yields_a_result_equivalent_to_that_obtained_for_numerical_approximation_just_with_fewer_function_calls()
+    {
+        var cost = _defaultProblem.Cost.WithGradient().Build();
+        var referenceCost = _defaultProblem.Cost.Build();
+        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
+        
+        var result = _minimizer.Minimize(cost, parameterConfigurations);
+        var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
+        
+        result.NumberOfFunctionCalls.Should().BeLessThan(referenceResult.NumberOfFunctionCalls);
+        result.Should().BeEquivalentTo(referenceResult, options => 
+            options.Excluding(x => x.NumberOfFunctionCalls).WithRelativeDoubleTolerance(0.001));
+    }
     
     [Test]
     public void when_minimizing_a_cost_function_sum_with_a_single_component_yields_parameter_covariances_equal_to_those_for_the_isolated_component(
