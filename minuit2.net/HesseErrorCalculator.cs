@@ -23,14 +23,16 @@ public static class HesseErrorCalculator
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
         
         var minimum = Copy(minimizationResult.Minimum);
-        hesse.Update(minimum, cost);
-        
-        if (!cost.Exceptions.TryDequeue(out var exception)) 
-            return new MinimizationResult(minimum, costFunction);
+        var success = hesse.Update(minimum, cost);
 
-        return exception is MinimizationAbort abort
-            ? new AbortedMinimizationResult(abort, costFunction, result.Variables, result.NumberOfFunctionCalls)
-            : throw exception;
+        if (cost.Exceptions.TryDequeue(out var exception))
+            return exception is MinimizationAbort abort
+                ? new AbortedMinimizationResult(abort, costFunction, result.Variables, result.NumberOfFunctionCalls)
+                : throw exception;
+        
+        return success
+            ? new MinimizationResult(minimum, costFunction) 
+            : throw new Exception("Cpp exception");
     }
 
     private static FunctionMinimum Copy(FunctionMinimum minimum)

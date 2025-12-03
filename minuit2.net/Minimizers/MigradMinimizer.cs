@@ -2,7 +2,7 @@ namespace minuit2.net.Minimizers;
 
 internal class MigradMinimizer : MnMinimizer
 {
-    protected sealed override FunctionMinimum MnMinimize(
+    protected sealed override RunResult MnMinimize(
         FCNWrap costFunction, 
         MnUserParameterState parameterState, 
         MnStrategy strategy, 

@@ -3,6 +3,7 @@
 
 #include "Minuit2/FCNBase.h"
 #include <atomic>
+#include <exception>
 #include <limits>
 
 namespace ROOT
@@ -17,35 +18,32 @@ namespace ROOT
         public:
             FCNWrap() {}
 
-            double operator()(std::vector<double> const &parameterValues) const override final
+            double operator()(const std::vector<double>& parameterValues) const override final
             {
+                // With OpenMP enabled, this method is invoked concurrently from multiple threads. Throwing exceptions
+                // to abort the calling process immediately is unsafe here: across OpenMP threads and the SWIG C#/C++
+                // boundary it leads to crashes/memory corruption. Instead, we return a non‑finite value to gracefully
+                // trigger process termination, which may occur only after a few additional calls.
+
                 if (shouldAbort.load())
                 {
                     return std::numeric_limits<double>::quiet_NaN();
                 }
-                
-                return CalculateValue(parameterValues);
+
+                return Value(parameterValues);
             }
 
-            virtual double CalculateValue(std::vector<double> const &parameterValues) const = 0;
+            virtual double Value(const std::vector<double>& parameterValues) const = 0;
 
-            std::vector<double> Gradient(std::vector<double> const &parameterValues) const override final
-            {
-                if (shouldAbort.load())
-                {
-                    return std::vector<double>(parameterValues.size(), std::numeric_limits<double>::quiet_NaN());
-                }
-                
-                return CalculateGradient(parameterValues);
-            }
+            virtual std::vector<double> Gradient(const std::vector<double>& parameterValues) const override { return {}; }
 
-            virtual std::vector<double> CalculateGradient(std::vector<double> const &parameterValues) const = 0;
+            virtual bool HasGradient() const override { return false; }
 
-			virtual bool HasGradient() const override { return false; }
+            virtual double Up() const override { return 1.0; }
 
-			virtual double Up() const override { return 1.0; }
+            void RequestAbort() { shouldAbort.store(true); }
 
-            void Abort() { shouldAbort.store(true); }
+            void AbortImmediately() const { throw std::exception("Abort"); }
 
             virtual ~FCNWrap() {}
         };

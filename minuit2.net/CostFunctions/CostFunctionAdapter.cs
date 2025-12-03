@@ -20,7 +20,7 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
 
     public override bool HasGradient() => function.HasGradient;
 
-    public override double CalculateValue(VectorDouble parameterValues)
+    public override double Value(VectorDouble parameterValues)
     {
         Interlocked.Increment(ref _numberOfFunctionCalls);
 
@@ -30,12 +30,13 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
         }
         catch (Exception exception)
         {
-            AbortWith(exception);
+            Exceptions.Enqueue(exception);
+            RequestAbort();  // Immediate abort via exception is unsafe here; see FCNWrap.h for details
             return double.NaN;
         }
     }
 
-    public override VectorDouble CalculateGradient(VectorDouble parameterValues)
+    public override VectorDouble Gradient(VectorDouble parameterValues)
     {
         try
         {
@@ -43,8 +44,9 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
         }
         catch (Exception exception)
         {
-            AbortWith(exception);
-            return VectorDouble.Repeat(double.NaN, parameterValues.Count);
+            Exceptions.Enqueue(exception);
+            AbortImmediately();
+            return [];
         }
     }
 
@@ -65,11 +67,5 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
         return gradient.All(double.IsFinite)
             ? gradient
             : throw new MinimizationAbort(NonFiniteGradient, parameterValues, _numberOfFunctionCalls);
-    }
-
-    private void AbortWith(Exception exception)
-    {
-        Exceptions.Enqueue(exception);
-        Abort();
     }
 }

@@ -25,19 +25,19 @@ internal abstract class MnMinimizer : IMinimizer
         var maximumFunctionCalls = minimizerConfiguration.MaximumFunctionCalls;
         var tolerance = minimizerConfiguration.Tolerance;
 
-        var minimum = MnMinimize(cost, parameterState, strategy, maximumFunctionCalls, tolerance);
+        var result = MnMinimize(cost, parameterState, strategy, maximumFunctionCalls, tolerance);
 
-        if (!cost.Exceptions.TryDequeue(out var exception))
-            return new MinimizationResult(minimum, costFunction);
+        if (cost.Exceptions.TryDequeue(out var exception))
+            return exception is MinimizationAbort abort
+                ? new AbortedMinimizationResult(abort, costFunction, parameterState.ExtractVariablesFrom(costFunction.Parameters))
+                : throw exception;
 
-        if (exception is not MinimizationAbort abort)
-            throw exception;
-
-        var variables = parameterState.ExtractVariablesFrom(costFunction.Parameters);
-        return new AbortedMinimizationResult(abort, costFunction, variables);
+        return result.Success 
+            ? new MinimizationResult(result.FunctionMinimum(), costFunction) 
+            : throw new Exception("Cpp exception");
     }
 
-    protected abstract FunctionMinimum MnMinimize(
+    protected abstract RunResult MnMinimize(
         FCNWrap costFunction, 
         MnUserParameterState parameterState, 
         MnStrategy strategy, 

@@ -48,7 +48,6 @@ namespace std {
 
 // Declare C++ types to be wrapped and made accessible in C# (SWIG binding generation)
 %feature("director") FCNWrap;
-%ignore ROOT::Minuit2::FCNWrap::Gradient;
 %include "FCNWrap.h"
 %include "Minuit2/MnStrategy.h"
 %include "Minuit2/MnUserCovariance.h"

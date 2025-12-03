@@ -3,11 +3,23 @@
 
 #include "Minuit2/FunctionMinimum.h"
 #include "FCNWrap.h"
+#include <optional>
 
 namespace ROOT
 {
     namespace Minuit2
     {
+        struct RunResult
+        {
+            bool Success;
+            std::optional<FunctionMinimum> Minimum;
+
+            RunResult(bool success, std::optional<FunctionMinimum> minimum)
+                : Success(success), Minimum(std::move(minimum)) {}
+
+            const FunctionMinimum &FunctionMinimum() const { return Minimum.value(); }
+        };
+
         template <typename MinimizerType>
         class MnApplicationWrap : public MinimizerType
         {
@@ -17,10 +29,18 @@ namespace ROOT
                               const MnStrategy& strategy = MnStrategy(1))
                 : MinimizerType(function, parameterState, strategy) {}
 
-            FunctionMinimum Run(unsigned int maximumFunctionCalls = 0,
-                                double tolerance = 0.1)
+            RunResult Run(unsigned int maximumFunctionCalls = 0,
+                          double tolerance = 0.1)
             {
-                return this->operator()(maximumFunctionCalls, tolerance);
+                try
+                {
+                    FunctionMinimum minimum = this->operator()(maximumFunctionCalls, tolerance);
+                    return RunResult(true, minimum);
+                }
+                catch (...)
+                {
+                    return RunResult(false, std::nullopt);
+                }
             }
         };
     }
