@@ -31,8 +31,8 @@ public static class HesseErrorCalculator
                 : throw exception;
         
         return success
-            ? new MinimizationResult(minimum, costFunction) 
-            : throw new Exception("Cpp exception");
+            ? new MinimizationResult(minimum, costFunction)
+            : throw new CppException();
     }
 
     private static FunctionMinimum Copy(FunctionMinimum minimum)
