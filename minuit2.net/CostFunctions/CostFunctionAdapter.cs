@@ -14,8 +14,7 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
 
     // We always forward a neutral error definition (Up) of 1 to the C++ code. Instead, we scale the output values of
     // the inner ValueFor() and GradientFor() by the error definition directly. This allows us to dynamically adjust
-    // error definitions, e.g. to get meaningful parameter uncertainties for least squares cost functions with unknown
-    // data errors (see LeastSquaresWithUnknownYError.cs).
+    // error definitions.
     public override double Up() => 1;
 
     public override bool HasGradient() => function.HasGradient;
