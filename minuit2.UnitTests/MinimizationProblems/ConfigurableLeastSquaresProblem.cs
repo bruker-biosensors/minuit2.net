@@ -9,6 +9,7 @@ internal abstract class ConfigurableLeastSquaresProblem
 {
     protected abstract Func<double, IReadOnlyList<double>, double> Model { get; }
     protected abstract Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; }
+    protected abstract Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessian { get; }
     protected abstract IReadOnlyList<string> ParameterNames { get; }
     
     protected abstract IReadOnlyList<double> XValues { get; }

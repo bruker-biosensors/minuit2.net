@@ -7,7 +7,10 @@ internal class CubicPolynomialLeastSquaresProblem : ConfigurableLeastSquaresProb
     
     protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; } =
         (x, _) => [1, x, x * x, x * x * x];
-    
+
+    protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessian { get; } =
+        (_, _) => Enumerable.Repeat(0d, 4 * 4).ToArray();
+
     protected override IReadOnlyList<string> ParameterNames { get; } = ["c0", "c1", "c2", "c3"];
     
     // The following values are generated using the above model with coefficients c0 = 10, c1 = -2, c2 = 1, c3 = -0.1,

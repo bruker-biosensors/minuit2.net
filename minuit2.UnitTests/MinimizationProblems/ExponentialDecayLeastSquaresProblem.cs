@@ -2,15 +2,25 @@ namespace minuit2.UnitTests.MinimizationProblems;
 
 internal class ExponentialDecayLeastSquaresProblem : ConfigurableLeastSquaresProblem
 {
-    protected override Func<double, IReadOnlyList<double>, double> Model { get; } = (x, p) => p[0] * Math.Exp(-p[1] * x) + p[2];
+    protected override Func<double, IReadOnlyList<double>, double> Model { get; } =
+        (x, p) => p[0] * Math.Exp(-p[1] * x) + p[2];
 
-    protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; } = (x, p) =>
-    [
-        Math.Exp(-p[1] * x),
-        -x * p[0] * Math.Exp(-p[1] * x),
-        1
-    ];
-    
+    protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; } =
+        (x, p) =>
+        [
+            Math.Exp(-p[1] * x),
+            -p[0] * x * Math.Exp(-p[1] * x),
+            1
+        ];
+
+    protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessian { get; } =
+        (x, p) =>
+        {
+            var h01 = -x * Math.Exp(-p[1] * x);
+            var h11 = p[0] * x * x * Math.Exp(-p[1] * x);
+            return [0, h01, 0, h01, h11, 0, 0, 0, 0];
+        };
+
     protected override IReadOnlyList<string> ParameterNames { get; } = ["amplitude", "rate", "offset"];
 
     // The following values are generated using the above model with parameters amplitude = 3, rate = 2, offset = 1,
