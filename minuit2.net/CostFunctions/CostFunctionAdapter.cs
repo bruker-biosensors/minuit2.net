@@ -4,11 +4,13 @@ using static minuit2.net.MinimizationExitCondition;
 
 namespace minuit2.net.CostFunctions;
 
-[SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local", 
+[SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local",
     Justification = "Cancellation token is stored for use in runtime cancellation checks across multiple method calls.")]
 internal sealed class CostFunctionAdapter(ICostFunction function, CancellationToken cancellationToken) : FCNWrap
 {
     private int _numberOfFunctionCalls;
+    private int _shouldReturnNaNValue;
+    private bool ShouldReturnNanValue => _shouldReturnNaNValue > 0;
 
     public ConcurrentQueue<Exception> Exceptions { get; } = new();
 
@@ -23,6 +25,13 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     {
         Interlocked.Increment(ref _numberOfFunctionCalls);
 
+        // When OpenMP is enabled, this method is invoked concurrently by multiple threads. Terminating the calling
+        // C++ process via an exception is unsafe in this case: across threads and the C#/C++ boundary it leads to
+        // crashes/memory corruption.
+        // Instead, we rely on the fact that the C++ processes terminate gracefully when encountering non‑finite values.
+        // Note: Termination may occur only after a few additional invocations.
+        if (ShouldReturnNanValue) return double.NaN;
+
         try
         {
             return ValueFor(parameterValues);
@@ -30,7 +39,7 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
         catch (Exception exception)
         {
             Exceptions.Enqueue(exception);
-            RequestAbort();  // Immediate abort via exception is unsafe here; see FCNWrap.h for details
+            Interlocked.Increment(ref _shouldReturnNaNValue);
             return double.NaN;
         }
     }
@@ -44,7 +53,7 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
         catch (Exception exception)
         {
             Exceptions.Enqueue(exception);
-            AbortImmediately();
+            Abort();
             return [];
         }
     }
