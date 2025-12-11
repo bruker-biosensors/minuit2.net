@@ -19,7 +19,15 @@ namespace ROOT
 
 			virtual std::vector<double> Gradient(const std::vector<double>& parameterValues) const override { return {}; }
 
+			virtual std::vector<double> Hessian(const std::vector<double>& parameterValues) const override { return {}; }
+
+            virtual std::vector<double> G2(const std::vector<double>& parameterValues) const override { return {}; }
+
 			virtual bool HasGradient() const override { return false; }
+
+			virtual bool HasHessian() const override { return false; }
+
+            virtual bool HasG2() const override { return false; }
 
 			virtual double Up() const override { return 1.0; }
 

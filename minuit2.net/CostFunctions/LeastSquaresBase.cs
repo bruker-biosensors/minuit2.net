@@ -4,11 +4,14 @@ internal abstract class LeastSquaresBase(
     int numberOfDataPoints,
     IReadOnlyList<string> parameters,
     bool hasGradient,
+    bool hasHessian,
     double errorDefinition)
     : ICostFunction
 {
     public IReadOnlyList<string> Parameters { get; } = parameters;
     public bool HasGradient { get; } = hasGradient;
+    public bool HasHessian { get; } = hasGradient && hasHessian;
+    public bool HasHessianDiagonal { get; } = hasGradient && hasHessian;
     public double ErrorDefinition { get; } = errorDefinition;
     
     // For least squares fits, an error definition of 1 corresponds to 1-sigma parameter errors
@@ -18,6 +21,10 @@ internal abstract class LeastSquaresBase(
     public abstract double ValueFor(IReadOnlyList<double> parameterValues);
 
     public abstract IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues);
+    
+    public abstract IReadOnlyList<double> HessianFor(IReadOnlyList<double> parameterValues);
+    
+    public abstract IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues);
 
     public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result)
     {

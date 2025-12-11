@@ -19,7 +19,7 @@ internal abstract class ConfigurableLeastSquaresProblem
     protected abstract IReadOnlyList<double> OptimumParameterValues { get; }
     protected abstract IReadOnlyList<double> DefaultInitialParameterValues { get; }
     
-    public LeastSquaresCostBuilder Cost => new(XValues, YValues, YError, Model, ModelGradient, ParameterNames);
+    public LeastSquaresCostBuilder Cost => new(XValues, YValues, YError, Model, ModelGradient, ModelHessian, ParameterNames);
     
     public class LeastSquaresCostBuilder(
         IReadOnlyList<double> xValues, 
@@ -27,20 +27,24 @@ internal abstract class ConfigurableLeastSquaresProblem
         double yError,
         Func<double, IReadOnlyList<double>, double> model,
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelHessian,
         IReadOnlyList<string> parameterNames)
     {
         private readonly string[] _parameterNames = parameterNames.ToArray();
         
         private bool _hasYErrors = true;
         private bool _hasGradient;
+        private bool _hasGradientAndHessian;
         private double _errorDefinitionInSigma = 1;
 
         public ICostFunction Build() => _hasYErrors switch
         {
-            true when _hasGradient => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
-            true when !_hasGradient => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, null, _errorDefinitionInSigma),
-            false when _hasGradient => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
-            _ => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, null, _errorDefinitionInSigma)
+            true when _hasGradientAndHessian => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, modelGradient, modelHessian, _errorDefinitionInSigma),
+            false when _hasGradientAndHessian => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, modelGradient, modelHessian, _errorDefinitionInSigma),
+            true when _hasGradient => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, modelGradient, null, _errorDefinitionInSigma),
+            false when _hasGradient => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, modelGradient, null, _errorDefinitionInSigma),
+            true => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, null, null, _errorDefinitionInSigma),
+            false => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, null, null, _errorDefinitionInSigma),
         };
 
         public LeastSquaresCostBuilder WithUnknownYErrors()
@@ -52,6 +56,12 @@ internal abstract class ConfigurableLeastSquaresProblem
         public LeastSquaresCostBuilder WithGradient(bool hasGradient = true)
         {
             _hasGradient = hasGradient;
+            return this;
+        }
+        
+        public LeastSquaresCostBuilder WithGradientAndHessian(bool hasGradientAndHessian = true)
+        {
+            _hasGradientAndHessian = hasGradientAndHessian;
             return this;
         }
         

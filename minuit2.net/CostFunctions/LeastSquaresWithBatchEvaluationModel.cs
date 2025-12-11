@@ -13,6 +13,7 @@ internal class LeastSquaresWithBatchEvaluationModel(
         x.Count,
         parameters,
         false,
+        false,
         ErrorDefinitionFor(errorDefinitionInSigma, errorDefinitionScaling))
 {
     public override double ValueFor(IReadOnlyList<double> parameterValues)
@@ -28,10 +29,14 @@ internal class LeastSquaresWithBatchEvaluationModel(
         return sum;
     }
 
-    public override IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
-    {
+    public override IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues) =>
         throw new NotImplementedException();
-    }
+
+    public override IReadOnlyList<double> HessianFor(IReadOnlyList<double> parameterValues) =>
+        throw new NotImplementedException();
+
+    public override IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues) =>
+        throw new NotImplementedException();
 
     protected override ICostFunction CopyWith(double errorDefinitionScaling)
     {

@@ -7,6 +7,7 @@ internal class LeastSquares(
     IReadOnlyList<string> parameters,
     Func<double, IReadOnlyList<double>, double> model,
     Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
+    Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessian,
     double errorDefinitionInSigma,
     bool isErrorDefinitionRecalculationEnabled,
     double errorDefinitionScaling = 1)
@@ -14,11 +15,12 @@ internal class LeastSquares(
         x.Count,
         parameters,
         modelGradient != null,
+        modelHessian != null,
         ErrorDefinitionFor(errorDefinitionInSigma, errorDefinitionScaling))
 {
     public override double ValueFor(IReadOnlyList<double> parameterValues)
     {
-        double sum = 0;
+        var sum = 0.0;
         for (var i = 0; i < x.Count; i++)
         {
             var residual = ResidualFor(parameterValues, i);
@@ -30,16 +32,56 @@ internal class LeastSquares(
 
     public override IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
     {
-        var gradientSums = new double[Parameters.Count];
+        var gradientSum = new double[Parameters.Count];
         for (var i = 0; i < x.Count; i++)
         {
+            var yError = yErrorForIndex(i);
             var residual = ResidualFor(parameterValues, i);
-            var gradients = modelGradient!(x[i], parameterValues);
+            var gradient = modelGradient!(x[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++)
-                gradientSums[j] -= 2 * residual * gradients[j] / yErrorForIndex(i);
+                gradientSum[j] -= 2.0 / yError * residual * gradient[j];
         }
 
-        return gradientSums;
+        return gradientSum;
+    }
+
+    public override IReadOnlyList<double> HessianFor(IReadOnlyList<double> parameterValues)
+    {
+        var hessianSum = new double[Parameters.Count * Parameters.Count];
+        for (var i = 0; i < x.Count; i++)
+        {
+            var yError = yErrorForIndex(i);
+            var residual = ResidualFor(parameterValues, i);
+            var gradient = modelGradient!(x[i], parameterValues);
+            var hessian = modelHessian!(x[i], parameterValues);
+            for (var j = 0; j < Parameters.Count; j++)
+            for (var k = 0; k < Parameters.Count; k++)
+            {
+                var jk = j * Parameters.Count + k;
+                hessianSum[jk] -= 2.0 / yError * (residual * hessian[jk] - gradient[j] * gradient[k] / yError);
+            }
+        } 
+        
+        return hessianSum;
+    }
+
+    public override IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues)
+    {
+        var g2Sum = new double[Parameters.Count];
+        for (var i = 0; i < x.Count; i++)
+        {
+            var yError = yErrorForIndex(i);
+            var residual = ResidualFor(parameterValues, i);
+            var gradient = modelGradient!(x[i], parameterValues);
+            var hessian = modelHessian!(x[i], parameterValues);
+            for (var j = 0; j < Parameters.Count; j++)
+            {
+                var jj = j * (Parameters.Count + 1);
+                g2Sum[j] -= 2.0 / yError * (residual * hessian[jj] - gradient[j] * gradient[j] / yError);
+            }
+        }
+
+        return g2Sum;
     }
 
     private double ResidualFor(IReadOnlyList<double> parameterValues, int index) =>
@@ -56,6 +98,7 @@ internal class LeastSquares(
             Parameters,
             model,
             modelGradient,
+            modelHessian,
             errorDefinitionInSigma,
             isErrorDefinitionRecalculationEnabled,
             errorDefinitionScaling);
