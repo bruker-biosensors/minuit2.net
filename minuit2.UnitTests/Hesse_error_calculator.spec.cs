@@ -87,7 +87,7 @@ public class The_hesse_error_calculator
      Description("The Hesse algorithm can be accelerated by using the analytical Hessian instead of numerical " +
                  "approximation only if both the cost function and the input minimization result have analytical " +
                  "gradients/hessians (see MnHesse.cxx implementation).")]
-    public void When_refining_an_analytical_minimization_result_for_a_related_cost_function_with_an_analytical_hessian_yields_a_result_equivalent_to_that_obtained_for_numerical_approximation_just_with_fewer_function_calls(
+    public void When_refining_an_analytical_minimization_result_for_a_related_cost_function_with_an_analytical_hessian_yields_a_result_matching_the_result_obtained_for_numerical_approximation_just_with_fewer_function_calls(
         [Values(1, 2, 3)] double errorDefinition,
         [Values] bool hasReferenceGradient,
         [Values] Strategy strategy)
@@ -102,9 +102,9 @@ public class The_hesse_error_calculator
             
         var result = HesseErrorCalculator.Refine(analyticalMinimizationResult, cost, strategy);            
         var referenceResult = HesseErrorCalculator.Refine(analyticalMinimizationResult, referenceCost, strategy);
-            
-        result.NumberOfFunctionCalls.Should().BeLessThan(referenceResult.NumberOfFunctionCalls);
-        result.Should().BeEquivalentTo(referenceResult, options => 
-            options.Excluding(x => x.NumberOfFunctionCalls).WithRelativeDoubleTolerance(0.001));
+
+        result.Should()
+            .MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001)).And
+            .HaveFewerFunctionCallsThan(referenceResult);
     }
 }

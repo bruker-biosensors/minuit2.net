@@ -61,7 +61,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     }
 
     [Test]
-    public void when_minimizing_a_cost_function_with_an_analytical_gradient_yields_a_result_equivalent_to_that_obtained_for_numerical_approximation_just_with_fewer_function_calls()
+    public void when_minimizing_a_cost_function_with_an_analytical_gradient_yields_a_result_matching_the_result_obtained_for_numerical_approximation_just_with_fewer_function_calls()
     {
         var cost = _defaultProblem.Cost.WithGradient().Build();
         var referenceCost = _defaultProblem.Cost.Build();
@@ -69,10 +69,10 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         
         var result = _minimizer.Minimize(cost, parameterConfigurations);
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
-        
-        result.NumberOfFunctionCalls.Should().BeLessThan(referenceResult.NumberOfFunctionCalls);
-        result.Should().BeEquivalentTo(referenceResult, options => 
-            options.Excluding(x => x.NumberOfFunctionCalls).WithRelativeDoubleTolerance(0.001));
+
+        result.Should()
+            .MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001)).And
+            .HaveFewerFunctionCallsThan(referenceResult);
     }
     
     [TestCase(double.NaN)]
@@ -107,7 +107,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     }
     
     [Test]
-    public void when_minimizing_a_cost_function_with_an_analytical_hessian_yields_a_result_equivalent_to_that_obtained_for_numerical_approximation_just_with_fewer_function_calls()
+    public void when_minimizing_a_cost_function_with_an_analytical_hessian_yields_a_result_matching_the_result_obtained_for_numerical_approximation_just_with_fewer_function_calls()
     {
         var cost = _defaultProblem.Cost.WithGradientAndHessian().Build();
         var referenceCost = _defaultProblem.Cost.WithGradient().Build();
@@ -116,9 +116,9 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var result = _minimizer.Minimize(cost, parameterConfigurations);
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
         
-        result.NumberOfFunctionCalls.Should().BeLessThan(referenceResult.NumberOfFunctionCalls);
-        result.Should().BeEquivalentTo(referenceResult, options => 
-            options.Excluding(x => x.NumberOfFunctionCalls).WithRelativeDoubleTolerance(0.001));
+        result.Should()
+            .MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001)).And
+            .HaveFewerFunctionCallsThan(referenceResult);
     }
     
     [TestCase(double.NaN)]
@@ -155,7 +155,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     [Test, 
      Description("This test ensures the Hessian (diagonal) is regularized during minimizer seeding to prevent the " +
                  "minimizer from initially stepping away from the minimum (and eventually failing).")]
-    public void when_minimizing_a_cost_function_with_an_analytical_hessian_that_is_not_positive_definite_for_the_initial_parameter_values_yields_a_result_equivalent_to_that_obtained_for_numerical_approximation()
+    public void when_minimizing_a_cost_function_with_an_analytical_hessian_that_is_not_positive_definite_for_the_initial_parameter_values_yields_a_result_matching_the_result_obtained_for_numerical_approximation()
     {
         // For the initial parameter values [2, 1, 0], the Hessian is not positive definite. Consequently, the initial
         // Newton step points in the wrong direction — away from the local minimum. To prevent this, the initial
@@ -172,8 +172,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var result = _minimizer.Minimize(cost, parameterConfigurations);
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
 
-        result.Should().BeEquivalentTo(referenceResult, options =>
-            options.Excluding(x => x.NumberOfFunctionCalls).WithRelativeDoubleTolerance(0.001));
+        result.Should().MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001));
     }
     
     [Test]
@@ -268,11 +267,11 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var result = _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations, minimizerConfiguration);
         
-        result.Should().BeEquivalentTo(referenceResult);
+        result.Should().Match(referenceResult);
     }
 
     [Test]
-    public void when_minimizing_a_cost_function_sum_where_all_components_have_analytical_hessians_yields_a_result_equivalent_to_that_obtained_for_numerical_approximation_just_with_fewer_function_calls(
+    public void when_minimizing_a_cost_function_sum_where_all_components_have_analytical_hessians_yields_a_result_matching_the_result_obtained_for_numerical_approximation_just_with_fewer_function_calls(
         [Values(1, 2)] double errorDefinitionOfComponent1,
         [Values] Strategy strategy)
     {
@@ -292,8 +291,8 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var result = _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations, minimizerConfiguration);
         
-        result.NumberOfFunctionCalls.Should().BeLessThan(referenceResult.NumberOfFunctionCalls);
-        result.Should().BeEquivalentTo(referenceResult, options => 
-            options.Excluding(x => x.NumberOfFunctionCalls).WithRelativeDoubleTolerance(0.001));
+        result.Should()
+            .MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001)).And
+            .HaveFewerFunctionCallsThan(referenceResult);
     }
 }

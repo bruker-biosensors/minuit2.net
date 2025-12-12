@@ -22,7 +22,6 @@ public class The_combined_minimizer() : Any_gradient_based_minimizer(CombinedMin
         var result = CombinedMinimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
         var migradResult = Minimizer.Migrad.Minimize(problem.Cost, problem.ParameterConfigurations);
 
-        result.Should().BeEquivalentTo(migradResult, 
-            options => options.Excluding(x => x.NumberOfFunctionCalls).WithRelativeDoubleTolerance(0.001));
+        result.Should().Match(migradResult);
     }
 }
