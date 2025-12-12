@@ -9,9 +9,42 @@ public static class CostFunction
         IReadOnlyList<double> y,
         IReadOnlyList<string> parameters,
         Func<double, IReadOnlyList<double>, double> model,
-        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
-        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessian = null,
         double errorDefinitionInSigma = 1)
+    {
+        return LeastSquaresWithUnknownYError(x, y, parameters, model, null, null, errorDefinitionInSigma);
+    }
+
+    public static ICostFunction LeastSquares(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+        double errorDefinitionInSigma = 1)
+    {
+        return LeastSquaresWithUnknownYError(x, y, parameters, model, modelGradient, null, errorDefinitionInSigma);
+    }
+
+    public static ICostFunction LeastSquares(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelHessian,
+        double errorDefinitionInSigma = 1)
+    {
+        return LeastSquaresWithUnknownYError(x, y, parameters, model, modelGradient, modelHessian, errorDefinitionInSigma);
+    }
+
+    private static LeastSquares LeastSquaresWithUnknownYError(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessian,
+        double errorDefinitionInSigma)
     {
         ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
         return new LeastSquares(x, y, _ => 1, parameters, model, modelGradient, modelHessian, errorDefinitionInSigma, true);
@@ -23,9 +56,45 @@ public static class CostFunction
         double yError,
         IReadOnlyList<string> parameters,
         Func<double, IReadOnlyList<double>, double> model,
-        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
-        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessian = null,
         double errorDefinitionInSigma = 1)
+    {
+        return LeastSquaresWithUniformYError(x, y, yError, parameters, model, null, null, errorDefinitionInSigma);
+    }
+
+    public static ICostFunction LeastSquares(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        double yError,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+        double errorDefinitionInSigma = 1)
+    {
+        return LeastSquaresWithUniformYError(x, y, yError, parameters, model, modelGradient, null, errorDefinitionInSigma);
+    }
+
+    public static ICostFunction LeastSquares(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        double yError,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelHessian,
+        double errorDefinitionInSigma = 1)
+    {
+        return LeastSquaresWithUniformYError(x, y, yError, parameters, model, modelGradient, modelHessian, errorDefinitionInSigma);
+    }
+
+    private static LeastSquares LeastSquaresWithUniformYError(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        double yError,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessian,
+        double errorDefinitionInSigma)
     {
         ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
         return new LeastSquares(x, y, _ => yError, parameters, model, modelGradient, modelHessian, errorDefinitionInSigma, false);
@@ -37,9 +106,45 @@ public static class CostFunction
         IReadOnlyList<double> yError,
         IReadOnlyList<string> parameters,
         Func<double, IReadOnlyList<double>, double> model,
-        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient = null,
-        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessian = null,
         double errorDefinitionInSigma = 1)
+    {
+        return LeastSquaresWithIndividualYErrors(x, y, yError, parameters, model, null, null, errorDefinitionInSigma);
+    }
+
+    public static ICostFunction LeastSquares(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<double> yError,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+        double errorDefinitionInSigma = 1)
+    {
+        return LeastSquaresWithIndividualYErrors(x, y, yError, parameters, model, modelGradient, null, errorDefinitionInSigma);
+    }
+
+    public static ICostFunction LeastSquares(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<double> yError,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelHessian,
+        double errorDefinitionInSigma = 1)
+    {
+        return LeastSquaresWithIndividualYErrors(x, y, yError, parameters, model, modelGradient, modelHessian, errorDefinitionInSigma);
+    }
+
+    private static LeastSquares LeastSquaresWithIndividualYErrors(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<double> yError,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessian,
+        double errorDefinitionInSigma)
     {
         ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)), (yError, nameof(yError)));
         return new LeastSquares(x, y, index => yError[index], parameters, model, modelGradient, modelHessian, errorDefinitionInSigma, false);
