@@ -9,6 +9,9 @@ public class A_least_squares_cost_function
 {
     private static int AnyCount(int min = 10, int max = 100) => Any.Integer().Between(min, max);
     private static List<double> AnyValues(int count) => Enumerable.Range(0, count).Select(_ => (double)Any.Double()).ToList();
+
+    private static double TestModel(double x, IReadOnlyList<double> p) => p[0] * x + p[1] * p[1] * x;
+    private static IReadOnlyList<double> TestModelGradient(double x, IReadOnlyList<double> p) => [x, 2 * p[1] * x];
     
     [Test]
     public void when_constructed_with_mismatching_numbers_of_x_and_y_values_throws_an_exception(
@@ -119,6 +122,82 @@ public class A_least_squares_cost_function
         cost.ValueFor([constantModelLevel]).Should().Be(expectedValue);
     }
 
+    [Test]
+    public void with_an_analytical_model_gradient_and_a_uniform_y_error_when_asked_for_its_gradient_returns_the_expected_vector()
+    {
+        var valueCount = AnyCount();
+        var xValues = AnyValues(valueCount);
+        var yValues = AnyValues(valueCount);
+        double yError = Any.Double();
+        var cost = LeastSquares(xValues, yValues, yError, ["a", "b"], TestModel, TestModelGradient);
+        var a = Any.Double();
+        var b = Any.Double();
+
+        var expectedGradient = new double[2];
+        for (var i = 0; i < valueCount; i++)
+        {
+            var x = xValues[i];
+            var y = yValues[i];
+            var residual = (y - TestModel(x, [a, b])) / yError;
+            var factor = -2 * residual / yError;
+            expectedGradient[0] += factor * x;
+            expectedGradient[1] += factor * 2 * b * x;
+        }
+
+        cost.GradientFor([a, b]).Should().BeEquivalentTo(expectedGradient, 
+            options => options.WithRelativeDoubleTolerance(0.001));
+    }
+    
+    [Test]
+    public void with_an_analytical_model_gradient_and_individual_y_errors_when_asked_for_its_gradient_returns_the_expected_vector()
+    {
+        var valueCount = AnyCount();
+        var xValues = AnyValues(valueCount);
+        var yValues = AnyValues(valueCount);
+        var yErrors = AnyValues(valueCount);
+        var cost = LeastSquares(xValues, yValues, yErrors, ["a", "b"], TestModel, TestModelGradient);
+        var a = Any.Double();
+        var b = Any.Double();
+
+        var expectedGradient = new double[2];
+        for (var i = 0; i < valueCount; i++)
+        {
+            var x = xValues[i];
+            var y = yValues[i];
+            var yError = yErrors[i];
+            var residual = (y - TestModel(x, [a, b])) / yError;
+            var factor = -2 * residual / yError;
+            expectedGradient[0] += factor * x;
+            expectedGradient[1] += factor * 2 * b * x;
+        }
+        cost.GradientFor([a, b]).Should().BeEquivalentTo(expectedGradient, 
+            options => options.WithRelativeDoubleTolerance(0.001));
+    }
+    
+    [Test]
+    public void with_an_analytical_model_gradient_and_without_y_errors_when_asked_for_its_gradient_returns_the_expected_vector()
+    {
+        var valueCount = AnyCount();
+        var xValues = AnyValues(valueCount);
+        var yValues = AnyValues(valueCount);
+        var cost = LeastSquares(xValues, yValues, ["a", "b"], TestModel, TestModelGradient);
+        var a = Any.Double();
+        var b = Any.Double();
+
+        var expectedGradient = new double[2];
+        for (var i = 0; i < valueCount; i++)
+        {
+            var x = xValues[i];
+            var y = yValues[i];
+            var residual = y - TestModel(x, [a, b]);
+            var factor = -2 * residual;
+            expectedGradient[0] += factor * x;
+            expectedGradient[1] += factor * 2 * b * x;
+        }
+        cost.GradientFor([a, b]).Should().BeEquivalentTo(expectedGradient, 
+            options => options.WithRelativeDoubleTolerance(0.001));
+    }
+    
     [Test]
     public void has_a_default_error_definition_of_one()
     {
