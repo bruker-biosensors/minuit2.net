@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using minuit2.net.CostFunctions;
 using minuit2.UnitTests.TestUtilities;
 using static minuit2.net.CostFunctions.CostFunction;
 
@@ -37,165 +36,208 @@ public class A_least_squares_cost_function
         action.Should().Throw<ArgumentException>();
     }
 
-    private static IEnumerable<TestCaseData> ConstantLevelCostFunctionWithUniformYErrorTestCases()
+    public class With_a_uniform_y_error
     {
-        var valueCount = AnyCount();
-        var xValues = AnyValues(valueCount);
-        var yValues = AnyValues(valueCount);
-        double yError = Any.Double();
-        
-        yield return Case(LeastSquares(xValues, yValues, yError, ["level"], (_, p) => p[0]));
-        yield return Case(LeastSquares(xValues, yValues, yError, ["level"], (_, p) => Enumerable.Repeat(p[0], valueCount).ToArray()));
-        yield break;
+        private readonly int _valueCount;
+        private readonly List<double> _xValues;
+        private readonly List<double> _yValues;
+        private readonly double _yError;
+        private readonly double[] _parameterValues;
 
-        TestCaseData Case(ICostFunction cost) => new(cost, yValues, yError);
-    }
-    
-    [TestCaseSource(nameof(ConstantLevelCostFunctionWithUniformYErrorTestCases))]
-    public void with_a_uniform_y_error_when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals(
-        ICostFunction cost, 
-        IReadOnlyList<double> yValues, 
-        double yError)
-    {
-        var constantModelLevel = Any.Double();
-        
-        var expectedValue = yValues
-            .Select(y => (y - constantModelLevel) / yError)
-            .Select(r => r * r)
-            .Sum();
-        cost.ValueFor([constantModelLevel]).Should().Be(expectedValue);
-    }
-    
-    private static IEnumerable<TestCaseData> ConstantLevelCostFunctionWithIndividualYErrorsTestCases()
-    {
-        var valueCount = AnyCount();
-        var xValues = AnyValues(valueCount);
-        var yValues = AnyValues(valueCount);
-        var yErrors = AnyValues(valueCount);
-
-        yield return Case(LeastSquares(xValues, yValues, yErrors, ["level"], (_, p) => p[0]));
-        yield return Case(LeastSquares(xValues, yValues, yErrors, ["level"], (_, p) => Enumerable.Repeat(p[0], valueCount).ToArray()));
-        yield break;
-
-        TestCaseData Case(ICostFunction cost) => new(cost, yValues, yErrors);
-    }
-    
-    [TestCaseSource(nameof(ConstantLevelCostFunctionWithIndividualYErrorsTestCases))]
-    public void with_individual_y_errors_when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals(
-        ICostFunction cost, 
-        IReadOnlyList<double> yValues, 
-        IReadOnlyList<double> yErrors)
-    {
-        var constantModelLevel = Any.Double();
-        
-        var expectedValue = yValues
-                .Zip(yErrors, (y, yError) => (y - constantModelLevel) / yError)
-                .Select(r => r * r)
-                .Sum();
-        cost.ValueFor([constantModelLevel]).Should().Be(expectedValue);
-    }
-    
-    private static IEnumerable<TestCaseData> ConstantLevelCostFunctionWithUnknownYErrorTestCases()
-    {
-        var valueCount = AnyCount();
-        var xValues = AnyValues(valueCount);
-        var yValues = AnyValues(valueCount);
-
-        yield return Case(LeastSquares(xValues, yValues, ["level"], (_, p) => p[0]));
-        yield return Case(LeastSquares(xValues, yValues, ["level"], (_, p) => Enumerable.Repeat(p[0], valueCount).ToArray()));
-        yield break;
-
-        TestCaseData Case(ICostFunction cost) => new(cost, yValues);
-    }
-
-    [TestCaseSource(nameof(ConstantLevelCostFunctionWithUnknownYErrorTestCases))]
-    public void without_y_errors_when_asked_for_its_cost_value_returns_the_sum_of_squared_unweighted_residuals(
-        ICostFunction cost, 
-        IReadOnlyList<double> yValues)
-    {
-        var constantModelLevel = Any.Double();
-        
-        var expectedValue = yValues
-            .Select(y => y - constantModelLevel)
-            .Select(r => r * r)
-            .Sum();
-        cost.ValueFor([constantModelLevel]).Should().Be(expectedValue);
-    }
-
-    [Test]
-    public void with_an_analytical_model_gradient_and_a_uniform_y_error_when_asked_for_its_gradient_returns_the_expected_vector()
-    {
-        var valueCount = AnyCount();
-        var xValues = AnyValues(valueCount);
-        var yValues = AnyValues(valueCount);
-        double yError = Any.Double();
-        var cost = LeastSquares(xValues, yValues, yError, ["a", "b"], TestModel, TestModelGradient);
-        var a = Any.Double();
-        var b = Any.Double();
-
-        var expectedGradient = new double[2];
-        for (var i = 0; i < valueCount; i++)
+        public With_a_uniform_y_error()
         {
-            var x = xValues[i];
-            var y = yValues[i];
-            var residual = (y - TestModel(x, [a, b])) / yError;
-            var factor = -2 * residual / yError;
-            expectedGradient[0] += factor * x;
-            expectedGradient[1] += factor * 2 * b * x;
+            _valueCount = AnyCount();
+            _xValues = AnyValues(_valueCount);
+            _yValues = AnyValues(_valueCount);
+            _yError = Any.Double();
+            _parameterValues = [Any.Double(), Any.Double()];
+        }
+        
+        [Test]
+        public void when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals()
+        {
+            var cost = LeastSquares(_xValues, _yValues, _yError, ["a", "b"], TestModel);
+
+            var expectedValue = 0.0;
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var residual = (_yValues[i] - TestModel(_xValues[i], _parameterValues)) / _yError;
+                expectedValue += residual * residual;
+            }
+            
+            cost.ValueFor(_parameterValues).Should().Be(expectedValue);
         }
 
-        cost.GradientFor([a, b]).Should().BeEquivalentTo(expectedGradient, 
-            options => options.WithRelativeDoubleTolerance(0.001));
-    }
-    
-    [Test]
-    public void with_an_analytical_model_gradient_and_individual_y_errors_when_asked_for_its_gradient_returns_the_expected_vector()
-    {
-        var valueCount = AnyCount();
-        var xValues = AnyValues(valueCount);
-        var yValues = AnyValues(valueCount);
-        var yErrors = AnyValues(valueCount);
-        var cost = LeastSquares(xValues, yValues, yErrors, ["a", "b"], TestModel, TestModelGradient);
-        var a = Any.Double();
-        var b = Any.Double();
-
-        var expectedGradient = new double[2];
-        for (var i = 0; i < valueCount; i++)
+        [Test]
+        public void and_a_batch_evaluation_model_when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals()
         {
-            var x = xValues[i];
-            var y = yValues[i];
-            var yError = yErrors[i];
-            var residual = (y - TestModel(x, [a, b])) / yError;
-            var factor = -2 * residual / yError;
-            expectedGradient[0] += factor * x;
-            expectedGradient[1] += factor * 2 * b * x;
-        }
-        cost.GradientFor([a, b]).Should().BeEquivalentTo(expectedGradient, 
-            options => options.WithRelativeDoubleTolerance(0.001));
-    }
-    
-    [Test]
-    public void with_an_analytical_model_gradient_and_without_y_errors_when_asked_for_its_gradient_returns_the_expected_vector()
-    {
-        var valueCount = AnyCount();
-        var xValues = AnyValues(valueCount);
-        var yValues = AnyValues(valueCount);
-        var cost = LeastSquares(xValues, yValues, ["a", "b"], TestModel, TestModelGradient);
-        var a = Any.Double();
-        var b = Any.Double();
+            var cost = LeastSquares(_xValues, _yValues, _yError, ["a", "b"], 
+                (x, p) => x.Select(xi => TestModel(xi, p)).ToArray());
 
-        var expectedGradient = new double[2];
-        for (var i = 0; i < valueCount; i++)
-        {
-            var x = xValues[i];
-            var y = yValues[i];
-            var residual = y - TestModel(x, [a, b]);
-            var factor = -2 * residual;
-            expectedGradient[0] += factor * x;
-            expectedGradient[1] += factor * 2 * b * x;
+            var expectedValue = 0.0;
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var residual = (_yValues[i] - TestModel(_xValues[i], _parameterValues)) / _yError;
+                expectedValue += residual * residual;
+            }
+            
+            cost.ValueFor(_parameterValues).Should().Be(expectedValue);
         }
-        cost.GradientFor([a, b]).Should().BeEquivalentTo(expectedGradient, 
-            options => options.WithRelativeDoubleTolerance(0.001));
+        
+        [Test]
+        public void and_an_analytical_model_gradient_when_asked_for_its_gradient_returns_the_expected_vector()
+        {
+            var cost = LeastSquares(_xValues, _yValues, _yError, ["a", "b"], TestModel, TestModelGradient);
+
+            var expectedGradient = new double[2];
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var x = _xValues[i];
+                var y = _yValues[i];
+                var residual = (y - TestModel(x, _parameterValues)) / _yError;
+                var factor = -2 * residual / _yError;
+                expectedGradient[0] += factor * x;
+                expectedGradient[1] += factor * 2 * _parameterValues[1] * x;
+            }
+
+            cost.GradientFor(_parameterValues).Should().BeEquivalentTo(expectedGradient, 
+                options => options.WithRelativeDoubleTolerance(0.001));
+        }
+    }
+
+    public class With_individual_y_errors
+    {
+        private readonly int _valueCount;
+        private readonly List<double> _xValues;
+        private readonly List<double> _yValues;
+        private readonly List<double> _yErrors;
+        private readonly double[] _parameterValues;
+
+        public With_individual_y_errors()
+        {
+            _valueCount = AnyCount();
+            _xValues = AnyValues(_valueCount);
+            _yValues = AnyValues(_valueCount);
+            _yErrors = AnyValues(_valueCount);
+            _parameterValues = [Any.Double(), Any.Double()];
+        }
+        
+        [Test]
+        public void when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals()
+        {
+            var cost = LeastSquares(_xValues, _yValues, _yErrors, ["a", "b"], TestModel);
+
+            var expectedValue = 0.0;
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var residual = (_yValues[i] - TestModel(_xValues[i], _parameterValues)) / _yErrors[i];
+                expectedValue += residual * residual;
+            }
+            
+            cost.ValueFor(_parameterValues).Should().Be(expectedValue);
+        }
+
+        [Test]
+        public void and_a_batch_evaluation_model_when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals()
+        {
+            var cost = LeastSquares(_xValues, _yValues, _yErrors, ["a", "b"], 
+                (x, p) => x.Select(xi => TestModel(xi, p)).ToArray());
+
+            var expectedValue = 0.0;
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var residual = (_yValues[i] - TestModel(_xValues[i], _parameterValues)) / _yErrors[i];
+                expectedValue += residual * residual;
+            }
+            
+            cost.ValueFor(_parameterValues).Should().Be(expectedValue);
+        }
+        
+        [Test]
+        public void and_an_analytical_model_gradient_when_asked_for_its_gradient_returns_the_expected_vector()
+        {
+            var cost = LeastSquares(_xValues, _yValues, _yErrors, ["a", "b"], TestModel, TestModelGradient);
+
+            var expectedGradient = new double[2];
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var x = _xValues[i];
+                var y = _yValues[i];
+                var yError = _yErrors[i];
+                var residual = (y - TestModel(x, _parameterValues)) / yError;
+                var factor = -2 * residual / yError;
+                expectedGradient[0] += factor * x;
+                expectedGradient[1] += factor * 2 * _parameterValues[1] * x;
+            }
+            cost.GradientFor(_parameterValues).Should().BeEquivalentTo(expectedGradient, 
+                options => options.WithRelativeDoubleTolerance(0.001));
+        }
+    }
+
+    public class Without_y_errors
+    {
+        private readonly int _valueCount;
+        private readonly List<double> _xValues;
+        private readonly List<double> _yValues;
+        private readonly double[] _parameterValues;
+
+        public Without_y_errors()
+        {
+            _valueCount = AnyCount();
+            _xValues = AnyValues(_valueCount);
+            _yValues = AnyValues(_valueCount);
+            _parameterValues = [Any.Double(), Any.Double()];
+        }
+        
+        [Test]
+        public void when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals()
+        {
+            var cost = LeastSquares(_xValues, _yValues, ["a", "b"], TestModel);
+
+            var expectedValue = 0.0;
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var residual = _yValues[i] - TestModel(_xValues[i], _parameterValues);
+                expectedValue += residual * residual;
+            }
+            
+            cost.ValueFor(_parameterValues).Should().Be(expectedValue);
+        }
+
+        [Test]
+        public void and_a_batch_evaluation_model_when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals()
+        {
+            var cost = LeastSquares(_xValues, _yValues, ["a", "b"], 
+                (x, p) => x.Select(xi => TestModel(xi, p)).ToArray());
+
+            var expectedValue = 0.0;
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var residual = _yValues[i] - TestModel(_xValues[i], _parameterValues);
+                expectedValue += residual * residual;
+            }
+            
+            cost.ValueFor(_parameterValues).Should().Be(expectedValue);
+        }
+        
+        [Test]
+        public void and_an_analytical_model_gradient_when_asked_for_its_gradient_returns_the_expected_vector()
+        { 
+            var cost = LeastSquares(_xValues, _yValues, ["a", "b"], TestModel, TestModelGradient);
+            
+            var expectedGradient = new double[2];
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var x = _xValues[i];
+                var y = _yValues[i];
+                var residual = y - TestModel(x, _parameterValues);
+                var factor = -2 * residual;
+                expectedGradient[0] += factor * x;
+                expectedGradient[1] += factor * 2 * _parameterValues[1] * x;
+            }
+            cost.GradientFor(_parameterValues).Should().BeEquivalentTo(expectedGradient, 
+                options => options.WithRelativeDoubleTolerance(0.001));
+        }
     }
     
     [Test]
