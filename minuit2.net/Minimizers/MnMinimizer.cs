@@ -1,4 +1,5 @@
 using minuit2.net.CostFunctions;
+using static minuit2.net.CostFunctionDerivativesGuard;
 using static minuit2.net.ParameterMappingGuard;
 
 namespace minuit2.net.Minimizers;
@@ -16,9 +17,15 @@ internal abstract class MnMinimizer : IMinimizer
             parameterConfigurations.Select(p => p.Name).ToArray(),
             "parameter configurations", 
             "minimization");
+        
+        var orderedParameterConfigurations = parameterConfigurations.ExtractInOrder(costFunction.Parameters).ToArray();
+
+        ThrowIfEvaluationErrorsOrIncorrectReturnSizes(
+            costFunction, 
+            orderedParameterConfigurations.Select(p => p.Value).ToArray());
 
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
-        using var parameterState = parameterConfigurations.ExtractInOrder(costFunction.Parameters).AsState();
+        using var parameterState = orderedParameterConfigurations.AsState();
         
         minimizerConfiguration ??= new MinimizerConfiguration();
         using var strategy = minimizerConfiguration.Strategy.AsMnStrategy();

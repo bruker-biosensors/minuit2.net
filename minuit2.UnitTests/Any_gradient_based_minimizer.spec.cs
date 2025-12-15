@@ -4,6 +4,7 @@ using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.UnitTests.MinimizationProblems;
 using minuit2.UnitTests.TestUtilities;
+using static minuit2.net.ParameterConfiguration;
 
 namespace minuit2.UnitTests;
 
@@ -11,7 +12,82 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
 {
     private readonly IMinimizer _minimizer = minimizer;
     private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialLeastSquaresProblem();
+    
+    [Test]
+    public void when_asked_to_minimize_a_cost_function_with_an_analytical_gradient_throwing_an_exception_for_the_given_parameter_configurations_throws_a_cost_function_error()
+    {
+        var cost = new ModelEvaluatingCostFunction(1, ["offset", "slope"], (x, p) => p[0] + p[1] * x,
+            modelGradient: (_, _) => throw new TestException());
+        var parameterConfigurations = new[] { Variable("offset", 1), Variable("slope", 1) };
 
+        Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
+
+        action.Should().Throw<CostFunctionError>().WithMessage("*gradient*").WithInnerException<TestException>();
+    }
+
+    [Test]
+    public void when_asked_to_minimize_a_cost_function_with_an_analytical_hessian_throwing_an_exception_for_the_given_parameter_configurations_throws_a_cost_function_error()
+    {
+        var cost = new ModelEvaluatingCostFunction(1, ["offset", "slope"], (x, p) => p[0] + p[1] * x,
+            modelHessian: (_, _) => throw new TestException());
+        var parameterConfigurations = new[] { Variable("offset", 1), Variable("slope", 1) };
+
+        Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
+
+        action.Should().Throw<CostFunctionError>().WithMessage("*Hessian*").WithInnerException<TestException>();
+    }
+    
+    [Test]
+    public void when_asked_to_minimize_a_cost_function_with_an_analytical_hessian_diagonal_throwing_an_exception_for_the_given_parameter_configurations_throws_a_cost_function_error()
+    {
+        var cost = new ModelEvaluatingCostFunction(1, ["offset", "slope"], (x, p) => p[0] + p[1] * x,
+            modelHessianDiagonal: (_, _) => throw new TestException());
+        var parameterConfigurations = new[] { Variable("offset", 1), Variable("slope", 1) };
+
+        Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
+
+        action.Should().Throw<CostFunctionError>().WithMessage("*Hessian diagonal*").WithInnerException<TestException>();
+    }
+    
+    [Test]
+    public void when_asked_to_minimize_a_cost_function_with_an_analytical_gradient_that_returns_the_wrong_size_throws_a_cost_function_error(
+        [Values(1, 3)] int flawedGradientSize)
+    {
+        var cost = new ModelEvaluatingCostFunction(1, ["offset", "slope"], (x, p) => p[0] + p[1] * x,
+            modelGradient: (_, _) => Enumerable.Repeat(1.0, flawedGradientSize).ToArray());
+        var parameterConfigurations = new[] { Variable("offset", 1), Variable("slope", 1) };
+
+        Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
+
+        action.Should().Throw<CostFunctionError>().WithMessage("*gradient*");
+    }
+    
+    [Test]
+    public void when_asked_to_minimize_a_cost_function_with_an_analytical_hessian_of_wrong_size_throws_an_exception(
+        [Values(3, 5)] int flawedHessianSize)
+    {
+        var cost = new ModelEvaluatingCostFunction(1, ["offset", "slope"], (x, p) => p[0] + p[1] * x,
+            modelHessian: (_, _) => Enumerable.Repeat(1.0, flawedHessianSize).ToArray());
+        var parameterConfigurations = new[] { Variable("offset", 1), Variable("slope", 1) };
+
+        Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
+
+        action.Should().Throw<CostFunctionError>().WithMessage("*Hessian*");
+    }
+
+    [Test]
+    public void when_asked_to_minimize_a_cost_function_with_an_analytical_hessian_diagonal_of_wrong_size_throws_an_exception(
+        [Values(1, 3)] int flawedHessianDiagonalSize)
+    {
+        var cost = new ModelEvaluatingCostFunction(1, ["offset", "slope"], (x, p) => p[0] + p[1] * x,
+            modelHessianDiagonal: (_, _) => Enumerable.Repeat(1.0, flawedHessianDiagonalSize).ToArray());
+        var parameterConfigurations = new[] { Variable("offset", 1), Variable("slope", 1) };
+
+        Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
+
+        action.Should().Throw<CostFunctionError>().WithMessage("*Hessian diagonal*");
+    }
+    
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
     [Description("This test should apply to all minimizers. It was put here to exclude the Simplex minimizer that " +
                  "occasionally reports non-convergence — even at the true minimum — due to its unreliable convergence " +

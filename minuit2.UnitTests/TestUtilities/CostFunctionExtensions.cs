@@ -53,12 +53,18 @@ internal static class CostFunctionExtensions
             null,
             numberOfFunctionCallsBeforeReturningOverride);
     }
-    
+
     public static ICostFunction WithHessianOverride(
         this ICostFunction costFunction,
-        Func<IReadOnlyList<double>, IReadOnlyList<double>> hessianOverride)
+        Func<IReadOnlyList<double>, IReadOnlyList<double>> hessianOverride,
+        int numberOfFunctionCallsBeforeReturningOverride = 1)
     {
-        return new CostFunctionWithOverrides(costFunction, null, null, hessianOverride, -1);
+        return new CostFunctionWithOverrides(
+            costFunction, 
+            null, 
+            null, 
+            hessianOverride, 
+            numberOfFunctionCallsBeforeReturningOverride);
     }
 }
 
