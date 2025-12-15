@@ -14,6 +14,7 @@ internal class LeastSquaresWithBatchEvaluationModel(
         parameters,
         false,
         false,
+        false,
         ErrorDefinitionFor(errorDefinitionInSigma, errorDefinitionScaling))
 {
     public override double ValueFor(IReadOnlyList<double> parameterValues)

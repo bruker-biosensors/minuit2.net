@@ -8,6 +8,7 @@ internal class LeastSquares(
     Func<double, IReadOnlyList<double>, double> model,
     Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
     Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessian,
+    Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessianDiagonal,
     double errorDefinitionInSigma,
     bool isErrorDefinitionRecalculationEnabled,
     double errorDefinitionScaling = 1)
@@ -16,6 +17,7 @@ internal class LeastSquares(
         parameters,
         modelGradient != null,
         modelHessian != null,
+        modelHessianDiagonal != null,
         ErrorDefinitionFor(errorDefinitionInSigma, errorDefinitionScaling))
 {
     public override double ValueFor(IReadOnlyList<double> parameterValues)
@@ -67,6 +69,13 @@ internal class LeastSquares(
 
     public override IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues)
     {
+        return modelHessianDiagonal == null 
+            ? HessianDiagonalFromModelHessianFor(parameterValues) 
+            : HessianDiagonalFromModelHessianDiagonalFor(parameterValues);
+    }
+    
+    private double[] HessianDiagonalFromModelHessianFor(IReadOnlyList<double> parameterValues)
+    {
         var g2Sum = new double[Parameters.Count];
         for (var i = 0; i < x.Count; i++)
         {
@@ -79,6 +88,22 @@ internal class LeastSquares(
                 var jj = j * (Parameters.Count + 1);
                 g2Sum[j] -= 2.0 / yError * (residual * hessian[jj] - gradient[j] * gradient[j] / yError);
             }
+        }
+
+        return g2Sum;
+    }
+
+    private double[] HessianDiagonalFromModelHessianDiagonalFor(IReadOnlyList<double> parameterValues)
+    {
+        var g2Sum = new double[Parameters.Count];
+        for (var i = 0; i < x.Count; i++)
+        {
+            var yError = yErrorForIndex(i);
+            var residual = ResidualFor(parameterValues, i);
+            var gradient = modelGradient!(x[i], parameterValues);
+            var hessianDiagonal = modelHessianDiagonal!(x[i], parameterValues);
+            for (var j = 0; j < Parameters.Count; j++)
+                g2Sum[j] -= 2.0 / yError * (residual * hessianDiagonal[j] - gradient[j] * gradient[j] / yError);
         }
 
         return g2Sum;
@@ -99,6 +124,7 @@ internal class LeastSquares(
             model,
             modelGradient,
             modelHessian,
+            modelHessianDiagonal,
             errorDefinitionInSigma,
             isErrorDefinitionRecalculationEnabled,
             errorDefinitionScaling);

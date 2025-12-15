@@ -12,6 +12,7 @@ public class A_least_squares_cost_function
     private static double TestModel(double x, IReadOnlyList<double> p) => p[0] * x + p[1] * p[1] * x;
     private static IReadOnlyList<double> TestModelGradient(double x, IReadOnlyList<double> p) => [x, 2 * p[1] * x];
     private static IReadOnlyList<double> TestModelHessian(double x, IReadOnlyList<double> p) => [0, 0, 0, 2 * x];
+    private static IReadOnlyList<double> TestModelHessianDiagonal(double x, IReadOnlyList<double> p) => [0, 2 * x];
 
     
     [Test]
@@ -148,6 +149,46 @@ public class A_least_squares_cost_function
             cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
                 options => options.WithRelativeDoubleTolerance(0.001));
         }
+        
+        [Test]
+        public void and_analytical_model_gradient_and_hessian_and_hessian_diagonal_when_asked_for_its_hessian_diagonal_returns_the_expected_vector()
+        {
+            var cost = LeastSquares(_xValues, _yValues, _yError, ["a", "b"], TestModel, TestModelGradient, TestModelHessian, TestModelHessianDiagonal);
+
+            var expectedHessianDiagonal = new double[2];
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var x = _xValues[i];
+                var y = _yValues[i];
+                var residual = (y - TestModel(x, _parameterValues)) / _yError;
+                var g = TestModelGradient(x, _parameterValues);
+                var h = TestModelHessian(x, _parameterValues);
+                expectedHessianDiagonal[0] -= 2 / _yError * (residual * h[0] - g[0] * g[0] / _yError);
+                expectedHessianDiagonal[1] -= 2 / _yError * (residual * h[3] - g[1] * g[1] / _yError);
+            }
+
+            cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
+                options => options.WithRelativeDoubleTolerance(0.001));
+        }
+        
+        [Test, 
+         Description("Ensure that the user-provided model Hessian diagonal is used to speed up computation of the cost function Hessian diagonal.")]
+        public void and_analytical_model_gradient_and_hessian_and_hessian_diagonal_when_asked_for_its_hessian_diagonal_uses_the_gives_model_hessian_diagonal()
+        {
+            var isModelHessianDiagonalCalled = false;
+            var cost = LeastSquares(_xValues, _yValues, _yError, ["a", "b"], TestModel, TestModelGradient, TestModelHessian, TestModelHessianDiagonalMonitor);
+
+            cost.HessianDiagonalFor(_parameterValues);
+            
+            isModelHessianDiagonalCalled.Should().BeTrue();
+            return;
+
+            IReadOnlyList<double> TestModelHessianDiagonalMonitor(double x, IReadOnlyList<double> p)
+            {
+                isModelHessianDiagonalCalled = true;
+                return TestModelHessianDiagonal(x, p);
+            }
+        }
     }
 
     public class With_individual_y_errors
@@ -263,6 +304,47 @@ public class A_least_squares_cost_function
             cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
                 options => options.WithRelativeDoubleTolerance(0.001));
         }
+        
+        [Test]
+        public void and_analytical_model_gradient_and_hessian_and_hessian_diagonal_when_asked_for_its_hessian_diagonal_returns_the_expected_vector()
+        {
+            var cost = LeastSquares(_xValues, _yValues, _yErrors, ["a", "b"], TestModel, TestModelGradient, TestModelHessian, TestModelHessianDiagonal);
+
+            var expectedHessianDiagonal = new double[2];
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var x = _xValues[i];
+                var y = _yValues[i];
+                var yError = _yErrors[i];
+                var residual = (y - TestModel(x, _parameterValues)) / yError;
+                var g = TestModelGradient(x, _parameterValues);
+                var h = TestModelHessian(x, _parameterValues);
+                expectedHessianDiagonal[0] -= 2 / yError * (residual * h[0] - g[0] * g[0] / yError);
+                expectedHessianDiagonal[1] -= 2 / yError * (residual * h[3] - g[1] * g[1] / yError);
+            }
+
+            cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
+                options => options.WithRelativeDoubleTolerance(0.001));
+        }
+        
+        [Test, 
+         Description("Ensure that the user-provided model Hessian diagonal is used to speed up computation of the cost function Hessian diagonal.")]
+        public void and_analytical_model_gradient_and_hessian_and_hessian_diagonal_when_asked_for_its_hessian_diagonal_uses_the_gives_model_hessian_diagonal()
+        {
+            var isModelHessianDiagonalCalled = false;
+            var cost = LeastSquares(_xValues, _yValues, _yErrors, ["a", "b"], TestModel, TestModelGradient, TestModelHessian, TestModelHessianDiagonalMonitor);
+
+            cost.HessianDiagonalFor(_parameterValues);
+            
+            isModelHessianDiagonalCalled.Should().BeTrue();
+            return;
+
+            IReadOnlyList<double> TestModelHessianDiagonalMonitor(double x, IReadOnlyList<double> p)
+            {
+                isModelHessianDiagonalCalled = true;
+                return TestModelHessianDiagonal(x, p);
+            }
+        }
     }
 
     public class Without_y_errors
@@ -372,6 +454,46 @@ public class A_least_squares_cost_function
 
             cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
                 options => options.WithRelativeDoubleTolerance(0.001));
+        }
+        
+        [Test]
+        public void and_analytical_model_gradient_and_hessian_and_hessian_diagonal_when_asked_for_its_hessian_diagonal_returns_the_expected_vector()
+        {
+            var cost = LeastSquares(_xValues, _yValues, ["a", "b"], TestModel, TestModelGradient, TestModelHessian, TestModelHessianDiagonal);
+
+            var expectedHessianDiagonal = new double[2];
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var x = _xValues[i];
+                var y = _yValues[i];
+                var residual = y - TestModel(x, _parameterValues);
+                var g = TestModelGradient(x, _parameterValues);
+                var h = TestModelHessian(x, _parameterValues);
+                expectedHessianDiagonal[0] -= 2 * (residual * h[0] - g[0] * g[0]);
+                expectedHessianDiagonal[1] -= 2 * (residual * h[3] - g[1] * g[1]);
+            }
+
+            cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
+                options => options.WithRelativeDoubleTolerance(0.001));
+        }
+        
+        [Test, 
+         Description("Ensure that the user-provided model Hessian diagonal is used to speed up computation of the cost function Hessian diagonal.")]
+        public void and_analytical_model_gradient_and_hessian_and_hessian_diagonal_when_asked_for_its_hessian_diagonal_uses_the_gives_model_hessian_diagonal()
+        {
+            var isModelHessianDiagonalCalled = false;
+            var cost = LeastSquares(_xValues, _yValues, ["a", "b"], TestModel, TestModelGradient, TestModelHessian, TestModelHessianDiagonalMonitor);
+
+            cost.HessianDiagonalFor(_parameterValues);
+            
+            isModelHessianDiagonalCalled.Should().BeTrue();
+            return;
+
+            IReadOnlyList<double> TestModelHessianDiagonalMonitor(double x, IReadOnlyList<double> p)
+            {
+                isModelHessianDiagonalCalled = true;
+                return TestModelHessianDiagonal(x, p);
+            }
         }
     }
     

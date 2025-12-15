@@ -5,13 +5,14 @@ internal abstract class LeastSquaresBase(
     IReadOnlyList<string> parameters,
     bool hasGradient,
     bool hasHessian,
+    bool hasHessianDiagonal,
     double errorDefinition)
     : ICostFunction
 {
     public IReadOnlyList<string> Parameters { get; } = parameters;
     public bool HasGradient { get; } = hasGradient;
     public bool HasHessian { get; } = hasGradient && hasHessian;
-    public bool HasHessianDiagonal { get; } = hasGradient && hasHessian;
+    public bool HasHessianDiagonal { get; } = hasGradient && (hasHessianDiagonal || hasHessian);
     public double ErrorDefinition { get; } = errorDefinition;
     
     // For least squares fits, an error definition of 1 corresponds to 1-sigma parameter errors
