@@ -11,6 +11,8 @@ public class A_least_squares_cost_function
 
     private static double TestModel(double x, IReadOnlyList<double> p) => p[0] * x + p[1] * p[1] * x;
     private static IReadOnlyList<double> TestModelGradient(double x, IReadOnlyList<double> p) => [x, 2 * p[1] * x];
+    private static IReadOnlyList<double> TestModelHessian(double x, IReadOnlyList<double> p) => [0, 0, 0, 2 * x];
+
     
     [Test]
     public void when_constructed_with_mismatching_numbers_of_x_and_y_values_throws_an_exception(
@@ -95,12 +97,55 @@ public class A_least_squares_cost_function
                 var x = _xValues[i];
                 var y = _yValues[i];
                 var residual = (y - TestModel(x, _parameterValues)) / _yError;
-                var factor = -2 * residual / _yError;
-                expectedGradient[0] += factor * x;
-                expectedGradient[1] += factor * 2 * _parameterValues[1] * x;
+                expectedGradient[0] -= 2 * residual / _yError * x;
+                expectedGradient[1] -= 2 * residual / _yError * 2 * _parameterValues[1] * x;
             }
 
             cost.GradientFor(_parameterValues).Should().BeEquivalentTo(expectedGradient, 
+                options => options.WithRelativeDoubleTolerance(0.001));
+        }
+        
+        [Test]
+        public void and_analytical_model_gradient_and_hessian_when_asked_for_its_hessian_returns_the_expected_flat_matrix()
+        {
+            var cost = LeastSquares(_xValues, _yValues, _yError, ["a", "b"], TestModel, TestModelGradient, TestModelHessian);
+
+            var expectedHessian = new double[4];
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var x = _xValues[i];
+                var y = _yValues[i];
+                var residual = (y - TestModel(x, _parameterValues)) / _yError;
+                var g = TestModelGradient(x, _parameterValues);
+                var h = TestModelHessian(x, _parameterValues);
+                expectedHessian[0] -= 2 / _yError * (residual * h[0] - g[0] * g[0] / _yError);
+                expectedHessian[1] -= 2 / _yError * (residual * h[1] - g[0] * g[1] / _yError);
+                expectedHessian[2] -= 2 / _yError * (residual * h[2] - g[1] * g[0] / _yError);
+                expectedHessian[3] -= 2 / _yError * (residual * h[3] - g[1] * g[1] / _yError);
+            }
+
+            cost.HessianFor(_parameterValues).Should().BeEquivalentTo(expectedHessian, 
+                options => options.WithRelativeDoubleTolerance(0.001));
+        }
+        
+        [Test]
+        public void and_analytical_model_gradient_and_hessian_when_asked_for_its_hessian_diagonal_returns_the_expected_vector()
+        {
+            var cost = LeastSquares(_xValues, _yValues, _yError, ["a", "b"], TestModel, TestModelGradient, TestModelHessian);
+
+            var expectedHessianDiagonal = new double[2];
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var x = _xValues[i];
+                var y = _yValues[i];
+                var residual = (y - TestModel(x, _parameterValues)) / _yError;
+                var g = TestModelGradient(x, _parameterValues);
+                var h = TestModelHessian(x, _parameterValues);
+                expectedHessianDiagonal[0] -= 2 / _yError * (residual * h[0] - g[0] * g[0] / _yError);
+                expectedHessianDiagonal[1] -= 2 / _yError * (residual * h[3] - g[1] * g[1] / _yError);
+            }
+
+            cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
                 options => options.WithRelativeDoubleTolerance(0.001));
         }
     }
@@ -172,6 +217,52 @@ public class A_least_squares_cost_function
             cost.GradientFor(_parameterValues).Should().BeEquivalentTo(expectedGradient, 
                 options => options.WithRelativeDoubleTolerance(0.001));
         }
+        
+        [Test]
+        public void and_analytical_model_gradient_and_hessian_when_asked_for_its_hessian_returns_the_expected_flat_matrix()
+        {
+            var cost = LeastSquares(_xValues, _yValues, _yErrors, ["a", "b"], TestModel, TestModelGradient, TestModelHessian);
+
+            var expectedHessian = new double[4];
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var x = _xValues[i];
+                var y = _yValues[i];
+                var yError = _yErrors[i];
+                var residual = (y - TestModel(x, _parameterValues)) / yError;
+                var g = TestModelGradient(x, _parameterValues);
+                var h = TestModelHessian(x, _parameterValues);
+                expectedHessian[0] -= 2 / yError * (residual * h[0] - g[0] * g[0] / yError);
+                expectedHessian[1] -= 2 / yError * (residual * h[1] - g[0] * g[1] / yError);
+                expectedHessian[2] -= 2 / yError * (residual * h[2] - g[1] * g[0] / yError);
+                expectedHessian[3] -= 2 / yError * (residual * h[3] - g[1] * g[1] / yError);
+            }
+
+            cost.HessianFor(_parameterValues).Should().BeEquivalentTo(expectedHessian, 
+                options => options.WithRelativeDoubleTolerance(0.001));
+        }
+        
+        [Test]
+        public void and_analytical_model_gradient_and_hessian_when_asked_for_its_hessian_diagonal_returns_the_expected_vector()
+        {
+            var cost = LeastSquares(_xValues, _yValues, _yErrors, ["a", "b"], TestModel, TestModelGradient, TestModelHessian);
+
+            var expectedHessianDiagonal = new double[2];
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var x = _xValues[i];
+                var y = _yValues[i];
+                var yError = _yErrors[i];
+                var residual = (y - TestModel(x, _parameterValues)) / yError;
+                var g = TestModelGradient(x, _parameterValues);
+                var h = TestModelHessian(x, _parameterValues);
+                expectedHessianDiagonal[0] -= 2 / yError * (residual * h[0] - g[0] * g[0] / yError);
+                expectedHessianDiagonal[1] -= 2 / yError * (residual * h[3] - g[1] * g[1] / yError);
+            }
+
+            cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
+                options => options.WithRelativeDoubleTolerance(0.001));
+        }
     }
 
     public class Without_y_errors
@@ -236,6 +327,50 @@ public class A_least_squares_cost_function
                 expectedGradient[1] += factor * 2 * _parameterValues[1] * x;
             }
             cost.GradientFor(_parameterValues).Should().BeEquivalentTo(expectedGradient, 
+                options => options.WithRelativeDoubleTolerance(0.001));
+        }
+        
+        [Test]
+        public void and_analytical_model_gradient_and_hessian_when_asked_for_its_hessian_returns_the_expected_flat_matrix()
+        {
+            var cost = LeastSquares(_xValues, _yValues, ["a", "b"], TestModel, TestModelGradient, TestModelHessian);
+
+            var expectedHessian = new double[4];
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var x = _xValues[i];
+                var y = _yValues[i];
+                var residual = y - TestModel(x, _parameterValues);
+                var g = TestModelGradient(x, _parameterValues);
+                var h = TestModelHessian(x, _parameterValues);
+                expectedHessian[0] -= 2 * (residual * h[0] - g[0] * g[0]);
+                expectedHessian[1] -= 2 * (residual * h[1] - g[0] * g[1]);
+                expectedHessian[2] -= 2 * (residual * h[2] - g[1] * g[0]);
+                expectedHessian[3] -= 2 * (residual * h[3] - g[1] * g[1]);
+            }
+
+            cost.HessianFor(_parameterValues).Should().BeEquivalentTo(expectedHessian, 
+                options => options.WithRelativeDoubleTolerance(0.001));
+        }
+        
+        [Test]
+        public void and_analytical_model_gradient_and_hessian_when_asked_for_its_hessian_diagonal_returns_the_expected_vector()
+        {
+            var cost = LeastSquares(_xValues, _yValues, ["a", "b"], TestModel, TestModelGradient, TestModelHessian);
+
+            var expectedHessianDiagonal = new double[2];
+            for (var i = 0; i < _valueCount; i++)
+            {
+                var x = _xValues[i];
+                var y = _yValues[i];
+                var residual = y - TestModel(x, _parameterValues);
+                var g = TestModelGradient(x, _parameterValues);
+                var h = TestModelHessian(x, _parameterValues);
+                expectedHessianDiagonal[0] -= 2 * (residual * h[0] - g[0] * g[0]);
+                expectedHessianDiagonal[1] -= 2 * (residual * h[3] - g[1] * g[1]);
+            }
+
+            cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
                 options => options.WithRelativeDoubleTolerance(0.001));
         }
     }
