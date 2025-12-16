@@ -17,23 +17,30 @@ public class Benchmarks
     [Benchmark]
     public void SimpleMinimizationProblem()
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem().Configured();
-        _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
+        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var cost = problem.Cost.Build();
+        var parameterConfigurations = problem.ParameterConfigurations.Build();
+        
+        _minimizer.Minimize(cost, parameterConfigurations);
     }
     
     [Benchmark]
     public void MoreComplexMinimizationProblem()
     {
         // problem1 shares all of its parameters with problem2; all other parameters are unique, meaning non-shared
-        var problem1 = new QuadraticPolynomialLeastSquaresProblem().Configured();
-        var problem2 = new CubicPolynomialLeastSquaresProblem().Configured();
-        var problem3 = new ExponentialDecayLeastSquaresProblem().Configured();
-        var problem4 = new BellCurveLeastSquaresProblem().Configured();
+        var problem1 = new QuadraticPolynomialLeastSquaresProblem();
+        var problem2 = new CubicPolynomialLeastSquaresProblem();
+        var problem3 = new ExponentialDecayLeastSquaresProblem();
+        var problem4 = new BellCurveLeastSquaresProblem();
 
-        var cost = CostFunction.Sum(problem1.Cost, problem2.Cost, problem3.Cost, problem4.Cost);
-        var parameterConfigurations = problem2.ParameterConfigurations
-            .Concat(problem3.ParameterConfigurations)
-            .Concat(problem4.ParameterConfigurations)
+        var cost = CostFunction.Sum(
+            problem1.Cost.Build(),
+            problem2.Cost.Build(), 
+            problem3.Cost.Build(), 
+            problem4.Cost.Build());
+        var parameterConfigurations = problem2.ParameterConfigurations.Build()
+            .Concat(problem3.ParameterConfigurations.Build())
+            .Concat(problem4.ParameterConfigurations.Build())
             .ToArray();
         
         _minimizer.Minimize(cost, parameterConfigurations);
