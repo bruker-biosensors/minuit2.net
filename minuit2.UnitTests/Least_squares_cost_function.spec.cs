@@ -92,19 +92,6 @@ public class A_least_squares_cost_function
             
             cost.ValueFor(_parameterValues).Should().Be(expectedValue);
         }
-
-        [Test]
-        public void and_a_batch_evaluation_model_when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals()
-        {
-            var cost = LeastSquares(_xValues, _yValues, _yError, _parameters, 
-                (x, p) => x.Select(xi => TestModel(xi, p)).ToArray());
-
-            double expectedValue = 0;
-            for (var i = 0; i < _valueCount; i++) 
-                expectedValue += Residual(i) * Residual(i);
-            
-            cost.ValueFor(_parameterValues).Should().Be(expectedValue);
-        }
         
         [Test]
         public void and_an_analytical_model_gradient_when_asked_for_its_gradient_returns_the_expected_vector()
@@ -285,19 +272,6 @@ public class A_least_squares_cost_function
             
             cost.ValueFor(_parameterValues).Should().Be(expectedValue);
         }
-
-        [Test]
-        public void and_a_batch_evaluation_model_when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals()
-        {
-            var cost = LeastSquares(_xValues, _yValues, _yErrors, _parameters, 
-                (x, p) => x.Select(xi => TestModel(xi, p)).ToArray());
-
-            double expectedValue = 0;
-            for (var i = 0; i < _valueCount; i++) 
-                expectedValue += Residual(i) * Residual(i);
-            
-            cost.ValueFor(_parameterValues).Should().Be(expectedValue);
-        }
         
         [Test]
         public void and_an_analytical_model_gradient_when_asked_for_its_gradient_returns_the_expected_vector()
@@ -459,19 +433,6 @@ public class A_least_squares_cost_function
         public void when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals()
         {
             var cost = LeastSquares(_xValues, _yValues, _parameters, TestModel);
-
-            double expectedValue = 0;
-            for (var i = 0; i < _valueCount; i++) 
-                expectedValue += Residual(i) * Residual(i);
-            
-            cost.ValueFor(_parameterValues).Should().Be(expectedValue);
-        }
-
-        [Test]
-        public void and_a_batch_evaluation_model_when_asked_for_its_cost_value_returns_the_sum_of_squared_error_weighted_residuals()
-        {
-            var cost = LeastSquares(_xValues, _yValues, _parameters, 
-                (x, p) => x.Select(xi => TestModel(xi, p)).ToArray());
 
             double expectedValue = 0;
             for (var i = 0; i < _valueCount; i++) 
