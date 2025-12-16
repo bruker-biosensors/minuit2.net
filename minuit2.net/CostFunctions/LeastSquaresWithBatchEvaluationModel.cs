@@ -19,15 +19,15 @@ internal class LeastSquaresWithBatchEvaluationModel(
 {
     public override double ValueFor(IReadOnlyList<double> parameterValues)
     {
-        double sum = 0;
+        double value = 0;
         var yModel = model(x, parameterValues);
         for (var i = 0; i < x.Count; i++)
         {
-            var residual = (y[i] - yModel[i]) / yErrorForIndex(i);
-            sum += residual * residual;
+            var r = (y[i] - yModel[i]) / yErrorForIndex(i);
+            value += r * r;
         }
 
-        return sum;
+        return value;
     }
 
     public override IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues) =>

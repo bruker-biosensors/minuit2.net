@@ -22,91 +22,91 @@ internal class LeastSquares(
 {
     public override double ValueFor(IReadOnlyList<double> parameterValues)
     {
-        var sum = 0.0;
+        double value = 0;
         for (var i = 0; i < x.Count; i++)
         {
-            var residual = ResidualFor(parameterValues, i);
-            sum += residual * residual;
+            var r = ResidualFor(parameterValues, i);
+            value += r * r;
         }
 
-        return sum;
+        return value;
     }
 
     public override IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
     {
-        var gradientSum = new double[Parameters.Count];
+        var gradient = new double[Parameters.Count];
         for (var i = 0; i < x.Count; i++)
         {
             var yError = yErrorForIndex(i);
-            var residual = ResidualFor(parameterValues, i);
-            var gradient = modelGradient!(x[i], parameterValues);
+            var r = ResidualFor(parameterValues, i);
+            var g = modelGradient!(x[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++)
-                gradientSum[j] -= 2.0 / yError * residual * gradient[j];
+                gradient[j] -= 2 * r * g[j] / yError;
         }
 
-        return gradientSum;
+        return gradient;
     }
 
     public override IReadOnlyList<double> HessianFor(IReadOnlyList<double> parameterValues)
     {
-        var hessianSum = new double[Parameters.Count * Parameters.Count];
+        var hessian = new double[Parameters.Count * Parameters.Count];
         for (var i = 0; i < x.Count; i++)
         {
             var yError = yErrorForIndex(i);
-            var residual = ResidualFor(parameterValues, i);
-            var gradient = modelGradient!(x[i], parameterValues);
-            var hessian = modelHessian!(x[i], parameterValues);
+            var r = ResidualFor(parameterValues, i);
+            var g = modelGradient!(x[i], parameterValues);
+            var h = modelHessian!(x[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++)
             for (var k = 0; k < Parameters.Count; k++)
             {
                 var jk = j * Parameters.Count + k;
-                hessianSum[jk] -= 2.0 / yError * (residual * hessian[jk] - gradient[j] * gradient[k] / yError);
+                hessian[jk] -= 2 / yError * (r * h[jk] - g[j] * g[k] / yError);
             }
         } 
         
-        return hessianSum;
+        return hessian;
     }
 
     public override IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues)
     {
-        return modelHessianDiagonal == null 
+        return modelHessianDiagonal == null
             ? HessianDiagonalFromModelHessianFor(parameterValues) 
             : HessianDiagonalFromModelHessianDiagonalFor(parameterValues);
     }
     
     private double[] HessianDiagonalFromModelHessianFor(IReadOnlyList<double> parameterValues)
     {
-        var g2Sum = new double[Parameters.Count];
+        var hessianDiagonal = new double[Parameters.Count];
         for (var i = 0; i < x.Count; i++)
         {
             var yError = yErrorForIndex(i);
-            var residual = ResidualFor(parameterValues, i);
-            var gradient = modelGradient!(x[i], parameterValues);
-            var hessian = modelHessian!(x[i], parameterValues);
+            var r = ResidualFor(parameterValues, i);
+            var g = modelGradient!(x[i], parameterValues);
+            var h = modelHessian!(x[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++)
             {
                 var jj = j * (Parameters.Count + 1);
-                g2Sum[j] -= 2.0 / yError * (residual * hessian[jj] - gradient[j] * gradient[j] / yError);
+                hessianDiagonal[j] -= 2 / yError * (r * h[jj] - g[j] * g[j] / yError);
             }
         }
 
-        return g2Sum;
+        return hessianDiagonal;
     }
 
     private double[] HessianDiagonalFromModelHessianDiagonalFor(IReadOnlyList<double> parameterValues)
     {
-        var g2Sum = new double[Parameters.Count];
+        var hessianDiagonal = new double[Parameters.Count];
         for (var i = 0; i < x.Count; i++)
         {
             var yError = yErrorForIndex(i);
-            var residual = ResidualFor(parameterValues, i);
-            var gradient = modelGradient!(x[i], parameterValues);
-            var hessianDiagonal = modelHessianDiagonal!(x[i], parameterValues);
+            var r = ResidualFor(parameterValues, i);
+            var g = modelGradient!(x[i], parameterValues);
+            var h = modelHessianDiagonal!(x[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++)
-                g2Sum[j] -= 2.0 / yError * (residual * hessianDiagonal[j] - gradient[j] * gradient[j] / yError);
+                hessianDiagonal[j] -= 2 / yError * (r * h[j] - g[j] * g[j] / yError);
         }
 
-        return g2Sum;
+        return hessianDiagonal;
     }
 
     private double ResidualFor(IReadOnlyList<double> parameterValues, int index) =>
