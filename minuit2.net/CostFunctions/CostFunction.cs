@@ -383,6 +383,68 @@ public static class CostFunction
             errorDefinitionInSigma,
             false);
     }
+    
+    public static ICostFunction LeastSquaresWithGaussNewtonApproximation(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+        double errorDefinitionInSigma = 1)
+    {
+        ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
+        return new LeastSquaresWithGaussNewtonApproximation(
+            x,
+            y,
+            _ => 1,
+            parameters,
+            model,
+            modelGradient,
+            errorDefinitionInSigma,
+            true);
+    }
+    
+    public static ICostFunction LeastSquaresWithGaussNewtonApproximation(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        double yError,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+        double errorDefinitionInSigma = 1)
+    {
+        ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
+        return new LeastSquaresWithGaussNewtonApproximation(
+            x,
+            y,
+            _ => yError,
+            parameters,
+            model,
+            modelGradient,
+            errorDefinitionInSigma,
+            false);
+    }
+    
+    public static ICostFunction LeastSquaresWithGaussNewtonApproximation(
+        IReadOnlyList<double> x,
+        IReadOnlyList<double> y,
+        IReadOnlyList<double> yError,
+        IReadOnlyList<string> parameters,
+        Func<double, IReadOnlyList<double>, double> model,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+        double errorDefinitionInSigma = 1)
+    {
+        ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)), (yError, nameof(yError)));
+        return new LeastSquaresWithGaussNewtonApproximation(
+            x,
+            y,
+            i => yError[i],
+            parameters,
+            model,
+            modelGradient,
+            errorDefinitionInSigma,
+            false);
+    }
 
     public static ICostFunction Sum(params ICostFunction[] components) => new CostFunctionSum(components);
 }

@@ -1,0 +1,95 @@
+namespace minuit2.net.CostFunctions;
+
+internal class LeastSquaresWithGaussNewtonApproximation(
+    IReadOnlyList<double> x,
+    IReadOnlyList<double> y,
+    Func<int, double> yErrorForIndex,
+    IReadOnlyList<string> parameters,
+    Func<double, IReadOnlyList<double>, double> model,
+    Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+    double errorDefinitionInSigma,
+    bool isErrorDefinitionRecalculationEnabled,
+    double errorDefinitionScaling = 1)
+    : LeastSquaresBase(
+        x.Count,
+        parameters,
+        true,
+        true,
+        true,
+        ErrorDefinitionFor(errorDefinitionInSigma, errorDefinitionScaling))
+{
+    public override double ValueFor(IReadOnlyList<double> parameterValues)
+    {
+        double value = 0;
+        for (var i = 0; i < x.Count; i++)
+        {
+            var r = (y[i] - model(x[i], parameterValues)) / yErrorForIndex(i);
+            value += r * r;
+        }
+
+        return value;
+    }
+
+    public override IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
+    {
+        var gradient = new double[Parameters.Count];
+        for (var i = 0; i < x.Count; i++)
+        {
+            var yError = yErrorForIndex(i);
+            var r = (y[i] - model(x[i], parameterValues)) / yError;
+            var g = modelGradient(x[i], parameterValues);
+            for (var j = 0; j < Parameters.Count; j++)
+                gradient[j] -= 2 * r * g[j] / yError;
+        }
+
+        return gradient;
+    }
+
+    public override IReadOnlyList<double> HessianFor(IReadOnlyList<double> parameterValues)
+    {
+        var hessian = new double[Parameters.Count * Parameters.Count];
+        for (var i = 0; i < x.Count; i++)
+        {
+            var yError = yErrorForIndex(i);
+            var g = modelGradient(x[i], parameterValues);
+            for (var j = 0; j < Parameters.Count; j++)
+            for (var k = 0; k < Parameters.Count; k++)
+            {
+                var jk = j * Parameters.Count + k;
+                hessian[jk] += 2 * g[j] * g[k] / (yError * yError);
+            }
+        } 
+        
+        return hessian;
+    }
+
+    public override IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues)
+    {
+        var hessianDiagonal = new double[Parameters.Count];
+        for (var i = 0; i < x.Count; i++)
+        {
+            var yError = yErrorForIndex(i);
+            var g = modelGradient(x[i], parameterValues);
+            for (var j = 0; j < Parameters.Count; j++) 
+                hessianDiagonal[j] += 2 * g[j] * g[j] / (yError * yError);
+        }
+
+        return hessianDiagonal;
+    }
+
+    protected override ICostFunction CopyWith(double errorDefinitionScaling)
+    {
+        if (!isErrorDefinitionRecalculationEnabled) return this;
+
+        return new LeastSquaresWithGaussNewtonApproximation(
+            x,
+            y,
+            yErrorForIndex,
+            Parameters,
+            model,
+            modelGradient,
+            errorDefinitionInSigma,
+            isErrorDefinitionRecalculationEnabled,
+            errorDefinitionScaling);
+    }
+}
