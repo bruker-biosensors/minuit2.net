@@ -2,54 +2,40 @@
 #define FCN_WRAP_H_
 
 #include "Minuit2/FCNBase.h"
-#include <atomic>
-#include <limits>
+#include <exception>
 
 namespace ROOT
 {
-    namespace Minuit2
-    {
-        class FCNWrap : public FCNBase
-        {
-        private:
-            std::atomic<bool> shouldAbort = false;
+	namespace Minuit2
+	{
+		class FCNWrap : public FCNBase
+		{
+		public:
+			FCNWrap() {}
 
-        public:
-            FCNWrap() {}
+			double operator()(const std::vector<double>& parameterValues) const override final { return Value(parameterValues); }
 
-            double operator()(std::vector<double> const &parameterValues) const override final
-            {
-                if (shouldAbort.load())
-                {
-                    return std::numeric_limits<double>::quiet_NaN();
-                }
-                
-                return CalculateValue(parameterValues);
-            }
+			virtual double Value(const std::vector<double>& parameterValues) const = 0;
 
-            virtual double CalculateValue(std::vector<double> const &parameterValues) const = 0;
+			virtual std::vector<double> Gradient(const std::vector<double>& parameterValues) const override { return {}; }
 
-            std::vector<double> Gradient(std::vector<double> const &parameterValues) const override final
-            {
-                if (shouldAbort.load())
-                {
-                    return std::vector<double>(parameterValues.size(), std::numeric_limits<double>::quiet_NaN());
-                }
-                
-                return CalculateGradient(parameterValues);
-            }
+			virtual std::vector<double> Hessian(const std::vector<double>& parameterValues) const override { return {}; }
 
-            virtual std::vector<double> CalculateGradient(std::vector<double> const &parameterValues) const = 0;
+            virtual std::vector<double> G2(const std::vector<double>& parameterValues) const override { return {}; }
 
 			virtual bool HasGradient() const override { return false; }
 
+			virtual bool HasHessian() const override { return false; }
+
+            virtual bool HasG2() const override { return false; }
+
 			virtual double Up() const override { return 1.0; }
 
-            void Abort() { shouldAbort.store(true); }
+			void Abort() const { throw std::exception("Abort"); }
 
-            virtual ~FCNWrap() {}
-        };
-    }
+			virtual ~FCNWrap() {}
+		};
+	}
 }
 
 #endif

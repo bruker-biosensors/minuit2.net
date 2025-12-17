@@ -13,25 +13,31 @@ internal class LeastSquaresWithBatchEvaluationModel(
         x.Count,
         parameters,
         false,
+        false,
+        false,
         ErrorDefinitionFor(errorDefinitionInSigma, errorDefinitionScaling))
 {
     public override double ValueFor(IReadOnlyList<double> parameterValues)
     {
-        double sum = 0;
+        double value = 0;
         var yModel = model(x, parameterValues);
         for (var i = 0; i < x.Count; i++)
         {
-            var residual = (y[i] - yModel[i]) / yErrorForIndex(i);
-            sum += residual * residual;
+            var r = (y[i] - yModel[i]) / yErrorForIndex(i);
+            value += r * r;
         }
 
-        return sum;
+        return value;
     }
 
-    public override IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
-    {
+    public override IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues) =>
         throw new NotImplementedException();
-    }
+
+    public override IReadOnlyList<double> HessianFor(IReadOnlyList<double> parameterValues) =>
+        throw new NotImplementedException();
+
+    public override IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues) =>
+        throw new NotImplementedException();
 
     protected override ICostFunction CopyWith(double errorDefinitionScaling)
     {

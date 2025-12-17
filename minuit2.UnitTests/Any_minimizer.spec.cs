@@ -78,8 +78,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var result = minimizer.Minimize(costFunction, excessParameterConfigurations);
         var referenceResult = minimizer.Minimize(costFunction, matchingParameterConfigurations);
 
-        result.Should().BeEquivalentTo(referenceResult, 
-            options => options.Excluding(x => x.NumberOfFunctionCalls));
+        result.Should().Match(referenceResult);
     }
 
     [Test]
@@ -93,8 +92,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var resultForOrderedConfigurations = minimizer.Minimize(cost, orderedConfigurations);
         var resultForDisorderedConfigurations = minimizer.Minimize(cost, disorderedConfigurations);
         
-        resultForDisorderedConfigurations.Should().BeEquivalentTo(resultForOrderedConfigurations, 
-            options => options.Excluding(x => x.NumberOfFunctionCalls));
+        resultForDisorderedConfigurations.Should().Match(resultForOrderedConfigurations);
     }
     
     [TestCase(double.NegativeInfinity, double.PositiveInfinity)]
@@ -112,8 +110,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var resultForUnlimited = minimizer.Minimize(cost, unlimitedParameterConfigurations);
         var resultForInfiniteLimits = minimizer.Minimize(cost, parameterConfigurationsWithInfiniteLimits);
 
-        resultForInfiniteLimits.Should().BeEquivalentTo(resultForUnlimited, 
-            options => options.Excluding(x => x.NumberOfFunctionCalls));
+        resultForInfiniteLimits.Should().Match(resultForUnlimited);
     }
     
     [TestCase(-1E15, 1E15)]
@@ -221,7 +218,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     [Test]
     [Description("Ensures that the inner scaling of gradients by the error definition in the component cost function " +
                  "and the final rescaling works.")]
-    public void when_minimizing_a_cost_function_sum_with_a_single_component_yields_a_result_equivalent_to_the_result_for_the_isolated_component(
+    public void when_minimizing_a_cost_function_sum_with_a_single_component_yields_a_result_matching_the_result_for_the_isolated_component(
         [Values] bool hasGradient, 
         [Values] Strategy strategy)
     {
@@ -233,9 +230,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var componentResult = minimizer.Minimize(component, parameterConfigurations, minimizerConfiguration);
         var sumResult = minimizer.Minimize(sum, parameterConfigurations, minimizerConfiguration);
         
-        sumResult.Should().BeEquivalentTo(componentResult, options => options
-            .Excluding(x => x.NumberOfFunctionCalls)
-            .Excluding(x => x.ParameterCovarianceMatrix)
+        sumResult.Should().MatchExcludingFunctionCalls(componentResult, options => options
+            .Excluding(x => x.ParameterCovarianceMatrix)  // is null for non-gradient-based minimizers (Simplex)
             .WithRelativeDoubleTolerance(0.001));
     }
 

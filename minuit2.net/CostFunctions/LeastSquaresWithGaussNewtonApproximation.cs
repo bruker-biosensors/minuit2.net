@@ -1,23 +1,21 @@
 namespace minuit2.net.CostFunctions;
 
-internal class LeastSquares(
+internal class LeastSquaresWithGaussNewtonApproximation(
     IReadOnlyList<double> x,
     IReadOnlyList<double> y,
     Func<int, double> yErrorForIndex,
     IReadOnlyList<string> parameters,
     Func<double, IReadOnlyList<double>, double> model,
-    Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelGradient,
-    Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessian,
-    Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessianDiagonal,
+    Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
     double errorDefinitionInSigma,
     bool isErrorDefinitionRecalculationEnabled,
     double errorDefinitionScaling = 1)
     : LeastSquaresBase(
         x.Count,
         parameters,
-        modelGradient != null,
-        modelHessian != null,
-        modelHessianDiagonal != null,
+        true,
+        true,
+        true,
         ErrorDefinitionFor(errorDefinitionInSigma, errorDefinitionScaling))
 {
     public override double ValueFor(IReadOnlyList<double> parameterValues)
@@ -39,7 +37,7 @@ internal class LeastSquares(
         {
             var yError = yErrorForIndex(i);
             var r = (y[i] - model(x[i], parameterValues)) / yError;
-            var g = modelGradient!(x[i], parameterValues);
+            var g = modelGradient(x[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++)
                 gradient[j] -= 2 * r * g[j] / yError;
         }
@@ -53,14 +51,12 @@ internal class LeastSquares(
         for (var i = 0; i < x.Count; i++)
         {
             var yError = yErrorForIndex(i);
-            var r = (y[i] - model(x[i], parameterValues)) / yError;
-            var g = modelGradient!(x[i], parameterValues);
-            var h = modelHessian!(x[i], parameterValues);
+            var g = modelGradient(x[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++)
             for (var k = 0; k < Parameters.Count; k++)
             {
                 var jk = j * Parameters.Count + k;
-                hessian[jk] -= 2 / yError * (r * h[jk] - g[j] * g[k] / yError);
+                hessian[jk] += 2 * g[j] * g[k] / (yError * yError);
             }
         } 
         
@@ -69,41 +65,13 @@ internal class LeastSquares(
 
     public override IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues)
     {
-        return modelHessianDiagonal == null
-            ? HessianDiagonalFromModelHessianFor(parameterValues) 
-            : HessianDiagonalFromModelHessianDiagonalFor(parameterValues);
-    }
-    
-    private double[] HessianDiagonalFromModelHessianFor(IReadOnlyList<double> parameterValues)
-    {
         var hessianDiagonal = new double[Parameters.Count];
         for (var i = 0; i < x.Count; i++)
         {
             var yError = yErrorForIndex(i);
-            var r = (y[i] - model(x[i], parameterValues)) / yError;
-            var g = modelGradient!(x[i], parameterValues);
-            var h = modelHessian!(x[i], parameterValues);
-            for (var j = 0; j < Parameters.Count; j++)
-            {
-                var jj = j * (Parameters.Count + 1);
-                hessianDiagonal[j] -= 2 / yError * (r * h[jj] - g[j] * g[j] / yError);
-            }
-        }
-
-        return hessianDiagonal;
-    }
-
-    private double[] HessianDiagonalFromModelHessianDiagonalFor(IReadOnlyList<double> parameterValues)
-    {
-        var hessianDiagonal = new double[Parameters.Count];
-        for (var i = 0; i < x.Count; i++)
-        {
-            var yError = yErrorForIndex(i);
-            var r = (y[i] - model(x[i], parameterValues)) / yError;
-            var g = modelGradient!(x[i], parameterValues);
-            var h = modelHessianDiagonal!(x[i], parameterValues);
-            for (var j = 0; j < Parameters.Count; j++)
-                hessianDiagonal[j] -= 2 / yError * (r * h[j] - g[j] * g[j] / yError);
+            var g = modelGradient(x[i], parameterValues);
+            for (var j = 0; j < Parameters.Count; j++) 
+                hessianDiagonal[j] += 2 * g[j] * g[j] / (yError * yError);
         }
 
         return hessianDiagonal;
@@ -113,15 +81,13 @@ internal class LeastSquares(
     {
         if (!isErrorDefinitionRecalculationEnabled) return this;
 
-        return new LeastSquares(
+        return new LeastSquaresWithGaussNewtonApproximation(
             x,
             y,
             yErrorForIndex,
             Parameters,
             model,
             modelGradient,
-            modelHessian,
-            modelHessianDiagonal,
             errorDefinitionInSigma,
             isErrorDefinitionRecalculationEnabled,
             errorDefinitionScaling);

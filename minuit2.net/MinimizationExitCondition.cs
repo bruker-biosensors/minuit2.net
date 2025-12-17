@@ -7,5 +7,7 @@ public enum MinimizationExitCondition
     FunctionCallsExhausted,
     ManuallyStopped,
     NonFiniteValue,
-    NonFiniteGradient
+    NonFiniteGradient,
+    NonFiniteHessian,
+    NonFiniteHessianDiagonal
 }

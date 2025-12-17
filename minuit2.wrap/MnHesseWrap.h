@@ -11,14 +11,22 @@ namespace ROOT
         class MnHesseWrap : public MnHesse
         {
         public:
-            MnHesseWrap(const MnStrategy &strategy = MnStrategy(1))
+            MnHesseWrap(const MnStrategy& strategy = MnStrategy(1))
                 : MnHesse(strategy) {}
 
-            void Update(FunctionMinimum &minimum,
-                        const FCNWrap &function,
+            bool Update(FunctionMinimum& minimum,
+                        const FCNWrap& function,
                         unsigned int maximumFunctionCalls = 0) const
             {
-                this->operator()(function, minimum, maximumFunctionCalls);
+                try
+                {
+                    this->operator()(function, minimum, maximumFunctionCalls);
+                    return true;
+                }
+                catch (...)
+                {
+                    return false;
+                }
             }
         };
     }

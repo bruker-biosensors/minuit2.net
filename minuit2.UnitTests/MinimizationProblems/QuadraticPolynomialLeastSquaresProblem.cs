@@ -2,9 +2,14 @@ namespace minuit2.UnitTests.MinimizationProblems;
 
 internal class QuadraticPolynomialLeastSquaresProblem : ConfigurableLeastSquaresProblem
 {
-    protected override Func<double, IReadOnlyList<double>, double> Model { get; } = (x, c) => c[0] + c[1] * x + c[2] * x * x;
-    
-    protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; } = (x, _) => [1, x, x * x];
+    protected override Func<double, IReadOnlyList<double>, double> Model { get; } =
+        (x, c) => c[0] + c[1] * x + c[2] * x * x;
+
+    protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; } =
+        (x, _) => [1, x, x * x];
+
+    protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessian { get; } =
+        (_, _) => Enumerable.Repeat(0d, 3 * 3).ToArray();
     
     protected override IReadOnlyList<string> ParameterNames { get; } = ["c0", "c1", "c2"];
     

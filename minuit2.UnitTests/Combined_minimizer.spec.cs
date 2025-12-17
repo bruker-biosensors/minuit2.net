@@ -6,7 +6,7 @@ using minuit2.UnitTests.TestUtilities;
 namespace minuit2.UnitTests;
 
 [TestFixture]
-public class The_combined_minimizer() : Any_parameter_uncertainty_resolving_minimizer(CombinedMinimizer)
+public class The_combined_minimizer() : Any_gradient_based_minimizer(CombinedMinimizer)
 {
     private static readonly IMinimizer CombinedMinimizer = Minimizer.Combined;
 
@@ -22,7 +22,6 @@ public class The_combined_minimizer() : Any_parameter_uncertainty_resolving_mini
         var result = CombinedMinimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
         var migradResult = Minimizer.Migrad.Minimize(problem.Cost, problem.ParameterConfigurations);
 
-        result.Should().BeEquivalentTo(migradResult, 
-            options => options.Excluding(x => x.NumberOfFunctionCalls).WithRelativeDoubleTolerance(0.001));
+        result.Should().Match(migradResult);
     }
 }

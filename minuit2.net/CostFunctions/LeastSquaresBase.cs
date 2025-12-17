@@ -3,12 +3,16 @@ namespace minuit2.net.CostFunctions;
 internal abstract class LeastSquaresBase(
     int numberOfDataPoints,
     IReadOnlyList<string> parameters,
-    bool hasGradient,
+    bool hasModelGradient,
+    bool hasModelHessian,
+    bool hasModelHessianDiagonal,
     double errorDefinition)
     : ICostFunction
 {
     public IReadOnlyList<string> Parameters { get; } = parameters;
-    public bool HasGradient { get; } = hasGradient;
+    public bool HasGradient { get; } = hasModelGradient;
+    public bool HasHessian { get; } = hasModelGradient && hasModelHessian;
+    public bool HasHessianDiagonal { get; } = hasModelGradient && (hasModelHessianDiagonal || hasModelHessian);
     public double ErrorDefinition { get; } = errorDefinition;
     
     // For least squares fits, an error definition of 1 corresponds to 1-sigma parameter errors
@@ -18,6 +22,10 @@ internal abstract class LeastSquaresBase(
     public abstract double ValueFor(IReadOnlyList<double> parameterValues);
 
     public abstract IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues);
+    
+    public abstract IReadOnlyList<double> HessianFor(IReadOnlyList<double> parameterValues);
+    
+    public abstract IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues);
 
     public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result)
     {

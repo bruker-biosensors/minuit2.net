@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using AwesomeAssertions;
+using AwesomeAssertions.Equivalency;
 using AwesomeAssertions.Execution;
 using AwesomeAssertions.Primitives;
 using minuit2.net;
@@ -38,6 +39,32 @@ internal class MinimizationResultAssertions(IMinimizationResult value)
             Subject.NumberOfFunctionCalls.Should().BeInRange(
                 expectedValue - SimilarFunctionCallsTolerance,
                 expectedValue + SimilarFunctionCallsTolerance);
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
+    
+    public AndConstraint<MinimizationResultAssertions> Match(
+        IMinimizationResult otherResult, 
+        Func<EquivalencyOptions<IMinimizationResult>, EquivalencyOptions<IMinimizationResult>>? options = null)
+    {
+        if (SkipFunctionCallsAssertions)
+            return MatchExcludingFunctionCalls(otherResult, options);
+
+        Subject.Should().BeEquivalentTo(otherResult, options ?? (o => o));
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
+
+    public AndConstraint<MinimizationResultAssertions> MatchExcludingFunctionCalls(
+        IMinimizationResult otherResult, 
+        Func<EquivalencyOptions<IMinimizationResult>, EquivalencyOptions<IMinimizationResult>>? options = null)
+    {
+        var inputOptions = options ?? (o => o);
+        Subject.Should().BeEquivalentTo(otherResult, o => inputOptions(o.Excluding(x => x.NumberOfFunctionCalls)));
+        return new AndConstraint<MinimizationResultAssertions>(this);
+    }
+    
+    public AndConstraint<MinimizationResultAssertions> HaveFewerFunctionCallsThan(IMinimizationResult otherResult)
+    {
+        Subject.NumberOfFunctionCalls.Should().BeLessThan(otherResult.NumberOfFunctionCalls);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
 }

@@ -9,6 +9,7 @@ internal abstract class ConfigurableLeastSquaresProblem
 {
     protected abstract Func<double, IReadOnlyList<double>, double> Model { get; }
     protected abstract Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; }
+    protected abstract Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessian { get; }
     protected abstract IReadOnlyList<string> ParameterNames { get; }
     
     protected abstract IReadOnlyList<double> XValues { get; }
@@ -18,7 +19,7 @@ internal abstract class ConfigurableLeastSquaresProblem
     protected abstract IReadOnlyList<double> OptimumParameterValues { get; }
     protected abstract IReadOnlyList<double> DefaultInitialParameterValues { get; }
     
-    public LeastSquaresCostBuilder Cost => new(XValues, YValues, YError, Model, ModelGradient, ParameterNames);
+    public LeastSquaresCostBuilder Cost => new(XValues, YValues, YError, Model, ModelGradient, ModelHessian, ParameterNames);
     
     public class LeastSquaresCostBuilder(
         IReadOnlyList<double> xValues, 
@@ -26,20 +27,27 @@ internal abstract class ConfigurableLeastSquaresProblem
         double yError,
         Func<double, IReadOnlyList<double>, double> model,
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
+        Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelHessian,
         IReadOnlyList<string> parameterNames)
     {
         private readonly string[] _parameterNames = parameterNames.ToArray();
         
         private bool _hasYErrors = true;
         private bool _hasGradient;
+        private bool _hasHessian;
+        private bool _isUsingGaussNewtonApproximation;
         private double _errorDefinitionInSigma = 1;
 
         public ICostFunction Build() => _hasYErrors switch
         {
+            true when _isUsingGaussNewtonApproximation => CostFunction.LeastSquaresWithGaussNewtonApproximation(xValues, yValues, yError, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
+            false when _isUsingGaussNewtonApproximation => CostFunction.LeastSquaresWithGaussNewtonApproximation(xValues, yValues, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
+            true when _hasHessian => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, modelGradient, modelHessian, _errorDefinitionInSigma),
+            false when _hasHessian => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, modelGradient, modelHessian, _errorDefinitionInSigma),
             true when _hasGradient => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
-            true when !_hasGradient => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, null, _errorDefinitionInSigma),
             false when _hasGradient => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
-            _ => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, null, _errorDefinitionInSigma)
+            true => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, _errorDefinitionInSigma),
+            false => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, _errorDefinitionInSigma),
         };
 
         public LeastSquaresCostBuilder WithUnknownYErrors()
@@ -51,6 +59,18 @@ internal abstract class ConfigurableLeastSquaresProblem
         public LeastSquaresCostBuilder WithGradient(bool hasGradient = true)
         {
             _hasGradient = hasGradient;
+            return this;
+        }
+        
+        public LeastSquaresCostBuilder WithHessian(bool hasHessian = true)
+        {
+            _hasHessian = hasHessian;
+            return this;
+        }
+        
+        public LeastSquaresCostBuilder UsingGaussNewtonApproximation(bool isUsingGaussNewtonApproximation = true)
+        {
+            _isUsingGaussNewtonApproximation = isUsingGaussNewtonApproximation;
             return this;
         }
         

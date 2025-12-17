@@ -8,13 +8,27 @@ internal class BellCurveLeastSquaresProblem : ConfigurableLeastSquaresProblem
         return 1 / Math.Sqrt(2 * Math.PI * variance) * Math.Exp(-dx * dx / (2 * variance));
     }
     
-    protected override Func<double, IReadOnlyList<double>, double> Model { get; } = (x, p) => Bell(x, p[0], p[1]);
-    
-    protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; } = (x, p) =>
-    [
-        (x - p[0]) / p[1] * Bell(x, p[0], p[1]),
-        ((x - p[0]) * (x - p[0]) / p[1] - 1) / (2 * p[1]) * Bell(x, p[0], p[1])
-    ];
+    protected override Func<double, IReadOnlyList<double>, double> Model { get; } = 
+        (x, p) => Bell(x, p[0], p[1]);
+
+    protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; } =
+        (x, p) =>
+        {
+            var frac = (x - p[0]) / p[1];
+            var g1 = frac * Bell(x, p[0], p[1]);
+            var g2 = (frac * frac - 1 / p[1]) * Bell(x, p[0], p[1]);
+            return [g1, g2];
+        };
+
+    protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessian { get; } =
+        (x, p) =>
+        {
+            var frac = (x - p[0]) / p[1];
+            var h00 = (frac * frac - 1 / p[1]) * Bell(x, p[0], p[1]);
+            var h01 = frac / 2 * (frac * frac - 3 / p[1]) * Bell(x, p[0], p[1]);
+            var h11 = ((frac * frac - 1 / p[1]) * (frac * frac - 1 / p[1]) / 4 - (frac * frac - 1 / (2 * p[1])) / p[1]) * Bell(x, p[0], p[1]);
+            return [h00, h01, h01, h11];
+        };
 
     protected override IReadOnlyList<string> ParameterNames { get; } = ["location", "variance"];
 

@@ -1,4 +1,5 @@
 using minuit2.net.CostFunctions;
+using static minuit2.net.CostFunctionDerivativesGuard;
 using static minuit2.net.ParameterMappingGuard;
 
 namespace minuit2.net.Minimizers;
@@ -16,28 +17,34 @@ internal abstract class MnMinimizer : IMinimizer
             parameterConfigurations.Select(p => p.Name).ToArray(),
             "parameter configurations", 
             "minimization");
+        
+        var orderedParameterConfigurations = parameterConfigurations.ExtractInOrder(costFunction.Parameters).ToArray();
+
+        ThrowIfEvaluationErrorsOrIncorrectReturnSizes(
+            costFunction, 
+            orderedParameterConfigurations.Select(p => p.Value).ToArray());
 
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
-        using var parameterState = parameterConfigurations.ExtractInOrder(costFunction.Parameters).AsState();
+        using var parameterState = orderedParameterConfigurations.AsState();
         
         minimizerConfiguration ??= new MinimizerConfiguration();
         using var strategy = minimizerConfiguration.Strategy.AsMnStrategy();
         var maximumFunctionCalls = minimizerConfiguration.MaximumFunctionCalls;
         var tolerance = minimizerConfiguration.Tolerance;
 
-        var minimum = MnMinimize(cost, parameterState, strategy, maximumFunctionCalls, tolerance);
+        var result = MnMinimize(cost, parameterState, strategy, maximumFunctionCalls, tolerance);
 
-        if (!cost.Exceptions.TryDequeue(out var exception))
-            return new MinimizationResult(minimum, costFunction);
+        if (cost.Exceptions.TryDequeue(out var exception))
+            return exception is MinimizationAbort abort
+                ? new AbortedMinimizationResult(abort, costFunction, parameterState.ExtractVariablesFrom(costFunction.Parameters))
+                : throw exception;
 
-        if (exception is not MinimizationAbort abort)
-            throw exception;
-
-        var variables = parameterState.ExtractVariablesFrom(costFunction.Parameters);
-        return new AbortedMinimizationResult(abort, costFunction, variables);
+        return result.Success 
+            ? new MinimizationResult(result.FunctionMinimum(), costFunction) 
+            : throw new CppException();
     }
 
-    protected abstract FunctionMinimum MnMinimize(
+    protected abstract RunResult MnMinimize(
         FCNWrap costFunction, 
         MnUserParameterState parameterState, 
         MnStrategy strategy, 

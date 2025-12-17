@@ -9,6 +9,8 @@ internal class CostFunctionSum : ICompositeCostFunction
         var parameters = components.DistinctParameters();
         Parameters = parameters;
         HasGradient = components.All(c => c.HasGradient);
+        HasHessian = components.All(c => c.HasHessian);
+        HasHessianDiagonal = components.All(c => c.HasHessianDiagonal);
         ErrorDefinition = 1;  // Neutral element; Scaling is performed for each component individually since factors may differ.
         
         _components = components.Select(c => new ComponentCostFunction(c, parameters)).ToArray();
@@ -16,6 +18,8 @@ internal class CostFunctionSum : ICompositeCostFunction
 
     public IReadOnlyList<string> Parameters { get; }
     public bool HasGradient { get; }
+    public bool HasHessian { get; }
+    public bool HasHessianDiagonal { get; }
     public double ErrorDefinition { get; }
 
     public double ValueFor(IReadOnlyList<double> parameterValues) => 
@@ -23,15 +27,41 @@ internal class CostFunctionSum : ICompositeCostFunction
 
     public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
     {
-        var gradients = new double[Parameters.Count];
+        var gradient = new double[Parameters.Count];
         foreach (var component in _components)
         {
-            var componentGradients = component.GradientFor(parameterValues);
+            var componentGradient = component.GradientFor(parameterValues);
             for (var i = 0; i < Parameters.Count; i++)
-                gradients[i] += componentGradients[i] / component.ErrorDefinition;
+                gradient[i] += componentGradient[i] / component.ErrorDefinition;
         }
         
-        return gradients;
+        return gradient;
+    }
+
+    public IReadOnlyList<double> HessianFor(IReadOnlyList<double> parameterValues)
+    {
+        var hessian = new double[Parameters.Count * Parameters.Count];
+        foreach (var component in _components)
+        {
+            var componentHessian = component.HessianFor(parameterValues);
+            for (var i = 0; i < Parameters.Count * Parameters.Count; i++)
+                hessian[i] += componentHessian[i] / component.ErrorDefinition;
+        }
+        
+        return hessian;
+    }
+
+    public IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues)
+    {
+        var hessianDiagonal = new double[Parameters.Count];
+        foreach (var component in _components)
+        {
+            var componentHessianDiagonal = component.HessianDiagonalFor(parameterValues);
+            for (var i = 0; i < Parameters.Count; i++)
+                hessianDiagonal[i] += componentHessianDiagonal[i] / component.ErrorDefinition;
+        }
+        
+        return hessianDiagonal;
     }
 
     public double CompositeValueFor(IReadOnlyList<double> parameterValues) =>
