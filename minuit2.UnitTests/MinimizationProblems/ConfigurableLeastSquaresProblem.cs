@@ -34,13 +34,16 @@ internal abstract class ConfigurableLeastSquaresProblem
         
         private bool _hasYErrors = true;
         private bool _hasGradient;
-        private bool _hasGradientAndHessian;
+        private bool _hasHessian;
+        private bool _isUsingGaussNewtonApproximation;
         private double _errorDefinitionInSigma = 1;
 
         public ICostFunction Build() => _hasYErrors switch
         {
-            true when _hasGradientAndHessian => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, modelGradient, modelHessian, _errorDefinitionInSigma),
-            false when _hasGradientAndHessian => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, modelGradient, modelHessian, _errorDefinitionInSigma),
+            true when _isUsingGaussNewtonApproximation => CostFunction.LeastSquaresWithGaussNewtonApproximation(xValues, yValues, yError, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
+            false when _isUsingGaussNewtonApproximation => CostFunction.LeastSquaresWithGaussNewtonApproximation(xValues, yValues, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
+            true when _hasHessian => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, modelGradient, modelHessian, _errorDefinitionInSigma),
+            false when _hasHessian => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, modelGradient, modelHessian, _errorDefinitionInSigma),
             true when _hasGradient => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
             false when _hasGradient => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
             true => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, _errorDefinitionInSigma),
@@ -59,9 +62,15 @@ internal abstract class ConfigurableLeastSquaresProblem
             return this;
         }
         
-        public LeastSquaresCostBuilder WithGradientAndHessian(bool hasGradientAndHessian = true)
+        public LeastSquaresCostBuilder WithHessian(bool hasHessian = true)
         {
-            _hasGradientAndHessian = hasGradientAndHessian;
+            _hasHessian = hasHessian;
+            return this;
+        }
+        
+        public LeastSquaresCostBuilder UsingGaussNewtonApproximation(bool isUsingGaussNewtonApproximation = true)
+        {
+            _isUsingGaussNewtonApproximation = isUsingGaussNewtonApproximation;
             return this;
         }
         

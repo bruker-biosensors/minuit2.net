@@ -185,7 +185,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     [Test]
     public void when_minimizing_a_cost_function_with_an_analytical_hessian_yields_a_result_matching_the_result_obtained_for_numerical_approximation_just_with_fewer_function_calls()
     {
-        var cost = _defaultProblem.Cost.WithGradientAndHessian().Build();
+        var cost = _defaultProblem.Cost.WithHessian().Build();
         var referenceCost = _defaultProblem.Cost.WithGradient().Build();
         var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
         
@@ -204,7 +204,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         double nonFiniteValue)
     {
         var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
-        var cost = _defaultProblem.Cost.WithGradientAndHessian().Build().WithHessianOverride(_ => 
+        var cost = _defaultProblem.Cost.WithHessian().Build().WithHessianOverride(_ => 
             Enumerable.Repeat(nonFiniteValue, parameterConfigurations.Length * parameterConfigurations.Length).ToArray());
         
         var result = _minimizer.Minimize(cost, parameterConfigurations);
@@ -220,7 +220,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     [Test]
     public void when_minimizing_a_cost_function_with_an_analytical_hessian_that_throws_an_exception_during_the_process_forwards_that_exception()
     {
-        var cost = _defaultProblem.Cost.WithGradientAndHessian().Build().WithHessianOverride(_ => throw new TestException());
+        var cost = _defaultProblem.Cost.WithHessian().Build().WithHessianOverride(_ => throw new TestException());
         var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
         
         Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
@@ -242,7 +242,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
             .WithParameter(1).WithLimits(0, null)
             .Build();
         
-        var cost = problem.Cost.WithGradientAndHessian().Build();
+        var cost = problem.Cost.WithHessian().Build();
         var referenceCost = problem.Cost.Build();
         
         var result = _minimizer.Minimize(cost, parameterConfigurations);
@@ -333,7 +333,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var problem = new QuadraticPolynomialLeastSquaresProblem();
         // second component shares offset parameter with the first component
         var component2 = problem.Cost.WithParameterSuffixes("2", [1, 2]).Build();
-        var cost = CostFunction.Sum(problem.Cost.WithGradientAndHessian().Build(), component2);
+        var cost = CostFunction.Sum(problem.Cost.WithHessian().Build(), component2);
         var referenceCost = CostFunction.Sum(problem.Cost.Build(), component2);
         
         var parameterConfigurations = problem.ParameterConfigurations.Build().Concat(
@@ -354,8 +354,8 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var problem = new QuadraticPolynomialLeastSquaresProblem();
         // second component shares offset parameter with the first component
         var cost = CostFunction.Sum(
-            problem.Cost.WithErrorDefinition(errorDefinitionOfComponent1).WithGradientAndHessian().Build(), 
-            problem.Cost.WithParameterSuffixes("2", [1, 2]).WithGradientAndHessian().Build());
+            problem.Cost.WithErrorDefinition(errorDefinitionOfComponent1).WithHessian().Build(), 
+            problem.Cost.WithParameterSuffixes("2", [1, 2]).WithHessian().Build());
         var referenceCost = CostFunction.Sum(
             problem.Cost.WithErrorDefinition(errorDefinitionOfComponent1).Build(), 
             problem.Cost.WithParameterSuffixes("2", [1, 2]).Build());

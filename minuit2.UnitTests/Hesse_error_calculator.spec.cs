@@ -93,7 +93,7 @@ public class The_hesse_error_calculator
         [Values] Strategy strategy)
     {
         var problem = new QuadraticPolynomialLeastSquaresProblem();
-        var cost = problem.Cost.WithErrorDefinition(errorDefinition).WithGradientAndHessian().Build();
+        var cost = problem.Cost.WithErrorDefinition(errorDefinition).WithHessian().Build();
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         // minimization result for the (fully) analytical cost function  
         var analyticalMinimizationResult = Minimizer.Migrad.Minimize(cost, parameterConfigurations);
