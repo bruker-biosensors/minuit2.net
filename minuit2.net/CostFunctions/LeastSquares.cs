@@ -25,7 +25,7 @@ internal class LeastSquares(
         double value = 0;
         for (var i = 0; i < x.Count; i++)
         {
-            var r = ResidualFor(parameterValues, i);
+            var r = (y[i] - model(x[i], parameterValues)) / yErrorForIndex(i);
             value += r * r;
         }
 
@@ -38,7 +38,7 @@ internal class LeastSquares(
         for (var i = 0; i < x.Count; i++)
         {
             var yError = yErrorForIndex(i);
-            var r = ResidualFor(parameterValues, i);
+            var r = (y[i] - model(x[i], parameterValues)) / yError;
             var g = modelGradient!(x[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++)
                 gradient[j] -= 2 * r * g[j] / yError;
@@ -53,7 +53,7 @@ internal class LeastSquares(
         for (var i = 0; i < x.Count; i++)
         {
             var yError = yErrorForIndex(i);
-            var r = ResidualFor(parameterValues, i);
+            var r = (y[i] - model(x[i], parameterValues)) / yError;
             var g = modelGradient!(x[i], parameterValues);
             var h = modelHessian!(x[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++)
@@ -80,7 +80,7 @@ internal class LeastSquares(
         for (var i = 0; i < x.Count; i++)
         {
             var yError = yErrorForIndex(i);
-            var r = ResidualFor(parameterValues, i);
+            var r = (y[i] - model(x[i], parameterValues)) / yError;
             var g = modelGradient!(x[i], parameterValues);
             var h = modelHessian!(x[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++)
@@ -99,7 +99,7 @@ internal class LeastSquares(
         for (var i = 0; i < x.Count; i++)
         {
             var yError = yErrorForIndex(i);
-            var r = ResidualFor(parameterValues, i);
+            var r = (y[i] - model(x[i], parameterValues)) / yError;
             var g = modelGradient!(x[i], parameterValues);
             var h = modelHessianDiagonal!(x[i], parameterValues);
             for (var j = 0; j < Parameters.Count; j++)
@@ -108,9 +108,6 @@ internal class LeastSquares(
 
         return hessianDiagonal;
     }
-
-    private double ResidualFor(IReadOnlyList<double> parameterValues, int index) =>
-        (y[index] - model(x[index], parameterValues)) / yErrorForIndex(index);
 
     protected override ICostFunction CopyWith(double errorDefinitionScaling)
     {
