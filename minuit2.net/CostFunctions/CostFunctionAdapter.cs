@@ -111,9 +111,9 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     
     private VectorDouble HessianDiagonalFor(VectorDouble parameterValues)
     {
-        var g2 = new VectorDouble(function.HessianDiagonalFor(parameterValues.AsReadOnly()).Select(ErrorDefinitionAdjusted));
-        return g2.All(double.IsFinite)
-            ? g2
+        var hessianDiagonal = new VectorDouble(function.HessianDiagonalFor(parameterValues.AsReadOnly()).Select(ErrorDefinitionAdjusted));
+        return hessianDiagonal.All(double.IsFinite)
+            ? hessianDiagonal
             : throw new MinimizationAbort(NonFiniteHessianDiagonal, parameterValues, _numberOfFunctionCalls);
     }
 
