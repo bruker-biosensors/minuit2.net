@@ -40,7 +40,7 @@ internal abstract class MnMinimizer : IMinimizer
                 : throw exception;
 
         return result.Success 
-            ? new MinimizationResult(result.FunctionMinimum(), costFunction) 
+            ? new MinimizationResult(FunctionMinimumExtensions.Copy(result.FunctionMinimum()), costFunction)
             : throw new CppException();
     }
 

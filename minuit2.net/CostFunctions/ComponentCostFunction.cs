@@ -15,11 +15,14 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> composit
 
     public IReadOnlyList<string> Parameters => inner.Parameters;
     public bool HasGradient => inner.HasGradient;
-    public bool HasHessian => false;
-    public bool HasHessianDiagonal => false;
+    public bool HasHessian => inner.HasHessian;
+    public bool HasHessianDiagonal => inner.HasHessianDiagonal;
     public double ErrorDefinition => inner.ErrorDefinition;
 
-    public double ValueFor(IReadOnlyList<double> parameterValues) => inner.ValueFor(Belonging(parameterValues));
+    public double ValueFor(IReadOnlyList<double> parameterValues)
+    {
+        return inner.ValueFor(Belonging(parameterValues));
+    }
 
     public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
     {

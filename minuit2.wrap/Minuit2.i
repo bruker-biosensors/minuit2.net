@@ -35,6 +35,7 @@ namespace std {
     #include "Minuit2/MnStrategy.h"
     #include "Minuit2/MnUserParameterState.h"
     #include "MnHesseWrap.h"
+    #include "FunctionMinimumExtensions.h"
 
     #include "Minuit2/MnMigrad.h"
     #include "Minuit2/MnSimplex.h"
@@ -55,6 +56,7 @@ namespace std {
 %include "Minuit2/FCNBase.h"
 %include "Minuit2/FunctionMinimum.h"
 %include "MnHesseWrap.h"
+%include "FunctionMinimumExtensions.h"
 
 %include "MnApplicationWrap.h"
 namespace ROOT {

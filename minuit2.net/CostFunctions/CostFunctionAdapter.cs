@@ -29,8 +29,7 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
         Interlocked.Increment(ref _numberOfFunctionCalls);
 
         // When OpenMP is enabled, this method is invoked concurrently by multiple threads. Terminating the calling
-        // C++ process via an exception is unsafe in this case: across threads and the C#/C++ boundary it leads to
-        // crashes/memory corruption.
+        // C++ process via an exception is unsafe in this case: across threads it leads to crashes/memory corruption.
         // Instead, we rely on the fact that the C++ processes terminate gracefully when encountering non‑finite values.
         // Note: Termination may occur only after a few additional invocations.
         if (ShouldReturnNanValue) return double.NaN;
@@ -112,9 +111,9 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     
     private VectorDouble HessianDiagonalFor(VectorDouble parameterValues)
     {
-        var g2 = new VectorDouble(function.HessianDiagonalFor(parameterValues.AsReadOnly()).Select(ErrorDefinitionAdjusted));
-        return g2.All(double.IsFinite)
-            ? g2
+        var hessianDiagonal = new VectorDouble(function.HessianDiagonalFor(parameterValues.AsReadOnly()).Select(ErrorDefinitionAdjusted));
+        return hessianDiagonal.All(double.IsFinite)
+            ? hessianDiagonal
             : throw new MinimizationAbort(NonFiniteHessianDiagonal, parameterValues, _numberOfFunctionCalls);
     }
 
