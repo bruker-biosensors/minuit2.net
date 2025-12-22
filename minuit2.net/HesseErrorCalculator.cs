@@ -22,7 +22,7 @@ public static class HesseErrorCalculator
         using var hesse = new MnHesseWrap(strategy.AsMnStrategy());
         using var cost = new CostFunctionAdapter(costFunction, cancellationToken);
         
-        var minimum = Copy(minimizationResult.Minimum);
+        var minimum = FunctionMinimumExtensions.Copy(minimizationResult.Minimum);
         var success = hesse.Update(minimum, cost);
 
         if (cost.Exceptions.TryDequeue(out var exception))
@@ -33,12 +33,5 @@ public static class HesseErrorCalculator
         return success
             ? new MinimizationResult(minimum, costFunction)
             : throw new CppException();
-    }
-
-    private static FunctionMinimum Copy(FunctionMinimum minimum)
-    {
-        var copy = new FunctionMinimum(minimum.Seed(), minimum.Up());
-        copy.Add(minimum.State());
-        return copy;
     }
 }
