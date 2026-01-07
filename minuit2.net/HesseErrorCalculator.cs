@@ -1,5 +1,4 @@
 using minuit2.net.CostFunctions;
-using static minuit2.net.ParameterMappingGuard;
 
 namespace minuit2.net;
 
@@ -11,7 +10,7 @@ public static class HesseErrorCalculator
         Strategy strategy = Strategy.Balanced,
         CancellationToken cancellationToken = default)
     {
-        ThrowIfNoUniqueMappingBetween(
+        ParameterValidation.EnsureUniqueMappingBetween(
             costFunction.Parameters,
             result.Parameters,
             "minimization result",

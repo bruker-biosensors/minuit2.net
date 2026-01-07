@@ -1,5 +1,4 @@
 using minuit2.net.CostFunctions;
-using static minuit2.net.ParameterMappingGuard;
 
 namespace minuit2.net.Minimizers;
 
@@ -11,7 +10,7 @@ internal abstract class MnMinimizer : IMinimizer
         MinimizerConfiguration? minimizerConfiguration = null, 
         CancellationToken cancellationToken = default)
     {
-        ThrowIfNoUniqueMappingBetween(
+        ParameterValidation.EnsureUniqueMappingBetween(
             costFunction.Parameters, 
             parameterConfigurations.Select(p => p.Name).ToArray(),
             "parameter configurations", 

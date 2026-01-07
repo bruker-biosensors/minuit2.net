@@ -1,8 +1,8 @@
 namespace minuit2.net;
 
-internal static class ParameterMappingGuard
+internal static class ParameterValidation
 { 
-    public static void ThrowIfNoUniqueMappingBetween(
+    public static void EnsureUniqueMappingBetween(
         IEnumerable<string> costParameters, 
         IReadOnlyCollection<string> otherParameters, 
         string otherInstance,
