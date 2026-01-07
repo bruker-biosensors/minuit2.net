@@ -47,7 +47,7 @@ internal abstract class ConfigurableLeastSquaresProblem
             true when _hasGradient => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
             false when _hasGradient => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, modelGradient, _errorDefinitionInSigma),
             true => CostFunction.LeastSquares(xValues, yValues, yError, _parameterNames, model, _errorDefinitionInSigma),
-            false => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, _errorDefinitionInSigma),
+            false => CostFunction.LeastSquares(xValues, yValues, _parameterNames, model, _errorDefinitionInSigma)
         };
 
         public LeastSquaresCostBuilder WithUnknownYErrors()
