@@ -31,8 +31,8 @@ internal static class CostFunctionValidation
         var size = costFunction.GradientFor(parameterValues).Count;
         var expectedSize = costFunction.Parameters.Count;
         if (size != expectedSize)
-            exceptions.Add(new CostFunctionError($"Invalid gradient size: expected {expectedSize} value(s) " +
-                                                 $"(one per parameter), but got {size}."));
+            exceptions.Add(new InvalidCostFunctionException(
+                $"Invalid gradient size: expected {expectedSize} value(s) (one per parameter), but got {size}."));
     }
 
     private static void EnsureValidHessianSize(
@@ -43,8 +43,8 @@ internal static class CostFunctionValidation
         var size = costFunction.HessianFor(parameterValues).Count;
         var expectedSize = costFunction.Parameters.Count * costFunction.Parameters.Count;
         if (size != expectedSize)
-            exceptions.Add(new CostFunctionError($"Invalid Hessian size: expected {expectedSize} value(s) " +
-                                                 $"(one per parameter pair), but got {size}."));
+            exceptions.Add(new InvalidCostFunctionException(
+                $"Invalid Hessian size: expected {expectedSize} value(s) (one per parameter pair), but got {size}."));
     }
 
     private static void EnsureValidHessianDiagonalSize(
@@ -55,7 +55,7 @@ internal static class CostFunctionValidation
         var size = costFunction.HessianDiagonalFor(parameterValues).Count;
         var expectedSize = costFunction.Parameters.Count;
         if (size != expectedSize)
-            exceptions.Add(new CostFunctionError($"Invalid Hessian diagonal size: expected {expectedSize} value(s) " +
-                                                 $"(one per parameter pair), but got {size}."));
+            exceptions.Add(new InvalidCostFunctionException(
+                $"Invalid Hessian diagonal size: expected {expectedSize} value(s) (one per parameter), but got {size}."));
     }
 }

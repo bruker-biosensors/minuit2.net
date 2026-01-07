@@ -14,7 +14,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialLeastSquaresProblem();
     
     [Test]
-    public void when_asked_to_minimize_a_cost_function_with_an_analytical_gradient_that_returns_the_wrong_size_throws_a_cost_function_error(
+    public void when_asked_to_minimize_a_cost_function_with_an_analytical_gradient_that_returns_the_wrong_size_throws_an_exception(
         [Values(1, 3)] int flawedGradientSize)
     {
         var cost = new ModelEvaluatingCostFunction(1, ["offset", "slope"], (x, p) => p[0] + p[1] * x,
@@ -23,7 +23,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
 
         Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
 
-        action.Should().Throw<CostFunctionError>().WithMessage("*gradient*");
+        action.Should().Throw<InvalidCostFunctionException>().WithMessage("*gradient*");
     }
     
     [Test]
@@ -36,7 +36,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
 
         Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
 
-        action.Should().Throw<CostFunctionError>().WithMessage("*Hessian*");
+        action.Should().Throw<InvalidCostFunctionException>().WithMessage("*Hessian*");
     }
 
     [Test]
@@ -49,7 +49,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
 
         Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
 
-        action.Should().Throw<CostFunctionError>().WithMessage("*Hessian diagonal*");
+        action.Should().Throw<InvalidCostFunctionException>().WithMessage("*Hessian diagonal*");
     }
     
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
