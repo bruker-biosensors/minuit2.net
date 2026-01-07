@@ -1,5 +1,3 @@
-using static minuit2.net.CostFunctions.DataPointGuard;
-
 namespace minuit2.net.CostFunctions;
 
 public static class CostFunction
@@ -92,7 +90,7 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessianDiagonal,
         double errorDefinitionInSigma)
     {
-        ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
+        DataValidation.EnsureMatchingSizesBetween((x, nameof(x)), (y, nameof(y)));
         return new LeastSquares(
             x,
             y,
@@ -203,7 +201,7 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessianDiagonal,
         double errorDefinitionInSigma)
     {
-        ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
+        DataValidation.EnsureMatchingSizesBetween((x, nameof(x)), (y, nameof(y)));
         return new LeastSquares(
             x,
             y,
@@ -314,7 +312,7 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>>? modelHessianDiagonal,
         double errorDefinitionInSigma)
     {
-        ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)), (yError, nameof(yError)));
+        DataValidation.EnsureMatchingSizesBetween((x, nameof(x)), (y, nameof(y)), (yError, nameof(yError)));
         return new LeastSquares(
             x,
             y,
@@ -335,7 +333,7 @@ public static class CostFunction
         Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>> model,
         double errorDefinitionInSigma = 1)
     {
-        ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
+        DataValidation.EnsureMatchingSizesBetween((x, nameof(x)), (y, nameof(y)));
         return new LeastSquaresWithBatchEvaluationModel(
             x,
             y,
@@ -354,7 +352,7 @@ public static class CostFunction
         Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>> model,
         double errorDefinitionInSigma = 1)
     {
-        ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
+        DataValidation.EnsureMatchingSizesBetween((x, nameof(x)), (y, nameof(y)));
         return new LeastSquaresWithBatchEvaluationModel(
             x,
             y,
@@ -373,7 +371,7 @@ public static class CostFunction
         Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>> model,
         double errorDefinitionInSigma = 1)
     {
-        ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)), (yError, nameof(yError)));
+        DataValidation.EnsureMatchingSizesBetween((x, nameof(x)), (y, nameof(y)), (yError, nameof(yError)));
         return new LeastSquaresWithBatchEvaluationModel(
             x,
             y,
@@ -392,7 +390,7 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
         double errorDefinitionInSigma = 1)
     {
-        ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
+        DataValidation.EnsureMatchingSizesBetween((x, nameof(x)), (y, nameof(y)));
         return new LeastSquaresWithGaussNewtonApproximation(
             x,
             y,
@@ -413,7 +411,7 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
         double errorDefinitionInSigma = 1)
     {
-        ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)));
+        DataValidation.EnsureMatchingSizesBetween((x, nameof(x)), (y, nameof(y)));
         return new LeastSquaresWithGaussNewtonApproximation(
             x,
             y,
@@ -434,7 +432,7 @@ public static class CostFunction
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
         double errorDefinitionInSigma = 1)
     {
-        ThrowIfCountMismatchBetween((x, nameof(x)), (y, nameof(y)), (yError, nameof(yError)));
+        DataValidation.EnsureMatchingSizesBetween((x, nameof(x)), (y, nameof(y)), (yError, nameof(yError)));
         return new LeastSquaresWithGaussNewtonApproximation(
             x,
             y,

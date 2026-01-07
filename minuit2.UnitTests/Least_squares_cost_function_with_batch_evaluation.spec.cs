@@ -12,7 +12,7 @@ public class A_least_squares_cost_function_with_batch_evaluation
     private static int AnyCount(int min = 10, int max = 100) => Any.Integer().Between(min, max);
     private static List<double> AnyValues(int count) => Enumerable.Range(0, count).Select(_ => (double)Any.Double()).ToList();
     
-    private static IReadOnlyList<double> TestModel(IReadOnlyList<double> x, IReadOnlyList<double> p) =>
+    private static double[] TestModel(IReadOnlyList<double> x, IReadOnlyList<double> p) =>
         x.Select(xx => p[0] * xx + p[1] * p[1] * xx).ToArray();
 
     public class With_a_uniform_y_error

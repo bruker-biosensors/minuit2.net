@@ -1,6 +1,4 @@
 using minuit2.net.CostFunctions;
-using static minuit2.net.CostFunctionDerivativesGuard;
-using static minuit2.net.ParameterMappingGuard;
 
 namespace minuit2.net.Minimizers;
 
@@ -12,7 +10,7 @@ internal abstract class MnMinimizer : IMinimizer
         MinimizerConfiguration? minimizerConfiguration = null, 
         CancellationToken cancellationToken = default)
     {
-        ThrowIfNoUniqueMappingBetween(
+        ParameterValidation.EnsureUniqueMappingBetween(
             costFunction.Parameters, 
             parameterConfigurations.Select(p => p.Name).ToArray(),
             "parameter configurations", 
@@ -20,7 +18,7 @@ internal abstract class MnMinimizer : IMinimizer
         
         var orderedParameterConfigurations = parameterConfigurations.ExtractInOrder(costFunction.Parameters).ToArray();
 
-        ThrowIfEvaluationErrorsOrIncorrectReturnSizes(
+        CostFunctionValidation.EnsureValidDerivativeSizes(
             costFunction, 
             orderedParameterConfigurations.Select(p => p.Value).ToArray());
 
@@ -41,7 +39,7 @@ internal abstract class MnMinimizer : IMinimizer
 
         return result.Success 
             ? new MinimizationResult(FunctionMinimumExtensions.Copy(result.FunctionMinimum()), costFunction)
-            : throw new CppException();
+            : throw new NativeMinuit2Exception();
     }
 
     protected abstract RunResult MnMinimize(

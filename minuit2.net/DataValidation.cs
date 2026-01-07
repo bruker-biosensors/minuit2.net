@@ -1,9 +1,9 @@
-namespace minuit2.net.CostFunctions;
+namespace minuit2.net;
 using NamedValues = (IReadOnlyList<double> Values, string Name);
 
-internal static class DataPointGuard
+internal static class DataValidation
 {
-    public static void ThrowIfCountMismatchBetween(NamedValues reference, params NamedValues[] others)
+    public static void EnsureMatchingSizesBetween(NamedValues reference, params NamedValues[] others)
     {
         var exceptions = new List<Exception>();
         foreach (var other in others)
