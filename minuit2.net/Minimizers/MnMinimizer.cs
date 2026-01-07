@@ -39,7 +39,7 @@ internal abstract class MnMinimizer : IMinimizer
 
         return result.Success 
             ? new MinimizationResult(FunctionMinimumExtensions.Copy(result.FunctionMinimum()), costFunction)
-            : throw new CppException();
+            : throw new NativeMinuit2Exception();
     }
 
     protected abstract RunResult MnMinimize(

@@ -31,6 +31,6 @@ public static class HesseErrorCalculator
         
         return success
             ? new MinimizationResult(minimum, costFunction)
-            : throw new CppException();
+            : throw new NativeMinuit2Exception();
     }
 }
