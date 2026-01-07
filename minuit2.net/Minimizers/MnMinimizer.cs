@@ -1,5 +1,4 @@
 using minuit2.net.CostFunctions;
-using static minuit2.net.CostFunctionDerivativesGuard;
 using static minuit2.net.ParameterMappingGuard;
 
 namespace minuit2.net.Minimizers;
@@ -20,7 +19,7 @@ internal abstract class MnMinimizer : IMinimizer
         
         var orderedParameterConfigurations = parameterConfigurations.ExtractInOrder(costFunction.Parameters).ToArray();
 
-        ThrowIfDerivativesAreOfIncorrectSize(
+        CostFunctionValidation.EnsureValidDerivativeSizes(
             costFunction, 
             orderedParameterConfigurations.Select(p => p.Value).ToArray());
 

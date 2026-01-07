@@ -2,20 +2,20 @@ using minuit2.net.CostFunctions;
 
 namespace minuit2.net;
 
-internal static class CostFunctionDerivativesGuard
+internal static class CostFunctionValidation
 {
-    public static void ThrowIfDerivativesAreOfIncorrectSize(
+    public static void EnsureValidDerivativeSizes(
         ICostFunction costFunction, 
         IReadOnlyList<double> parameterValues)
     {
         var exceptions = new List<Exception>();
 
         if (costFunction.HasGradient) 
-            CheckGradient(costFunction, parameterValues, exceptions);
+            EnsureValidGradientSize(costFunction, parameterValues, exceptions);
         if (costFunction.HasHessian) 
-            CheckHessian(costFunction, parameterValues, exceptions);
+            EnsureValidHessianSize(costFunction, parameterValues, exceptions);
         if (costFunction.HasHessianDiagonal) 
-            CheckHessianDiagonal(costFunction, parameterValues, exceptions);
+            EnsureValidHessianDiagonalSize(costFunction, parameterValues, exceptions);
         
         if (exceptions.Count == 1)
             throw exceptions.Single();
@@ -23,7 +23,10 @@ internal static class CostFunctionDerivativesGuard
             throw new AggregateException(exceptions);
     }
 
-    private static void CheckGradient(ICostFunction costFunction, IReadOnlyList<double> parameterValues, List<Exception> exceptions)
+    private static void EnsureValidGradientSize(
+        ICostFunction costFunction,
+        IReadOnlyList<double> parameterValues,
+        List<Exception> exceptions)
     {
         var size = costFunction.GradientFor(parameterValues).Count;
         var expectedSize = costFunction.Parameters.Count;
@@ -32,7 +35,10 @@ internal static class CostFunctionDerivativesGuard
                                                  $"(one per parameter), but got {size}."));
     }
 
-    private static void CheckHessian(ICostFunction costFunction, IReadOnlyList<double> parameterValues, List<Exception> exceptions)
+    private static void EnsureValidHessianSize(
+        ICostFunction costFunction,
+        IReadOnlyList<double> parameterValues,
+        List<Exception> exceptions)
     {
         var size = costFunction.HessianFor(parameterValues).Count;
         var expectedSize = costFunction.Parameters.Count * costFunction.Parameters.Count;
@@ -41,7 +47,9 @@ internal static class CostFunctionDerivativesGuard
                                                  $"(one per parameter pair), but got {size}."));
     }
 
-    private static void CheckHessianDiagonal(ICostFunction costFunction, IReadOnlyList<double> parameterValues,
+    private static void EnsureValidHessianDiagonalSize(
+        ICostFunction costFunction,
+        IReadOnlyList<double> parameterValues,
         List<Exception> exceptions)
     {
         var size = costFunction.HessianDiagonalFor(parameterValues).Count;
