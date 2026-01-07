@@ -20,7 +20,7 @@ internal abstract class MnMinimizer : IMinimizer
         
         var orderedParameterConfigurations = parameterConfigurations.ExtractInOrder(costFunction.Parameters).ToArray();
 
-        ThrowIfEvaluationErrorsOrIncorrectReturnSizes(
+        ThrowIfDerivativesAreOfIncorrectSize(
             costFunction, 
             orderedParameterConfigurations.Select(p => p.Value).ToArray());
 
