@@ -1,6 +1,6 @@
 using minuit2.net;
 
-namespace minuit2.UnitTests.TestUtilities;
+namespace ExampleProblems;
 
 internal static class ParameterConfigurationExtensions
 {

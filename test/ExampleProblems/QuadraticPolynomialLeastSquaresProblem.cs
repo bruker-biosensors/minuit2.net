@@ -1,6 +1,6 @@
-namespace minuit2.UnitTests.MinimizationProblems;
+namespace ExampleProblems;
 
-internal class QuadraticPolynomialLeastSquaresProblem : ConfigurableLeastSquaresProblem
+public class QuadraticPolynomialLeastSquaresProblem : ConfigurableLeastSquaresProblem
 {
     protected override Func<double, IReadOnlyList<double>, double> Model { get; } =
         (x, c) => c[0] + c[1] * x + c[2] * x * x;

@@ -1,6 +1,6 @@
-namespace minuit2.UnitTests.MinimizationProblems;
+namespace ExampleProblems;
 
-internal class BellCurveLeastSquaresProblem : ConfigurableLeastSquaresProblem
+public class BellCurveLeastSquaresProblem : ConfigurableLeastSquaresProblem
 {
     private static double Bell(double x, double location, double variance)
     {

@@ -1,9 +1,9 @@
 using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 
-namespace minuit2.UnitTests.TestUtilities;
+namespace ConstrainedNonDeterminism;
 
-internal static class Any
+public static class Any
 {
     // This setup was inspired by https://stackoverflow.com/a/18346427/6667272
     private static readonly IFixture Fixture = new Fixture()

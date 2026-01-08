@@ -1,7 +1,7 @@
 using minuit2.net;
 using minuit2.net.CostFunctions;
 
-namespace minuit2.UnitTests.MinimizationProblems;
+namespace ExampleProblems;
 
 public interface IConfiguredProblem
 {

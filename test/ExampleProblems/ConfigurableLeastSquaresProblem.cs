@@ -1,11 +1,11 @@
+using ConstrainedNonDeterminism;
 using minuit2.net;
 using minuit2.net.CostFunctions;
-using minuit2.UnitTests.TestUtilities;
-using static minuit2.UnitTests.MinimizationProblems.ConfigurableLeastSquaresProblem.ParameterConfigurationsBuilder;
+using static ExampleProblems.ConfigurableLeastSquaresProblem.ParameterConfigurationsBuilder;
 
-namespace minuit2.UnitTests.MinimizationProblems;
+namespace ExampleProblems;
 
-internal abstract class ConfigurableLeastSquaresProblem
+public abstract class ConfigurableLeastSquaresProblem
 {
     protected abstract Func<double, IReadOnlyList<double>, double> Model { get; }
     protected abstract Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; }
@@ -167,7 +167,7 @@ internal abstract class ConfigurableLeastSquaresProblem
         }
     }
 
-    internal IConfiguredProblem Configured(
+    public IConfiguredProblem Configured(
         Func<ParameterConfigurationsBuilder, ParameterConfigurationsWithSpecialParameterBuilder>? customization = null)
     {
         var configBuilder = ParameterConfigurations.WithAnyValuesCloseToOptimumValues(maximumRelativeBias: 0.1);

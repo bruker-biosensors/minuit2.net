@@ -1,4 +1,5 @@
 using AwesomeAssertions;
+using ConstrainedNonDeterminism;
 using minuit2.net;
 using minuit2.UnitTests.TestUtilities;
 using NSubstitute;

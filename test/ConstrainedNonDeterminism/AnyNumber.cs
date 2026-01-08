@@ -1,9 +1,9 @@
 using System.Numerics;
 using AutoFixture;
 
-namespace minuit2.UnitTests.TestUtilities;
+namespace ConstrainedNonDeterminism;
 
-internal class AnyNumber<T>(IFixture fixture) where T : INumber<T>, IMinMaxValue<T>
+public class AnyNumber<T>(IFixture fixture) where T : INumber<T>, IMinMaxValue<T>
 {
     private readonly T[] _ascendingNumbers = fixture.CreateMany<T>(3).Order().ToArray();
     

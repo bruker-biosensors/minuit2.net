@@ -1,6 +1,6 @@
-namespace minuit2.UnitTests.MinimizationProblems;
+namespace ExampleProblems;
 
-internal class ExponentialDecayLeastSquaresProblem : ConfigurableLeastSquaresProblem
+public class ExponentialDecayLeastSquaresProblem : ConfigurableLeastSquaresProblem
 {
     protected override Func<double, IReadOnlyList<double>, double> Model { get; } =
         (x, p) => p[0] * Math.Exp(-p[1] * x) + p[2];

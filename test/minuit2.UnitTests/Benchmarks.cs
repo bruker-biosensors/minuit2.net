@@ -2,9 +2,9 @@ using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Running;
+using ExampleProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
-using minuit2.UnitTests.MinimizationProblems;
 
 namespace minuit2.UnitTests;
 

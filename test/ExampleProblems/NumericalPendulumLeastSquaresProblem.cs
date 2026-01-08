@@ -1,9 +1,9 @@
 using minuit2.net;
 using minuit2.net.CostFunctions;
 
-namespace minuit2.UnitTests.MinimizationProblems;
+namespace ExampleProblems;
 
-internal class NumericalPendulumLeastSquaresProblem : IConfiguredProblem
+public class NumericalPendulumLeastSquaresProblem : IConfiguredProblem
 {
     public NumericalPendulumLeastSquaresProblem()
     {
