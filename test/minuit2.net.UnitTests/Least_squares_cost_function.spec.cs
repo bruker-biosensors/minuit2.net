@@ -1,11 +1,10 @@
 using AwesomeAssertions;
 using ConstrainedNonDeterminism;
-using minuit2.net;
-using minuit2.UnitTests.TestUtilities;
+using minuit2.net.UnitTests.TestUtilities;
 using NSubstitute;
 using static minuit2.net.CostFunctions.CostFunction;
 
-namespace minuit2.UnitTests;
+namespace minuit2.net.UnitTests;
 
 [TestFixture]
 public class A_least_squares_cost_function

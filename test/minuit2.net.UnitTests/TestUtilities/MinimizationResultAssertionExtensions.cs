@@ -3,9 +3,8 @@ using AwesomeAssertions;
 using AwesomeAssertions.Equivalency;
 using AwesomeAssertions.Execution;
 using AwesomeAssertions.Primitives;
-using minuit2.net;
 
-namespace minuit2.UnitTests.TestUtilities;
+namespace minuit2.net.UnitTests.TestUtilities;
 
 internal static class MinimizationResultAssertionExtensions
 {

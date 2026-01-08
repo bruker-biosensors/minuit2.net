@@ -1,7 +1,6 @@
-using minuit2.net;
 using minuit2.net.CostFunctions;
 
-namespace minuit2.UnitTests.TestUtilities;
+namespace minuit2.net.UnitTests.TestUtilities;
 
 internal static class CostFunctionExtensions
 {

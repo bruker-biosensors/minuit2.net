@@ -1,9 +1,8 @@
 using ExampleProblems;
-using minuit2.net;
 using minuit2.net.Minimizers;
-using minuit2.UnitTests.TestUtilities;
+using minuit2.net.UnitTests.TestUtilities;
 
-namespace minuit2.UnitTests;
+namespace minuit2.net.UnitTests;
 
 [TestFixture]
 public class The_combined_minimizer() : Any_gradient_based_minimizer(CombinedMinimizer)

@@ -1,9 +1,8 @@
 using AwesomeAssertions;
 using AwesomeAssertions.Equivalency;
-using minuit2.net;
-using static minuit2.UnitTests.TestUtilities.NumericAssertionExtensions;
+using static minuit2.net.UnitTests.TestUtilities.NumericAssertionExtensions;
 
-namespace minuit2.UnitTests.TestUtilities;
+namespace minuit2.net.UnitTests.TestUtilities;
 
 internal static class EquivalencyOptionsExtensions
 {

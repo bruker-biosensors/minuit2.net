@@ -1,10 +1,9 @@
 using AwesomeAssertions;
 using ConstrainedNonDeterminism;
-using minuit2.net;
 using minuit2.net.CostFunctions;
 using NSubstitute;
 
-namespace minuit2.UnitTests;
+namespace minuit2.net.UnitTests;
 
 [TestFixture]
 public class A_least_squares_cost_function_with_batch_evaluation

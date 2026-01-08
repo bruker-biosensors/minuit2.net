@@ -1,8 +1,7 @@
 using AwesomeAssertions;
 using ConstrainedNonDeterminism;
-using minuit2.net;
 
-namespace minuit2.UnitTests;
+namespace minuit2.net.UnitTests;
 
 [TestFixture]
 public class A_parameter_configuration

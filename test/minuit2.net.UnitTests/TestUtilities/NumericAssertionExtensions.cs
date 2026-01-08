@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using AwesomeAssertions;
 using AwesomeAssertions.Numeric;
 
-namespace minuit2.UnitTests.TestUtilities;
+namespace minuit2.net.UnitTests.TestUtilities;
 
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global", Justification = "Adhere to convention")]
 internal static class NumericAssertionExtensions

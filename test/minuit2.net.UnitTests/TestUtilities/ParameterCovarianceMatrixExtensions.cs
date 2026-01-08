@@ -1,4 +1,4 @@
-namespace minuit2.UnitTests.TestUtilities;
+namespace minuit2.net.UnitTests.TestUtilities;
 
 internal static class ParameterCovarianceMatrixExtensions
 {

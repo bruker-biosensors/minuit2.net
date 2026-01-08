@@ -1,13 +1,12 @@
 using AwesomeAssertions;
 using ConstrainedNonDeterminism;
 using ExampleProblems;
-using minuit2.net;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
-using minuit2.UnitTests.TestUtilities;
+using minuit2.net.UnitTests.TestUtilities;
 using static minuit2.net.ParameterConfiguration;
 
-namespace minuit2.UnitTests;
+namespace minuit2.net.UnitTests;
 
 public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_minimizer(minimizer)
 {
