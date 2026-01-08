@@ -43,7 +43,8 @@ Both packages share the same API and can be used interchangeably depending on yo
 
 - **minuit2.net/**: Main C# library containing the .NET API
 - **minuit2.wrap/**: C++ wrapper layer using SWIG for interoperability
-- **minuit2.UnitTests/**: Comprehensive unit tests for the library
+- **test/minuit2.net.UnitTests/**: Comprehensive unit tests for the .NET library
+- **test/minuit2.net.Benchmarks/**: Benchmarks for the .NET library
 - **Build.targets**: MSBuild targets for automated building of native components
 - **Directory.Build.props**: Defines the flag to enable OpenMP support for multithreaded native builds
 
