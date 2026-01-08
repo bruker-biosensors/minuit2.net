@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using ExampleProblems;
 using minuit2.net.CostFunctions;
@@ -6,7 +5,6 @@ using minuit2.net.Minimizers;
 
 namespace minuit2.net.Benchmarks;
 
-[SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Benchmarks.NET only supports instance methods.")]
 public class Benchmarks
 {
     private readonly IMinimizer _minimizer = Minimizer.Migrad;
