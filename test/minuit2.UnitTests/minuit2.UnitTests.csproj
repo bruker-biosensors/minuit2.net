@@ -33,7 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\minuit2.net\minuit2.net.csproj" />
+      <ProjectReference Include="..\..\minuit2.net\minuit2.net.csproj" />
     </ItemGroup>
 
 </Project>

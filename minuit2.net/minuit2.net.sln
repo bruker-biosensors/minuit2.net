@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minuit2.net", "minuit2.net.csproj", "{8D3093E6-A2D3-4FD7-9A57-AEB9552B8F1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minuit2.UnitTests", "..\minuit2.UnitTests\minuit2.UnitTests.csproj", "{3F218799-CAE2-493B-9CF0-0322AA9B07BE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minuit2.UnitTests", "..\test\minuit2.UnitTests\minuit2.UnitTests.csproj", "{3F218799-CAE2-493B-9CF0-0322AA9B07BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
