@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using ConstrainedNonDeterminism;
 using ExampleProblems;
+using ExampleProblems.MinuitTutorialProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
@@ -21,6 +22,13 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             yield return TestCase(new ExponentialDecayLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(ExponentialDecayLeastSquaresProblem));
             yield return TestCase(new BellCurveLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveLeastSquaresProblem));
             yield return TestCase(new NumericalPendulumLeastSquaresProblem(), nameof(NumericalPendulumLeastSquaresProblem));
+            
+            // challenging problems
+            yield return TestCase(new RosenbrockProblem(false, false, false), "Rosenbrock problem without analytical derivatives");
+            yield return TestCase(new RosenbrockProblem(true, false, false), "Rosenbrock problem with analytical gradient");
+            yield return TestCase(new RosenbrockProblem(true, true, false), "Rosenbrock problem with analytical gradient and hessian");
+            yield return TestCase(new RosenbrockProblem(true, true, true), "Rosenbrock problem with analytical gradient, hessian and hessian diagonal");
+            yield return TestCase(new RosenbrockProblem(true, false, true), "Rosenbrock problem with analytical gradient and hessian diagonal");
             continue;
 
             TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
