@@ -1,5 +1,6 @@
 using minuit2.net;
 using minuit2.net.CostFunctions;
+using static minuit2.net.ParameterConfiguration;
 
 namespace ExampleProblems.MinuitTutorialProblems;
 
@@ -51,6 +52,6 @@ public class RosenbrockProblem(bool hasGradient, bool hasHessian, bool hasHessia
 
     public IReadOnlyCollection<double> OptimumParameterValues { get; } = [1, 1];
 
-    public IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations { get; } =
-        [ParameterConfiguration.Variable("x", -1.2), ParameterConfiguration.Variable("y", 1)];
+    public IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations { get; } = 
+        [Variable("x", -1.2), Variable("y", 1)];
 }
