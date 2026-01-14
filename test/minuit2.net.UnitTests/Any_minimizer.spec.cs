@@ -24,16 +24,21 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             yield return TestCase(new NumericalPendulumLeastSquaresProblem(), nameof(NumericalPendulumLeastSquaresProblem));
             
             // Minuit tutorial problems
-            yield return TestCase(new RosenbrockProblem(false, false, false), "Rosenbrock problem without analytical derivatives");
-            yield return TestCase(new RosenbrockProblem(true, false, false), "Rosenbrock problem with analytical gradient");
-            yield return TestCase(new RosenbrockProblem(true, true, false), "Rosenbrock problem with analytical gradient and hessian");
-            yield return TestCase(new RosenbrockProblem(true, true, true), "Rosenbrock problem with analytical gradient, hessian and hessian diagonal");
-            yield return TestCase(new RosenbrockProblem(true, false, true), "Rosenbrock problem with analytical gradient and hessian diagonal");
-            //yield return TestCase(new WoodProblem(false, false, false), "Wood problem without analytical derivatives");
-            yield return TestCase(new WoodProblem(true, false, false), "Wood problem with analytical gradient");
-            yield return TestCase(new WoodProblem(true, true, false), "Wood problem with analytical gradient and hessian");
-            yield return TestCase(new WoodProblem(true, true, true), "Wood problem with analytical gradient, hessian and hessian diagonal");
-            yield return TestCase(new WoodProblem(true, false, true), "Wood problem with analytical gradient and hessian diagonal");
+            yield return TestCase(new RosenbrockProblem(false, false, false), "Rosenbrock problem without derivatives");
+            yield return TestCase(new RosenbrockProblem(true, false, false), "Rosenbrock problem with gradient");
+            yield return TestCase(new RosenbrockProblem(true, true, false), "Rosenbrock problem with gradient and hessian");
+            yield return TestCase(new RosenbrockProblem(true, true, true), "Rosenbrock problem with gradient, hessian and hessian diagonal");
+            yield return TestCase(new RosenbrockProblem(true, false, true), "Rosenbrock problem with gradient and hessian diagonal");
+            //yield return TestCase(new WoodProblem(false, false, false), "Wood problem without derivatives");
+            yield return TestCase(new WoodProblem(true, false, false), "Wood problem with gradient");
+            yield return TestCase(new WoodProblem(true, true, false), "Wood problem with gradient and hessian");
+            yield return TestCase(new WoodProblem(true, true, true), "Wood problem with gradient, hessian and hessian diagonal");
+            yield return TestCase(new WoodProblem(true, false, true), "Wood problem with gradient and hessian diagonal");
+            yield return TestCase(new PowellProblem(false, false, false), "Powell problem without derivatives");
+            yield return TestCase(new PowellProblem(true, false, false), "Powell problem with gradient");
+            yield return TestCase(new PowellProblem(true, true, false), "Powell problem with gradient and hessian");
+            yield return TestCase(new PowellProblem(true, true, true), "Powell problem with gradient, hessian and hessian diagonal");
+            yield return TestCase(new PowellProblem(true, false, true), "Powell problem with gradient and hessian diagonal");
             continue;
 
             TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
@@ -49,8 +54,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
         
         var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
-        
-        result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues, 0.01);
+
+        result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues,
+            relativeToleranceForNonZeros: 0.01, toleranceForZeros: 0.01);
     }
     
     private static IEnumerable<TestCaseData> InvalidParameterConfigurationTestCases()

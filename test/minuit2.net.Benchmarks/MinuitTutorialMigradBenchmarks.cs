@@ -39,4 +39,12 @@ public class MinuitTutorialMigradBenchmarks
         var problem = new WoodProblem(hasGradient, hasHessian, hasHessianDiagonal);
         return _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
     }
+    
+    [Benchmark]
+    public IMinimizationResult PowellProblem()
+    {
+        var (hasGradient, hasHessian, hasHessianDiagonal) = DerivativeConfiguration;
+        var problem = new PowellProblem(hasGradient, hasHessian, hasHessianDiagonal);
+        return _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
+    }
 }
