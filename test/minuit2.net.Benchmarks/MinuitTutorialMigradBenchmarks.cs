@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using ExampleProblems.MinuitTutorialProblems;
 using minuit2.net.Minimizers;
+using DerivativeConfiguration = (bool hasGradient, bool hasHessian, bool hasHessianDiagonal);
 
 namespace minuit2.net.Benchmarks;
 
@@ -10,13 +11,21 @@ public class MinuitTutorialMigradBenchmarks
 {
     private readonly IMinimizer _minimizer = Minimizer.Migrad;
     
-    [ParamsSource(typeof(AnalyticalDerivativeConfiguration), nameof(AnalyticalDerivativeConfiguration.All))]
-    public AnalyticalDerivativeConfiguration? Config;
+    public static IEnumerable<DerivativeConfiguration> DerivativeConfigurations =>
+    [
+        new(false, false, false),
+        new(true, false, false),
+        new(true, true, false),
+        new(true, true, true)
+    ];
+    
+    [ParamsSource(nameof(DerivativeConfigurations))]
+    public DerivativeConfiguration DerivativeConfiguration;
 
     [Benchmark]
     public IMinimizationResult RosenbrockProblem()
     {
-        var (hasGradient, hasHessian, hasHessianDiagonal) = Config!;
+        var (hasGradient, hasHessian, hasHessianDiagonal) = DerivativeConfiguration;
         var problem = new RosenbrockProblem(hasGradient, hasHessian, hasHessianDiagonal);
         return _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
     }
@@ -24,7 +33,7 @@ public class MinuitTutorialMigradBenchmarks
     [Benchmark]
     public IMinimizationResult WoodProblem()
     {
-        var (hasGradient, hasHessian, hasHessianDiagonal) = Config!;
+        var (hasGradient, hasHessian, hasHessianDiagonal) = DerivativeConfiguration;
         var problem = new WoodProblem(hasGradient, hasHessian, hasHessianDiagonal);
         return _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
     }
