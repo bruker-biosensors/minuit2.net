@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Order;
 using ExampleProblems.MinuitTutorialProblems;
 using minuit2.net.Minimizers;
 using DerivativeConfiguration = (bool hasGradient, bool hasHessian, bool hasHessianDiagonal);
@@ -7,6 +8,7 @@ using DerivativeConfiguration = (bool hasGradient, bool hasHessian, bool hasHess
 namespace minuit2.net.Benchmarks;
 
 [SuppressMessage("ReSharper", "UnassignedField.Global", Justification = "[ParamsSource] property is set at runtime by Benchmark.NET.")]
+[Orderer(SummaryOrderPolicy.Method)]
 public class MinuitTutorialMigradBenchmarks
 {
     private readonly IMinimizer _minimizer = Minimizer.Migrad;
