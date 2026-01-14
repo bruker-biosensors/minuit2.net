@@ -20,4 +20,12 @@ public class MinuitTutorialMigradBenchmarks
         var problem = new RosenbrockProblem(hasGradient, hasHessian, hasHessianDiagonal);
         return _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
     }
+    
+    [Benchmark]
+    public IMinimizationResult WoodProblem()
+    {
+        var (hasGradient, hasHessian, hasHessianDiagonal) = Config!;
+        var problem = new WoodProblem(hasGradient, hasHessian, hasHessianDiagonal);
+        return _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
+    }
 }
