@@ -8,7 +8,7 @@ namespace minuit2.net.UnitTests.TestUtilities;
 internal static class NumericAssertionExtensions
 {
     internal const double DefaultRelativeDoubleTolerance = 0.001;
-    internal const double DefaultMinimumDoubleTolerance = 1E-8;
+    internal const double DefaultDoubleTolerance = 1E-8;
     
     public static AndConstraint<NumericAssertions<double>> BeApproximately(
         this NumericAssertions<double> parent, 
@@ -19,7 +19,7 @@ internal static class NumericAssertionExtensions
         return parent.BeApproximately(
             expectedValue, 
             DefaultRelativeDoubleTolerance, 
-            DefaultMinimumDoubleTolerance, 
+            DefaultDoubleTolerance, 
             because, 
             becauseArgs);
     }

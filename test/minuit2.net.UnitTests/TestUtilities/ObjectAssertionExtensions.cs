@@ -31,7 +31,7 @@ internal static class ObjectAssertionExtensions
             ? parent.BeNull()
             : parent.BeEquivalentTo(
                 expectation,
-                options => options.WithRelativeDoubleTolerance(relativeTolerance),
+                options => options.WithSmartDoubleTolerance(relativeTolerance),
                 because,
                 becauseArgs);
     }

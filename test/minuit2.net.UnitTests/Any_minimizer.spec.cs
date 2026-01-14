@@ -50,7 +50,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
         
-        result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues, relativeTolerance: 0.01);
+        result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues, 0.01);
     }
     
     private static IEnumerable<TestCaseData> InvalidParameterConfigurationTestCases()
@@ -245,7 +245,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         sumResult.Should().MatchExcludingFunctionCalls(componentResult, options => options
             .Excluding(x => x.ParameterCovarianceMatrix)  // is null for non-gradient-based minimizers (Simplex)
-            .WithRelativeDoubleTolerance(0.001));
+            .WithSmartDoubleTolerance(0.001));
     }
 
     [Test]

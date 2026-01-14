@@ -111,7 +111,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
 
         result.Should()
-            .MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001)).And
+            .MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001)).And
             .HaveFewerFunctionCallsThan(referenceResult);
     }
     
@@ -157,7 +157,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
         
         result.Should()
-            .MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001)).And
+            .MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001)).And
             .HaveFewerFunctionCallsThan(referenceResult);
     }
     
@@ -212,7 +212,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var result = _minimizer.Minimize(cost, parameterConfigurations);
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
 
-        result.Should().MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001));
+        result.Should().MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001));
     }
     
     [Test]
@@ -332,7 +332,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations, minimizerConfiguration);
         
         result.Should()
-            .MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001)).And
+            .MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001)).And
             .HaveFewerFunctionCallsThan(referenceResult);
     }
 }

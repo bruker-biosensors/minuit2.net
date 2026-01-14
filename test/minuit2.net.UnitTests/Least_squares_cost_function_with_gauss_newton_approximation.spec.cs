@@ -110,7 +110,7 @@ public class A_least_squares_cost_function_with_gauss_newton_approximation
             }
 
             _validCost.GradientFor(_parameterValues).Should().BeEquivalentTo(expectedGradient,
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
 
         [Test]
@@ -127,7 +127,7 @@ public class A_least_squares_cost_function_with_gauss_newton_approximation
             }
 
             _validCost.HessianFor(_parameterValues).Should().BeEquivalentTo(expectedHessian,
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
 
         [Test]
@@ -142,7 +142,7 @@ public class A_least_squares_cost_function_with_gauss_newton_approximation
             }
 
             _validCost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal,
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
     }
 
@@ -254,7 +254,7 @@ public class A_least_squares_cost_function_with_gauss_newton_approximation
             }
 
             _validCost.GradientFor(_parameterValues).Should().BeEquivalentTo(expectedGradient,
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
 
         [Test]
@@ -271,7 +271,7 @@ public class A_least_squares_cost_function_with_gauss_newton_approximation
             }
 
             _validCost.HessianFor(_parameterValues).Should().BeEquivalentTo(expectedHessian,
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
 
         [Test]
@@ -286,7 +286,7 @@ public class A_least_squares_cost_function_with_gauss_newton_approximation
             }
 
             _validCost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal,
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
     }
 
@@ -385,7 +385,7 @@ public class A_least_squares_cost_function_with_gauss_newton_approximation
             }
 
             _validCost.GradientFor(_parameterValues).Should().BeEquivalentTo(expectedGradient,
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
 
         [Test]
@@ -402,7 +402,7 @@ public class A_least_squares_cost_function_with_gauss_newton_approximation
             }
 
             _validCost.HessianFor(_parameterValues).Should().BeEquivalentTo(expectedHessian,
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
 
         [Test]
@@ -417,7 +417,7 @@ public class A_least_squares_cost_function_with_gauss_newton_approximation
             }
 
             _validCost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal,
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
     }
 }

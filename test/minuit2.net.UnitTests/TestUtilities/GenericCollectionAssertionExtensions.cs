@@ -14,19 +14,27 @@ internal static class GenericCollectionAssertionExtensions
         [StringSyntax("CompositeFormat")] string because = "",
         params object[] becauseArgs)
     {
-        return parent.BeApproximately(expectation, DefaultRelativeDoubleTolerance, because, becauseArgs);
+        return parent.BeApproximately(
+            expectation,
+            DefaultRelativeDoubleTolerance,
+            DefaultDoubleTolerance,
+            DefaultDoubleTolerance,
+            because,
+            becauseArgs);
     }
     
     public static AndConstraint<GenericCollectionAssertions<double>> BeApproximately(
         this GenericCollectionAssertions<double> parent,
         IEnumerable<double> expectation,
-        double relativeTolerance,
+        double relativeToleranceForNonZeros,
+        double? minimumToleranceForNonZeros = null,
+        double? toleranceForZeros = null,
         [StringSyntax("CompositeFormat")] string because = "",
         params object[] becauseArgs)
     {
         return parent.BeEquivalentTo(
             expectation, 
-            options => options.WithRelativeDoubleTolerance(relativeTolerance), 
+            options => options.WithSmartDoubleTolerance(relativeToleranceForNonZeros, minimumToleranceForNonZeros, toleranceForZeros), 
             because, 
             becauseArgs);
     }

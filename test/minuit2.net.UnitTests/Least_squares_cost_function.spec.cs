@@ -106,7 +106,7 @@ public class A_least_squares_cost_function
             }
 
             cost.GradientFor(_parameterValues).Should().BeEquivalentTo(expectedGradient, 
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
         
         [Test]
@@ -126,7 +126,7 @@ public class A_least_squares_cost_function
             }
 
             cost.HessianFor(_parameterValues).Should().BeEquivalentTo(expectedHessian, 
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
         
         [Test]
@@ -144,7 +144,7 @@ public class A_least_squares_cost_function
             }
 
             cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
         
         [Test]
@@ -162,7 +162,7 @@ public class A_least_squares_cost_function
             }
 
             cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
         
         [Test, 
@@ -286,7 +286,7 @@ public class A_least_squares_cost_function
             }
             
             cost.GradientFor(_parameterValues).Should().BeEquivalentTo(expectedGradient, 
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
         
         [Test]
@@ -306,7 +306,7 @@ public class A_least_squares_cost_function
             }
 
             cost.HessianFor(_parameterValues).Should().BeEquivalentTo(expectedHessian, 
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
         
         [Test]
@@ -324,7 +324,7 @@ public class A_least_squares_cost_function
             }
 
             cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
         
         [Test]
@@ -342,7 +342,7 @@ public class A_least_squares_cost_function
             }
 
             cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
         
         [Test, 
@@ -454,7 +454,7 @@ public class A_least_squares_cost_function
             }
             
             cost.GradientFor(_parameterValues).Should().BeEquivalentTo(expectedGradient, 
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
         
         [Test]
@@ -474,7 +474,7 @@ public class A_least_squares_cost_function
             }
 
             cost.HessianFor(_parameterValues).Should().BeEquivalentTo(expectedHessian, 
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
         
         [Test]
@@ -492,7 +492,7 @@ public class A_least_squares_cost_function
             }
 
             cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
         
         [Test]
@@ -510,7 +510,7 @@ public class A_least_squares_cost_function
             }
 
             cost.HessianDiagonalFor(_parameterValues).Should().BeEquivalentTo(expectedHessianDiagonal, 
-                options => options.WithRelativeDoubleTolerance(0.001));
+                options => options.WithSmartDoubleTolerance(0.001));
         }
         
         [Test, 

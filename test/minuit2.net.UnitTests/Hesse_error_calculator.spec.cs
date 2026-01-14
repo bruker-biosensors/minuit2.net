@@ -104,7 +104,7 @@ public class The_hesse_error_calculator
         var referenceResult = HesseErrorCalculator.Refine(analyticalMinimizationResult, referenceCost, strategy);
 
         result.Should()
-            .MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001)).And
+            .MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001)).And
             .HaveFewerFunctionCallsThan(referenceResult);
     }
 }
