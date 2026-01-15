@@ -1,50 +1,40 @@
 using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
+using ExampleProblems;
 using ExampleProblems.MinuitTutorialProblems;
 using minuit2.net.Minimizers;
-using DerivativeConfiguration = (bool hasGradient, bool hasHessian, bool hasHessianDiagonal);
+using static ExampleProblems.DerivativeConfiguration;
 
 namespace minuit2.net.Benchmarks;
 
-[SuppressMessage("ReSharper", "UnassignedField.Global", Justification = "[ParamsSource] property is set at runtime by Benchmark.NET.")]
+[SuppressMessage("ReSharper", "UnassignedField.Global", Justification = "[Params] property is set at runtime by Benchmark.NET.")]
 [Orderer(SummaryOrderPolicy.Method)]
 public class MinuitTutorialMigradBenchmarks
 {
     private readonly IMinimizer _minimizer = Minimizer.Migrad;
     
-    public static IEnumerable<DerivativeConfiguration> DerivativeConfigurations =>
-    [
-        new(false, false, false),
-        new(true, false, false),
-        new(true, true, false),
-        new(true, true, true)
-    ];
-    
-    [ParamsSource(nameof(DerivativeConfigurations))]
+    [Params(WithoutDerivatives, WithGradient, WithGradientAndHessian, WithGradientHessianAndHessianDiagonal)]
     public DerivativeConfiguration DerivativeConfiguration;
 
     [Benchmark]
     public IMinimizationResult RosenbrockProblem()
     {
-        var (hasGradient, hasHessian, hasHessianDiagonal) = DerivativeConfiguration;
-        var problem = new RosenbrockProblem(hasGradient, hasHessian, hasHessianDiagonal);
+        var problem = new RosenbrockProblem(DerivativeConfiguration);
         return _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
     }
     
     [Benchmark]
     public IMinimizationResult WoodProblem()
     {
-        var (hasGradient, hasHessian, hasHessianDiagonal) = DerivativeConfiguration;
-        var problem = new WoodProblem(hasGradient, hasHessian, hasHessianDiagonal);
+        var problem = new WoodProblem(DerivativeConfiguration);
         return _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
     }
     
     [Benchmark]
     public IMinimizationResult PowellProblem()
     {
-        var (hasGradient, hasHessian, hasHessianDiagonal) = DerivativeConfiguration;
-        var problem = new PowellProblem(hasGradient, hasHessian, hasHessianDiagonal);
+        var problem = new PowellProblem(DerivativeConfiguration);
         return _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
     }
 }

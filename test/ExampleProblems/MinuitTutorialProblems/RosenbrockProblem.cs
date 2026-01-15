@@ -1,14 +1,23 @@
-using minuit2.net;
-using minuit2.net.CostFunctions;
-using static minuit2.net.ParameterConfiguration;
-
 namespace ExampleProblems.MinuitTutorialProblems;
 
-public class RosenbrockProblem(bool hasGradient, bool hasHessian, bool hasHessianDiagonal) : IConfiguredProblem
+public class RosenbrockProblem(DerivativeConfiguration derivativeConfiguration)
+    : MinuitTutorialProblem(
+        Parameters,
+        InitialValues,
+        OptimumValues,
+        Function,
+        Gradient,
+        Hessian,
+        HessianDiagonal,
+        derivativeConfiguration)
 {
     // see section 7.1 in https://seal.web.cern.ch/seal/documents/minuit/mntutorial.pdf
 
-    private static readonly Func<IReadOnlyList<double>, double> Value = p =>
+    private static readonly IReadOnlyList<string> Parameters = ["x", "y"];
+    private static readonly IReadOnlyList<double> InitialValues = [-1.2, 1];
+    private static readonly IReadOnlyList<double> OptimumValues = [1, 1];
+
+    private static readonly Func<IReadOnlyList<double>, double> Function = p =>
     {
         var (x, y) = (p[0], p[1]);
         return Math.Pow(1 - x, 2) + 100 * Math.Pow(-Math.Pow(x, 2) + y, 2);
@@ -42,16 +51,4 @@ public class RosenbrockProblem(bool hasGradient, bool hasHessian, bool hasHessia
         const double h11 = 200;
         return [h00, h11];
     };
-
-    public ICostFunction Cost { get; } = new CostFunction(
-        ["x", "y"],
-        Value,
-        hasGradient ? Gradient : null,
-        hasHessian ? Hessian : null,
-        hasHessianDiagonal ? HessianDiagonal : null);
-
-    public IReadOnlyCollection<double> OptimumParameterValues { get; } = [1, 1];
-
-    public IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations { get; } = 
-        [Variable("x", -1.2), Variable("y", 1)];
 }

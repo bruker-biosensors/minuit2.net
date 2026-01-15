@@ -1,14 +1,23 @@
-using minuit2.net;
-using minuit2.net.CostFunctions;
-using static minuit2.net.ParameterConfiguration;
-
 namespace ExampleProblems.MinuitTutorialProblems;
 
-public class PowellProblem(bool hasGradient, bool hasHessian, bool hasHessianDiagonal) : IConfiguredProblem
+public class PowellProblem(DerivativeConfiguration derivativeConfiguration)
+    : MinuitTutorialProblem(
+        Parameters,
+        InitialValues,
+        OptimumValues,
+        Function,
+        Gradient,
+        Hessian,
+        HessianDiagonal,
+        derivativeConfiguration)
 {
     // see section 7.3 in https://seal.web.cern.ch/seal/documents/minuit/mntutorial.pdf
 
-    private static readonly Func<IReadOnlyList<double>, double> Value = p =>
+    private static readonly IReadOnlyList<string> Parameters = ["w", "x", "y", "z"];
+    private static readonly IReadOnlyList<double> InitialValues = [3, -1, 0, 1];
+    private static readonly IReadOnlyList<double> OptimumValues = [0, 0, 0, 0];
+
+    private static readonly Func<IReadOnlyList<double>, double> Function = p =>
     {
         var (w, x, y, z) = (p[0], p[1], p[2], p[3]);
         return Math.Pow(w + 10 * x, 2) + 10 * Math.Pow(w - z, 4) + Math.Pow(x - 2 * y, 4) + 5 * Math.Pow(y - z, 2);
@@ -55,16 +64,4 @@ public class PowellProblem(bool hasGradient, bool hasHessian, bool hasHessianDia
         var h33 = 120 * Math.Pow(w - z, 2) + 10;
         return [h00, h11, h22, h33];
     };
-
-    public ICostFunction Cost { get; } = new CostFunction(
-        ["w", "x", "y", "z"],
-        Value,
-        hasGradient ? Gradient : null,
-        hasHessian ? Hessian : null,
-        hasHessianDiagonal ? HessianDiagonal : null);
-
-    public IReadOnlyCollection<double> OptimumParameterValues { get; } = [0, 0, 0, 0];
-
-    public IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations { get; } =
-        [Variable("w", 3), Variable("x", -1), Variable("y", 0), Variable("z", 1)];
 }

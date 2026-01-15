@@ -5,6 +5,7 @@ using ExampleProblems.MinuitTutorialProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
+using static ExampleProblems.DerivativeConfiguration;
 using static minuit2.net.ParameterConfiguration;
 
 namespace minuit2.net.UnitTests;
@@ -24,21 +25,18 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             yield return TestCase(new NumericalPendulumLeastSquaresProblem(), nameof(NumericalPendulumLeastSquaresProblem));
             
             // Minuit tutorial problems
-            yield return TestCase(new RosenbrockProblem(false, false, false), "Rosenbrock problem without derivatives");
-            yield return TestCase(new RosenbrockProblem(true, false, false), "Rosenbrock problem with gradient");
-            yield return TestCase(new RosenbrockProblem(true, true, false), "Rosenbrock problem with gradient and hessian");
-            yield return TestCase(new RosenbrockProblem(true, true, true), "Rosenbrock problem with gradient, hessian and hessian diagonal");
-            yield return TestCase(new RosenbrockProblem(true, false, true), "Rosenbrock problem with gradient and hessian diagonal");
-            //yield return TestCase(new WoodProblem(false, false, false), "Wood problem without derivatives");
-            yield return TestCase(new WoodProblem(true, false, false), "Wood problem with gradient");
-            yield return TestCase(new WoodProblem(true, true, false), "Wood problem with gradient and hessian");
-            yield return TestCase(new WoodProblem(true, true, true), "Wood problem with gradient, hessian and hessian diagonal");
-            yield return TestCase(new WoodProblem(true, false, true), "Wood problem with gradient and hessian diagonal");
-            yield return TestCase(new PowellProblem(false, false, false), "Powell problem without derivatives");
-            yield return TestCase(new PowellProblem(true, false, false), "Powell problem with gradient");
-            yield return TestCase(new PowellProblem(true, true, false), "Powell problem with gradient and hessian");
-            yield return TestCase(new PowellProblem(true, true, true), "Powell problem with gradient, hessian and hessian diagonal");
-            yield return TestCase(new PowellProblem(true, false, true), "Powell problem with gradient and hessian diagonal");
+            yield return TestCase(new RosenbrockProblem(WithoutDerivatives), $"{nameof(RosenbrockProblem)}.{nameof(WithoutDerivatives)}");
+            yield return TestCase(new RosenbrockProblem(WithGradient), $"{nameof(RosenbrockProblem)}.{nameof(WithGradient)}");
+            yield return TestCase(new RosenbrockProblem(WithGradientAndHessian), $"{nameof(RosenbrockProblem)}.{nameof(WithGradientAndHessian)}");
+            yield return TestCase(new RosenbrockProblem(WithGradientHessianAndHessianDiagonal), $"{nameof(RosenbrockProblem)}.{nameof(WithGradientHessianAndHessianDiagonal)}");
+            //yield return TestCase(new WoodProblem(WithoutDerivatives), $"{nameof(WoodProblem)}.{nameof(WithoutDerivatives)}");
+            yield return TestCase(new WoodProblem(WithGradient), $"{nameof(WoodProblem)}.{nameof(WithGradient)}");
+            yield return TestCase(new WoodProblem(WithGradientAndHessian), $"{nameof(WoodProblem)}.{nameof(WithGradientAndHessian)}");
+            yield return TestCase(new WoodProblem(WithGradientHessianAndHessianDiagonal), $"{nameof(WoodProblem)}.{nameof(WithGradientHessianAndHessianDiagonal)}");
+            yield return TestCase(new PowellProblem(WithoutDerivatives), $"{nameof(PowellProblem)}.{nameof(WithoutDerivatives)}");
+            yield return TestCase(new PowellProblem(WithGradient), $"{nameof(PowellProblem)}.{nameof(WithGradient)}");
+            yield return TestCase(new PowellProblem(WithGradientAndHessian), $"{nameof(PowellProblem)}.{nameof(WithGradientAndHessian)}");
+            yield return TestCase(new PowellProblem(WithGradientHessianAndHessianDiagonal), $"{nameof(PowellProblem)}.{nameof(WithGradientHessianAndHessianDiagonal)}");
             continue;
 
             TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
