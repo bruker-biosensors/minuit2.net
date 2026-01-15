@@ -61,9 +61,10 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
             yield return TestCase(new ThurberProblem(derivativeConfiguration), nameof(ThurberProblem));
             yield return TestCase(new Rat43Problem(derivativeConfiguration), nameof(Rat43Problem));
 
-            if (strategy > Strategy.Rigorous)
-                // This problem fails for some configurations for less-rigorous strategies
+            if (strategy == Strategy.VeryRigorous)
                 yield return TestCase(new Mgh09Problem(derivativeConfiguration), nameof(Mgh09Problem));
+            if (strategy != Strategy.Rigorous)
+                yield return TestCase(new BoxBodProblem(derivativeConfiguration), nameof(BoxBodProblem));
             
             continue;
 

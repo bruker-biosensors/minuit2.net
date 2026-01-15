@@ -25,6 +25,10 @@ public class NistProblemsMigradBenchmarks
     [Benchmark]
     public IMinimizationResult ThurberProblem() =>
         new ThurberProblem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
+    
+    [Benchmark]
+    public IMinimizationResult BoxBodProblem() =>
+        new BoxBodProblem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
 
     [Benchmark]
     public IMinimizationResult Rat43Problem() => 
