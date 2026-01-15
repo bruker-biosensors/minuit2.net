@@ -5,7 +5,6 @@ using ExampleProblems.MinuitTutorialProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
-using static ExampleProblems.DerivativeConfiguration;
 using static minuit2.net.ParameterConfiguration;
 
 namespace minuit2.net.UnitTests;
@@ -23,20 +22,6 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             yield return TestCase(new ExponentialDecayLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(ExponentialDecayLeastSquaresProblem));
             yield return TestCase(new BellCurveLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveLeastSquaresProblem));
             yield return TestCase(new NumericalPendulumLeastSquaresProblem(), nameof(NumericalPendulumLeastSquaresProblem));
-            
-            // Minuit tutorial problems
-            yield return TestCase(new RosenbrockProblem(WithoutDerivatives), $"{nameof(RosenbrockProblem)}.{nameof(WithoutDerivatives)}");
-            yield return TestCase(new RosenbrockProblem(WithGradient), $"{nameof(RosenbrockProblem)}.{nameof(WithGradient)}");
-            yield return TestCase(new RosenbrockProblem(WithGradientAndHessian), $"{nameof(RosenbrockProblem)}.{nameof(WithGradientAndHessian)}");
-            yield return TestCase(new RosenbrockProblem(WithGradientHessianAndHessianDiagonal), $"{nameof(RosenbrockProblem)}.{nameof(WithGradientHessianAndHessianDiagonal)}");
-            //yield return TestCase(new WoodProblem(WithoutDerivatives), $"{nameof(WoodProblem)}.{nameof(WithoutDerivatives)}");
-            yield return TestCase(new WoodProblem(WithGradient), $"{nameof(WoodProblem)}.{nameof(WithGradient)}");
-            yield return TestCase(new WoodProblem(WithGradientAndHessian), $"{nameof(WoodProblem)}.{nameof(WithGradientAndHessian)}");
-            yield return TestCase(new WoodProblem(WithGradientHessianAndHessianDiagonal), $"{nameof(WoodProblem)}.{nameof(WithGradientHessianAndHessianDiagonal)}");
-            yield return TestCase(new PowellProblem(WithoutDerivatives), $"{nameof(PowellProblem)}.{nameof(WithoutDerivatives)}");
-            yield return TestCase(new PowellProblem(WithGradient), $"{nameof(PowellProblem)}.{nameof(WithGradient)}");
-            yield return TestCase(new PowellProblem(WithGradientAndHessian), $"{nameof(PowellProblem)}.{nameof(WithGradientAndHessian)}");
-            yield return TestCase(new PowellProblem(WithGradientHessianAndHessianDiagonal), $"{nameof(PowellProblem)}.{nameof(WithGradientHessianAndHessianDiagonal)}");
             continue;
 
             TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
@@ -44,7 +29,27 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         }
     }
 
+    protected static IEnumerable<TestCaseData> MinuitTutorialProblems()
+    {
+        foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
+        foreach (DerivativeConfiguration derivativeConfiguration in Enum.GetValues(typeof(DerivativeConfiguration)))
+        {
+            yield return TestCase(new RosenbrockProblem(derivativeConfiguration), nameof(RosenbrockProblem));
+            yield return TestCase(new PowellProblem(derivativeConfiguration), nameof(PowellProblem));
+
+            if (derivativeConfiguration != DerivativeConfiguration.WithoutDerivatives)
+                // The gradient-based minimizers fail for this problem when no analytical derivatives are available.
+                yield return TestCase(new WoodProblem(derivativeConfiguration), nameof(WoodProblem));
+            
+            continue;
+
+            TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
+                new TestCaseData(problem, strategy).SetArgDisplayNames(problemName, derivativeConfiguration.ToString(), strategy.ToString());
+        }
+    }
+
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
+    [TestCaseSource(nameof(MinuitTutorialProblems))]
     public void when_minimizing_a_well_posed_problem_finds_the_optimum_parameter_values(
         IConfiguredProblem problem,
         Strategy strategy)

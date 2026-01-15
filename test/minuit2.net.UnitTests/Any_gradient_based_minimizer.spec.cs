@@ -53,6 +53,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     }
     
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
+    [TestCaseSource(nameof(MinuitTutorialProblems))]
     [Description("This test should apply to all minimizers. It was put here to exclude the Simplex minimizer that " +
                  "occasionally reports non-convergence — even at the true minimum — due to its unreliable convergence " +
                  "criteria (see the Minuit docs: '...it would not even know if it did converge').")]
@@ -71,6 +72,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     }
     
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
+    [TestCaseSource(nameof(MinuitTutorialProblems))]
     public void when_minimizing_a_well_posed_problem_yields_parameter_values_that_agree_with_the_optimum_values_within_3_sigma_tolerance(
         IConfiguredProblem problem,
         Strategy strategy)
