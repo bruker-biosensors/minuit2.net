@@ -12,29 +12,24 @@ namespace minuit2.net.Benchmarks;
 [Orderer(SummaryOrderPolicy.Method)]
 public class MinuitTutorialMigradBenchmarks
 {
-    private readonly IMinimizer _minimizer = Minimizer.Migrad;
-    
     [Params(WithoutDerivatives, WithGradient, WithGradientAndHessian, WithGradientHessianAndHessianDiagonal)]
     public DerivativeConfiguration DerivativeConfiguration;
 
-    [Benchmark]
-    public IMinimizationResult RosenbrockProblem()
+    [Params(Strategy.Fast, Strategy.Balanced, Strategy.Rigorous, Strategy.VeryRigorous)]
+    public Strategy Strategy;
+
+    private static IMinimizationResult Minimize(IConfiguredProblem problem, Strategy strategy)
     {
-        var problem = new RosenbrockProblem(DerivativeConfiguration);
-        return _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
+        var minimizerConfiguration = new MinimizerConfiguration(strategy);
+        return Minimizer.Migrad.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
     }
-    
+
     [Benchmark]
-    public IMinimizationResult WoodProblem()
-    {
-        var problem = new WoodProblem(DerivativeConfiguration);
-        return _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
-    }
-    
+    public IMinimizationResult RosenbrockProblem() => Minimize(new RosenbrockProblem(DerivativeConfiguration), Strategy);
+
     [Benchmark]
-    public IMinimizationResult PowellProblem()
-    {
-        var problem = new PowellProblem(DerivativeConfiguration);
-        return _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
-    }
+    public IMinimizationResult WoodProblem() => Minimize(new WoodProblem(DerivativeConfiguration), Strategy);
+
+    [Benchmark]
+    public IMinimizationResult PowellProblem() => Minimize(new PowellProblem(DerivativeConfiguration), Strategy);
 }
