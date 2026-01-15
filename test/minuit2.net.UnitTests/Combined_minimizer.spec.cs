@@ -10,8 +10,6 @@ public class The_combined_minimizer() : Any_gradient_based_minimizer(CombinedMin
     private static readonly IMinimizer CombinedMinimizer = Minimizer.Combined;
 
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
-    [TestCaseSource(nameof(MinuitTutorialProblems))]
-    [TestCaseSource(nameof(DifficultNistProblems))]
     [Description("The combined minimizer leverages Migrad, and only temporarily switches to the Simplex method when " +
                  "Migrad runs into problems (see Minuit documentation). Therefore, for well-posed problems, where " +
                  "Migrad shouldn't face issues, there should be no difference between results obtained by Migrad and " +
