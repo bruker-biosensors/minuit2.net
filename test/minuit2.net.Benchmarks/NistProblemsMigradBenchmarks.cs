@@ -31,6 +31,10 @@ public class NistProblemsMigradBenchmarks
         new BoxBodProblem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
 
     [Benchmark]
+    public IMinimizationResult Rat42Problem() => 
+        new Rat42Problem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
+    
+    [Benchmark]
     public IMinimizationResult Rat43Problem() => 
         new Rat43Problem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
 }

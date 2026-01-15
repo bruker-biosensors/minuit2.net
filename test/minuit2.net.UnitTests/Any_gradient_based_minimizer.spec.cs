@@ -59,6 +59,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         foreach (DerivativeConfiguration derivativeConfiguration in Enum.GetValues(typeof(DerivativeConfiguration)))
         {
             yield return TestCase(new ThurberProblem(derivativeConfiguration), nameof(ThurberProblem));
+            yield return TestCase(new Rat42Problem(derivativeConfiguration), nameof(Rat42Problem));
             yield return TestCase(new Rat43Problem(derivativeConfiguration), nameof(Rat43Problem));
 
             if (strategy == Strategy.VeryRigorous)
