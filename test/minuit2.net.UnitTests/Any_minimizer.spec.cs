@@ -61,6 +61,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             yield return TestCase(new BoxBodProblem(derivativeConfiguration), nameof(BoxBodProblem));
             yield return TestCase(new Rat42Problem(derivativeConfiguration), nameof(Rat42Problem));
             yield return TestCase(new Rat43Problem(derivativeConfiguration), nameof(Rat43Problem));
+            yield return TestCase(new Bennett5Problem(derivativeConfiguration), nameof(Bennett5Problem));
             continue;
 
             TestCaseData TestCase(IConfiguredProblem problem, string problemName) => 

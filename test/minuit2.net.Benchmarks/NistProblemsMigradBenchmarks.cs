@@ -37,4 +37,8 @@ public class NistProblemsMigradBenchmarks
     [Benchmark]
     public IMinimizationResult Rat43Problem() => 
         new Rat43Problem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
+    
+    [Benchmark]
+    public IMinimizationResult Bennett5Problem() => 
+        new Bennett5Problem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
 }

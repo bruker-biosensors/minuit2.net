@@ -1,4 +1,12 @@
 ﻿[
+  Bennett5Problem.WithGradient (Balanced),
+  Bennett5Problem.WithGradient (Fast),
+  Bennett5Problem.WithGradient (Rigorous),
+  Bennett5Problem.WithGradient (VeryRigorous),
+  Bennett5Problem.WithoutDerivatives (Balanced),
+  Bennett5Problem.WithoutDerivatives (Fast),
+  Bennett5Problem.WithoutDerivatives (Rigorous),
+  Bennett5Problem.WithoutDerivatives (VeryRigorous),
   BoxBodProblem.WithGradient (Rigorous),
   BoxBodProblem.WithGradientAndHessian (Rigorous),
   BoxBodProblem.WithGradientHessianAndHessianDiagonal (Rigorous),
