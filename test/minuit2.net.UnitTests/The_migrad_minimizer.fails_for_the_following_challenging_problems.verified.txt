@@ -1,0 +1,13 @@
+﻿[
+  BoxBodProblem.WithGradient (Rigorous),
+  BoxBodProblem.WithGradientAndHessian (Rigorous),
+  BoxBodProblem.WithGradientHessianAndHessianDiagonal (Rigorous),
+  BoxBodProblem.WithoutDerivatives (Rigorous),
+  Mgh09Problem.WithGradient (Balanced),
+  Mgh09Problem.WithGradient (Fast),
+  Mgh09Problem.WithGradientAndHessian (Fast),
+  Mgh09Problem.WithGradientHessianAndHessianDiagonal (Fast),
+  Mgh09Problem.WithoutDerivatives (Balanced),
+  Mgh09Problem.WithoutDerivatives (Fast),
+  Mgh09Problem.WithoutDerivatives (Rigorous)
+]

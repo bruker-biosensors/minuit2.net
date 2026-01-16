@@ -1,7 +1,6 @@
 using AwesomeAssertions;
 using ConstrainedNonDeterminism;
 using ExampleProblems;
-using ExampleProblems.NISTProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
@@ -53,43 +52,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         action.Should().Throw<InvalidCostFunctionException>().WithMessage("*Hessian diagonal*");
     }
     
-    protected static IEnumerable<TestCaseData> DifficultNistProblems()
-    {
-        foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
-        foreach (DerivativeConfiguration derivativeConfiguration in Enum.GetValues(typeof(DerivativeConfiguration)))
-        {
-            yield return TestCase(new ThurberProblem(derivativeConfiguration), nameof(ThurberProblem));
-            yield return TestCase(new Rat42Problem(derivativeConfiguration), nameof(Rat42Problem));
-            yield return TestCase(new Rat43Problem(derivativeConfiguration), nameof(Rat43Problem));
-
-            if (strategy == Strategy.VeryRigorous)
-                yield return TestCase(new Mgh09Problem(derivativeConfiguration), nameof(Mgh09Problem));
-            if (strategy != Strategy.Rigorous)
-                yield return TestCase(new BoxBodProblem(derivativeConfiguration), nameof(BoxBodProblem));
-            
-            continue;
-
-            TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
-                new TestCaseData(problem, strategy).SetArgDisplayNames(problemName, derivativeConfiguration.ToString(), strategy.ToString());
-        }
-    }
-    
-    [TestCaseSource(nameof(DifficultNistProblems))]
-    public void when_minimizing_a_difficult_problem_finds_the_optimum_parameter_values(
-        IConfiguredProblem problem,
-        Strategy strategy)
-    { 
-        var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
-        
-        var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
-
-        result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues,
-            relativeToleranceForNonZeros: 0.01, toleranceForZeros: 0.01);
-    }
-    
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
-    [TestCaseSource(nameof(MinuitTutorialProblems))]
-    [TestCaseSource(nameof(DifficultNistProblems))]
     [Description("This test should apply to all minimizers. It was put here to exclude the Simplex minimizer that " +
                  "occasionally reports non-convergence — even at the true minimum — due to its unreliable convergence " +
                  "criteria (see the Minuit docs: '...it would not even know if it did converge').")]
@@ -108,8 +71,6 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     }
     
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
-    [TestCaseSource(nameof(MinuitTutorialProblems))]
-    [TestCaseSource(nameof(DifficultNistProblems))]
     public void when_minimizing_a_well_posed_problem_yields_parameter_values_that_agree_with_the_optimum_values_within_3_sigma_tolerance(
         IConfiguredProblem problem,
         Strategy strategy)

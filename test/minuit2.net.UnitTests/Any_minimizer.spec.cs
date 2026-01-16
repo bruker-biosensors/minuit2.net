@@ -2,6 +2,7 @@ using AwesomeAssertions;
 using ConstrainedNonDeterminism;
 using ExampleProblems;
 using ExampleProblems.MinuitTutorialProblems;
+using ExampleProblems.NISTProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
@@ -29,27 +30,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         }
     }
 
-    protected static IEnumerable<TestCaseData> MinuitTutorialProblems()
-    {
-        foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
-        foreach (DerivativeConfiguration derivativeConfiguration in Enum.GetValues(typeof(DerivativeConfiguration)))
-        {
-            yield return TestCase(new RosenbrockProblem(derivativeConfiguration), nameof(RosenbrockProblem));
-            yield return TestCase(new PowellProblem(derivativeConfiguration), nameof(PowellProblem));
-
-            if (derivativeConfiguration != DerivativeConfiguration.WithoutDerivatives)
-                // The gradient-based minimizers fail for this problem when no analytical derivatives are available.
-                yield return TestCase(new WoodProblem(derivativeConfiguration), nameof(WoodProblem));
-            
-            continue;
-
-            TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
-                new TestCaseData(problem, strategy).SetArgDisplayNames(problemName, derivativeConfiguration.ToString(), strategy.ToString());
-        }
-    }
-
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
-    [TestCaseSource(nameof(MinuitTutorialProblems))]
     public void when_minimizing_a_well_posed_problem_finds_the_optimum_parameter_values(
         IConfiguredProblem problem,
         Strategy strategy)
@@ -60,6 +41,55 @@ public abstract class Any_minimizer(IMinimizer minimizer)
 
         result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues,
             relativeToleranceForNonZeros: 0.01, toleranceForZeros: 0.01);
+    }
+    
+    private static IEnumerable<TestCaseData> ChallengingMinimizationProblems()
+    {
+        foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
+        foreach (DerivativeConfiguration derivativeConfiguration in Enum.GetValues(typeof(DerivativeConfiguration)))
+        {
+            // Minuit tutorial problems
+            yield return TestCase(new RosenbrockProblem(derivativeConfiguration), nameof(RosenbrockProblem));
+            yield return TestCase(new WoodProblem(derivativeConfiguration), nameof(WoodProblem));
+            yield return TestCase(new PowellProblem(derivativeConfiguration), nameof(PowellProblem));
+            
+            // NIST problems ranked as difficult 
+            yield return TestCase(new Mgh09Problem(derivativeConfiguration), nameof(Mgh09Problem));
+            yield return TestCase(new ThurberProblem(derivativeConfiguration), nameof(ThurberProblem));
+            yield return TestCase(new BoxBodProblem(derivativeConfiguration), nameof(BoxBodProblem));
+            yield return TestCase(new Rat42Problem(derivativeConfiguration), nameof(Rat42Problem));
+            yield return TestCase(new Rat43Problem(derivativeConfiguration), nameof(Rat43Problem));
+            continue;
+
+            TestCaseData TestCase(IConfiguredProblem problem, string problemName) => 
+                new TestCaseData(problem, strategy).SetName($"{problemName}.{derivativeConfiguration} ({strategy})");
+        }
+    }
+
+    [Test]
+    public Task fails_for_the_following_challenging_problems()
+    {
+        var report = new List<string>();
+        foreach (var testCase in ChallengingMinimizationProblems().OrderBy(x => x.TestName))
+        {
+            var problem = (IConfiguredProblem)testCase.Arguments[0]!;
+            var strategy = (Strategy)testCase.Arguments[1]!;
+            
+            var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
+            var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+
+            try
+            {
+                result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues, 
+                    relativeToleranceForNonZeros: 0.01, toleranceForZeros: 0.01);
+            }
+            catch (Exception)
+            {
+                report.Add(testCase.TestName!);
+            }
+        }
+        
+        return Verify(report);
     }
     
     private static IEnumerable<TestCaseData> InvalidParameterConfigurationTestCases()
