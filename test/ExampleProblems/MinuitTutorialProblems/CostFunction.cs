@@ -5,21 +5,21 @@ namespace ExampleProblems.MinuitTutorialProblems;
 
 internal class CostFunction(
     IReadOnlyList<string> parameters,
-    Func<IReadOnlyList<double>, double> valueFunction, 
-    Func<IReadOnlyList<double>, IReadOnlyList<double>>? gradientFunction = null, 
-    Func<IReadOnlyList<double>, IReadOnlyList<double>>? hessianFunction = null, 
-    Func<IReadOnlyList<double>, IReadOnlyList<double>>? hessianDiagonalFunction = null, 
+    Func<IReadOnlyList<double>, double> value, 
+    Func<IReadOnlyList<double>, IReadOnlyList<double>>? gradient = null, 
+    Func<IReadOnlyList<double>, IReadOnlyList<double>>? hessian = null, 
+    Func<IReadOnlyList<double>, IReadOnlyList<double>>? hessianDiagonal = null, 
     double errorDefinition = 1) 
     : ICostFunction
 {
     public IReadOnlyList<string> Parameters { get; } = parameters;
-    public bool HasGradient { get; } = gradientFunction != null;
-    public bool HasHessian { get; } = hessianFunction != null;
-    public bool HasHessianDiagonal { get; } = hessianDiagonalFunction != null;
+    public bool HasGradient { get; } = gradient != null;
+    public bool HasHessian { get; } = hessian != null;
+    public bool HasHessianDiagonal { get; } = hessianDiagonal != null;
     public double ErrorDefinition { get; } = errorDefinition;
-    public double ValueFor(IReadOnlyList<double> parameterValues) => valueFunction(parameterValues);
-    public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues) => gradientFunction!(parameterValues);
-    public IReadOnlyList<double> HessianFor(IReadOnlyList<double> parameterValues) => hessianFunction!(parameterValues);
-    public IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues) => hessianDiagonalFunction!(parameterValues);
+    public double ValueFor(IReadOnlyList<double> parameterValues) => value(parameterValues);
+    public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues) => gradient!(parameterValues);
+    public IReadOnlyList<double> HessianFor(IReadOnlyList<double> parameterValues) => hessian!(parameterValues);
+    public IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues) => hessianDiagonal!(parameterValues);
     public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) => this;
 }
