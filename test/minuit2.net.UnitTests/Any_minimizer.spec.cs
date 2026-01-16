@@ -25,7 +25,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             continue;
 
             TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
-                new TestCaseData(problem, strategy).SetArgDisplayNames(problemName, strategy.ToString());
+                new TestCaseData(problem, strategy).SetName($"{problemName} ({strategy})");
         }
     }
 
