@@ -52,6 +52,8 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             yield return TestCase(new RosenbrockProblem(derivativeConfiguration), nameof(RosenbrockProblem));
             yield return TestCase(new WoodProblem(derivativeConfiguration), nameof(WoodProblem));
             yield return TestCase(new PowellProblem(derivativeConfiguration), nameof(PowellProblem));
+            yield return TestCase(new FletcherPowellProblem(derivativeConfiguration), nameof(FletcherPowellProblem));
+            yield return TestCase(new GoldsteinPriceProblem(derivativeConfiguration), nameof(GoldsteinPriceProblem));
             
             // NIST problems ranked as difficult 
             yield return TestCase(new Mgh09Problem(derivativeConfiguration), nameof(Mgh09Problem));

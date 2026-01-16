@@ -22,10 +22,18 @@ public class MinuitTutorialMigradBenchmarks
         new RosenbrockProblem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
 
     [Benchmark]
-    public IMinimizationResult WoodProblem() => 
+    public IMinimizationResult WoodProblem() =>
         new WoodProblem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
 
     [Benchmark]
     public IMinimizationResult PowellProblem() =>
         new PowellProblem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
+
+    [Benchmark]
+    public IMinimizationResult FletcherPowellProblem() =>
+        new FletcherPowellProblem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
+
+    [Benchmark]
+    public IMinimizationResult GoldsteinPriceProblem() =>
+        new GoldsteinPriceProblem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
 }
