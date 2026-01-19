@@ -1,7 +1,7 @@
 using minuit2.net;
 using minuit2.net.CostFunctions;
 
-namespace ExampleProblems;
+namespace ExampleProblems.CustomProblems;
 
 public class NumericalPendulumLeastSquaresProblem : IConfiguredProblem
 {

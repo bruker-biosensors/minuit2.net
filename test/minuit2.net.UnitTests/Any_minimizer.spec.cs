@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using ConstrainedNonDeterminism;
 using ExampleProblems;
+using ExampleProblems.CustomProblems;
 using ExampleProblems.MinuitTutorialProblems;
 using ExampleProblems.NISTProblems;
 using minuit2.net.CostFunctions;

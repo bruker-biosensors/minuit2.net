@@ -1,4 +1,4 @@
-namespace ExampleProblems;
+namespace ExampleProblems.CustomProblems;
 
 public class BellCurveLeastSquaresProblem : ConfigurableLeastSquaresProblem
 {

@@ -1,6 +1,6 @@
 using AwesomeAssertions;
 using ConstrainedNonDeterminism;
-using ExampleProblems;
+using ExampleProblems.CustomProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;

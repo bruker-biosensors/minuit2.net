@@ -1,19 +1,19 @@
-namespace ExampleProblems;
+namespace ExampleProblems.CustomProblems;
 
-public class CubicPolynomialLeastSquaresProblem : ConfigurableLeastSquaresProblem
+public class QuadraticPolynomialLeastSquaresProblem : ConfigurableLeastSquaresProblem
 {
     protected override Func<double, IReadOnlyList<double>, double> Model { get; } =
-        (x, c) => c[0] + c[1] * x + c[2] * x * x + c[3] * x * x * x;
-    
+        (x, c) => c[0] + c[1] * x + c[2] * x * x;
+
     protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient { get; } =
-        (x, _) => [1, x, x * x, x * x * x];
+        (x, _) => [1, x, x * x];
 
     protected override Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessian { get; } =
-        (_, _) => Enumerable.Repeat(0d, 4 * 4).ToArray();
-
-    protected override IReadOnlyList<string> ParameterNames { get; } = ["c0", "c1", "c2", "c3"];
+        (_, _) => Enumerable.Repeat(0d, 3 * 3).ToArray();
     
-    // The following values are generated using the above model with coefficients c0 = 10, c1 = -2, c2 = 1, c3 = -0.1,
+    protected override IReadOnlyList<string> ParameterNames { get; } = ["c0", "c1", "c2"];
+    
+    // The following values are generated using the above model with coefficients c0 = 10, c1 = -5, c2 = 0.5,
     // adding random normal noise with a standard deviation of 0.1
     protected override IReadOnlyList<double> XValues { get; } =
     [
@@ -22,15 +22,15 @@ public class CubicPolynomialLeastSquaresProblem : ConfigurableLeastSquaresProble
     
     protected override IReadOnlyList<double> YValues { get; } = 
     [
-        9.9, 9.2, 9.03, 8.93, 9.29, 9.75, 10.24, 11.02, 11.57, 12.11, 12.51, 12.46, 12.52, 11.72, 10.8, 9.08, 6.95,
-        3.77, 0.07, -4.45
+        9.9, 7.59, 5.63, 3.64, 2.09, 0.68, -0.56, -1.32, -2.03, -2.41, -2.49, -2.53, -1.88, -1.44, -0.4, 0.64, 2.15,
+        3.56, 5.47, 7.66
     ];
 
     protected override double YError => 0.1; // standard deviation of noise used to generate the above y-values
     
     // Since the model is linear in its coefficients, the optimal parameter values are fully determined by the
     // closed-form solution of a linear regression (here, rounded to 2-digit precision)
-    protected override IReadOnlyList<double> OptimumParameterValues { get; } = [9.97, -1.96, 0.99, -0.1];
-
-    protected override IReadOnlyList<double> DefaultInitialParameterValues { get; } = [10.75, -1.97, 1.13, -0.11];
+    protected override IReadOnlyList<double> OptimumParameterValues { get; } = [10, -5, 0.5];
+    
+    protected override IReadOnlyList<double> DefaultInitialParameterValues { get; } = [10.9, -6.06, 0.58];
 }

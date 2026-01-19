@@ -1,5 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using ExampleProblems;
+using ExampleProblems.CustomProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 
