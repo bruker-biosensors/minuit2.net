@@ -18,10 +18,10 @@ public abstract class MinuitTutorialProblem(
 {
     public ICostFunction Cost { get; } = derivativeConfiguration switch
     {
-        WithoutDerivatives => new CostFunction(parameters, function),
-        WithGradient => new CostFunction(parameters, function, gradient),
-        WithGradientAndHessian => new CostFunction(parameters, function, gradient, hessian),
-        WithGradientHessianAndHessianDiagonal => new CostFunction(parameters, function, gradient, hessian, hessianDiagonal),
+        WithoutDerivatives => new DirectCostFunction(parameters, function),
+        WithGradient => new DirectCostFunction(parameters, function, gradient),
+        WithGradientAndHessian => new DirectCostFunction(parameters, function, gradient, hessian),
+        WithGradientHessianAndHessianDiagonal => new DirectCostFunction(parameters, function, gradient, hessian, hessianDiagonal),
         _ => throw new ArgumentOutOfRangeException(nameof(derivativeConfiguration), derivativeConfiguration, null)
     };
 

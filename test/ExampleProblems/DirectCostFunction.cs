@@ -1,9 +1,9 @@
 using minuit2.net;
 using minuit2.net.CostFunctions;
 
-namespace ExampleProblems.MinuitTutorialProblems;
+namespace ExampleProblems;
 
-internal class CostFunction(
+internal class DirectCostFunction(
     IReadOnlyList<string> parameters,
     Func<IReadOnlyList<double>, double> value, 
     Func<IReadOnlyList<double>, IReadOnlyList<double>>? gradient = null, 
