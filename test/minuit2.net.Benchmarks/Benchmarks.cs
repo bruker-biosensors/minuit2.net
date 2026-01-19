@@ -12,10 +12,10 @@ public class Benchmarks
 
     // By default, problem1 shares all of its parameters with problem2 (since they have the same names);
     // All other parameters are unique, meaning non-shared, unless renamed
-    private readonly ConfigurableLeastSquaresProblem _problem1 = new QuadraticPolynomialLeastSquaresProblem();
-    private readonly ConfigurableLeastSquaresProblem _problem2 = new CubicPolynomialLeastSquaresProblem();
-    private readonly ConfigurableLeastSquaresProblem _problem3 = new ExponentialDecayLeastSquaresProblem();
-    private readonly ConfigurableLeastSquaresProblem _problem4 = new BellCurveLeastSquaresProblem();
+    private readonly ConfigurableLeastSquaresProblem _problem1 = new QuadraticPolynomialProblem();
+    private readonly ConfigurableLeastSquaresProblem _problem2 = new CubicPolynomialProblem();
+    private readonly ConfigurableLeastSquaresProblem _problem3 = new ExponentialDecayProblem();
+    private readonly ConfigurableLeastSquaresProblem _problem4 = new BellCurveProblem();
 
     [Benchmark]
     public IMinimizationResult BasicMinimizationProblem()

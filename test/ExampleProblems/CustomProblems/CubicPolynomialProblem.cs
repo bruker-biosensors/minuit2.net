@@ -1,6 +1,6 @@
 namespace ExampleProblems.CustomProblems;
 
-public class CubicPolynomialLeastSquaresProblem : ConfigurableLeastSquaresProblem
+public class CubicPolynomialProblem : ConfigurableLeastSquaresProblem
 {
     protected override Func<double, IReadOnlyList<double>, double> Model { get; } =
         (x, c) => c[0] + c[1] * x + c[2] * x * x + c[3] * x * x * x;

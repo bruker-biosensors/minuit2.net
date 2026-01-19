@@ -27,7 +27,7 @@ public class The_hesse_error_calculator
 
         public When_refining_a_minimization_result_for_a_related_cost_function()
         {
-            var problem = new QuadraticPolynomialLeastSquaresProblem();
+            var problem = new QuadraticPolynomialProblem();
             _costFunction = problem.Cost.WithGradient().Build();
             var parameterConfigurations = problem.ParameterConfigurations.Build();
             _minimizationResult = Minimizer.Migrad.Minimize(_costFunction, parameterConfigurations);
@@ -92,7 +92,7 @@ public class The_hesse_error_calculator
         [Values] bool hasReferenceGradient,
         [Values] Strategy strategy)
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var problem = new QuadraticPolynomialProblem();
         var cost = problem.Cost.WithErrorDefinition(errorDefinition).WithHessian().Build();
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         // minimization result for the (fully) analytical cost function  

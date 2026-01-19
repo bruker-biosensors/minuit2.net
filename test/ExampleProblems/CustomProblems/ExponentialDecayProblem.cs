@@ -1,6 +1,6 @@
 namespace ExampleProblems.CustomProblems;
 
-public class ExponentialDecayLeastSquaresProblem : ConfigurableLeastSquaresProblem
+public class ExponentialDecayProblem : ConfigurableLeastSquaresProblem
 {
     protected override Func<double, IReadOnlyList<double>, double> Model { get; } =
         (x, p) => p[0] * Math.Exp(-p[1] * x) + p[2];

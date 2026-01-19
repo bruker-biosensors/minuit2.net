@@ -26,7 +26,7 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
     
     public class When_minimizing_a_least_squares_cost_function
     {
-        private readonly ConfigurableLeastSquaresProblem _problem = new CubicPolynomialLeastSquaresProblem();
+        private readonly ConfigurableLeastSquaresProblem _problem = new CubicPolynomialProblem();
 
         [TestCase(false, 100)]
         [TestCase(true, 78)]
@@ -214,7 +214,7 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
                      "state with clear error details.")]
         public void leaving_the_valid_parameter_space_during_the_minimization_process_yields_an_invalid_result_with_non_finite_value_exit_condition_and_undefined_covariances_representing_the_last_state_of_the_process()
         {
-            var problem = new BellCurveLeastSquaresProblem();
+            var problem = new BellCurveProblem();
             var cost = problem.Cost.Build();
             var parameterConfigurations = problem.ParameterConfigurations
                 .WithParameter(0).WithValue(6.41).And
@@ -236,7 +236,7 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
 
     public class When_minimizing_a_sum_of_least_squares_cost_functions
     {
-        private readonly ConfigurableLeastSquaresProblem _problem = new CubicPolynomialLeastSquaresProblem();
+        private readonly ConfigurableLeastSquaresProblem _problem = new CubicPolynomialProblem();
 
         [Test]
         [Description("Ensures that recalculation of the error definition for least squares cost functions with " +

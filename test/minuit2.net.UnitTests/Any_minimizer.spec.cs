@@ -13,17 +13,17 @@ namespace minuit2.net.UnitTests;
 
 public abstract class Any_minimizer(IMinimizer minimizer)
 {
-    private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialLeastSquaresProblem();
+    private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialProblem();
     
     protected static IEnumerable<TestCaseData> WellPosedMinimizationProblems()
     {
         foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
         {
-            yield return TestCase(new QuadraticPolynomialLeastSquaresProblem().Configured(), nameof(QuadraticPolynomialLeastSquaresProblem));
-            yield return TestCase(new CubicPolynomialLeastSquaresProblem().Configured(), nameof(CubicPolynomialLeastSquaresProblem));
-            yield return TestCase(new ExponentialDecayLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(ExponentialDecayLeastSquaresProblem));
-            yield return TestCase(new BellCurveLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveLeastSquaresProblem));
-            yield return TestCase(new NumericalPendulumLeastSquaresProblem(), nameof(NumericalPendulumLeastSquaresProblem));
+            yield return TestCase(new QuadraticPolynomialProblem().Configured(), nameof(QuadraticPolynomialProblem));
+            yield return TestCase(new CubicPolynomialProblem().Configured(), nameof(CubicPolynomialProblem));
+            yield return TestCase(new ExponentialDecayProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(ExponentialDecayProblem));
+            yield return TestCase(new BellCurveProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveProblem));
+            yield return TestCase(new NumericalPendulumProblem(), nameof(NumericalPendulumProblem));
             continue;
 
             TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
@@ -304,7 +304,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             [Values] bool hasGradient,
             [Values] Strategy strategy)
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var problem = new QuadraticPolynomialProblem();
         var component1 = problem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
         var component2 = problem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component1, component2);
@@ -331,7 +331,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     public void when_the_cost_function_returns_a_non_finite_value_during_a_minimization_process_yields_an_invalid_result_with_non_finite_value_exit_condition_and_undefined_covariances(
         double nonFiniteValue)
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var problem = new QuadraticPolynomialProblem();
         const int numberOfValidFunctionCalls = 5;
         var cost = problem.Cost.Build().WithValueOverride(_ => nonFiniteValue, numberOfValidFunctionCalls);
         var parameterConfigurations = problem.ParameterConfigurations.Build();
@@ -350,7 +350,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     [Test]
     public void when_the_cost_function_value_calculation_throws_an_exception_during_a_minimization_process_forwards_that_exception()
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var problem = new QuadraticPolynomialProblem();
         var cost = problem.Cost.Build().WithValueOverride(_ => throw new TestException());
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         

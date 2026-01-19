@@ -3,9 +3,9 @@ using minuit2.net.CostFunctions;
 
 namespace ExampleProblems.CustomProblems;
 
-public class NumericalPendulumLeastSquaresProblem : IConfiguredProblem
+public class NumericalPendulumProblem : IConfiguredProblem
 {
-    public NumericalPendulumLeastSquaresProblem()
+    public NumericalPendulumProblem()
     {
         OptimumParameterValues = [1];
         ParameterConfigurations = [ParameterConfiguration.Variable("pendulumLength", 2)];
