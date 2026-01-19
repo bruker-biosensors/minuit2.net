@@ -24,6 +24,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             yield return TestCase(new ExponentialDecayProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(ExponentialDecayProblem));
             yield return TestCase(new BellCurveProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveProblem));
             yield return TestCase(new NumericalPendulumProblem(), nameof(NumericalPendulumProblem));
+            yield return TestCase(new SurfaceBiosensorBindingKineticsProblem(), nameof(SurfaceBiosensorBindingKineticsProblem));
             continue;
 
             TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>

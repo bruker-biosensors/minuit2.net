@@ -11,7 +11,7 @@ public class NumericalPendulumProblem : IConfiguredProblem
         ParameterConfigurations = [ParameterConfiguration.Variable("pendulumLength", 2)];
 
         var model = NumericalPendulumModelFor(startAngle: 1.5, startAngleVelocity: 0.0);
-        var xValues = LinearlySpacedValues(0, 3, 0.001);
+        var xValues = Values.LinearlySpacedBetween(0, 3, 0.001);
         var yValues = model(xValues, OptimumParameterValues.ToArray());
         Cost = CostFunction.LeastSquares(xValues, yValues, ["pendulumLength"], model);
     }
@@ -39,11 +39,5 @@ public class NumericalPendulumProblem : IConfiguredProblem
 
             return angle;
         };
-    }
-
-    private static double[] LinearlySpacedValues(double start, double end, double step)
-    {
-        var number = (int)((end - start) / step) + 1;
-        return Enumerable.Range(0, number).Select(i => start + i * step).ToArray();
     }
 }
