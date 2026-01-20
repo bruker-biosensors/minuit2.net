@@ -1,6 +1,6 @@
-namespace ExampleProblems;
+namespace ExampleProblems.CustomProblems;
 
-public class BellCurveLeastSquaresProblem : ConfigurableLeastSquaresProblem
+public class BellCurveProblem : ConfigurableLeastSquaresProblem
 {
     private static double Bell(double x, double location, double variance)
     {

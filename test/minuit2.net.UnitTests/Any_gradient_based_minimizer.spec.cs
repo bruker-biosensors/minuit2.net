@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using ConstrainedNonDeterminism;
 using ExampleProblems;
+using ExampleProblems.CustomProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
@@ -11,7 +12,7 @@ namespace minuit2.net.UnitTests;
 public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_minimizer(minimizer)
 {
     private readonly IMinimizer _minimizer = minimizer;
-    private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialLeastSquaresProblem();
+    private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialProblem();
     
     [Test]
     public void when_asked_to_minimize_a_cost_function_with_an_analytical_gradient_that_returns_the_wrong_size_throws_an_exception(
@@ -111,7 +112,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
 
         result.Should()
-            .MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001)).And
+            .MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001)).And
             .HaveFewerFunctionCallsThan(referenceResult);
     }
     
@@ -157,7 +158,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
         
         result.Should()
-            .MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001)).And
+            .MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001)).And
             .HaveFewerFunctionCallsThan(referenceResult);
     }
     
@@ -201,7 +202,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         // Newton step points in the wrong direction — away from the local minimum. To prevent this, the initial
         // Hessian (or its diagonal approximation) must be regularized to ensure positive definiteness during minimizer
         // seeding. Without this safeguard, the minimizer will fail in this case (cf. https://github.com/root-project/root/issues/20665). 
-        var problem = new ExponentialDecayLeastSquaresProblem();
+        var problem = new ExponentialDecayProblem();
         var parameterConfigurations = problem.ParameterConfigurations
             .WithParameter(1).WithLimits(0, null)
             .Build();
@@ -212,7 +213,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var result = _minimizer.Minimize(cost, parameterConfigurations);
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
 
-        result.Should().MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001));
+        result.Should().MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001));
     }
     
     [Test]
@@ -294,7 +295,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     public void when_minimizing_a_cost_function_sum_where_only_some_components_have_an_analytical_hessian_yields_the_same_result_as_if_none_had_an_analytical_gradient(
         [Values] Strategy strategy)
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var problem = new QuadraticPolynomialProblem();
         // second component shares offset parameter with the first component
         var component2 = problem.Cost.WithParameterSuffixes("2", [1, 2]).Build();
         var cost = CostFunction.Sum(problem.Cost.WithHessian().Build(), component2);
@@ -315,7 +316,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         [Values(1, 2)] double errorDefinitionOfComponent1,
         [Values] Strategy strategy)
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var problem = new QuadraticPolynomialProblem();
         // second component shares offset parameter with the first component
         var cost = CostFunction.Sum(
             problem.Cost.WithErrorDefinition(errorDefinitionOfComponent1).WithHessian().Build(), 
@@ -332,7 +333,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations, minimizerConfiguration);
         
         result.Should()
-            .MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001)).And
+            .MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001)).And
             .HaveFewerFunctionCallsThan(referenceResult);
     }
 }

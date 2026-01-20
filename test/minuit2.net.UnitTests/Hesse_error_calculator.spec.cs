@@ -1,6 +1,6 @@
 using AwesomeAssertions;
 using ConstrainedNonDeterminism;
-using ExampleProblems;
+using ExampleProblems.CustomProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
@@ -27,7 +27,7 @@ public class The_hesse_error_calculator
 
         public When_refining_a_minimization_result_for_a_related_cost_function()
         {
-            var problem = new QuadraticPolynomialLeastSquaresProblem();
+            var problem = new QuadraticPolynomialProblem();
             _costFunction = problem.Cost.WithGradient().Build();
             var parameterConfigurations = problem.ParameterConfigurations.Build();
             _minimizationResult = Minimizer.Migrad.Minimize(_costFunction, parameterConfigurations);
@@ -92,7 +92,7 @@ public class The_hesse_error_calculator
         [Values] bool hasReferenceGradient,
         [Values] Strategy strategy)
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var problem = new QuadraticPolynomialProblem();
         var cost = problem.Cost.WithErrorDefinition(errorDefinition).WithHessian().Build();
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         // minimization result for the (fully) analytical cost function  
@@ -104,7 +104,7 @@ public class The_hesse_error_calculator
         var referenceResult = HesseErrorCalculator.Refine(analyticalMinimizationResult, referenceCost, strategy);
 
         result.Should()
-            .MatchExcludingFunctionCalls(referenceResult, options => options.WithRelativeDoubleTolerance(0.001)).And
+            .MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001)).And
             .HaveFewerFunctionCallsThan(referenceResult);
     }
 }

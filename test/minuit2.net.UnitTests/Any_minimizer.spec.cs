@@ -1,6 +1,9 @@
 using AwesomeAssertions;
 using ConstrainedNonDeterminism;
 using ExampleProblems;
+using ExampleProblems.CustomProblems;
+using ExampleProblems.MinuitTutorialProblems;
+using ExampleProblems.NISTProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
@@ -10,21 +13,22 @@ namespace minuit2.net.UnitTests;
 
 public abstract class Any_minimizer(IMinimizer minimizer)
 {
-    private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialLeastSquaresProblem();
+    private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialProblem();
     
     protected static IEnumerable<TestCaseData> WellPosedMinimizationProblems()
     {
         foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
         {
-            yield return TestCase(new QuadraticPolynomialLeastSquaresProblem().Configured(), nameof(QuadraticPolynomialLeastSquaresProblem));
-            yield return TestCase(new CubicPolynomialLeastSquaresProblem().Configured(), nameof(CubicPolynomialLeastSquaresProblem));
-            yield return TestCase(new ExponentialDecayLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(ExponentialDecayLeastSquaresProblem));
-            yield return TestCase(new BellCurveLeastSquaresProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveLeastSquaresProblem));
-            yield return TestCase(new NumericalPendulumLeastSquaresProblem(), nameof(NumericalPendulumLeastSquaresProblem));
+            yield return TestCase(new QuadraticPolynomialProblem().Configured(), nameof(QuadraticPolynomialProblem));
+            yield return TestCase(new CubicPolynomialProblem().Configured(), nameof(CubicPolynomialProblem));
+            yield return TestCase(new ExponentialDecayProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(ExponentialDecayProblem));
+            yield return TestCase(new BellCurveProblem().Configured(x => x.WithParameter(1).WithLimits(0, null)), nameof(BellCurveProblem));
+            yield return TestCase(new NumericalPendulumProblem(), nameof(NumericalPendulumProblem));
+            yield return TestCase(new SurfaceBiosensorBindingKineticsProblem(), nameof(SurfaceBiosensorBindingKineticsProblem));
             continue;
 
             TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
-                new TestCaseData(problem, strategy).SetArgDisplayNames(problemName, strategy.ToString());
+                new TestCaseData(problem, strategy).SetName($"{problemName} ({strategy})");
         }
     }
 
@@ -36,8 +40,61 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
         
         var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+
+        result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues,
+            relativeToleranceForNonZeros: 0.01, toleranceForZeros: 0.01);
+    }
+    
+    private static IEnumerable<TestCaseData> ChallengingMinimizationProblems()
+    {
+        foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
+        foreach (DerivativeConfiguration derivativeConfiguration in Enum.GetValues(typeof(DerivativeConfiguration)))
+        {
+            // Minuit tutorial problems
+            yield return TestCase(new RosenbrockProblem(derivativeConfiguration), nameof(RosenbrockProblem));
+            yield return TestCase(new WoodProblem(derivativeConfiguration), nameof(WoodProblem));
+            yield return TestCase(new PowellProblem(derivativeConfiguration), nameof(PowellProblem));
+            yield return TestCase(new FletcherPowellProblem(derivativeConfiguration), nameof(FletcherPowellProblem));
+            yield return TestCase(new GoldsteinPriceProblem(derivativeConfiguration), nameof(GoldsteinPriceProblem));
+            
+            // NIST problems ranked as difficult 
+            yield return TestCase(new Mgh09Problem(derivativeConfiguration), nameof(Mgh09Problem));
+            yield return TestCase(new ThurberProblem(derivativeConfiguration), nameof(ThurberProblem));
+            yield return TestCase(new BoxBodProblem(derivativeConfiguration), nameof(BoxBodProblem));
+            yield return TestCase(new Rat42Problem(derivativeConfiguration), nameof(Rat42Problem));
+            yield return TestCase(new Rat43Problem(derivativeConfiguration), nameof(Rat43Problem));
+            yield return TestCase(new Bennett5Problem(derivativeConfiguration), nameof(Bennett5Problem));
+            continue;
+
+            TestCaseData TestCase(IConfiguredProblem problem, string problemName) => 
+                new TestCaseData(problem, strategy).SetName($"{problemName}.{derivativeConfiguration} ({strategy})");
+        }
+    }
+
+    [Test]
+    public Task fails_for_the_following_challenging_problems()
+    {
+        var report = new List<string>();
+        foreach (var testCase in ChallengingMinimizationProblems().OrderBy(x => x.TestName))
+        {
+            var problem = (IConfiguredProblem)testCase.Arguments[0]!;
+            var strategy = (Strategy)testCase.Arguments[1]!;
+            
+            var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
+            var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+
+            try
+            {
+                result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues, 
+                    relativeToleranceForNonZeros: 0.01, toleranceForZeros: 0.01);
+            }
+            catch (Exception)
+            {
+                report.Add(testCase.TestName!);
+            }
+        }
         
-        result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues, relativeTolerance: 0.01);
+        return Verify(report);
     }
     
     private static IEnumerable<TestCaseData> InvalidParameterConfigurationTestCases()
@@ -232,7 +289,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         
         sumResult.Should().MatchExcludingFunctionCalls(componentResult, options => options
             .Excluding(x => x.ParameterCovarianceMatrix)  // is null for non-gradient-based minimizers (Simplex)
-            .WithRelativeDoubleTolerance(0.001));
+            .WithSmartDoubleTolerance(0.001));
     }
 
     [Test]
@@ -248,7 +305,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             [Values] bool hasGradient,
             [Values] Strategy strategy)
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var problem = new QuadraticPolynomialProblem();
         var component1 = problem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
         var component2 = problem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
         var sum = CostFunction.Sum(component1, component2);
@@ -275,7 +332,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     public void when_the_cost_function_returns_a_non_finite_value_during_a_minimization_process_yields_an_invalid_result_with_non_finite_value_exit_condition_and_undefined_covariances(
         double nonFiniteValue)
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var problem = new QuadraticPolynomialProblem();
         const int numberOfValidFunctionCalls = 5;
         var cost = problem.Cost.Build().WithValueOverride(_ => nonFiniteValue, numberOfValidFunctionCalls);
         var parameterConfigurations = problem.ParameterConfigurations.Build();
@@ -294,7 +351,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     [Test]
     public void when_the_cost_function_value_calculation_throws_an_exception_during_a_minimization_process_forwards_that_exception()
     {
-        var problem = new QuadraticPolynomialLeastSquaresProblem();
+        var problem = new QuadraticPolynomialProblem();
         var cost = problem.Cost.Build().WithValueOverride(_ => throw new TestException());
         var parameterConfigurations = problem.ParameterConfigurations.Build();
         

@@ -6,29 +6,64 @@ namespace minuit2.net.UnitTests.TestUtilities;
 
 internal static class EquivalencyOptionsExtensions
 {
-    public static EquivalencyOptions<double> WithRelativeDoubleTolerance(
+    public static EquivalencyOptions<double> WithSmartDoubleTolerance(
         this EquivalencyOptions<double> options,
-        double relativeTolerance)
+        double relativeToleranceForNonZeros, 
+        double? minimumToleranceForNonZeros = null,
+        double? toleranceForZeros = null)
     {
-        return options.WithRelativeDoubleTolerance<double>(relativeTolerance);
+        return options.WithSmartDoubleTolerance<double>(
+            relativeToleranceForNonZeros,
+            minimumToleranceForNonZeros,
+            toleranceForZeros);
     }
     
-    public static EquivalencyOptions<double[,]> WithRelativeDoubleTolerance(
-        this EquivalencyOptions<double[,]> options, double relativeTolerance)
+    public static EquivalencyOptions<double[,]> WithSmartDoubleTolerance(
+        this EquivalencyOptions<double[,]> options, 
+        double relativeToleranceForNonZeros,
+        double? minimumToleranceForNonZeros = null,
+        double? toleranceForZeros = null)
     {
-        return options.WithRelativeDoubleTolerance<double[,]>(relativeTolerance);
+        return options.WithSmartDoubleTolerance<double[,]>(
+            relativeToleranceForNonZeros,
+            minimumToleranceForNonZeros,
+            toleranceForZeros);
     }
     
-    public static EquivalencyOptions<IMinimizationResult> WithRelativeDoubleTolerance(
-        this EquivalencyOptions<IMinimizationResult> options, double relativeTolerance)
+    public static EquivalencyOptions<IMinimizationResult> WithSmartDoubleTolerance(
+        this EquivalencyOptions<IMinimizationResult> options, 
+        double relativeToleranceForNonZeros, 
+        double? minimumToleranceForNonZeros = null,
+        double? toleranceForZeros = null)
     {
-        return options.WithRelativeDoubleTolerance<IMinimizationResult>(relativeTolerance);
+        return options.WithSmartDoubleTolerance<IMinimizationResult>(
+            relativeToleranceForNonZeros,
+            minimumToleranceForNonZeros,
+            toleranceForZeros);
     }
 
-    private static EquivalencyOptions<T> WithRelativeDoubleTolerance<T>(this EquivalencyOptions<T> options, double relativeTolerance)
+    private static EquivalencyOptions<T> WithSmartDoubleTolerance<T>(
+        this EquivalencyOptions<T> options,
+        double relativeToleranceForNonZeros,
+        double? minimumToleranceForNonZeros,
+        double? toleranceForZeros)
     {
         return options
-            .Using<double>(ctx => ctx.Subject.Should().BeApproximately(ctx.Expectation, relativeTolerance, DefaultMinimumDoubleTolerance))
+            .Using<double>(ctx =>
+            {
+                var actual = ctx.Subject;
+                var expected = ctx.Expectation;
+                if (Math.Abs(expected) > double.Epsilon)
+                {
+                    var minimumTolerance = minimumToleranceForNonZeros ?? DefaultDoubleTolerance;
+                    actual.Should().BeApproximately(expected, relativeToleranceForNonZeros, minimumTolerance);
+                }
+                else
+                {
+                    var tolerance = toleranceForZeros ?? DefaultDoubleTolerance;
+                    actual.Should().BeApproximately(expected, tolerance);
+                }
+            })
             .WhenTypeIs<double>();
     }
 }
