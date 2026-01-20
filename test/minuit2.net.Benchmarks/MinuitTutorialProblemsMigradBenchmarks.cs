@@ -9,7 +9,7 @@ namespace minuit2.net.Benchmarks;
 
 [SuppressMessage("ReSharper", "UnassignedField.Global", Justification = "[Params] property is set at runtime by Benchmark.NET")]
 [Orderer(SummaryOrderPolicy.Method)]
-public class MinuitTutorialMigradBenchmarks
+public class MinuitTutorialProblemsMigradBenchmarks
 {
     [Params(WithoutDerivatives, WithGradient, WithGradientAndHessian, WithGradientHessianAndHessianDiagonal)]
     public DerivativeConfiguration DerivativeConfiguration;

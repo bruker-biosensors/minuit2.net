@@ -2,5 +2,5 @@
 using minuit2.net.Benchmarks;
 
 BenchmarkRunner.Run<Benchmarks>();
-BenchmarkRunner.Run<MinuitTutorialMigradBenchmarks>();
+BenchmarkRunner.Run<MinuitTutorialProblemsMigradBenchmarks>();
 BenchmarkRunner.Run<SurfaceBiosensorBindingKineticsMigradBenchmarks>();
