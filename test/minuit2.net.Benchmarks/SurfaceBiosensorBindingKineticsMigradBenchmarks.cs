@@ -12,9 +12,7 @@ namespace minuit2.net.Benchmarks;
 [Orderer(SummaryOrderPolicy.Method)]
 public class SurfaceBiosensorBindingKineticsMigradBenchmarks
 {
-    [Params(WithoutDerivatives, WithGradient)]
-    // Benchmark all configurations once Hessian-indexing bug is fixed in Minuit2
-    // (see https://github.com/root-project/root/pull/20936)
+    [Params(WithoutDerivatives, WithGradient, WithGradientAndHessian, WithGradientHessianAndHessianDiagonal)]
     public DerivativeConfiguration DerivativeConfiguration;  
 
     [Params(Fast, Balanced, Rigorous, VeryRigorous)]
