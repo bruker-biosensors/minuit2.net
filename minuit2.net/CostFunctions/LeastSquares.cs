@@ -69,32 +69,6 @@ internal class LeastSquares(
 
     public override IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues)
     {
-        return modelHessianDiagonal == null
-            ? HessianDiagonalFromModelHessianFor(parameterValues) 
-            : HessianDiagonalFromModelHessianDiagonalFor(parameterValues);
-    }
-    
-    private double[] HessianDiagonalFromModelHessianFor(IReadOnlyList<double> parameterValues)
-    {
-        var hessianDiagonal = new double[Parameters.Count];
-        for (var i = 0; i < x.Count; i++)
-        {
-            var yError = yErrorForIndex(i);
-            var r = (y[i] - model(x[i], parameterValues)) / yError;
-            var g = modelGradient!(x[i], parameterValues);
-            var h = modelHessian!(x[i], parameterValues);
-            for (var j = 0; j < Parameters.Count; j++)
-            {
-                var jj = j * (Parameters.Count + 1);
-                hessianDiagonal[j] -= 2 / yError * (r * h[jj] - g[j] * g[j] / yError);
-            }
-        }
-
-        return hessianDiagonal;
-    }
-
-    private double[] HessianDiagonalFromModelHessianDiagonalFor(IReadOnlyList<double> parameterValues)
-    {
         var hessianDiagonal = new double[Parameters.Count];
         for (var i = 0; i < x.Count; i++)
         {
