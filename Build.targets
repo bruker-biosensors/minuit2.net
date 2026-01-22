@@ -14,7 +14,6 @@
     <RemoveDir Directories="$(MSBuildThisFileDirectory)/minuit2.wrap/build;$(SwigOutputPath)"/>
     <Exec Command="git clean -fdx"
           WorkingDirectory="$(RootGitPath)"
-          ContinueOnError="false"
           Condition="Exists('$(RootGitPath)')"/>
   </Target>
 
@@ -22,23 +21,19 @@
 
     <MakeDir Directories="$(RootGitPath)"/>
     <Exec Command="git init"
-          WorkingDirectory="$(RootGitPath)"
-          ContinueOnError="false"/>
+          WorkingDirectory="$(RootGitPath)"/>
 
     <!-- Add remote origin -->
     <Exec Command="git remote add origin https://github.com/root-project/root.git"
-          WorkingDirectory="$(RootGitPath)"
-          ContinueOnError="false"/>
+          WorkingDirectory="$(RootGitPath)"/>
 
     <!-- Fetch only the specific commit without history -->
     <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
-          WorkingDirectory="$(RootGitPath)"
-          ContinueOnError="false"/>
+          WorkingDirectory="$(RootGitPath)"/>
 
     <!-- Checkout the fetched commit -->
     <Exec Command="git checkout $(RootRevision)"
-          WorkingDirectory="$(RootGitPath)"
-          ContinueOnError="false"/>
+          WorkingDirectory="$(RootGitPath)"/>
   </Target>
 
   <!-- Ensure build directory exists -->
@@ -60,7 +55,6 @@
 
     <Exec Command="$(CmakeBuildCommand)"
           WorkingDirectory="$(MSBuildThisFileDirectory)"
-          ContinueOnError="false"
           IgnoreExitCode="false"/>
   </Target>
 
@@ -71,8 +65,7 @@
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
-          WorkingDirectory="$(MSBuildThisFileDirectory)"
-          ContinueOnError="false"/>
+          WorkingDirectory="$(MSBuildThisFileDirectory)"/>
   </Target>
 
   <Target Name="IncludeGeneratedCSharpFiles" AfterTargets="BuildNativeLibrary" BeforeTargets="CoreCompile">
