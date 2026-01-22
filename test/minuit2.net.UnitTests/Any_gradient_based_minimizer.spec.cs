@@ -193,15 +193,10 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         action.Should().ThrowExactly<TestException>();
     }
     
-    [Test, 
-     Description("This test ensures the Hessian (diagonal) is regularized during minimizer seeding to prevent the " +
-                 "minimizer from initially stepping away from the minimum (and eventually failing).")]
-    public void when_minimizing_a_cost_function_with_an_analytical_hessian_that_is_not_positive_definite_for_the_initial_parameter_values_yields_a_result_matching_the_result_obtained_for_numerical_approximation()
+    [Test]
+    public void when_minimizing_a_cost_function_with_an_analytical_hessian_that_is_not_positive_definite_for_the_initial_parameter_values_and_some_parameters_are_limited_yields_a_result_matching_the_result_obtained_for_numerical_approximation()
     {
-        // For the initial parameter values [2, 1, 0], the Hessian is not positive definite. Consequently, the initial
-        // Newton step points in the wrong direction — away from the local minimum. To prevent this, the initial
-        // Hessian (or its diagonal approximation) must be regularized to ensure positive definiteness during minimizer
-        // seeding. Without this safeguard, the minimizer will fail in this case (cf. https://github.com/root-project/root/issues/20665). 
+        // For the initial parameter values [2, 1, 0], the Hessian is not positive definite.
         var problem = new ExponentialDecayProblem();
         var parameterConfigurations = problem.ParameterConfigurations
             .WithParameter(1).WithLimits(0, null)
