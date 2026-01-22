@@ -1,7 +1,7 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <RootRevision>b5fd6643c1cc36fa95297c6a5cda4140573006d5</RootRevision>
+    <RootRevision>3b5475ca350bd5e50b58fd2d8642051ee0c19916</RootRevision>
     <RootGitPath>$(MSBuildThisFileDirectory)minuit2.net/obj/root</RootGitPath>
     <SwigOutputPath>$(MSBuildThisFileDirectory)/minuit2.net/obj/gen</SwigOutputPath>
   </PropertyGroup>
