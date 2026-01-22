@@ -7,17 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="swigwintools" Version="4.2.0" PrivateAssets="all"/>
+    <PackageReference Include="swigwintools" 
+                      Version="4.2.0" 
+                      PrivateAssets="all"/>
   </ItemGroup>
 
-  <Target Name="CleanGeneratedDirectories" BeforeTargets="Clean">
+  <Target Name="CleanGeneratedDirectories" 
+          BeforeTargets="Clean">
     <RemoveDir Directories="$(MSBuildThisFileDirectory)/minuit2.wrap/build;$(SwigOutputPath)"/>
     <Exec Command="git clean -fdx"
           WorkingDirectory="$(RootGitPath)"
           Condition="Exists('$(RootGitPath)')"/>
   </Target>
 
-  <Target Name="Fetch Minuit" BeforeTargets="BeforeBuild" Condition="!Exists('$(RootGitPath)')">
+  <Target Name="Fetch Minuit" 
+          BeforeTargets="BeforeBuild" 
+          Condition="!Exists('$(RootGitPath)')">
 
     <MakeDir Directories="$(RootGitPath)"/>
     <Exec Command="git init"
@@ -37,12 +42,15 @@
   </Target>
 
   <!-- Ensure build directory exists -->
-  <Target Name="CreateBuildDirectories" BeforeTargets="BeforeBuild">
+  <Target Name="CreateBuildDirectories" 
+          BeforeTargets="BeforeBuild">
     <MakeDir Directories="$(BuildDir);$(SwigOutputPath);$(CmakeBuildDir)"/>
   </Target>
 
   <!-- Run CMake Configure -->
-  <Target Name="CmakeConfigure" BeforeTargets="BeforeBuild" DependsOnTargets="CreateBuildDirectories">
+  <Target Name="CmakeConfigure" 
+          BeforeTargets="BeforeBuild" 
+          DependsOnTargets="CreateBuildDirectories">
     <PropertyGroup>
       <CmakeArchitecture Condition="'$(Platform)' == 'x64'">x64</CmakeArchitecture>
       <CmakeArchitecture Condition="'$(Platform)' == 'x86'">Win32</CmakeArchitecture>
@@ -59,7 +67,9 @@
   </Target>
 
   <!-- Build C++ Library and Generate SWIG Wrappers -->
-  <Target Name="BuildNativeLibrary" BeforeTargets="BeforeBuild" DependsOnTargets="CmakeConfigure">
+  <Target Name="BuildNativeLibrary" 
+          BeforeTargets="BeforeBuild" 
+          DependsOnTargets="CmakeConfigure">
     <PropertyGroup>
       <CmakeBuildCommand>cmake --build "$(CmakeBuildDir)" --config Release</CmakeBuildCommand>
     </PropertyGroup>
@@ -68,7 +78,9 @@
           WorkingDirectory="$(MSBuildThisFileDirectory)"/>
   </Target>
 
-  <Target Name="IncludeGeneratedCSharpFiles" AfterTargets="BuildNativeLibrary" BeforeTargets="CoreCompile">
+  <Target Name="IncludeGeneratedCSharpFiles" 
+          AfterTargets="BuildNativeLibrary" 
+          BeforeTargets="CoreCompile">
     <ItemGroup>
       <GeneratedCSharpFiles Include="$(MSBuildThisFileDirectory)/minuit2.net/obj/gen/*.cs"/>
       <Compile Include="@(GeneratedCSharpFiles)"/>
@@ -76,13 +88,16 @@
   </Target>
 
   <!-- Copy native DLL to output directory -->
-  <Target Name="CopyWrapperDll" AfterTargets="BuildNativeLibrary">
+  <Target Name="CopyWrapperDll" 
+          AfterTargets="BuildNativeLibrary">
     <ItemGroup>
-      <NativeDlls Include="$(CmakeBuildDir)/minuit2.wrap/Release/$(NativeAssemblyName).dll" Visible="false"/>
+      <NativeDlls Include="$(CmakeBuildDir)/minuit2.wrap/Release/$(NativeAssemblyName).dll" 
+                  Visible="false"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="@(NativeDlls)" Visible="false">
+      <None Include="@(NativeDlls)" 
+            Visible="false">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         <Visible>false</Visible>
@@ -90,11 +105,19 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="CopyNativeBinariesForNuGet" AfterTargets="CopyWrapperDll" Condition="'$(Platform)' != 'AnyCPU' AND '$(PlatformTarget)'!= 'AnyCPU'">
+  <Target Name="CopyNativeBinariesForNuGet" 
+          AfterTargets="CopyWrapperDll" 
+          Condition="'$(Platform)' != 'AnyCPU' AND '$(PlatformTarget)'!= 'AnyCPU'">
     <ItemGroup>
-      <NativeBinaries Include="$(OutputPath)$(NativeAssemblyName).dll" Condition="'$(Platform)' == 'x64'" Visible="false"/>
-      <NativeBinaries Include="$(OutputPath)$(NativeAssemblyName).dll" Condition="'$(Platform)' == 'ARM64'" Visible="false"/>
-      <NativeBinaries Include="$(OutputPath)$(NativeAssemblyName).dll" Condition="'$(Platform)' == 'x86'" Visible="false"/>
+      <NativeBinaries Include="$(OutputPath)$(NativeAssemblyName).dll" 
+                      Condition="'$(Platform)' == 'x64'" 
+                      Visible="false"/>
+      <NativeBinaries Include="$(OutputPath)$(NativeAssemblyName).dll" 
+                      Condition="'$(Platform)' == 'ARM64'" 
+                      Visible="false"/>
+      <NativeBinaries Include="$(OutputPath)$(NativeAssemblyName).dll" 
+                      Condition="'$(Platform)' == 'x86'" 
+                      Visible="false"/>
     </ItemGroup>
     <Copy
       SourceFiles="@(NativeDlls)"
@@ -104,7 +127,8 @@
 
   </Target>
 
-  <Target Name="CheckAvailableDlls" BeforeTargets="GenerateNuspec">
+  <Target Name="CheckAvailableDlls" 
+          BeforeTargets="GenerateNuspec">
     <PropertyGroup>
       <RequiredPlatforms>x64;x86;ARM64</RequiredPlatforms>
     </PropertyGroup>
@@ -118,7 +142,8 @@
 
     <!-- Check each required native DLL exists -->
     <ItemGroup>
-      <MissingNativeDlls Include="@(RequiredNativeDlls)" Condition="!Exists('%(RequiredNativeDlls.Identity)')"/>
+      <MissingNativeDlls Include="@(RequiredNativeDlls)" 
+                         Condition="!Exists('%(RequiredNativeDlls.Identity)')"/>
     </ItemGroup>
 
     <Error Text="Cannot pack: Missing native DLL for platform. Missing files: @(MissingNativeDlls, ', '). Please build all platforms (x64, x86, ARM64) before packing."
@@ -127,12 +152,14 @@
   </Target>
 
 
-  <Target Name="RenameROOTLicense" AfterTargets="CopyNativeBinariesForNuGet">
+  <Target Name="RenameROOTLicense" 
+          AfterTargets="CopyNativeBinariesForNuGet">
     <Copy SourceFiles="$(RootGitPath)/LICENSE"
           DestinationFiles="$(IntermediateOutputPath)/ROOT-LICENSE"/>
   </Target>
 
-  <Target Name="AddROOTLicenseToNuget" AfterTargets="CopyNativeBinariesForNuGet; RenameROOTLicense">
+  <Target Name="AddROOTLicenseToNuget" 
+          AfterTargets="CopyNativeBinariesForNuGet; RenameROOTLicense">
     <ItemGroup>
       <None Include="$(IntermediateOutputPath)/ROOT-LICENSE"
             Pack="true"
