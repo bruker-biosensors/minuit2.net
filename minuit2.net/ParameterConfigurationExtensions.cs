@@ -11,7 +11,7 @@ internal static class ParameterConfigurationExtensions
 
     private static void Add(this MnUserParameterState state, ParameterConfiguration parameter)
     {
-        state.Add(parameter.Name, parameter.Value, parameter.Value * 0.01);
+        state.Add(parameter.Name, parameter.Value, parameter.Value == 0 ? 1 : parameter.Value * 0.01);
 
         if (parameter.IsFixed) 
             state.Fix(parameter.Name);
