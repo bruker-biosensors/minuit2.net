@@ -74,7 +74,7 @@ Both packages share the same API and can be used interchangeably depending on yo
 
 The build process is automated through MSBuild targets and will:
 
-1. Download [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) source code (v6.34.04) via git
+1. Download [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) source code via git
 2. Configure and build the C++ Minuit2 library
 3. Generate C# wrapper code using SWIG
 4. Compile the .NET library with the generated bindings
@@ -99,7 +99,7 @@ AnyCPU will default to the x64 version of the C++ dll.
 - `swigwintools` (4.2.0) - SWIG interface generator
 
 ### External Dependencies (automatically handled)
-- [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library (v6.34.04) - downloaded and built during compilation
+- [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library (6.36.08) - downloaded and built during compilation
 
 ## Usage
 
