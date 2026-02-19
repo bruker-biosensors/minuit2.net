@@ -5,6 +5,7 @@ using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
 using static minuit2.net.MinimizationExitCondition;
+using static minuit2.net.ParameterConfiguration;
 
 namespace minuit2.net.UnitTests;
 
@@ -214,22 +215,21 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
                      "state with clear error details.")]
         public void leaving_the_valid_parameter_space_during_the_minimization_process_yields_an_invalid_result_with_non_finite_value_exit_condition_and_undefined_covariances_representing_the_last_state_of_the_process()
         {
-            var problem = new BellCurveProblem();
-            var cost = problem.Cost.Build();
-            var parameterConfigurations = problem.ParameterConfigurations
-                .WithParameter(0).WithValue(6.41).And
-                .WithParameter(1).WithValue(1.42).Build();
+            var problem = new BellCurveProblem(
+                location: Variable("loc", 6.41),
+                variance: Variable("var", 1.42)
+            );
             var minimizerConfiguration = new MinimizerConfiguration(Strategy.Rigorous);
-        
-            var result = MigradMinimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
-        
+
+            var result = MigradMinimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+
             result.ShouldFulfill(x =>
             {
                 x.IsValid.Should().BeFalse();
                 x.ExitCondition.Should().Be(NonFiniteValue);
                 x.NumberOfFunctionCalls.Should().BeGreaterThan(0);
                 x.ParameterCovarianceMatrix.Should().BeNull();
-                x.CostValue.Should().Be(cost.ValueFor(x.ParameterValues)).And.NotBeFinite();
+                x.CostValue.Should().Be(problem.Cost.ValueFor(x.ParameterValues)).And.NotBeFinite();
             });
         }
     }
