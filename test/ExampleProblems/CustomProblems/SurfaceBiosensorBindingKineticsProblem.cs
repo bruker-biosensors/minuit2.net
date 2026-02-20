@@ -196,7 +196,7 @@ public class SurfaceBiosensorBindingKineticsProblem : IConfiguredProblem
          h01, h11, h12, h13, h14,
          h02, h12, h22, h23, h24,
          h03, h13, h23, h33, h34,
-         h04, h14, h24, h34, h44,
+         h04, h14, h24, h34, h44
       ];
    };
 
