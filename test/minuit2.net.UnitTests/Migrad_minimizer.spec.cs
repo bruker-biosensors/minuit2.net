@@ -221,7 +221,7 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
             );
             var minimizerConfiguration = new MinimizerConfiguration(Strategy.Rigorous);
 
-            var result = MigradMinimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+            var result = MigradMinimizer.Minimize(problem, minimizerConfiguration);
 
             result.ShouldFulfill(x =>
             {

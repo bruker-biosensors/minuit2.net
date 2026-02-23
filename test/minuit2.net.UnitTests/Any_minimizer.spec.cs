@@ -39,7 +39,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     { 
         var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
         
-        var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+        var result = minimizer.Minimize(problem, minimizerConfiguration);
 
         result.ParameterValues.Should().BeApproximately(problem.OptimumParameterValues,
             relativeToleranceForNonZeros: 0.01, toleranceForZeros: 0.01);
@@ -81,7 +81,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             var strategy = (Strategy)testCase.Arguments[1]!;
             
             var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
-            var result = minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
+            var result = minimizer.Minimize(problem, minimizerConfiguration);
 
             try
             {

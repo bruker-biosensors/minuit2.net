@@ -202,8 +202,8 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var problem = new ExponentialDecayProblem(derivativeConfiguration: WithGradientAndHessian);
         var referenceProblem = new ExponentialDecayProblem(derivativeConfiguration: WithoutDerivatives);
         
-        var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
-        var referenceResult = _minimizer.Minimize(referenceProblem.Cost, referenceProblem.ParameterConfigurations);
+        var result = _minimizer.Minimize(problem);
+        var referenceResult = _minimizer.Minimize(referenceProblem);
 
         result.Should().MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001));
     }
