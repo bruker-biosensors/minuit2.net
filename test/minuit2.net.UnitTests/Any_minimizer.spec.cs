@@ -19,7 +19,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     {
         foreach (Strategy strategy in Enum.GetValues(typeof(Strategy)))
         {
-            yield return TestCase(new QuadraticPolynomialProblem().Configured(), nameof(QuadraticPolynomialProblem));
+            yield return TestCase(new QuadraticPolynomialProblem().WithVariablesAnywhereCloseToOptimumValues(), nameof(QuadraticPolynomialProblem));
             yield return TestCase(new CubicPolynomialProblem().Configured(), nameof(CubicPolynomialProblem));
             yield return TestCase(new ExponentialDecayProblem().WithVariablesAnywhereCloseToOptimumValues(), nameof(ExponentialDecayProblem));
             yield return TestCase(new BellCurveProblem().WithVariablesAnywhereCloseToOptimumValues(), nameof(BellCurveProblem));
@@ -302,25 +302,28 @@ public abstract class Any_minimizer(IMinimizer minimizer)
                  "either choose alternative minimizers or apply additional minimization cycles when strict " +
                  "convergence and accurate results are required.")]
     public void when_minimizing_a_cost_function_sum_of_independent_components_with_different_error_definitions_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
-            [Values] bool hasGradient,
+            [Values] DerivativeConfiguration derivativeConfiguration,
             [Values] Strategy strategy)
     {
-        var problem = new QuadraticPolynomialProblem();
-        var component1 = problem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
-        var component2 = problem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
-        var sum = CostFunction.Sum(component1, component2);
-        var parameterConfigurations1 = problem.ParameterConfigurations.WithSuffix("1").Build();
-        var parameterConfigurations2 = problem.ParameterConfigurations.WithSuffix("2").Build();
+        var problem1 = new QuadraticPolynomialProblem(derivativeConfiguration: derivativeConfiguration);
+        var problem2 = new QuadraticPolynomialProblem(
+            // optimum values at [10, -5, 0.5]
+            c0: Variable("c0_2", 10.5),
+            c1: Variable("c1_2", -5.5),
+            c2: Variable("c2_2", 0.55),
+            derivativeConfiguration: derivativeConfiguration, 
+            errorDefinitionInSigma: 2);
+        var problemSum = problem1.SumWith(problem2);
         var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
 
-        var component1Result = minimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
-        var component2Result = minimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
-        var sumResult = minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
+        var problem1Result = minimizer.Minimize(problem1, minimizerConfiguration);
+        var problem2Result = minimizer.Minimize(problem2, minimizerConfiguration);
+        var problemSumResult = minimizer.Minimize(problemSum, minimizerConfiguration);
 
-        sumResult.ShouldFulfill(x =>
+        problemSumResult.ShouldFulfill(x =>
         {
-            x.CostValue.Should().BeApproximately(component1Result.CostValue + component2Result.CostValue);
-            x.ParameterValues.Should().BeApproximately(component1Result.ParameterValues.Concat(component2Result.ParameterValues));
+            x.CostValue.Should().BeApproximately(problem1Result.CostValue + problem2Result.CostValue);
+            x.ParameterValues.Should().BeApproximately(problem1Result.ParameterValues.Concat(problem2Result.ParameterValues));
         });
     }
 
@@ -334,10 +337,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     {
         var problem = new QuadraticPolynomialProblem();
         const int numberOfValidFunctionCalls = 5;
-        var cost = problem.Cost.Build().WithValueOverride(_ => nonFiniteValue, numberOfValidFunctionCalls);
-        var parameterConfigurations = problem.ParameterConfigurations.Build();
-        
-        var result = minimizer.Minimize(cost, parameterConfigurations);
+        var cost = problem.Cost.WithValueOverride(_ => nonFiniteValue, numberOfValidFunctionCalls);
+
+        var result = minimizer.Minimize(cost, problem.ParameterConfigurations);
 
         result.ShouldFulfill(x =>
         {
@@ -352,10 +354,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     public void when_the_cost_function_value_calculation_throws_an_exception_during_a_minimization_process_forwards_that_exception()
     {
         var problem = new QuadraticPolynomialProblem();
-        var cost = problem.Cost.Build().WithValueOverride(_ => throw new TestException());
-        var parameterConfigurations = problem.ParameterConfigurations.Build();
-        
-        Action action = () => minimizer.Minimize(cost, parameterConfigurations);
+        var cost = problem.Cost.WithValueOverride(_ => throw new TestException());
+
+        Action action = () => minimizer.Minimize(cost, problem.ParameterConfigurations);
         
         action.Should().ThrowExactly<TestException>();
     }

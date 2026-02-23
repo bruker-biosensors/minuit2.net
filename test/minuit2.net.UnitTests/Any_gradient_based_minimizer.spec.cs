@@ -287,20 +287,22 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     public void when_minimizing_a_cost_function_sum_where_only_some_components_have_an_analytical_hessian_yields_the_same_result_as_if_none_had_an_analytical_gradient(
         [Values] Strategy strategy)
     {
-        var problem = new QuadraticPolynomialProblem();
-        // second component shares offset parameter with the first component
-        var component2 = problem.Cost.WithParameterSuffixes("2", [1, 2]).Build();
-        var cost = CostFunction.Sum(problem.Cost.WithHessian().Build(), component2);
-        var referenceCost = CostFunction.Sum(problem.Cost.Build(), component2);
-        
-        var parameterConfigurations = problem.ParameterConfigurations.Build().Concat(
-            problem.ParameterConfigurations.WithSuffix("2").Build()).ToArray();
+        var problem = ProblemComponent1(WithGradientAndHessian).SumWith(ProblemComponent2());
+        var referenceProblem = ProblemComponent1(WithoutDerivatives).SumWith(ProblemComponent2());
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
         
-        var result = _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
-        var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations, minimizerConfiguration);
+        var result = _minimizer.Minimize(problem, minimizerConfiguration);
+        var referenceResult = _minimizer.Minimize(referenceProblem, minimizerConfiguration);
         
         result.Should().Match(referenceResult);
+        return;
+
+        QuadraticPolynomialProblem ProblemComponent1(DerivativeConfiguration derivativeConfiguration) =>
+            new(derivativeConfiguration: derivativeConfiguration);
+        
+        QuadraticPolynomialProblem ProblemComponent2() =>
+            // optimum values for c1 and c2 are -5 and 0.5, respectively
+            new(c1: Variable("c1_2", -5.5), c2: Variable("c2_2", 0.55));
     }
 
     [Test]
@@ -308,24 +310,23 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         [Values(1, 2)] double errorDefinitionOfComponent1,
         [Values] Strategy strategy)
     {
-        var problem = new QuadraticPolynomialProblem();
-        // second component shares offset parameter with the first component
-        var cost = CostFunction.Sum(
-            problem.Cost.WithErrorDefinition(errorDefinitionOfComponent1).WithHessian().Build(), 
-            problem.Cost.WithParameterSuffixes("2", [1, 2]).WithHessian().Build());
-        var referenceCost = CostFunction.Sum(
-            problem.Cost.WithErrorDefinition(errorDefinitionOfComponent1).Build(), 
-            problem.Cost.WithParameterSuffixes("2", [1, 2]).Build());
-        
-        var parameterConfigurations = problem.ParameterConfigurations.Build().Concat(
-            problem.ParameterConfigurations.WithSuffix("2").Build()).ToArray();
+        var problem = ProblemComponent1(WithGradientAndHessian).SumWith(ProblemComponent2(WithGradientAndHessian));
+        var referenceProblem = ProblemComponent1(WithoutDerivatives).SumWith(ProblemComponent2(WithoutDerivatives));
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
         
-        var result = _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
-        var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations, minimizerConfiguration);
+        var result = _minimizer.Minimize(problem, minimizerConfiguration);
+        var referenceResult = _minimizer.Minimize(referenceProblem, minimizerConfiguration);
         
         result.Should()
             .MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001)).And
             .HaveFewerFunctionCallsThan(referenceResult);
+        return;
+
+        QuadraticPolynomialProblem ProblemComponent1(DerivativeConfiguration derivativeConfiguration) =>
+            new(derivativeConfiguration: derivativeConfiguration, errorDefinitionInSigma: errorDefinitionOfComponent1);
+
+        QuadraticPolynomialProblem ProblemComponent2(DerivativeConfiguration derivativeConfiguration) =>
+            // optimum values for c1 and c2 are -5 and 0.5, respectively
+            new(c1: Variable("c1_2", -5.5), c2: Variable("c2_2", 0.55), derivativeConfiguration: derivativeConfiguration);
     }
 }

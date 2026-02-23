@@ -17,23 +17,24 @@ public abstract class LeastSquaresProblem : IConfiguredProblem
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelGradient,
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelHessian,
         Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelHessianDiagonal,
-        DerivativeConfiguration modelDerivativeConfiguration)
+        DerivativeConfiguration modelDerivativeConfiguration,
+        double errorDefinitionInSigma = 1)
     {
         var parameters = parameterConfigurations.Select(c => c.Name).ToList();
         
         Cost = (modelDerivativeConfiguration, yError) switch
         {
-            (WithoutDerivatives, null) => LeastSquares(x, y, parameters, model),
-            (WithoutDerivatives, not null) => LeastSquares(x, y, yError.Value, parameters, model),
+            (WithoutDerivatives, null) => LeastSquares(x, y, parameters, model, errorDefinitionInSigma),
+            (WithoutDerivatives, not null) => LeastSquares(x, y, yError.Value, parameters, model, errorDefinitionInSigma),
 
-            (WithGradient, null) => LeastSquares(x, y, parameters, model, modelGradient),
-            (WithGradient, not null) => LeastSquares(x, y, yError.Value, parameters, model, modelGradient),
+            (WithGradient, null) => LeastSquares(x, y, parameters, model, modelGradient, errorDefinitionInSigma),
+            (WithGradient, not null) => LeastSquares(x, y, yError.Value, parameters, model, modelGradient, errorDefinitionInSigma),
             
-            (WithGradientAndHessian, null) => LeastSquares(x, y, parameters, model, modelGradient, modelHessian),
-            (WithGradientAndHessian, not null) => LeastSquares(x, y, yError.Value, parameters, model, modelGradient, modelHessian),
+            (WithGradientAndHessian, null) => LeastSquares(x, y, parameters, model, modelGradient, modelHessian, errorDefinitionInSigma),
+            (WithGradientAndHessian, not null) => LeastSquares(x, y, yError.Value, parameters, model, modelGradient, modelHessian, errorDefinitionInSigma),
         
-            (WithGradientHessianAndHessianDiagonal, null) => LeastSquares(x, y, parameters, model, modelGradient, modelHessian, modelHessianDiagonal),
-            (WithGradientHessianAndHessianDiagonal, not null) => LeastSquares(x, y, yError.Value, parameters, model, modelGradient, modelHessian, modelHessianDiagonal),
+            (WithGradientHessianAndHessianDiagonal, null) => LeastSquares(x, y, parameters, model, modelGradient, modelHessian, modelHessianDiagonal, errorDefinitionInSigma),
+            (WithGradientHessianAndHessianDiagonal, not null) => LeastSquares(x, y, yError.Value, parameters, model, modelGradient, modelHessian, modelHessianDiagonal, errorDefinitionInSigma),
             
             _ => throw new ArgumentOutOfRangeException(nameof(modelDerivativeConfiguration), modelDerivativeConfiguration, null)
         };
