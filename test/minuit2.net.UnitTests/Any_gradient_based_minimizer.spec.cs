@@ -5,6 +5,7 @@ using ExampleProblems.CustomProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
+using static ExampleProblems.DerivativeConfiguration;
 using static minuit2.net.ParameterConfiguration;
 
 namespace minuit2.net.UnitTests;
@@ -196,17 +197,13 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     [Test]
     public void when_minimizing_a_cost_function_with_an_analytical_hessian_that_is_not_positive_definite_for_the_initial_parameter_values_and_some_parameters_are_limited_yields_a_result_matching_the_result_obtained_for_numerical_approximation()
     {
-        // For the initial parameter values [2, 1, 0], the Hessian is not positive definite.
-        var problem = new ExponentialDecayProblem();
-        var parameterConfigurations = problem.ParameterConfigurations
-            .WithParameter(1).WithLimits(0, null)
-            .Build();
+        // For the default initial parameter values [2, 1, 0], the cost function Hessian is not positive definite;
+        // The rate parameter has a lower limit of 0 by default.
+        var problem = new ExponentialDecayProblem(derivativeConfiguration: WithGradientAndHessian);
+        var referenceProblem = new ExponentialDecayProblem(derivativeConfiguration: WithoutDerivatives);
         
-        var cost = problem.Cost.WithHessian().Build();
-        var referenceCost = problem.Cost.Build();
-        
-        var result = _minimizer.Minimize(cost, parameterConfigurations);
-        var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
+        var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
+        var referenceResult = _minimizer.Minimize(referenceProblem.Cost, referenceProblem.ParameterConfigurations);
 
         result.Should().MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001));
     }
