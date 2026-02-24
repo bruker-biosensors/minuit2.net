@@ -12,7 +12,7 @@ public class CubicPolynomialProblem(
     bool hasYErrors = true,
     DerivativeConfiguration derivativeConfiguration = WithoutDerivatives,
     double errorDefinitionInSigma = 1)
-    : LeastSquaresProblem(
+    : AnalyticalLeastSquaresProblem(
         XValues,
         YValues,
         hasYErrors ? YError : null,

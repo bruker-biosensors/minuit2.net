@@ -5,9 +5,9 @@ using static minuit2.net.CostFunctions.CostFunction;
 
 namespace ExampleProblems;
 
-public abstract class LeastSquaresProblem : IConfiguredProblem
+public abstract class AnalyticalLeastSquaresProblem : IConfiguredProblem
 {
-    protected LeastSquaresProblem(
+    protected AnalyticalLeastSquaresProblem(
         IReadOnlyList<double> x,
         IReadOnlyList<double> y,
         double? yError,

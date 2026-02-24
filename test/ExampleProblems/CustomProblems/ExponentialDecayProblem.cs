@@ -9,7 +9,7 @@ public class ExponentialDecayProblem(
     ParameterConfiguration? rate = null,
     ParameterConfiguration? offset = null,
     DerivativeConfiguration derivativeConfiguration = WithoutDerivatives) 
-    : LeastSquaresProblem(
+    : AnalyticalLeastSquaresProblem(
         XValues,
         YValues,
         YError,

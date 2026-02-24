@@ -8,7 +8,7 @@ public class BellCurveProblem(
     ParameterConfiguration? location = null,
     ParameterConfiguration? variance = null,
     DerivativeConfiguration derivativeConfiguration = WithoutDerivatives)
-    : LeastSquaresProblem(
+    : AnalyticalLeastSquaresProblem(
         XValues,
         YValues,
         YError,

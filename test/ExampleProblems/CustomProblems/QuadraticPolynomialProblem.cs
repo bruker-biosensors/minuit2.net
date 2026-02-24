@@ -10,7 +10,7 @@ public class QuadraticPolynomialProblem(
     ParameterConfiguration? c2 = null,
     DerivativeConfiguration derivativeConfiguration = WithoutDerivatives, 
     double errorDefinitionInSigma = 1)
-    : LeastSquaresProblem(
+    : AnalyticalLeastSquaresProblem(
         XValues,
         YValues,
         YError,

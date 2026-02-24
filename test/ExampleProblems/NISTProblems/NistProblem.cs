@@ -13,7 +13,7 @@ public abstract class NistProblem(
     Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelHessian,
     Func<double, IReadOnlyList<double>, IReadOnlyList<double>> modelHessianDiagonal,
     DerivativeConfiguration modelDerivativeConfiguration)
-    : LeastSquaresProblem(
+    : AnalyticalLeastSquaresProblem(
         x,
         y,
         null,
