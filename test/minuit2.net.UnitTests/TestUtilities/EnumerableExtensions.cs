@@ -1,4 +1,4 @@
-namespace ExampleProblems;
+namespace minuit2.net.UnitTests.TestUtilities;
 
 internal static class EnumerableExtensions
 {

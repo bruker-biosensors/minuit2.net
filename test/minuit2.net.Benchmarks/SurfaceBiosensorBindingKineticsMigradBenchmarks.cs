@@ -19,8 +19,11 @@ public class SurfaceBiosensorBindingKineticsMigradBenchmarks
     public Strategy Strategy;
 
     [Benchmark]
-    public IMinimizationResult SingleBindingKinetics() =>
-        new SurfaceBiosensorBindingKineticsProblem(DerivativeConfiguration).MinimizeWithMigrad(Strategy);
+    public IMinimizationResult SingleBindingKinetics()
+    {
+        var problem = new SurfaceBiosensorBindingKineticsProblem(modelDerivativeConfiguration: DerivativeConfiguration);
+        return problem.MinimizeWithMigrad(Strategy);
+    }
 
     [Benchmark]
     public IMinimizationResult GlobalBindingKinetics()

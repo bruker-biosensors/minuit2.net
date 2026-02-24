@@ -14,7 +14,7 @@ public abstract class MinuitTutorialProblem(
     Func<IReadOnlyList<double>, IReadOnlyList<double>> hessian,
     Func<IReadOnlyList<double>, IReadOnlyList<double>> hessianDiagonal,
     DerivativeConfiguration derivativeConfiguration)
-    : IConfiguredProblem
+    : IProblem
 {
     public ICostFunction Cost { get; } = derivativeConfiguration switch
     {

@@ -1,9 +1,10 @@
 using AwesomeAssertions;
-using ConstrainedNonDeterminism;
+using ExampleProblems;
 using ExampleProblems.CustomProblems;
 using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
+using static ExampleProblems.DerivativeConfiguration;
 
 namespace minuit2.net.UnitTests;
 
@@ -27,10 +28,9 @@ public class The_hesse_error_calculator
 
         public When_refining_a_minimization_result_for_a_related_cost_function()
         {
-            var problem = new QuadraticPolynomialProblem();
-            _costFunction = problem.Cost.WithGradient().Build();
-            var parameterConfigurations = problem.ParameterConfigurations.Build();
-            _minimizationResult = Minimizer.Migrad.Minimize(_costFunction, parameterConfigurations);
+            var problem = new QuadraticPolynomialProblem(derivativeConfiguration: WithGradient);
+            _costFunction = problem.Cost;
+            _minimizationResult = Minimizer.Migrad.Minimize(_costFunction, problem.ParameterConfigurations);
         }
 
         [Test]
@@ -89,18 +89,16 @@ public class The_hesse_error_calculator
                  "gradients/hessians (see MnHesse.cxx implementation).")]
     public void When_refining_an_analytical_minimization_result_for_a_related_cost_function_with_an_analytical_hessian_yields_a_result_matching_the_result_obtained_for_numerical_approximation_just_with_fewer_function_calls(
         [Values(1, 2, 3)] double errorDefinition,
-        [Values] bool hasReferenceGradient,
+        [Values(WithoutDerivatives, WithGradient)] DerivativeConfiguration referenceDerivativeConfiguration,
         [Values] Strategy strategy)
     {
-        var problem = new QuadraticPolynomialProblem();
-        var cost = problem.Cost.WithErrorDefinition(errorDefinition).WithHessian().Build();
-        var parameterConfigurations = problem.ParameterConfigurations.Build();
-        // minimization result for the (fully) analytical cost function  
-        var analyticalMinimizationResult = Minimizer.Migrad.Minimize(cost, parameterConfigurations);
+        var problem = new QuadraticPolynomialProblem(derivativeConfiguration: WithGradientAndHessian, errorDefinitionInSigma: errorDefinition);
+        // minimization result for the "fully analytical" cost function
+        var analyticalMinimizationResult = Minimizer.Migrad.Minimize(problem);
         // reference cost without analytical Hessian
-        var referenceCost = problem.Cost.WithErrorDefinition(errorDefinition).WithGradient(hasReferenceGradient).Build();
+        var referenceCost = new QuadraticPolynomialProblem(derivativeConfiguration: referenceDerivativeConfiguration, errorDefinitionInSigma: errorDefinition).Cost;
             
-        var result = HesseErrorCalculator.Refine(analyticalMinimizationResult, cost, strategy);            
+        var result = HesseErrorCalculator.Refine(analyticalMinimizationResult, problem.Cost, strategy);            
         var referenceResult = HesseErrorCalculator.Refine(analyticalMinimizationResult, referenceCost, strategy);
 
         result.Should()

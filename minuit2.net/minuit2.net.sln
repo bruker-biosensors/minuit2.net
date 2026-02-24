@@ -6,8 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minuit2.net.UnitTests", "..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleProblems", "..\test\ExampleProblems\ExampleProblems.csproj", "{597BEFC6-4E61-4902-A9F6-271014518081}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConstrainedNonDeterminism", "..\test\ConstrainedNonDeterminism\ConstrainedNonDeterminism.csproj", "{398E15C1-7760-4399-BD62-202AE2038376}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minuit2.net.Benchmarks", "..\test\minuit2.net.Benchmarks\minuit2.net.Benchmarks.csproj", "{4D399DF7-90FC-4377-94F9-551C5B38E7A5}"
 EndProject
 Global
@@ -56,18 +54,6 @@ Global
 		{597BEFC6-4E61-4902-A9F6-271014518081}.Release|Any CPU.Build.0 = Release|Any CPU
 		{597BEFC6-4E61-4902-A9F6-271014518081}.Release|ARM64.ActiveCfg = Release|Any CPU
 		{597BEFC6-4E61-4902-A9F6-271014518081}.Release|ARM64.Build.0 = Release|Any CPU
-		{398E15C1-7760-4399-BD62-202AE2038376}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{398E15C1-7760-4399-BD62-202AE2038376}.Debug|x64.Build.0 = Debug|Any CPU
-		{398E15C1-7760-4399-BD62-202AE2038376}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{398E15C1-7760-4399-BD62-202AE2038376}.Debug|x86.Build.0 = Debug|Any CPU
-		{398E15C1-7760-4399-BD62-202AE2038376}.Release|x64.ActiveCfg = Release|Any CPU
-		{398E15C1-7760-4399-BD62-202AE2038376}.Release|x64.Build.0 = Release|Any CPU
-		{398E15C1-7760-4399-BD62-202AE2038376}.Release|x86.ActiveCfg = Release|Any CPU
-		{398E15C1-7760-4399-BD62-202AE2038376}.Release|x86.Build.0 = Release|Any CPU
-		{398E15C1-7760-4399-BD62-202AE2038376}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{398E15C1-7760-4399-BD62-202AE2038376}.Release|Any CPU.Build.0 = Release|Any CPU
-		{398E15C1-7760-4399-BD62-202AE2038376}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{398E15C1-7760-4399-BD62-202AE2038376}.Release|ARM64.Build.0 = Release|Any CPU
 		{4D399DF7-90FC-4377-94F9-551C5B38E7A5}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{4D399DF7-90FC-4377-94F9-551C5B38E7A5}.Debug|x64.Build.0 = Debug|Any CPU
 		{4D399DF7-90FC-4377-94F9-551C5B38E7A5}.Debug|x86.ActiveCfg = Debug|Any CPU

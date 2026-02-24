@@ -1,0 +1,28 @@
+using ExampleProblems;
+using static minuit2.net.ParameterConfiguration;
+
+namespace minuit2.net.UnitTests.TestUtilities;
+
+internal static class ProblemExtensions
+{
+    public static double InitialCostValue(this IProblem problem) =>
+        problem.Cost.ValueFor(problem.ParameterConfigurations);
+    
+    public static IProblem WithVariablesAnywhereCloseToOptimumValues(this IProblem problem)
+    {
+        const double maximumRelativeBias = 0.1;
+        var newParameterConfigurations = problem.ParameterConfigurations.Zip(problem.OptimumParameterValues, 
+            (p, optimumValue) => p.IsFixed 
+                ? p 
+                : Variable(p.Name, AnyValueCloseTo(optimumValue, maximumRelativeBias), p.LowerLimit, p.UpperLimit))
+            .ToArray();
+        
+        return new Problem(problem.Cost, problem.OptimumParameterValues, newParameterConfigurations);
+    }
+    
+    private static double AnyValueCloseTo(double value, double maximumRelativeBias)
+    {
+        var maximumBias = Math.Abs(value * maximumRelativeBias);
+        return Any.Double().Between(value - maximumBias, value + maximumBias);
+    }
+}
