@@ -17,11 +17,13 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
 
     public class When_minimizing_a_least_squares_cost_function
     {
-        [TestCase(false, 100)]
-        [TestCase(true, 78)]
-        public void yields_the_expected_result(bool hasGradient, int expectedFunctionCalls)
+        [TestCase(WithoutDerivatives, 100)]
+        [TestCase(WithGradient, 78)]
+        public void yields_the_expected_result(
+            DerivativeConfiguration derivativeConfiguration, 
+            int expectedFunctionCalls)
         {
-            var problem = new CubicPolynomialProblem(derivativeConfiguration: hasGradient ? WithGradient : WithoutDerivatives);
+            var problem = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration);
             
             var result = MigradMinimizer.Minimize(problem);
 
@@ -44,14 +46,16 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
             });
         }
 
-        [TestCase(false, 31)]
-        [TestCase(true, 31)]
-        public void with_fixed_parameters_yields_the_expected_result(bool hasGradient, int expectedFunctionCalls)
+        [TestCase(WithoutDerivatives, 31)]
+        [TestCase(WithGradient, 31)]
+        public void with_fixed_parameters_yields_the_expected_result(
+            DerivativeConfiguration derivativeConfiguration, 
+            int expectedFunctionCalls)
         {
             var problem = new CubicPolynomialProblem(
                 c1: Fixed("c1", -1.97), 
                 c3: Fixed("c3", -0.11),
-                derivativeConfiguration: hasGradient ? WithGradient : WithoutDerivatives);
+                derivativeConfiguration: derivativeConfiguration);
 
             var result = MigradMinimizer.Minimize(problem);
             
@@ -253,19 +257,19 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
             });
         }
 
-        [TestCase(false, false, 182)]
-        [TestCase(true, false, 182)]
-        [TestCase(true, true, 120)]
+        [TestCase(WithoutDerivatives, WithoutDerivatives, 182)]
+        [TestCase(WithGradient, WithoutDerivatives, 182)]
+        [TestCase(WithGradient, WithGradient, 120)]
         public void with_defined_data_uncertainties_yields_the_expected_result(
-            bool hasFirstGradient, 
-            bool hasLastGradient, 
+            DerivativeConfiguration derivativeConfiguration1, 
+            DerivativeConfiguration derivativeConfiguration2, 
             int expectedFunctionCalls)
         {
-            var problem1 = new CubicPolynomialProblem(derivativeConfiguration: hasFirstGradient ? WithGradient : WithoutDerivatives);
+            var problem1 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration1);
             var problem2 = new CubicPolynomialProblem(
                 c1: Variable("c1_2", -2.1),
                 c3: Variable("c3_2", -0.15),
-                derivativeConfiguration: hasLastGradient ? WithGradient : WithoutDerivatives);
+                derivativeConfiguration: derivativeConfiguration2);
             var sumProblem = problem1.SumWith(problem2);
 
             var result = MigradMinimizer.Minimize(sumProblem);
