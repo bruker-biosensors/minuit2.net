@@ -25,15 +25,15 @@
     <Import Project="../Build.targets"/>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.103" PrivateAssets="All"/>
         <None Include="../README.md" Pack="true" PackagePath=""/>
         <None Include="../LICENSE" Pack="true" PackagePath=""/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="runtimes/win-x64/native/$(NativeAssemblyName).dll" Pack="true" PackagePath="runtimes/win-x64/native/" Visible="false"/>
-      <None Include="runtimes/win-x86/native/$(NativeAssemblyName).dll" Pack="true" PackagePath="runtimes/win-x86/native/" Visible="false"/>
-      <None Include="runtimes/win-ARM64/native/$(NativeAssemblyName).dll" Pack="true" PackagePath="runtimes/win-ARM64/native/" Visible="false"/>
+        <None Include="runtimes/win-x64/native/$(NativeAssemblyName).dll" Pack="true" PackagePath="runtimes/win-x64/native/" Visible="false"/>
+        <None Include="runtimes/win-x86/native/$(NativeAssemblyName).dll" Pack="true" PackagePath="runtimes/win-x86/native/" Visible="false"/>
+        <None Include="runtimes/win-ARM64/native/$(NativeAssemblyName).dll" Pack="true" PackagePath="runtimes/win-ARM64/native/" Visible="false"/>
     </ItemGroup>
 
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
