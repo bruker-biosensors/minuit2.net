@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using ConstrainedNonDeterminism;
 using minuit2.net.UnitTests.TestUtilities;
 using NSubstitute;
 using static minuit2.net.CostFunctions.CostFunction;

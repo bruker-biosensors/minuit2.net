@@ -1,4 +1,3 @@
-using ConstrainedNonDeterminism;
 using ExampleProblems;
 using minuit2.net.CostFunctions;
 using static minuit2.net.ParameterConfiguration;

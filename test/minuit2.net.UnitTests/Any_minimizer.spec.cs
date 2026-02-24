@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using ConstrainedNonDeterminism;
 using ExampleProblems;
 using ExampleProblems.CustomProblems;
 using ExampleProblems.MinuitTutorialProblems;
