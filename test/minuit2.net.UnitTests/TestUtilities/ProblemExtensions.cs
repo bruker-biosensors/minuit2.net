@@ -5,6 +5,9 @@ namespace minuit2.net.UnitTests.TestUtilities;
 
 internal static class ProblemExtensions
 {
+    public static double InitialCostValue(this IProblem problem) =>
+        problem.Cost.ValueFor(problem.ParameterConfigurations);
+    
     public static IProblem WithVariablesAnywhereCloseToOptimumValues(this IProblem problem)
     {
         const double maximumRelativeBias = 0.1;
