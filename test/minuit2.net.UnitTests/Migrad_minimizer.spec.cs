@@ -1,9 +1,9 @@
 using AwesomeAssertions;
 using ExampleProblems;
 using ExampleProblems.CustomProblems;
-using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
+using static ExampleProblems.DerivativeConfiguration;
 using static minuit2.net.MinimizationExitCondition;
 using static minuit2.net.ParameterConfiguration;
 
@@ -14,29 +14,16 @@ namespace minuit2.net.UnitTests;
 public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimizer)
 {
     private static readonly IMinimizer MigradMinimizer = Minimizer.Migrad;
-    
-    private static IMinimizationResult MinimizeAndRefineErrors(
-        ICostFunction cost,
-        ParameterConfiguration[] parameterConfigurations, 
-        MinimizerConfiguration? minimizerConfiguration = null)
-    {
-        var result = MigradMinimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
-        var adjustedCost = cost.WithErrorDefinitionRecalculatedBasedOnValid(result);
-        return HesseErrorCalculator.Refine(result, adjustedCost);
-    }
-    
+
     public class When_minimizing_a_least_squares_cost_function
     {
-        private readonly ConfigurableLeastSquaresProblem _problem = new CubicPolynomialProblem();
-
         [TestCase(false, 100)]
         [TestCase(true, 78)]
         public void yields_the_expected_result(bool hasGradient, int expectedFunctionCalls)
         {
-            var cost = _problem.Cost.WithGradient(hasGradient).Build();
-            var parameterConfigurations = _problem.ParameterConfigurations.Build();
+            var problem = new CubicPolynomialProblem(derivativeConfiguration: hasGradient ? WithGradient : WithoutDerivatives);
             
-            var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+            var result = MigradMinimizer.Minimize(problem);
 
             result.ShouldFulfill(x =>
             {
@@ -61,12 +48,12 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
         [TestCase(true, 31)]
         public void with_fixed_parameters_yields_the_expected_result(bool hasGradient, int expectedFunctionCalls)
         {
-            var cost = _problem.Cost.WithGradient(hasGradient).Build();
-            var parameterConfigurations = _problem.ParameterConfigurations
-                .WithParameter(1).Fixed().And
-                .WithParameter(3).Fixed().Build();
+            var problem = new CubicPolynomialProblem(
+                c1: Fixed("c1", -1.97), 
+                c3: Fixed("c3", -0.11),
+                derivativeConfiguration: hasGradient ? WithGradient : WithoutDerivatives);
 
-            var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+            var result = MigradMinimizer.Minimize(problem);
             
             result.ShouldFulfill(x =>
             {
@@ -90,12 +77,11 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
         [Test]
         public void with_limited_parameters_yields_the_expected_result()
         {
-            var cost = _problem.Cost.Build();
-            var parameterConfigurations = _problem.ParameterConfigurations
-                .WithParameter(0).WithLimits(10.5, null).And
-                .WithParameter(3).WithLimits(null, -0.105).Build();
+            var problem = new CubicPolynomialProblem(
+                c0: Variable("c0", 10.75, lowerLimit: 10.5),  // optimum is 10
+                c3: Variable("c3", -0.11, upperLimit: -0.105));  // optimum is -0.1
             
-            var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+            var result = MigradMinimizer.Minimize(problem);
             
             result.ShouldFulfill(x =>
             {
@@ -119,12 +105,12 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
         [Test]
         public void with_an_analytical_gradient_and_with_limited_parameters_yields_the_expected_result()
         {
-            var cost = _problem.Cost.WithGradient().Build();
-            var parameterConfigurations = _problem.ParameterConfigurations
-                .WithParameter(0).WithLimits(10.5, null).And
-                .WithParameter(3).WithLimits(null, -0.105).Build();
+            var problem = new CubicPolynomialProblem(
+                c0: Variable("c0", 10.75, lowerLimit: 10.5),  // optimum is 10
+                c3: Variable("c3", -0.11, upperLimit: -0.105),  // optimum is -0.1
+                derivativeConfiguration: WithGradient);  
 
-            var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+            var result = MigradMinimizer.Minimize(problem);
 
             // Covariances are slightly different from the numerical-gradient case (above).
             // This is because, in contrast to proper convergence, in the case of early termination at parameter limits,
@@ -150,12 +136,12 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
         }
         
         [Test]
-        public void with_unknown_data_errors_yields_the_expected_result([Values] bool hasGradient)
+        public void with_unknown_data_errors_yields_the_expected_result(
+            [Values] DerivativeConfiguration derivativeConfiguration)
         {
-            var cost = _problem.Cost.WithUnknownYErrors().WithGradient(hasGradient).Build();
-            var parameterConfigurations = _problem.ParameterConfigurations.Build();
+            var problem = new CubicPolynomialProblem(hasYErrors: false, derivativeConfiguration: derivativeConfiguration);
             
-            var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+            var result = MigradMinimizer.Minimize(problem);
             
             result.ShouldFulfill(x =>
             {
@@ -183,12 +169,11 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
                      "minimizing the cost function with correctly specified y-errors (i.e., the true standard " +
                      "deviation of the noise affecting the data).")]
         public void with_unknown_data_errors_and_subsequently_applying_error_definition_recalculation_followed_by_error_refinement_yields_the_expected_result(
-            [Values] bool hasGradient)
+            [Values] DerivativeConfiguration derivativeConfiguration)
         {
-            var cost = _problem.Cost.WithUnknownYErrors().WithGradient(hasGradient).Build();
-            var parameterConfigurations = _problem.ParameterConfigurations.Build();
+            var problem = new CubicPolynomialProblem(hasYErrors: false, derivativeConfiguration: derivativeConfiguration);
             
-            var result = MinimizeAndRefineErrors(cost, parameterConfigurations);
+            var result = MigradMinimizer.MinimizeAndRefineErrors(problem);
             
             result.ShouldFulfill(x =>
             {
@@ -236,25 +221,27 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
 
     public class When_minimizing_a_sum_of_least_squares_cost_functions
     {
-        private readonly ConfigurableLeastSquaresProblem _problem = new CubicPolynomialProblem();
-
         [Test]
         [Description("Ensures that recalculation of the error definition for least squares cost functions with " +
                      "unknown y-errors and, hence, parameter covariances works (on a per-cost basis).")]
         public void not_sharing_any_parameters_where_some_have_unknown_data_errors_and_subsequently_applying_error_refinement_yields_a_result_equivalent_to_the_results_for_the_isolated_components(
-                [Values] bool hasGradient, 
+                [Values] DerivativeConfiguration derivativeConfiguration, 
                 [Values] Strategy strategy)
         {
-            var component1 = _problem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
-            var component2 = _problem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithUnknownYErrors().Build();
-            var sum = CostFunction.Sum(component1, component2);
-            var parameterConfigurations1 = _problem.ParameterConfigurations.WithSuffix("1").Build();
-            var parameterConfigurations2 = _problem.ParameterConfigurations.WithSuffix("2").Build();
+            var problem1 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration);
+            var problem2 = new CubicPolynomialProblem(
+                c0: Variable("c0_2", 10.5),
+                c1: Variable("c1_2", -2.5),
+                c2: Variable("c2_2", 1.5),
+                c3: Variable("c3_2", -0.15),
+                hasYErrors: false,
+                derivativeConfiguration: derivativeConfiguration);
+            var sumProblem = problem1.SumWith(problem2);
             var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
             
-            var component1Result = MinimizeAndRefineErrors(component1, parameterConfigurations1, minimizerConfiguration);
-            var component2Result = MinimizeAndRefineErrors(component2, parameterConfigurations2, minimizerConfiguration);
-            var sumResult = MinimizeAndRefineErrors(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
+            var component1Result = MigradMinimizer.MinimizeAndRefineErrors(problem1, minimizerConfiguration);
+            var component2Result = MigradMinimizer.MinimizeAndRefineErrors(problem2, minimizerConfiguration);
+            var sumResult = MigradMinimizer.MinimizeAndRefineErrors(sumProblem, minimizerConfiguration);
 
             sumResult.ShouldFulfill(x =>
             {
@@ -274,15 +261,14 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
             bool hasLastGradient, 
             int expectedFunctionCalls)
         {
-            var cost = CostFunction.Sum(
-                _problem.Cost.WithGradient(hasFirstGradient).Build(),
-                _problem.Cost.WithGradient(hasLastGradient).WithParameterSuffixes("1", indicesToSuffix: [1, 3]).Build());
-            var parameterConfigurations = _problem.ParameterConfigurations.Build()
-                .Concat(_problem.ParameterConfigurations.WithSuffix("1")
-                    .WithParameter(1).WithValue(-2.1).And
-                    .WithParameter(3).WithValue(-0.15).Build());
+            var problem1 = new CubicPolynomialProblem(derivativeConfiguration: hasFirstGradient ? WithGradient : WithoutDerivatives);
+            var problem2 = new CubicPolynomialProblem(
+                c1: Variable("c1_2", -2.1),
+                c3: Variable("c3_2", -0.15),
+                derivativeConfiguration: hasLastGradient ? WithGradient : WithoutDerivatives);
+            var sumProblem = problem1.SumWith(problem2);
 
-            var result = MigradMinimizer.Minimize(cost, parameterConfigurations.ToArray());
+            var result = MigradMinimizer.Minimize(sumProblem);
             
             result.ShouldFulfill(x =>
             {
@@ -290,8 +276,8 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
                 x.ExitCondition.Should().Be(Converged);
                 x.IsValid.Should().BeTrue();
                 x.CostValue.Should().BeApproximately(24.99);
-                x.Parameters.Should().Equal("c0", "c1", "c2", "c3", "c1_1", "c3_1");
-                x.Variables.Should().Equal("c0", "c1", "c2", "c3", "c1_1", "c3_1");
+                x.Parameters.Should().Equal("c0", "c1", "c2", "c3", "c1_2", "c3_2");
+                x.Variables.Should().Equal("c0", "c1", "c2", "c3", "c1_2", "c3_2");
                 x.ParameterValues.Should().BeApproximately([9.974, -1.959, 0.9898, -0.09931, -1.959, -0.09931]);
                 x.ParameterCovarianceMatrix.Should().BeApproximately(new[,]
                 {
@@ -307,15 +293,14 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
         
         [Test]
         public void with_some_having_unknown_data_errors_yields_the_expected_result(
-            [Values] bool hasFirstGradient, 
-            [Values] bool hasLastGradient)
+            [Values] DerivativeConfiguration derivativeConfiguration1, 
+            [Values] DerivativeConfiguration derivativeConfiguration2)
         {
-            var cost = CostFunction.Sum(
-                _problem.Cost.WithGradient(hasFirstGradient).Build(),
-                _problem.Cost.WithGradient(hasLastGradient).WithUnknownYErrors().Build());
-            var parameterConfigurations = _problem.ParameterConfigurations.Build();
+            var problem1 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration1);
+            var problem2 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration2, hasYErrors: false);
+            var sumProblem = problem1.SumWith(problem2);
 
-            var result = MigradMinimizer.Minimize(cost, parameterConfigurations);
+            var result = MigradMinimizer.Minimize(sumProblem);
             
             result.ShouldFulfill(x =>
             {
@@ -338,15 +323,14 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
         [Test]
         [Description("Ensures parameter covariances are adjusted only for (inner) cost functions with unknown y-errors.")]
         public void with_some_having_unknown_data_errors_and_subsequently_applying_error_refinement_yields_the_expected_result(
-            [Values] bool hasFirstGradient, 
-            [Values] bool hasLastGradient)
+            [Values] DerivativeConfiguration derivativeConfiguration1,  
+            [Values] DerivativeConfiguration derivativeConfiguration2)
         {
-            var cost = CostFunction.Sum(
-                _problem.Cost.WithGradient(hasFirstGradient).Build(),
-                _problem.Cost.WithGradient(hasLastGradient).WithUnknownYErrors().Build());
-            var parameterConfigurations = _problem.ParameterConfigurations.Build();
+            var problem1 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration1);
+            var problem2 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration2, hasYErrors: false);
+            var sumProblem = problem1.SumWith(problem2);
 
-            var result = MinimizeAndRefineErrors(cost, parameterConfigurations);
+            var result = MigradMinimizer.MinimizeAndRefineErrors(sumProblem);
             
             result.ShouldFulfill(x =>
             {

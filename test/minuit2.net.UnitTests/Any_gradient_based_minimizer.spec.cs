@@ -6,6 +6,7 @@ using minuit2.net.CostFunctions;
 using minuit2.net.Minimizers;
 using minuit2.net.UnitTests.TestUtilities;
 using static ExampleProblems.DerivativeConfiguration;
+using static minuit2.net.MinimizationExitCondition;
 using static minuit2.net.ParameterConfiguration;
 
 namespace minuit2.net.UnitTests;
@@ -13,8 +14,7 @@ namespace minuit2.net.UnitTests;
 public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_minimizer(minimizer)
 {
     private readonly IMinimizer _minimizer = minimizer;
-    private readonly ConfigurableLeastSquaresProblem _defaultProblem = new CubicPolynomialProblem();
-    
+
     [Test]
     public void when_asked_to_minimize_a_cost_function_with_an_analytical_gradient_that_returns_the_wrong_size_throws_an_exception(
         [Values(1, 3)] int flawedGradientSize)
@@ -67,7 +67,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         result.ShouldFulfill(x =>
         {
             x.IsValid.Should().BeTrue();
-            x.ExitCondition.Should().Be(MinimizationExitCondition.Converged);
+            x.ExitCondition.Should().Be(Converged);
             x.CostValue.Should().BeLessThan(problem.InitialCostValue());
         });
     }
@@ -90,27 +90,25 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     [Test]
     public void when_minimizing_the_same_cost_function_with_varying_error_definitions_yields_parameter_covariances_that_directly_scale_with_the_error_definition()
     {
-        var cost = _defaultProblem.Cost.WithErrorDefinition(Any.Double().Between(2, 5)).Build();
-        var referenceCost = _defaultProblem.Cost.WithErrorDefinition(1).Build();
-        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
+        var problem = new CubicPolynomialProblem(errorDefinitionInSigma: Any.Double().Between(2, 5));
+        var referenceProblem = new CubicPolynomialProblem(errorDefinitionInSigma: 1);
         
-        var result = _minimizer.Minimize(cost, parameterConfigurations);
-        var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
+        var result = _minimizer.Minimize(problem);
+        var referenceResult = _minimizer.Minimize(referenceProblem);
         
         result.ParameterCovarianceMatrix.Should()
             .NotBeNull().And
-            .BeApproximately(referenceResult.ParameterCovarianceMatrix.MultipliedBy(cost.ErrorDefinition));
+            .BeApproximately(referenceResult.ParameterCovarianceMatrix.MultipliedBy(problem.Cost.ErrorDefinition));
     }
 
     [Test]
     public void when_minimizing_a_cost_function_with_an_analytical_gradient_yields_a_result_matching_the_result_obtained_for_numerical_approximation_just_with_fewer_function_calls()
     {
-        var cost = _defaultProblem.Cost.WithGradient().Build();
-        var referenceCost = _defaultProblem.Cost.Build();
-        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
-        
-        var result = _minimizer.Minimize(cost, parameterConfigurations);
-        var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
+        var problem = new CubicPolynomialProblem(derivativeConfiguration: WithGradient);
+        var referenceProblem = new CubicPolynomialProblem(derivativeConfiguration: WithoutDerivatives);
+
+        var result = _minimizer.Minimize(problem);
+        var referenceResult = _minimizer.Minimize(referenceProblem);
 
         result.Should()
             .MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001)).And
@@ -123,16 +121,17 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     public void when_minimizing_a_cost_function_with_an_analytical_gradient_that_returns_non_finite_values_during_the_process_yields_an_invalid_result_with_non_finite_gradient_exit_condition_and_undefined_covariances(
         double nonFiniteValue)
     {
-        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
-        var cost = _defaultProblem.Cost.WithGradient().Build().WithGradientOverride(_ =>
-            Enumerable.Repeat(1.0, parameterConfigurations.Length - 1).Concat([nonFiniteValue]).ToArray());
+        var problem = new CubicPolynomialProblem(derivativeConfiguration: WithGradient);
+        var parameterConfigurations = problem.ParameterConfigurations;
+        var cost = problem.Cost.WithGradientOverride(_ =>
+            Enumerable.Repeat(1.0, parameterConfigurations.Count - 1).Concat([nonFiniteValue]).ToArray());
         
         var result = _minimizer.Minimize(cost, parameterConfigurations);
         
         result.ShouldFulfill(x =>
         {
             x.IsValid.Should().BeFalse();
-            x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteGradient);
+            x.ExitCondition.Should().Be(NonFiniteGradient);
             x.ParameterCovarianceMatrix.Should().BeNull();
         });
     }
@@ -140,10 +139,10 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     [Test]
     public void when_minimizing_a_cost_function_with_an_analytical_gradient_that_throws_an_exception_during_the_process_forwards_that_exception()
     {
-        var cost = _defaultProblem.Cost.WithGradient().Build().WithGradientOverride(_ => throw new TestException());
-        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
+        var problem = new CubicPolynomialProblem(derivativeConfiguration: WithGradient);
+        var cost = problem.Cost.WithGradientOverride(_ => throw new TestException());
         
-        Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
+        Action action = () => _minimizer.Minimize(cost, problem.ParameterConfigurations);
         
         action.Should().ThrowExactly<TestException>();
     }
@@ -151,12 +150,11 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     [Test]
     public void when_minimizing_a_cost_function_with_an_analytical_hessian_yields_a_result_matching_the_result_obtained_for_numerical_approximation_just_with_fewer_function_calls()
     {
-        var cost = _defaultProblem.Cost.WithHessian().Build();
-        var referenceCost = _defaultProblem.Cost.WithGradient().Build();
-        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
+        var problem = new CubicPolynomialProblem(derivativeConfiguration: WithGradientAndHessian);
+        var referenceProblem = new CubicPolynomialProblem(derivativeConfiguration: WithGradient);
         
-        var result = _minimizer.Minimize(cost, parameterConfigurations);
-        var referenceResult = _minimizer.Minimize(referenceCost, parameterConfigurations);
+        var result = _minimizer.Minimize(problem);
+        var referenceResult = _minimizer.Minimize(referenceProblem);
         
         result.Should()
             .MatchExcludingFunctionCalls(referenceResult, options => options.WithSmartDoubleTolerance(0.001)).And
@@ -169,16 +167,17 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     public void when_minimizing_a_cost_function_with_an_analytical_hessian_that_returns_non_finite_values_during_the_process_yields_an_invalid_result_with_non_finite_hessian_exit_condition_and_undefined_covariances(
         double nonFiniteValue)
     {
-        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
-        var cost = _defaultProblem.Cost.WithHessian().Build().WithHessianOverride(_ => 
-            Enumerable.Repeat(nonFiniteValue, parameterConfigurations.Length * parameterConfigurations.Length).ToArray());
+        var problem = new CubicPolynomialProblem(derivativeConfiguration: WithGradientAndHessian);
+        var parameterConfigurations = problem.ParameterConfigurations;
+        var cost = problem.Cost.WithHessianOverride(_ => 
+            Enumerable.Repeat(nonFiniteValue, parameterConfigurations.Count * parameterConfigurations.Count).ToArray());
         
         var result = _minimizer.Minimize(cost, parameterConfigurations);
         
         result.ShouldFulfill(x =>
         {
             x.IsValid.Should().BeFalse();
-            x.ExitCondition.Should().Be(MinimizationExitCondition.NonFiniteHessian);
+            x.ExitCondition.Should().Be(NonFiniteHessian);
             x.ParameterCovarianceMatrix.Should().BeNull();
         });
     }
@@ -186,10 +185,10 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     [Test]
     public void when_minimizing_a_cost_function_with_an_analytical_hessian_that_throws_an_exception_during_the_process_forwards_that_exception()
     {
-        var cost = _defaultProblem.Cost.WithHessian().Build().WithHessianOverride(_ => throw new TestException());
-        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
+        var problem = new CubicPolynomialProblem(derivativeConfiguration: WithGradientAndHessian);
+        var cost = problem.Cost.WithHessianOverride(_ => throw new TestException());
         
-        Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
+        Action action = () => _minimizer.Minimize(cost, problem.ParameterConfigurations);
         
         action.Should().ThrowExactly<TestException>();
     }
@@ -210,25 +209,23 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     
     [Test]
     public void when_minimizing_a_cost_function_sum_with_a_single_component_yields_parameter_covariances_equal_to_those_for_the_isolated_component(
-        [Values] bool hasGradient, 
+        [Values] DerivativeConfiguration derivativeConfiguration, 
         [Values] Strategy strategy)
     {
-        var component = _defaultProblem.Cost.WithGradient(hasGradient).WithErrorDefinition(2).Build();
-        var sum = CostFunction.Sum(component);
-        var parameterConfigurations = _defaultProblem.ParameterConfigurations.Build();
+        var problem = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration, errorDefinitionInSigma: 2);
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
 
-        var componentResult = _minimizer.Minimize(component, parameterConfigurations, minimizerConfiguration);
-        var sumResult = _minimizer.Minimize(sum, parameterConfigurations, minimizerConfiguration);
+        var result = _minimizer.Minimize(problem, minimizerConfiguration);
+        var sumResult = _minimizer.Minimize(CostFunction.Sum(problem.Cost), problem.ParameterConfigurations, minimizerConfiguration);
 
         sumResult.ParameterCovarianceMatrix.Should()
             .NotBeNull().And
-            .BeApproximately(componentResult.ParameterCovarianceMatrix);
+            .BeApproximately(result.ParameterCovarianceMatrix);
     }
 
     [Test]
     public void when_minimizing_a_cost_function_sum_of_independent_components_with_different_error_definitions_yields_parameter_covariances_equivalent_to_those_for_the_isolated_components(
-        [Values] bool hasGradient, 
+        [Values] DerivativeConfiguration derivativeConfiguration, 
         [Values] Strategy strategy)
     { 
         if (strategy == Strategy.Fast) 
@@ -237,52 +234,53 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
                           "prevent early termination. Users should be aware of this limitation and are advised to " +
                           "apply error refinement after minimizing cost function sums with the fast strategy when " +
                           "precise parameter uncertainties are required (see complementary test).");
-        
-        var component1 = _defaultProblem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
-        var component2 = _defaultProblem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
-        var sum = CostFunction.Sum(component1, component2);
-        var parameterConfigurations1 = _defaultProblem.ParameterConfigurations.WithSuffix("1").Build();
-        var parameterConfigurations2 = _defaultProblem.ParameterConfigurations.WithSuffix("2").Build();
+
+        var problem1 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration);
+        var problem2 = new CubicPolynomialProblem(
+            // optimum parameter values are [9.97, -1.96, 0.99, -0.1]
+            c0: Variable("c0_2", 10.5),
+            c1: Variable("c1_2", -2.5),
+            c2: Variable("c2_2", 1.5),
+            c3: Variable("c3_2", -0.15),
+            derivativeConfiguration: derivativeConfiguration, 
+            errorDefinitionInSigma: 2);
+        var sumProblem = problem1.SumWith(problem2);
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
 
-        var component1Result = _minimizer.Minimize(component1, parameterConfigurations1, minimizerConfiguration);
-        var component2Result = _minimizer.Minimize(component2, parameterConfigurations2, minimizerConfiguration);
-        var sumResult = _minimizer.Minimize(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
+        var problem1Result = _minimizer.Minimize(problem1, minimizerConfiguration);
+        var problem2Result = _minimizer.Minimize(problem2, minimizerConfiguration);
+        var sumProblemResult = _minimizer.Minimize(sumProblem, minimizerConfiguration);
 
-        sumResult.ParameterCovarianceMatrix.Should()
+        sumProblemResult.ParameterCovarianceMatrix.Should()
             .NotBeNull().And
-            .BeApproximately(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix));
+            .BeApproximately(problem1Result.ParameterCovarianceMatrix.BlockConcat(problem2Result.ParameterCovarianceMatrix));
     }
     
     [Test]
     public void when_minimizing_a_cost_function_sum_of_independent_components_with_different_error_definitions_using_the_fast_strategy_and_subsequently_applying_error_refinement_yields_parameter_covariances_equivalent_to_those_for_the_isolated_components(
-        [Values] bool hasGradient)
-    { 
-        var component1 = _defaultProblem.Cost.WithParameterSuffixes("1").WithGradient(hasGradient).Build();
-        var component2 = _defaultProblem.Cost.WithParameterSuffixes("2").WithGradient(hasGradient).WithErrorDefinition(2).Build();
-        var sum = CostFunction.Sum(component1, component2);
-        var parameterConfigurations1 = _defaultProblem.ParameterConfigurations.WithSuffix("1").Build();
-        var parameterConfigurations2 = _defaultProblem.ParameterConfigurations.WithSuffix("2").Build();
+        [Values] DerivativeConfiguration derivativeConfiguration)
+    {
+        var problem1 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration);
+        var problem2 = new CubicPolynomialProblem(
+            // optimum parameter values are [9.97, -1.96, 0.99, -0.1]
+            c0: Variable("c0_2", 10.5),
+            c1: Variable("c1_2", -2.5),
+            c2: Variable("c2_2", 1.5),
+            c3: Variable("c3_2", -0.15),
+            derivativeConfiguration: derivativeConfiguration, 
+            errorDefinitionInSigma: 2);
+        var sumProblem = problem1.SumWith(problem2);
         var minimizerConfiguration = new MinimizerConfiguration(Strategy.Fast);
 
-        var component1Result = MinimizeAndRefineErrors(component1, parameterConfigurations1, minimizerConfiguration);
-        var component2Result = MinimizeAndRefineErrors(component2, parameterConfigurations2, minimizerConfiguration);
-        var sumResult = MinimizeAndRefineErrors(sum, parameterConfigurations1.Concat(parameterConfigurations2).ToArray(), minimizerConfiguration);
+        var problem1Result = _minimizer.MinimizeAndRefineErrors(problem1, minimizerConfiguration);
+        var problem2Result = _minimizer.MinimizeAndRefineErrors(problem2, minimizerConfiguration);
+        var sumProblemResult = _minimizer.MinimizeAndRefineErrors(sumProblem, minimizerConfiguration);
 
-        sumResult.ParameterCovarianceMatrix.Should()
+        sumProblemResult.ParameterCovarianceMatrix.Should()
             .NotBeNull().And
-            .BeApproximately(component1Result.ParameterCovarianceMatrix.BlockConcat(component2Result.ParameterCovarianceMatrix));
+            .BeApproximately(problem1Result.ParameterCovarianceMatrix.BlockConcat(problem2Result.ParameterCovarianceMatrix));
     }
-    
-    private IMinimizationResult MinimizeAndRefineErrors(
-        ICostFunction cost,
-        ParameterConfiguration[] parameterConfigurations, 
-        MinimizerConfiguration? minimizerConfiguration)
-    {
-        var result = _minimizer.Minimize(cost, parameterConfigurations, minimizerConfiguration);
-        return HesseErrorCalculator.Refine(result, cost);
-    }
-    
+
     [Test]
     public void when_minimizing_a_cost_function_sum_where_only_some_components_have_an_analytical_hessian_yields_the_same_result_as_if_none_had_an_analytical_gradient(
         [Values] Strategy strategy)

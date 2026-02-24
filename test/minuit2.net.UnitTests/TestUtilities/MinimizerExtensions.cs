@@ -12,4 +12,14 @@ internal static class MinimizerExtensions
     {
         return minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
     }
+    
+    public static IMinimizationResult MinimizeAndRefineErrors(
+        this IMinimizer minimizer, 
+        IConfiguredProblem problem, 
+        MinimizerConfiguration? minimizerConfiguration = null)
+    {
+        var result = minimizer.Minimize(problem, minimizerConfiguration);
+        var adjustedCost = problem.Cost.WithErrorDefinitionRecalculatedBasedOnValid(result);
+        return HesseErrorCalculator.Refine(result, adjustedCost);
+    }
 }
