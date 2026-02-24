@@ -242,7 +242,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
             c3: CubicPolynomialProblem.DefaultC3.WithSuffix("2"),
             derivativeConfiguration: derivativeConfiguration, 
             errorDefinitionInSigma: 2);
-        var sumProblem = problem1.SumWith(problem2);
+        var sumProblem = ConfiguredProblem.Sum(problem1, problem2);
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
 
         var problem1Result = _minimizer.Minimize(problem1, minimizerConfiguration);
@@ -266,7 +266,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
             c3: CubicPolynomialProblem.DefaultC3.WithSuffix("2"),
             derivativeConfiguration: derivativeConfiguration, 
             errorDefinitionInSigma: 2);
-        var sumProblem = problem1.SumWith(problem2);
+        var sumProblem = ConfiguredProblem.Sum(problem1, problem2);
         var minimizerConfiguration = new MinimizerConfiguration(Strategy.Fast);
 
         var problem1Result = _minimizer.MinimizeAndRefineErrors(problem1, minimizerConfiguration);
@@ -282,8 +282,8 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     public void when_minimizing_a_cost_function_sum_where_only_some_components_have_an_analytical_hessian_yields_the_same_result_as_if_none_had_an_analytical_gradient(
         [Values] Strategy strategy)
     {
-        var problem = ProblemComponent1(WithGradientAndHessian).SumWith(ProblemComponent2());
-        var referenceProblem = ProblemComponent1(WithoutDerivatives).SumWith(ProblemComponent2());
+        var problem = ConfiguredProblem.Sum(ProblemComponent1(WithGradientAndHessian), ProblemComponent2());
+        var referenceProblem = ConfiguredProblem.Sum(ProblemComponent1(WithoutDerivatives), ProblemComponent2());
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
         
         var result = _minimizer.Minimize(problem, minimizerConfiguration);
@@ -305,8 +305,8 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         [Values(1, 2)] double errorDefinitionOfComponent1,
         [Values] Strategy strategy)
     {
-        var problem = ProblemComponent1(WithGradientAndHessian).SumWith(ProblemComponent2(WithGradientAndHessian));
-        var referenceProblem = ProblemComponent1(WithoutDerivatives).SumWith(ProblemComponent2(WithoutDerivatives));
+        var problem = ConfiguredProblem.Sum(ProblemComponent1(WithGradientAndHessian), ProblemComponent2(WithGradientAndHessian));
+        var referenceProblem = ConfiguredProblem.Sum(ProblemComponent1(WithoutDerivatives), ProblemComponent2(WithoutDerivatives));
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
         
         var result = _minimizer.Minimize(problem, minimizerConfiguration);

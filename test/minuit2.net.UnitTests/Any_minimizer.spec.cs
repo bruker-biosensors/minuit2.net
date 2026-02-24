@@ -302,7 +302,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             c2: QuadraticPolynomialProblem.DefaultC2.WithSuffix("2"),
             derivativeConfiguration: derivativeConfiguration, 
             errorDefinitionInSigma: 2);
-        var problemSum = problem1.SumWith(problem2);
+        var problemSum = ConfiguredProblem.Sum(problem1, problem2);
         var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
 
         var problem1Result = minimizer.Minimize(problem1, minimizerConfiguration);

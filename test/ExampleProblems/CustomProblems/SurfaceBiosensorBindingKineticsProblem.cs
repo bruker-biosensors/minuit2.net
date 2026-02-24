@@ -1,5 +1,4 @@
 using minuit2.net;
-using minuit2.net.CostFunctions;
 using static ExampleProblems.DerivativeConfiguration;
 using static minuit2.net.ParameterConfiguration;
 
@@ -51,23 +50,9 @@ public class SurfaceBiosensorBindingKineticsProblem(
                 actualAnalyteConcentrationInNanoMolar: conc,
                 modelDerivativeConfiguration: modelDerivativeConfiguration,
                 localParameterSuffix: index.ToString(),
-                randomSeed: index + randomSeed));
-      
-        var costs = new List<ICostFunction>();
-        var parameterConfigs = new List<ParameterConfiguration>();
-        var optimumValues = new List<double>();
-        foreach (var problem in problems)
-        {
-            costs.Add(problem.Cost);
-            foreach (var (config, value) in problem.ParameterConfigurations.Zip(problem.OptimumParameterValues))
-            {
-                if (parameterConfigs.Any(c => c.Name == config.Name)) continue;
-                parameterConfigs.Add(config);
-                optimumValues.Add(value);
-            }
-        }
+                randomSeed: index + randomSeed)).Cast<IConfiguredProblem>().ToArray();
 
-        return new ConfiguredProblem(CostFunction.Sum(costs.ToArray()), optimumValues, parameterConfigs);
+        return ConfiguredProblem.Sum(problems);
     }
 
     private static readonly Func<double, IReadOnlyList<double>, double> Model = 
