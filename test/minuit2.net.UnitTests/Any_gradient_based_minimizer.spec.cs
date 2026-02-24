@@ -236,11 +236,10 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
 
         var problem1 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration);
         var problem2 = new CubicPolynomialProblem(
-            // optimum parameter values are [9.97, -1.96, 0.99, -0.1]
-            c0: Variable("c0_2", 10.5),
-            c1: Variable("c1_2", -2.5),
-            c2: Variable("c2_2", 1.5),
-            c3: Variable("c3_2", -0.15),
+            c0: CubicPolynomialProblem.DefaultC0.WithSuffix("2"),
+            c1: CubicPolynomialProblem.DefaultC1.WithSuffix("2"),
+            c2: CubicPolynomialProblem.DefaultC2.WithSuffix("2"),
+            c3: CubicPolynomialProblem.DefaultC3.WithSuffix("2"),
             derivativeConfiguration: derivativeConfiguration, 
             errorDefinitionInSigma: 2);
         var sumProblem = problem1.SumWith(problem2);
@@ -261,11 +260,10 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     {
         var problem1 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration);
         var problem2 = new CubicPolynomialProblem(
-            // optimum parameter values are [9.97, -1.96, 0.99, -0.1]
-            c0: Variable("c0_2", 10.5),
-            c1: Variable("c1_2", -2.5),
-            c2: Variable("c2_2", 1.5),
-            c3: Variable("c3_2", -0.15),
+            c0: CubicPolynomialProblem.DefaultC0.WithSuffix("2"),
+            c1: CubicPolynomialProblem.DefaultC1.WithSuffix("2"),
+            c2: CubicPolynomialProblem.DefaultC2.WithSuffix("2"),
+            c3: CubicPolynomialProblem.DefaultC3.WithSuffix("2"),
             derivativeConfiguration: derivativeConfiguration, 
             errorDefinitionInSigma: 2);
         var sumProblem = problem1.SumWith(problem2);
@@ -298,8 +296,8 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
             new(derivativeConfiguration: derivativeConfiguration);
         
         QuadraticPolynomialProblem ProblemComponent2() =>
-            // optimum values for c1 and c2 are -5 and 0.5, respectively
-            new(c1: Variable("c1_2", -5.5), c2: Variable("c2_2", 0.55));
+            new(c1: QuadraticPolynomialProblem.DefaultC1.WithSuffix("2"), 
+                c2: QuadraticPolynomialProblem.DefaultC2.WithSuffix("2"));
     }
 
     [Test]
@@ -323,7 +321,8 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
             new(derivativeConfiguration: derivativeConfiguration, errorDefinitionInSigma: errorDefinitionOfComponent1);
 
         QuadraticPolynomialProblem ProblemComponent2(DerivativeConfiguration derivativeConfiguration) =>
-            // optimum values for c1 and c2 are -5 and 0.5, respectively
-            new(c1: Variable("c1_2", -5.5), c2: Variable("c2_2", 0.55), derivativeConfiguration: derivativeConfiguration);
+            new(c1: QuadraticPolynomialProblem.DefaultC1.WithSuffix("2"), 
+                c2: QuadraticPolynomialProblem.DefaultC2.WithSuffix("2"), 
+                derivativeConfiguration: derivativeConfiguration);
     }
 }

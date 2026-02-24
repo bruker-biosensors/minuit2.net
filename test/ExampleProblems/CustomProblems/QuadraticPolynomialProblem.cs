@@ -55,7 +55,7 @@ public class QuadraticPolynomialProblem(
     private static readonly IReadOnlyList<double> OptimumValues = [10, -5, 0.5];
     
     // Default parameter configurations
-    private static readonly ParameterConfiguration DefaultC0 = Variable("c0", 10.9);
-    private static readonly ParameterConfiguration DefaultC1 = Variable("c1", -6.06);
-    private static readonly ParameterConfiguration DefaultC2 = Variable("c2", 0.58);
+    public static readonly ParameterConfiguration DefaultC0 = Variable("c0", 10.9);
+    public static readonly ParameterConfiguration DefaultC1 = Variable("c1", -6.06);
+    public static readonly ParameterConfiguration DefaultC2 = Variable("c2", 0.58);
 }

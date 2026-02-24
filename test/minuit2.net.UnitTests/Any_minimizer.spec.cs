@@ -158,7 +158,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     {
         var problem = new CubicPolynomialProblem();
         var parameterConfigurationsWithInfiniteLimits = problem.ParameterConfigurations
-            .Select(x => Variable(x.Name, x.Value, lowerLimit, upperLimit)).ToList();
+            .Select(x => x.WithLimits(lowerLimit, upperLimit)).ToList();
 
         var result = minimizer.Minimize(problem.Cost, parameterConfigurationsWithInfiniteLimits);
         var referenceResult = minimizer.Minimize(problem);
@@ -181,7 +181,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     {
         var problem = new CubicPolynomialProblem();
         var parameterConfigurationsWithExtremeLimits = problem.ParameterConfigurations
-            .Select(x => Variable(x.Name, x.Value, lowerLimit, upperLimit)).ToList();
+            .Select(x => x.WithLimits(lowerLimit, upperLimit)).ToList();
         
         var result = minimizer.Minimize(problem.Cost, parameterConfigurationsWithExtremeLimits);
         
@@ -297,10 +297,9 @@ public abstract class Any_minimizer(IMinimizer minimizer)
     {
         var problem1 = new QuadraticPolynomialProblem(derivativeConfiguration: derivativeConfiguration);
         var problem2 = new QuadraticPolynomialProblem(
-            // optimum values at [10, -5, 0.5]
-            c0: Variable("c0_2", 10.5),
-            c1: Variable("c1_2", -5.5),
-            c2: Variable("c2_2", 0.55),
+            c0: QuadraticPolynomialProblem.DefaultC0.WithSuffix("2"),
+            c1: QuadraticPolynomialProblem.DefaultC1.WithSuffix("2"),
+            c2: QuadraticPolynomialProblem.DefaultC2.WithSuffix("2"),
             derivativeConfiguration: derivativeConfiguration, 
             errorDefinitionInSigma: 2);
         var problemSum = problem1.SumWith(problem2);

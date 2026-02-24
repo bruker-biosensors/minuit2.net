@@ -57,8 +57,8 @@ public class CubicPolynomialProblem(
     private static readonly IReadOnlyList<double> OptimumValues = [9.97, -1.96, 0.99, -0.1];
 
     // Default parameter configurations
-    private static readonly ParameterConfiguration DefaultC0 = Variable("c0", 10.75);
-    private static readonly ParameterConfiguration DefaultC1 = Variable("c1", -1.97);
-    private static readonly ParameterConfiguration DefaultC2 = Variable("c2", 1.13);
-    private static readonly ParameterConfiguration DefaultC3 = Variable("c3", -0.11);
+    public static readonly ParameterConfiguration DefaultC0 = Variable("c0", 10.75);
+    public static readonly ParameterConfiguration DefaultC1 = Variable("c1", -1.97);
+    public static readonly ParameterConfiguration DefaultC2 = Variable("c2", 1.13);
+    public static readonly ParameterConfiguration DefaultC3 = Variable("c3", -0.11);
 }

@@ -53,8 +53,8 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
             int expectedFunctionCalls)
         {
             var problem = new CubicPolynomialProblem(
-                c1: Fixed("c1", -1.97), 
-                c3: Fixed("c3", -0.11),
+                c1: CubicPolynomialProblem.DefaultC1.Fixed(),
+                c3: CubicPolynomialProblem.DefaultC3.Fixed(),
                 derivativeConfiguration: derivativeConfiguration);
 
             var result = MigradMinimizer.Minimize(problem);
@@ -82,9 +82,8 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
         public void with_limited_parameters_yields_the_expected_result()
         {
             var problem = new CubicPolynomialProblem(
-                c0: Variable("c0", 10.75, lowerLimit: 10.5),  // optimum is 10
-                c3: Variable("c3", -0.11, upperLimit: -0.105));  // optimum is -0.1
-            
+                c0: CubicPolynomialProblem.DefaultC0.WithLimits(10.5, null),  // middle between start (10.75) and optimum (10)
+                c3: CubicPolynomialProblem.DefaultC3.WithLimits(null, -0.105));  // middle between start (-0.11) and optimum (-0.1)
             var result = MigradMinimizer.Minimize(problem);
             
             result.ShouldFulfill(x =>
@@ -110,9 +109,9 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
         public void with_an_analytical_gradient_and_with_limited_parameters_yields_the_expected_result()
         {
             var problem = new CubicPolynomialProblem(
-                c0: Variable("c0", 10.75, lowerLimit: 10.5),  // optimum is 10
-                c3: Variable("c3", -0.11, upperLimit: -0.105),  // optimum is -0.1
-                derivativeConfiguration: WithGradient);  
+                c0: CubicPolynomialProblem.DefaultC0.WithLimits(10.5, null),  // initial and optimum values are 10.75 and 10, respectively
+                c3: CubicPolynomialProblem.DefaultC3.WithLimits(null, -0.105),  // initial and optimum values are -0.11 and -0.1, respectively
+                derivativeConfiguration: WithGradient);
 
             var result = MigradMinimizer.Minimize(problem);
 
@@ -234,10 +233,10 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
         {
             var problem1 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration);
             var problem2 = new CubicPolynomialProblem(
-                c0: Variable("c0_2", 10.5),
-                c1: Variable("c1_2", -2.5),
-                c2: Variable("c2_2", 1.5),
-                c3: Variable("c3_2", -0.15),
+                c0: CubicPolynomialProblem.DefaultC0.WithSuffix("2"),
+                c1: CubicPolynomialProblem.DefaultC1.WithSuffix("2"),
+                c2: CubicPolynomialProblem.DefaultC2.WithSuffix("2"),
+                c3: CubicPolynomialProblem.DefaultC3.WithSuffix("2"),
                 hasYErrors: false,
                 derivativeConfiguration: derivativeConfiguration);
             var sumProblem = problem1.SumWith(problem2);

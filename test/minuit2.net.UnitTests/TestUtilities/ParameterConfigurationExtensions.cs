@@ -7,20 +7,9 @@ internal static class ParameterConfigurationExtensions
 
     public static ParameterConfiguration WithSuffix(this ParameterConfiguration parameter, string suffix) =>
         parameter.CopyWith(name: $"{parameter.Name}_{suffix}");
-
-    public static ParameterConfiguration WithValue(this ParameterConfiguration parameter, double value) =>
-        parameter.CopyWith(value: value);
     
     public static ParameterConfiguration WithLimits(this ParameterConfiguration parameter, double? lowerLimit, double? upperLimit) =>
         parameter.CopyWith(lowerLimit: lowerLimit, upperLimit: upperLimit);
-    
-    public static ParameterConfiguration[] WithLimits(
-        this ParameterConfiguration[] parameters, 
-        double? lowerLimit, 
-        double? upperLimit)
-    {
-        return parameters.Select(p => p.WithLimits(lowerLimit, upperLimit)).ToArray();
-    }
 
     private static ParameterConfiguration CopyWith(
         this ParameterConfiguration parameter,
