@@ -25,14 +25,14 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             yield return TestCase(new SurfaceBiosensorBindingKineticsProblem(), nameof(SurfaceBiosensorBindingKineticsProblem));
             continue;
 
-            TestCaseData TestCase(IConfiguredProblem problem, string problemName) =>
+            TestCaseData TestCase(IProblem problem, string problemName) =>
                 new TestCaseData(problem, strategy).SetName($"{problemName} ({strategy})");
         }
     }
 
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
     public void when_minimizing_a_well_posed_problem_finds_the_optimum_parameter_values(
-        IConfiguredProblem problem,
+        IProblem problem,
         Strategy strategy)
     { 
         var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
@@ -64,7 +64,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             yield return TestCase(new Bennett5Problem(derivativeConfiguration), nameof(Bennett5Problem));
             continue;
 
-            TestCaseData TestCase(IConfiguredProblem problem, string problemName) => 
+            TestCaseData TestCase(IProblem problem, string problemName) => 
                 new TestCaseData(problem, strategy).SetName($"{problemName}.{derivativeConfiguration} ({strategy})");
         }
     }
@@ -75,7 +75,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         var report = new List<string>();
         foreach (var testCase in ChallengingMinimizationProblems().OrderBy(x => x.TestName))
         {
-            var problem = (IConfiguredProblem)testCase.Arguments[0]!;
+            var problem = (IProblem)testCase.Arguments[0]!;
             var strategy = (Strategy)testCase.Arguments[1]!;
             
             var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
@@ -302,7 +302,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
             c2: QuadraticPolynomialProblem.DefaultC2.WithSuffix("2"),
             derivativeConfiguration: derivativeConfiguration, 
             errorDefinitionInSigma: 2);
-        var problemSum = ConfiguredProblem.Sum(problem1, problem2);
+        var problemSum = Problem.Sum(problem1, problem2);
         var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
 
         var problem1Result = minimizer.Minimize(problem1, minimizerConfiguration);

@@ -7,7 +7,7 @@ internal static class MinimizerExtensions
 {
     public static IMinimizationResult Minimize(
         this IMinimizer minimizer, 
-        IConfiguredProblem problem, 
+        IProblem problem, 
         MinimizerConfiguration? minimizerConfiguration = null)
     {
         return minimizer.Minimize(problem.Cost, problem.ParameterConfigurations, minimizerConfiguration);
@@ -15,7 +15,7 @@ internal static class MinimizerExtensions
     
     public static IMinimizationResult MinimizeAndRefineErrors(
         this IMinimizer minimizer, 
-        IConfiguredProblem problem, 
+        IProblem problem, 
         MinimizerConfiguration? minimizerConfiguration = null)
     {
         var result = minimizer.Minimize(problem, minimizerConfiguration);

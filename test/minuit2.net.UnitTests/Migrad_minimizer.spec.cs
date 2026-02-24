@@ -239,7 +239,7 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
                 c3: CubicPolynomialProblem.DefaultC3.WithSuffix("2"),
                 hasYErrors: false,
                 derivativeConfiguration: derivativeConfiguration);
-            var sumProblem = ConfiguredProblem.Sum(problem1, problem2);
+            var sumProblem = Problem.Sum(problem1, problem2);
             var minimizerConfiguration = new MaximumAccuracyMinimizerConfiguration(strategy);
             
             var component1Result = MigradMinimizer.MinimizeAndRefineErrors(problem1, minimizerConfiguration);
@@ -269,7 +269,7 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
                 c1: Variable("c1_2", -2.1),
                 c3: Variable("c3_2", -0.15),
                 derivativeConfiguration: derivativeConfiguration2);
-            var sumProblem = ConfiguredProblem.Sum(problem1, problem2);
+            var sumProblem = Problem.Sum(problem1, problem2);
 
             var result = MigradMinimizer.Minimize(sumProblem);
             
@@ -301,7 +301,7 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
         {
             var problem1 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration1);
             var problem2 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration2, hasYErrors: false);
-            var sumProblem = ConfiguredProblem.Sum(problem1, problem2);
+            var sumProblem = Problem.Sum(problem1, problem2);
 
             var result = MigradMinimizer.Minimize(sumProblem);
             
@@ -331,7 +331,7 @@ public class The_migrad_minimizer() : Any_gradient_based_minimizer(MigradMinimiz
         {
             var problem1 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration1);
             var problem2 = new CubicPolynomialProblem(derivativeConfiguration: derivativeConfiguration2, hasYErrors: false);
-            var sumProblem = ConfiguredProblem.Sum(problem1, problem2);
+            var sumProblem = Problem.Sum(problem1, problem2);
 
             var result = MigradMinimizer.MinimizeAndRefineErrors(sumProblem);
             

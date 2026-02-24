@@ -3,13 +3,13 @@ using minuit2.net.CostFunctions;
 
 namespace ExampleProblems;
 
-public record ConfiguredProblem(
+public record Problem(
     ICostFunction Cost,
     IReadOnlyCollection<double> OptimumParameterValues,
     IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations) 
-    : IConfiguredProblem
+    : IProblem
 {
-    public static ConfiguredProblem Sum(params IConfiguredProblem[] problems)
+    public static Problem Sum(params IProblem[] problems)
     {
         
         var parameterConfigurations = problems.Aggregate(Enumerable.Empty<ParameterConfiguration>(), (acc, next) => acc.Concat(next.ParameterConfigurations));
@@ -25,7 +25,7 @@ public record ConfiguredProblem(
                 throw new ArgumentException($"Parameter {config.Name} has different optimum values in both problems.");
         }
 
-        return new ConfiguredProblem(
+        return new Problem(
             CostFunction.Sum(problems.Select(p => p.Cost).ToArray()),
             parameters.Select(p => p.Optimum).ToList(),
             parameters.Select(p => p.Config).ToList());

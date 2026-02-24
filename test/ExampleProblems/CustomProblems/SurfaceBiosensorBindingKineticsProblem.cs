@@ -40,7 +40,7 @@ public class SurfaceBiosensorBindingKineticsProblem(
     // - analyte mobility is no restricting factor for the association kinetics (no mass transport limitations)
     // (e.g. cf. https://www.sprpages.nl/data-fitting/kinetic-models/one-to-one)
     
-    public static IConfiguredProblem Global(
+    public static IProblem Global(
         IEnumerable<double> analyteConcentrationsInNanoMolar,
         DerivativeConfiguration modelDerivativeConfiguration = WithoutDerivatives,
         int randomSeed = 0)
@@ -50,9 +50,9 @@ public class SurfaceBiosensorBindingKineticsProblem(
                 actualAnalyteConcentrationInNanoMolar: conc,
                 modelDerivativeConfiguration: modelDerivativeConfiguration,
                 localParameterSuffix: index.ToString(),
-                randomSeed: index + randomSeed)).Cast<IConfiguredProblem>().ToArray();
+                randomSeed: index + randomSeed)).Cast<IProblem>().ToArray();
 
-        return ConfiguredProblem.Sum(problems);
+        return Problem.Sum(problems);
     }
 
     private static readonly Func<double, IReadOnlyList<double>, double> Model = 

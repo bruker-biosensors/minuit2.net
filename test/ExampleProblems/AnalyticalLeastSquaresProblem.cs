@@ -5,7 +5,7 @@ using static minuit2.net.CostFunctions.CostFunction;
 
 namespace ExampleProblems;
 
-public abstract class AnalyticalLeastSquaresProblem : IConfiguredProblem
+public abstract class AnalyticalLeastSquaresProblem : IProblem
 {
     protected AnalyticalLeastSquaresProblem(
         IReadOnlyList<double> x,

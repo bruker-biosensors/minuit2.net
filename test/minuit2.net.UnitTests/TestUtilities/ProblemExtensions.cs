@@ -3,9 +3,9 @@ using static minuit2.net.ParameterConfiguration;
 
 namespace minuit2.net.UnitTests.TestUtilities;
 
-internal static class ConfiguredProblemExtensions
+internal static class ProblemExtensions
 {
-    public static IConfiguredProblem WithVariablesAnywhereCloseToOptimumValues(this IConfiguredProblem problem)
+    public static IProblem WithVariablesAnywhereCloseToOptimumValues(this IProblem problem)
     {
         const double maximumRelativeBias = 0.1;
         var newParameterConfigurations = problem.ParameterConfigurations.Zip(problem.OptimumParameterValues, 
@@ -14,7 +14,7 @@ internal static class ConfiguredProblemExtensions
                 : Variable(p.Name, AnyValueCloseTo(optimumValue, maximumRelativeBias), p.LowerLimit, p.UpperLimit))
             .ToArray();
         
-        return new ConfiguredProblem(problem.Cost, problem.OptimumParameterValues, newParameterConfigurations);
+        return new Problem(problem.Cost, problem.OptimumParameterValues, newParameterConfigurations);
     }
     
     private static double AnyValueCloseTo(double value, double maximumRelativeBias)

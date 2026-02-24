@@ -58,7 +58,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
                  "occasionally reports non-convergence — even at the true minimum — due to its unreliable convergence " +
                  "criteria (see the Minuit docs: '...it would not even know if it did converge').")]
     public void when_minimizing_a_well_posed_problem_converges_to_a_valid_cost_function_minimum(
-        IConfiguredProblem problem,
+        IProblem problem,
         Strategy strategy)
     { 
         var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
@@ -73,7 +73,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     
     [TestCaseSource(nameof(WellPosedMinimizationProblems))]
     public void when_minimizing_a_well_posed_problem_yields_parameter_values_that_agree_with_the_optimum_values_within_3_sigma_tolerance(
-        IConfiguredProblem problem,
+        IProblem problem,
         Strategy strategy)
     { 
         var result = _minimizer.Minimize(problem.Cost, problem.ParameterConfigurations);
@@ -242,7 +242,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
             c3: CubicPolynomialProblem.DefaultC3.WithSuffix("2"),
             derivativeConfiguration: derivativeConfiguration, 
             errorDefinitionInSigma: 2);
-        var sumProblem = ConfiguredProblem.Sum(problem1, problem2);
+        var sumProblem = Problem.Sum(problem1, problem2);
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
 
         var problem1Result = _minimizer.Minimize(problem1, minimizerConfiguration);
@@ -266,7 +266,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
             c3: CubicPolynomialProblem.DefaultC3.WithSuffix("2"),
             derivativeConfiguration: derivativeConfiguration, 
             errorDefinitionInSigma: 2);
-        var sumProblem = ConfiguredProblem.Sum(problem1, problem2);
+        var sumProblem = Problem.Sum(problem1, problem2);
         var minimizerConfiguration = new MinimizerConfiguration(Strategy.Fast);
 
         var problem1Result = _minimizer.MinimizeAndRefineErrors(problem1, minimizerConfiguration);
@@ -282,8 +282,8 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
     public void when_minimizing_a_cost_function_sum_where_only_some_components_have_an_analytical_hessian_yields_the_same_result_as_if_none_had_an_analytical_gradient(
         [Values] Strategy strategy)
     {
-        var problem = ConfiguredProblem.Sum(ProblemComponent1(WithGradientAndHessian), ProblemComponent2());
-        var referenceProblem = ConfiguredProblem.Sum(ProblemComponent1(WithoutDerivatives), ProblemComponent2());
+        var problem = Problem.Sum(Problem1(WithGradientAndHessian), Problem2());
+        var referenceProblem = Problem.Sum(Problem1(WithoutDerivatives), Problem2());
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
         
         var result = _minimizer.Minimize(problem, minimizerConfiguration);
@@ -292,10 +292,10 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         result.Should().Match(referenceResult);
         return;
 
-        QuadraticPolynomialProblem ProblemComponent1(DerivativeConfiguration derivativeConfiguration) =>
+        QuadraticPolynomialProblem Problem1(DerivativeConfiguration derivativeConfiguration) =>
             new(derivativeConfiguration: derivativeConfiguration);
         
-        QuadraticPolynomialProblem ProblemComponent2() =>
+        QuadraticPolynomialProblem Problem2() =>
             new(c1: QuadraticPolynomialProblem.DefaultC1.WithSuffix("2"), 
                 c2: QuadraticPolynomialProblem.DefaultC2.WithSuffix("2"));
     }
@@ -305,8 +305,8 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         [Values(1, 2)] double errorDefinitionOfComponent1,
         [Values] Strategy strategy)
     {
-        var problem = ConfiguredProblem.Sum(ProblemComponent1(WithGradientAndHessian), ProblemComponent2(WithGradientAndHessian));
-        var referenceProblem = ConfiguredProblem.Sum(ProblemComponent1(WithoutDerivatives), ProblemComponent2(WithoutDerivatives));
+        var problem = Problem.Sum(Problem1(WithGradientAndHessian), Problem2(WithGradientAndHessian));
+        var referenceProblem = Problem.Sum(Problem1(WithoutDerivatives), Problem2(WithoutDerivatives));
         var minimizerConfiguration = new MinimizerConfiguration(strategy);
         
         var result = _minimizer.Minimize(problem, minimizerConfiguration);
@@ -317,10 +317,10 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
             .HaveFewerFunctionCallsThan(referenceResult);
         return;
 
-        QuadraticPolynomialProblem ProblemComponent1(DerivativeConfiguration derivativeConfiguration) =>
+        QuadraticPolynomialProblem Problem1(DerivativeConfiguration derivativeConfiguration) =>
             new(derivativeConfiguration: derivativeConfiguration, errorDefinitionInSigma: errorDefinitionOfComponent1);
 
-        QuadraticPolynomialProblem ProblemComponent2(DerivativeConfiguration derivativeConfiguration) =>
+        QuadraticPolynomialProblem Problem2(DerivativeConfiguration derivativeConfiguration) =>
             new(c1: QuadraticPolynomialProblem.DefaultC1.WithSuffix("2"), 
                 c2: QuadraticPolynomialProblem.DefaultC2.WithSuffix("2"), 
                 derivativeConfiguration: derivativeConfiguration);

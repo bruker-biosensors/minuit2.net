@@ -3,7 +3,7 @@ using minuit2.net.CostFunctions;
 
 namespace ExampleProblems.CustomProblems;
 
-public class NumericalPendulumProblem : IConfiguredProblem
+public class NumericalPendulumProblem : IProblem
 {
     public NumericalPendulumProblem()
     {
