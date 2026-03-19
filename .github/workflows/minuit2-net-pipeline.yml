@@ -60,16 +60,16 @@ jobs:
         uses: actions/setup-dotnet@v4
 
       - name: Build x86 Library
-        run: dotnet build ./minuit2.net.sln --configuration Release -p:Platform=x86 -p:UseOpenMP=${{ matrix.build.use-openmp }}
+        run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release -p:Platform=x86 -p:UseOpenMP=${{ matrix.build.use-openmp }}
 
       - name: Build x64 Library
-        run: dotnet build ./minuit2.net.sln --configuration Release -p:Platform=x64 -p:UseOpenMP=${{ matrix.build.use-openmp }}
+        run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release -p:Platform=x64 -p:UseOpenMP=${{ matrix.build.use-openmp }}
 
       - name: Build ARM64 Library
-        run: dotnet build ./minuit2.net.sln --configuration Release -p:Platform=ARM64 -p:UseOpenMP=${{ matrix.build.use-openmp }}
+        run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release -p:Platform=ARM64 -p:UseOpenMP=${{ matrix.build.use-openmp }}
 
       - name: Test
-        run: dotnet test ./minuit2.net.sln --configuration Release  -p:UseOpenMP=${{ matrix.build.use-openmp }}
+        run: dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj --configuration Release -p:UseOpenMP=${{ matrix.build.use-openmp }}
 
       - name: Extract Assembly Name
         shell: pwsh

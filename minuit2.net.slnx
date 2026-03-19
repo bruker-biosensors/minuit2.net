@@ -1,0 +1,8 @@
+﻿<Solution>
+  <Project Path="minuit2.net\minuit2.net.csproj" />
+  <Folder Name="/test/">
+    <Project Path="test\minuit2.net.UnitTests\minuit2.net.UnitTests.csproj" />
+    <Project Path="test\ExampleProblems\ExampleProblems.csproj" />
+    <Project Path="test\minuit2.net.Benchmarks\minuit2.net.Benchmarks.csproj" />
+  </Folder>
+</Solution>
