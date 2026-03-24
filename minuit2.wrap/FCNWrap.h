@@ -2,7 +2,7 @@
 #define FCN_WRAP_H_
 
 #include "Minuit2/FCNBase.h"
-#include <exception>
+#include <stdexcept>
 
 namespace ROOT
 {
@@ -21,17 +21,17 @@ namespace ROOT
 
 			virtual std::vector<double> Hessian(const std::vector<double>& parameterValues) const override { return {}; }
 
-            virtual std::vector<double> G2(const std::vector<double>& parameterValues) const override { return {}; }
+			virtual std::vector<double> G2(const std::vector<double>& parameterValues) const override { return {}; }
 
 			virtual bool HasGradient() const override { return false; }
 
 			virtual bool HasHessian() const override { return false; }
 
-            virtual bool HasG2() const override { return false; }
+			virtual bool HasG2() const override { return false; }
 
 			virtual double Up() const override { return 1.0; }
 
-			void Abort() const { throw std::exception("Abort"); }
+			void Abort() const { throw std::runtime_error("Abort"); }
 
 			virtual ~FCNWrap() {}
 		};
