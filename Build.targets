@@ -34,7 +34,7 @@
           WorkingDirectory="$(RootGitPath)"/>
 
     <!-- Checkout the fetched commit -->
-    <Exec Command="git checkout FETCH_HEAD"
+    <Exec Command="git -c advice.detachedHead=false checkout FETCH_HEAD"
           WorkingDirectory="$(RootGitPath)"/>
   </Target>
 
