@@ -1,10 +1,8 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <RootRevision>v6-36-08</RootRevision>
     <RootGitPath>$(MSBuildThisFileDirectory)/minuit2.net/obj/root</RootGitPath>
     <SwigOutputPath>$(MSBuildThisFileDirectory)/minuit2.net/obj/gen</SwigOutputPath>
-    <BuildToolchain Condition="'$(BuildToolchain)' == ''">VisualStudio</BuildToolchain>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)/Build.Windows.$(BuildToolchain).targets" />
