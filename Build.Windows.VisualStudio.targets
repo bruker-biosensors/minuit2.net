@@ -1,0 +1,14 @@
+﻿<Project>
+  <Import Project="$(MSBuildThisFileDirectory)/Build.Windows.targets" />
+
+  <PropertyGroup>
+    <CmakeArchitecture Condition="'$(Platform)' == 'x64'">x64</CmakeArchitecture>
+    <CmakeArchitecture Condition="'$(Platform)' == 'x86'">Win32</CmakeArchitecture>
+    <CmakeArchitecture Condition="'$(Platform)' == 'ARM64'">ARM64</CmakeArchitecture>
+    <CmakeArchitecture Condition="'$(Platform)' == 'AnyCPU'">x64</CmakeArchitecture>
+    
+    <CmakeBuildToolchainFlags>-A $(CmakeArchitecture)</CmakeBuildToolchainFlags>
+    <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(CmakeArchitecture)</CmakeBuildDir>
+    <CmakeOutputPath>$(CmakeBuildDir)/minuit2.wrap/Release</CmakeOutputPath>
+  </PropertyGroup>
+</Project>

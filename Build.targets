@@ -3,20 +3,11 @@
   <PropertyGroup>
     <RootRevision>v6-36-08</RootRevision>
     <RootGitPath>$(MSBuildThisFileDirectory)/minuit2.net/obj/root</RootGitPath>
-
-    <SwigVersion>4.2.0</SwigVersion>
     <SwigOutputPath>$(MSBuildThisFileDirectory)/minuit2.net/obj/gen</SwigOutputPath>
-
-    <CmakeGenerator Condition="'$(CmakeGenerator)' == ''"></CmakeGenerator>
-    <CmakeCCompiler Condition="'$(CmakeCCompiler)' == ''"></CmakeCCompiler>
-    <CmakeCxxCompiler Condition="'$(CmakeCxxCompiler)' == ''"></CmakeCxxCompiler>
+    <BuildToolchain Condition="'$(BuildToolchain)' == ''">VisualStudio</BuildToolchain>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="swigwintools" 
-                      Version="$(SwigVersion)" 
-                      PrivateAssets="all"/>
-  </ItemGroup>
+  <Import Project="$(MSBuildThisFileDirectory)/Build.Windows.$(BuildToolchain).targets" />
 
   <Target Name="CleanGeneratedDirectories" 
           BeforeTargets="Clean">
@@ -58,23 +49,7 @@
           BeforeTargets="BeforeBuild" 
           DependsOnTargets="CreateBuildDirectories">
     <PropertyGroup>
-      <CmakeArchitecture Condition="'$(Platform)' == 'x64'">x64</CmakeArchitecture>
-      <CmakeArchitecture Condition="'$(Platform)' == 'x86'">Win32</CmakeArchitecture>
-      <CmakeArchitecture Condition="'$(Platform)' == 'ARM64'">ARM64</CmakeArchitecture>
-      <CmakeArchitecture Condition="'$(Platform)' == 'AnyCPU'">x64</CmakeArchitecture>
-      
-      <CmakeBuildDir>$(MSBuildThisFileDirectory)/minuit2.wrap/build/$(CmakeArchitecture)</CmakeBuildDir>
-      
-      <IsVsGenerator Condition="'$(CmakeGenerator)' == '' OR $(CmakeGenerator.StartsWith('Visual Studio'))">true</IsVsGenerator>
-      <CmakeArchitectureFlag Condition="'$(IsVsGenerator)' == 'true'">-A $(CmakeArchitecture)</CmakeArchitectureFlag>
-
-      <CmakeGeneratorFlag Condition="'$(CmakeGenerator)' != ''">-G "$(CmakeGenerator)"</CmakeGeneratorFlag>
-      <CmakeCCompilerFlag Condition="'$(CmakeCCompiler)' != ''">-DCMAKE_C_COMPILER=$(CmakeCCompiler)</CmakeCCompilerFlag>
-      <CmakeCxxCompilerFlag Condition="'$(CmakeCxxCompiler)' != ''">-DCMAKE_CXX_COMPILER=$(CmakeCxxCompiler)</CmakeCxxCompilerFlag>
-      
-      <CmakeSwigExecutableFlag>-DSWIG_EXECUTABLE="$(NuGetPackageRoot)/swigwintools/$(SwigVersion)/tools/swigwin-$(SwigVersion)/swig.exe"</CmakeSwigExecutableFlag>
-
-      <CmakeBuildCommand>cmake -S $(MSBuildThisFileDirectory) -B $(CmakeBuildDir) $(CmakeGeneratorFlag) $(CmakeArchitectureFlag) $(CmakeCCompilerFlag) $(CmakeCxxCompilerFlag) -DCMAKE_BUILD_TYPE=Release $(CmakeSwigExecutableFlag) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootGitPath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
+      <CmakeBuildCommand>cmake -S $(MSBuildThisFileDirectory) -B $(CmakeBuildDir) $(CmakeSwigExecutableFlag) $(CmakeBuildToolchainFlags) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootGitPath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
@@ -106,10 +81,6 @@
   <!-- Copy native DLL to output directory -->
   <Target Name="CopyWrapperDll" 
           AfterTargets="BuildNativeLibrary">
-    <PropertyGroup>
-      <CmakeOutputPath Condition="'$(IsVsGenerator)' == 'true'">$(CmakeBuildDir)/minuit2.wrap/Release</CmakeOutputPath>
-      <CmakeOutputPath Condition="'$(IsVsGenerator)' != 'true'">$(CmakeBuildDir)/minuit2.wrap</CmakeOutputPath>
-    </PropertyGroup>
     <ItemGroup>
       <NativeDlls Include="$(CmakeOutputPath)/$(NativeAssemblyName).dll" 
                   Visible="false"/>
