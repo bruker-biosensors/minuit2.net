@@ -1,8 +1,8 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <RootGitPath>$(MSBuildThisFileDirectory)/minuit2.net/obj/root</RootGitPath>
-    <SwigOutputPath>$(MSBuildThisFileDirectory)/minuit2.net/obj/gen</SwigOutputPath>
+    <RootGitPath>$(MSBuildThisFileDirectory)minuit2.wrap/root</RootGitPath>
+    <SwigOutputPath>$(MSBuildThisFileDirectory)minuit2.net/obj/gen</SwigOutputPath>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)/Build.Windows.$(BuildToolchain).targets" />
