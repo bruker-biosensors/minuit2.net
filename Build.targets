@@ -1,6 +1,7 @@
 ﻿<Project>
 
   <PropertyGroup>
+    <RootRevisionRef>$(RootRevision.Replace('tag ', ''))</RootRevisionRef>
     <RootClonePath>$(MSBuildThisFileDirectory)minuit2.wrap/root</RootClonePath>
     <SwigOutputPath>$(MSBuildThisFileDirectory)minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
@@ -25,11 +26,20 @@
           WorkingDirectory="$(RootClonePath)"
           Condition="!Exists('$(RootClonePath)/.git')"/>
 
-    <!-- Fetch only the specific commit without history -->
-    <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
-          WorkingDirectory="$(RootClonePath)"/>
+    <Exec Command="git rev-parse --verify &quot;$(RootRevisionRef)^{commit}&quot;"
+          WorkingDirectory="$(RootClonePath)"
+          ContinueOnError="true"
+          IgnoreExitCode="true"
+          Condition="Exists('$(RootClonePath)/.git')">
+      <Output TaskParameter="ExitCode" 
+              PropertyName="RevisionExistsExitCode"/>
+    </Exec>
 
-    <Exec Command="git -c advice.detachedHead=false checkout FETCH_HEAD"
+    <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
+          WorkingDirectory="$(RootClonePath)"
+          Condition="'$(RevisionExistsExitCode)' != '0'"/>
+
+    <Exec Command="git -c advice.detachedHead=false checkout $(RootRevisionRef)"
           WorkingDirectory="$(RootClonePath)"/>
   </Target>
 
