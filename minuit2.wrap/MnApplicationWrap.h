@@ -42,6 +42,8 @@ namespace ROOT
                     return RunResult(false, std::nullopt);
                 }
             }
+
+            virtual ~MnApplicationWrap() {}
         };
     }
 }
