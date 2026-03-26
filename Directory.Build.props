@@ -4,7 +4,7 @@
 
     <PropertyGroup>
         <UseOpenMP Condition="'$(UseOpenMP)' == ''">OFF</UseOpenMP>
-        <RootRevision Condition="'$(RootRevision)' == ''">v6-36-08</RootRevision>
+        <RootRevision Condition="'$(RootRevision)' == ''">tag v6-36-08</RootRevision>
         <BuildToolchain Condition="'$(BuildToolchain)' == ''">VisualStudio</BuildToolchain>
     </PropertyGroup>
     

@@ -28,7 +28,7 @@
           WorkingDirectory="$(RootGitPath)"/>
 
     <!-- Fetch only the specific commit without history -->
-    <Exec Command="git fetch --depth 1 --no-tags origin tag $(RootRevision)"
+    <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
           WorkingDirectory="$(RootGitPath)"/>
 
     <!-- Checkout the fetched commit -->
