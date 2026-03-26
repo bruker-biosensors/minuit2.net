@@ -71,7 +71,7 @@
           AfterTargets="BuildNativeLibrary" 
           BeforeTargets="CoreCompile">
     <ItemGroup>
-      <GeneratedCSharpFiles Include="$(MSBuildThisFileDirectory)/minuit2.net/obj/gen/*.cs"/>
+      <GeneratedCSharpFiles Include="$(SwigOutputPath)/*.cs"/>
       <Compile Include="@(GeneratedCSharpFiles)"/>
     </ItemGroup>
   </Target>
