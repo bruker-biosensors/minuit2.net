@@ -49,12 +49,15 @@ namespace std {
 
 // Declare C++ types to be wrapped and made accessible in C# (SWIG binding generation)
 %ignore operator();
+%feature("nodirector") operator();
+
 %feature("director") FCNWrap;
+%include "Minuit2/FCNBase.h"
 %include "FCNWrap.h"
+
 %include "Minuit2/MnStrategy.h"
 %include "Minuit2/MnUserCovariance.h"
 %include "Minuit2/MnUserParameterState.h"
-%include "Minuit2/FCNBase.h"
 %include "Minuit2/FunctionMinimum.h"
 %include "MnHesseWrap.h"
 %include "FunctionMinimumExtensions.h"
