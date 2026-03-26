@@ -16,22 +16,19 @@
   </Target>
 
   <Target Name="Fetch Minuit" 
-          BeforeTargets="BeforeBuild" 
-          Condition="!Exists('$(RootClonePath)')">
+          BeforeTargets="BeforeBuild">
 
-    <MakeDir Directories="$(RootClonePath)"/>
-    <Exec Command="git init"
-          WorkingDirectory="$(RootClonePath)"/>
+    <MakeDir Directories="$(RootClonePath)"
+             Condition="!Exists('$(RootClonePath)')"/>
 
-    <!-- Add remote origin -->
-    <Exec Command="git remote add origin https://github.com/root-project/root.git"
-          WorkingDirectory="$(RootClonePath)"/>
+    <Exec Command="git init &amp;&amp; git remote add origin https://github.com/root-project/root.git"
+          WorkingDirectory="$(RootClonePath)"
+          Condition="!Exists('$(RootClonePath)/.git')"/>
 
     <!-- Fetch only the specific commit without history -->
     <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
           WorkingDirectory="$(RootClonePath)"/>
 
-    <!-- Checkout the fetched commit -->
     <Exec Command="git -c advice.detachedHead=false checkout FETCH_HEAD"
           WorkingDirectory="$(RootClonePath)"/>
   </Target>
