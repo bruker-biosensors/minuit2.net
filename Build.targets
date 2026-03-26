@@ -1,7 +1,7 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <RootGitPath>$(MSBuildThisFileDirectory)minuit2.wrap/root</RootGitPath>
+    <RootClonePath>$(MSBuildThisFileDirectory)minuit2.wrap/root</RootClonePath>
     <SwigOutputPath>$(MSBuildThisFileDirectory)minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
 
@@ -11,29 +11,29 @@
           BeforeTargets="Clean">
     <RemoveDir Directories="$(MSBuildThisFileDirectory)/minuit2.wrap/build;$(SwigOutputPath)"/>
     <Exec Command="git clean -fdx"
-          WorkingDirectory="$(RootGitPath)"
-          Condition="Exists('$(RootGitPath)')"/>
+          WorkingDirectory="$(RootClonePath)"
+          Condition="Exists('$(RootClonePath)')"/>
   </Target>
 
   <Target Name="Fetch Minuit" 
           BeforeTargets="BeforeBuild" 
-          Condition="!Exists('$(RootGitPath)')">
+          Condition="!Exists('$(RootClonePath)')">
 
-    <MakeDir Directories="$(RootGitPath)"/>
+    <MakeDir Directories="$(RootClonePath)"/>
     <Exec Command="git init"
-          WorkingDirectory="$(RootGitPath)"/>
+          WorkingDirectory="$(RootClonePath)"/>
 
     <!-- Add remote origin -->
     <Exec Command="git remote add origin https://github.com/root-project/root.git"
-          WorkingDirectory="$(RootGitPath)"/>
+          WorkingDirectory="$(RootClonePath)"/>
 
     <!-- Fetch only the specific commit without history -->
     <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
-          WorkingDirectory="$(RootGitPath)"/>
+          WorkingDirectory="$(RootClonePath)"/>
 
     <!-- Checkout the fetched commit -->
     <Exec Command="git -c advice.detachedHead=false checkout FETCH_HEAD"
-          WorkingDirectory="$(RootGitPath)"/>
+          WorkingDirectory="$(RootClonePath)"/>
   </Target>
 
   <!-- Ensure build directory exists -->
@@ -47,7 +47,7 @@
           BeforeTargets="BeforeBuild" 
           DependsOnTargets="CreateBuildDirectories">
     <PropertyGroup>
-      <CmakeBuildCommand>cmake -S $(MSBuildThisFileDirectory) -B $(CmakeBuildDir) $(CmakeSwigExecutableFlag) $(CmakeBuildToolchainFlags) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootGitPath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
+      <CmakeBuildCommand>cmake -S $(MSBuildThisFileDirectory) -B $(CmakeBuildDir) $(CmakeSwigExecutableFlag) $(CmakeBuildToolchainFlags) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootClonePath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
@@ -145,7 +145,7 @@
 
   <Target Name="RenameROOTLicense" 
           AfterTargets="CopyNativeBinariesForNuGet">
-    <Copy SourceFiles="$(RootGitPath)/LICENSE"
+    <Copy SourceFiles="$(RootClonePath)/LICENSE"
           DestinationFiles="$(IntermediateOutputPath)/ROOT-LICENSE"/>
   </Target>
 
@@ -155,7 +155,7 @@
       <None Include="$(IntermediateOutputPath)/ROOT-LICENSE"
             Pack="true"
             PackagePath="third-party-licenses/"/>
-      <None Include="$(RootGitPath)/LGPL2_1.txt"
+      <None Include="$(RootClonePath)/LGPL2_1.txt"
             Pack="true"
             PackagePath="third-party-licenses/"/>
     </ItemGroup>
