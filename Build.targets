@@ -30,10 +30,17 @@
           WorkingDirectory="$(RootClonePath)"
           ContinueOnError="true"
           IgnoreExitCode="true"
+          StandardOutputImportance="low"
+          StandardErrorImportance="low"
+          EchoOff="true"
           Condition="Exists('$(RootClonePath)/.git')">
       <Output TaskParameter="ExitCode" 
               PropertyName="RevisionExistsExitCode"/>
     </Exec>
+
+    <Message Text="Skipping fetch..." 
+             Importance="high"
+             Condition="'$(RevisionExistsExitCode)' == '0'"/>
 
     <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
           WorkingDirectory="$(RootClonePath)"
