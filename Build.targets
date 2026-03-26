@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <RootGitPath>$(MSBuildThisFileDirectory)minuit2.wrap/root</RootGitPath>
-    <SwigOutputPath>$(MSBuildThisFileDirectory)minuit2.net/obj/gen</SwigOutputPath>
+    <SwigOutputPath>$(MSBuildThisFileDirectory)minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)/Build.Windows.$(BuildToolchain).targets" />
@@ -74,6 +74,8 @@
       <GeneratedCSharpFiles Include="$(SwigOutputPath)/*.cs"/>
       <Compile Include="@(GeneratedCSharpFiles)"/>
     </ItemGroup>
+    <Message Text="Included SWIG generated files from: $(SwigOutputPath)" 
+             Importance="high"/>
   </Target>
 
   <!-- Copy native DLL to output directory -->
