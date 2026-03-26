@@ -58,11 +58,12 @@ namespace std {
 %include "Minuit2/MnStrategy.h"
 %include "Minuit2/MnUserCovariance.h"
 %include "Minuit2/MnUserParameterState.h"
+
 %include "Minuit2/FunctionMinimum.h"
+%include "FunctionMinimumExtensions.h"
 
 %include "Minuit2/MnHesse.h"
 %include "MnHesseWrap.h"
-%include "FunctionMinimumExtensions.h"
 
 %include "MnApplicationWrap.h"
 namespace ROOT {
