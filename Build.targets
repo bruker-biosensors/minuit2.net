@@ -9,7 +9,7 @@
 
   <Target Name="CleanGeneratedDirectories" 
           BeforeTargets="Clean">
-    <RemoveDir Directories="$(MSBuildThisFileDirectory)/minuit2.wrap/build;$(SwigOutputPath)"/>
+    <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
     <Exec Command="git clean -fdx"
           WorkingDirectory="$(RootClonePath)"
           Condition="Exists('$(RootClonePath)')"/>
