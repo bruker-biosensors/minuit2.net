@@ -65,6 +65,9 @@ namespace std {
 %include "Minuit2/MnHesse.h"
 %include "MnHesseWrap.h"
 
+// Note: Minimizer headers (MnMigrad.h, MnSimplex.h, MnMinimize.h) are excluded here because they use C++11 
+// initializer-list syntax that SWIG cannot yet reliably parse (see https://swig.org/Doc3.0/CPlusPlus11.html).
+// Including them currently causes build errors, while excluding them is safe and only results in build warnings.
 %include "MnApplicationWrap.h"
 namespace ROOT {
   namespace Minuit2 {
