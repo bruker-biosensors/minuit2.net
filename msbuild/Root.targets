@@ -1,4 +1,5 @@
-﻿<Project>
+﻿<!-- This file contains all MSBuild targets for managing the C++ library ROOT/Minuit2, which is the native dependency of this project -->
+<Project>
   <PropertyGroup>
     <RootRevisionRef>$(RootRevision.Replace('tag ', ''))</RootRevisionRef>
     <RootClonePath>$(RepoPath)/minuit2.wrap/root</RootClonePath>
