@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <RepoPath>$(MSBuildThisFileDirectory)..</RepoPath>
-    <RootClonePath>$(RepoPath)/minuit2.wrap/root</RootClonePath>
     <SwigOutputPath>$(RepoPath)/minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
 
@@ -12,9 +11,6 @@
   <Target Name="CleanGeneratedDirectories" 
           BeforeTargets="Clean">
     <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
-    <Exec Command="git clean -fdx"
-          WorkingDirectory="$(RootClonePath)"
-          Condition="Exists('$(RootClonePath)')"/>
   </Target>
 
   <!-- Ensure build directory exists -->
