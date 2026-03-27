@@ -5,8 +5,8 @@
     <SwigOutputPath>$(RepoPath)/minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
 
+  <Import Project="$(MSBuildThisFileDirectory)Root.targets" />
   <Import Project="$(MSBuildThisFileDirectory)Windows.$(BuildToolchain).targets" />
-  <Import Project="$(MSBuildThisFileDirectory)PrepareRootSource.targets" />
 
   <Target Name="CleanGeneratedDirectories" 
           BeforeTargets="Clean">

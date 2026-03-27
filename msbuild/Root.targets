@@ -4,14 +4,14 @@
     <RootClonePath>$(RepoPath)/minuit2.wrap/root</RootClonePath>
   </PropertyGroup>
 
-  <Target Name="CleanRoot"
+  <Target Name="CleanLocalRootClone"
           BeforeTargets="Clean">
     <Exec Command="git clean -fdx"
           WorkingDirectory="$(RootClonePath)"
           Condition="Exists('$(RootClonePath)')"/>
   </Target>
   
-  <Target Name="PrepareRoot" 
+  <Target Name="PrepareLocalRootClone" 
           BeforeTargets="BeforeBuild">
 
     <MakeDir Directories="$(RootClonePath)"
