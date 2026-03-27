@@ -1,12 +1,12 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <RootClonePath>$(MSBuildThisFileDirectory)minuit2.wrap/root</RootClonePath>
-    <SwigOutputPath>$(MSBuildThisFileDirectory)minuit2.net/obj/swig</SwigOutputPath>
+    <RootClonePath>$(MSBuildThisFileDirectory)../minuit2.wrap/root</RootClonePath>
+    <SwigOutputPath>$(MSBuildThisFileDirectory)../minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)/Build.Windows.$(BuildToolchain).targets" />
-  <Import Project="$(MSBuildThisFileDirectory)/PrepareRootSource.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)Build.Windows.$(BuildToolchain).targets" />
+  <Import Project="$(MSBuildThisFileDirectory)PrepareRootSource.targets" />
 
   <Target Name="CleanGeneratedDirectories" 
           BeforeTargets="Clean">
@@ -27,11 +27,11 @@
           BeforeTargets="BeforeBuild" 
           DependsOnTargets="CreateBuildDirectories">
     <PropertyGroup>
-      <CmakeBuildCommand>cmake -S $(MSBuildThisFileDirectory) -B $(CmakeBuildDir) $(CmakeSwigExecutableFlag) $(CmakeBuildToolchainFlags) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootClonePath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
+      <CmakeBuildCommand>cmake -S $(MSBuildThisFileDirectory).. -B $(CmakeBuildDir) $(CmakeSwigExecutableFlag) $(CmakeBuildToolchainFlags) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootClonePath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
-          WorkingDirectory="$(MSBuildThisFileDirectory)"
+          WorkingDirectory="$(MSBuildThisFileDirectory).."
           IgnoreExitCode="false"/>
   </Target>
 
@@ -44,7 +44,7 @@
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
-          WorkingDirectory="$(MSBuildThisFileDirectory)"/>
+          WorkingDirectory="$(MSBuildThisFileDirectory).."/>
   </Target>
 
   <Target Name="IncludeGeneratedCSharpFiles" 

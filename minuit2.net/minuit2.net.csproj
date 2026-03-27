@@ -22,7 +22,7 @@
         <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
     </PropertyGroup>
 
-    <Import Project="../Build.targets"/>
+    <Import Project="../msbuild/Build.targets"/>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.103" PrivateAssets="All"/>
