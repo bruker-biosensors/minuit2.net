@@ -8,7 +8,7 @@
   <Import Project="$(MSBuildThisFileDirectory)Root.targets" />
   <Import Project="$(MSBuildThisFileDirectory)Windows.$(BuildToolchain).targets" />
 
-  <Target Name="CleanGeneratedDirectories" 
+  <Target Name="CleanBuildDirectories" 
           BeforeTargets="Clean">
     <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
   </Target>
