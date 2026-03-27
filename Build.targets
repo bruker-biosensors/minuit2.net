@@ -1,12 +1,12 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <RootRevisionRef>$(RootRevision.Replace('tag ', ''))</RootRevisionRef>
     <RootClonePath>$(MSBuildThisFileDirectory)minuit2.wrap/root</RootClonePath>
     <SwigOutputPath>$(MSBuildThisFileDirectory)minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)/Build.Windows.$(BuildToolchain).targets" />
+  <Import Project="$(MSBuildThisFileDirectory)/PrepareRootSource.targets" />
 
   <Target Name="CleanGeneratedDirectories" 
           BeforeTargets="Clean">
@@ -14,40 +14,6 @@
     <Exec Command="git clean -fdx"
           WorkingDirectory="$(RootClonePath)"
           Condition="Exists('$(RootClonePath)')"/>
-  </Target>
-
-  <Target Name="Fetch Minuit" 
-          BeforeTargets="BeforeBuild">
-
-    <MakeDir Directories="$(RootClonePath)"
-             Condition="!Exists('$(RootClonePath)')"/>
-
-    <Exec Command="git init &amp;&amp; git remote add origin https://github.com/root-project/root.git"
-          WorkingDirectory="$(RootClonePath)"
-          Condition="!Exists('$(RootClonePath)/.git')"/>
-
-    <Exec Command="git rev-parse --verify &quot;$(RootRevisionRef)^{commit}&quot;"
-          WorkingDirectory="$(RootClonePath)"
-          ContinueOnError="true"
-          IgnoreExitCode="true"
-          StandardOutputImportance="low"
-          StandardErrorImportance="low"
-          EchoOff="true"
-          Condition="Exists('$(RootClonePath)/.git')">
-      <Output TaskParameter="ExitCode" 
-              PropertyName="RevisionExistsExitCode"/>
-    </Exec>
-
-    <Message Text="Skipping fetch..." 
-             Importance="high"
-             Condition="'$(RevisionExistsExitCode)' == '0'"/>
-
-    <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
-          WorkingDirectory="$(RootClonePath)"
-          Condition="'$(RevisionExistsExitCode)' != '0'"/>
-
-    <Exec Command="git -c advice.detachedHead=false checkout $(RootRevisionRef)"
-          WorkingDirectory="$(RootClonePath)"/>
   </Target>
 
   <!-- Ensure build directory exists -->
