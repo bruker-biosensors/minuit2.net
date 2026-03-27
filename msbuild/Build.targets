@@ -15,7 +15,7 @@
 
   <Target Name="CreateBuildDirectories" 
           BeforeTargets="BeforeBuild">
-    <MakeDir Directories="$(BuildDir);$(SwigOutputPath);$(CmakeBuildDir)"/>
+    <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
   </Target>
 
   <!-- Run CMake Configure -->
