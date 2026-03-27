@@ -13,7 +13,6 @@
     <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
   </Target>
 
-  <!-- Ensure build directory exists -->
   <Target Name="CreateBuildDirectories" 
           BeforeTargets="BeforeBuild">
     <MakeDir Directories="$(BuildDir);$(SwigOutputPath);$(CmakeBuildDir)"/>
