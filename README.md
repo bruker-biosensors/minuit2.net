@@ -46,7 +46,7 @@ Both packages share the same API and can be used interchangeably depending on yo
 - **test/minuit2.net.UnitTests/**: Comprehensive unit tests for the .NET library
 - **test/minuit2.net.Benchmarks/**: Benchmarks for the .NET library
 - **msbuild/**: MSBuild targets for automated building of native components
-- **Directory.Build.props**: Defines the flag to enable OpenMP support for multithreaded native builds
+- **Directory.Build.props**: Solution-wide MSBuild properties and defaults
 
 ## Prerequisites
 
