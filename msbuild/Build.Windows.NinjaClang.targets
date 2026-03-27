@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <CmakeBuildToolchainFlags>-G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release</CmakeBuildToolchainFlags>
-    <CmakeBuildDir>$(MSBuildThisFileDirectory)../minuit2.wrap/build/ActiveEnvironment</CmakeBuildDir>
+    <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/ActiveEnvironment</CmakeBuildDir>
     <CmakeOutputPath>$(CmakeBuildDir)/minuit2.wrap</CmakeOutputPath>
   </PropertyGroup>
 </Project>
