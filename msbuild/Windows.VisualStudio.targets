@@ -1,5 +1,5 @@
 ﻿<Project>
-  <Import Project="$(MSBuildThisFileDirectory)/Build.Windows.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)Windows.targets" />
 
   <PropertyGroup>
     <CmakeArchitecture Condition="'$(Platform)' == 'x64'">x64</CmakeArchitecture>

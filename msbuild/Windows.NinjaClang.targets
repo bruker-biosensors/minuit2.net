@@ -1,5 +1,5 @@
 ﻿<Project>
-  <Import Project="$(MSBuildThisFileDirectory)/Build.Windows.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)Windows.targets" />
 
   <PropertyGroup>
     <CmakeBuildToolchainFlags>-G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release</CmakeBuildToolchainFlags>
