@@ -22,10 +22,6 @@
 
   <Target Name="CheckAvailableDlls" 
           BeforeTargets="GenerateNuspec">
-    <PropertyGroup>
-      <RequiredPlatforms>x64;x86;ARM64</RequiredPlatforms>
-    </PropertyGroup>
-
     <ItemGroup>
       <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x64/native/$(NativeAssemblyName).dll"/>
       <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x86/native/$(NativeAssemblyName).dll"/>
