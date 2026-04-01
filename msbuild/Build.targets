@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <RepoPath>$(MSBuildThisFileDirectory)..</RepoPath>
+    <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
     <SwigOutputPath>$(RepoPath)/minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
 
