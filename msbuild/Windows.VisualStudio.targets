@@ -8,7 +8,7 @@
     <CmakeArchitecture Condition="'$(Platform)' == 'AnyCPU'">x64</CmakeArchitecture>
     
     <CmakeBuildToolchainFlags>-A $(CmakeArchitecture)</CmakeBuildToolchainFlags>
-    <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(CmakeArchitecture)</CmakeBuildDir>
+    <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
     <CmakeOutputPath>$(CmakeBuildDir)/minuit2.wrap/Release</CmakeOutputPath>
   </PropertyGroup>
 </Project>
