@@ -33,7 +33,7 @@
   </Target>
 
   <!-- Build C++ Library and Generate SWIG Wrappers -->
-  <Target Name="BuildNativeLibrary" 
+  <Target Name="BuildNativeDependencies" 
           BeforeTargets="BeforeBuild" 
           DependsOnTargets="CmakeConfigure">
     <PropertyGroup>
@@ -45,7 +45,7 @@
   </Target>
 
   <Target Name="IncludeGeneratedCSharpFiles" 
-          AfterTargets="BuildNativeLibrary" 
+          AfterTargets="BuildNativeDependencies" 
           BeforeTargets="BeforeCompile">
     <ItemGroup>
       <GeneratedCSharpFiles Include="$(SwigOutputPath)/*.cs"/>
@@ -57,7 +57,7 @@
 
   <!-- Copy native DLL to output directory -->
   <Target Name="CopyWrapperDll" 
-          AfterTargets="BuildNativeLibrary">
+          AfterTargets="BuildNativeDependencies">
     <ItemGroup>
       <NativeDlls Include="$(CmakeOutputPath)/$(NativeAssemblyName)$(NativeAssemblyExtension)" 
                   Visible="false"/>
