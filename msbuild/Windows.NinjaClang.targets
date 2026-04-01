@@ -2,7 +2,12 @@
   <Import Project="$(MSBuildThisFileDirectory)Windows.targets" />
 
   <PropertyGroup>
-    <CmakeBuildToolchainFlags>-G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release</CmakeBuildToolchainFlags>
+    <ClangTarget Condition="'$(Platform)' == 'x64'">x86_64-w64-mingw32</ClangTarget>
+    <ClangTarget Condition="'$(Platform)' == 'x86'">i686-w64-mingw32</ClangTarget>
+    <ClangTarget Condition="'$(Platform)' == 'ARM64'">aarch64-w64-mingw32</ClangTarget>
+    <ClangTarget Condition="'$(ClangTarget)' == ''">x86_64-w64-mingw32</ClangTarget>
+
+    <CmakeBuildToolchainFlags>-G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="--target=$(ClangTarget)" -DCMAKE_CXX_FLAGS="--target=$(ClangTarget)"</CmakeBuildToolchainFlags>
     <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
     <CmakeOutputPath>$(CmakeBuildDir)/minuit2.wrap</CmakeOutputPath>
   </PropertyGroup>
