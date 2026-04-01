@@ -9,4 +9,35 @@
                       Version="$(SwigWinToolsVersion)" 
                       PrivateAssets="all"/>
   </ItemGroup>
+
+  <Target Name="CopyNativeBinariesForNuGet" 
+          AfterTargets="CopyWrapperDll" 
+          Condition="'$(Platform)' == 'x64' OR '$(Platform)' == 'x86' OR '$(Platform)' == 'ARM64'">
+    <Copy
+      SourceFiles="@(NativeDlls)"
+      DestinationFiles="@(NativeDlls->'$(ProjectDir)runtimes/win-$(Platform)/native/$(NativeAssemblyName).dll')"
+      SkipUnchangedFiles="true"
+      Condition="Exists('%(NativeDlls.Identity)')"/>
+  </Target>
+
+  <Target Name="CheckAvailableDlls" 
+          BeforeTargets="GenerateNuspec">
+    <PropertyGroup>
+      <RequiredPlatforms>x64;x86;ARM64</RequiredPlatforms>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x64/native/$(NativeAssemblyName).dll"/>
+      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x86/native/$(NativeAssemblyName).dll"/>
+      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-ARM64/native/$(NativeAssemblyName).dll"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <MissingNativeDlls Include="@(RequiredNativeDlls)" 
+                         Condition="!Exists('%(RequiredNativeDlls.Identity)')"/>
+    </ItemGroup>
+
+    <Error Text="Cannot pack: Missing native DLL for platform. Missing files: @(MissingNativeDlls, ', '). Please build all platforms (x64, x86, ARM64) before packing."
+           Condition="'@(MissingNativeDlls)' != ''"/>
+  </Target>
 </Project>
