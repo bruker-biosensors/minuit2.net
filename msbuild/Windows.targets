@@ -2,6 +2,7 @@
   <PropertyGroup>
     <SwigWinToolsVersion>4.2.0</SwigWinToolsVersion>
     <CmakeSwigExecutableFlag>-DSWIG_EXECUTABLE="$(NuGetPackageRoot)/swigwintools/$(SwigWinToolsVersion)/tools/swigwin-$(SwigWinToolsVersion)/swig.exe"</CmakeSwigExecutableFlag>
+    <NativeAssemblyExtension>.dll</NativeAssemblyExtension>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,7 +16,7 @@
           Condition="'$(Platform)' == 'x64' OR '$(Platform)' == 'x86' OR '$(Platform)' == 'ARM64'">
     <Copy
       SourceFiles="@(NativeDlls)"
-      DestinationFiles="@(NativeDlls->'$(ProjectDir)runtimes/win-$(Platform)/native/$(NativeAssemblyName).dll')"
+      DestinationFiles="@(NativeDlls->'$(ProjectDir)runtimes/win-$(Platform)/native/$(NativeAssemblyName)$(NativeAssemblyExtension)')"
       SkipUnchangedFiles="true"
       Condition="Exists('%(NativeDlls.Identity)')"/>
   </Target>
@@ -23,9 +24,9 @@
   <Target Name="CheckAvailableDlls" 
           BeforeTargets="GenerateNuspec">
     <ItemGroup>
-      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x64/native/$(NativeAssemblyName).dll"/>
-      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x86/native/$(NativeAssemblyName).dll"/>
-      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-ARM64/native/$(NativeAssemblyName).dll"/>
+      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x64/native/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
+      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-x86/native/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
+      <RequiredNativeDlls Include="$(ProjectDir)runtimes/win-ARM64/native/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
     </ItemGroup>
 
     <ItemGroup>

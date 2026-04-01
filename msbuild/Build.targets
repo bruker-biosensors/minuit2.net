@@ -59,7 +59,7 @@
   <Target Name="CopyWrapperDll" 
           AfterTargets="BuildNativeLibrary">
     <ItemGroup>
-      <NativeDlls Include="$(CmakeOutputPath)/$(NativeAssemblyName).dll" 
+      <NativeDlls Include="$(CmakeOutputPath)/$(NativeAssemblyName)$(NativeAssemblyExtension)" 
                   Visible="false"/>
     </ItemGroup>
 
