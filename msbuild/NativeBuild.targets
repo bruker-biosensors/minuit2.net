@@ -1,4 +1,5 @@
-﻿<Project>
+﻿<!-- Platform-agnostic targets for building the native C++ code and creating the associated C# wrapper code, ensuring everything is available to the C# library. -->
+<Project>
   <PropertyGroup>
     <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
     <SwigOutputPath>$(RepoPath)/minuit2.net/obj/swig</SwigOutputPath>
@@ -26,7 +27,7 @@
           IgnoreExitCode="false"/>
   </Target>
 
-  <!-- Build C++ Library and Generate SWIG Wrappers -->
+  <!-- Build C++ code and generate SWIG-wrappers -->
   <Target Name="BuildNativeCode" 
           BeforeTargets="BeforeBuild" 
           DependsOnTargets="ConfigureCmake">
