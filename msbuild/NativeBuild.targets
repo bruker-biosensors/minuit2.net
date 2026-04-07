@@ -39,14 +39,14 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="IncludeGeneratedCSharpFiles" 
+  <Target Name="IncludeSwigGeneratedCSharpFiles" 
           AfterTargets="BuildNativeCode" 
           BeforeTargets="BeforeCompile">
     <ItemGroup>
-      <GeneratedCSharpFiles Include="$(SwigOutputPath)/*.cs"/>
-      <Compile Include="@(GeneratedCSharpFiles)"/>
+      <SwigGeneratedCSharpFiles Include="$(SwigOutputPath)/*.cs"/>
+      <Compile Include="@(SwigGeneratedCSharpFiles)"/>
     </ItemGroup>
-    <Message Text="Included SWIG generated files from: $(SwigOutputPath)" 
+    <Message Text="Included SWIG-generated files from: $(SwigOutputPath)" 
              Importance="high"/>
   </Target>
 </Project>
