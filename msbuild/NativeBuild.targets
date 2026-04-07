@@ -4,6 +4,16 @@
     <SwigOutputPath>$(RepoPath)/minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
 
+  <Target Name="CleanBuildDirectories" 
+          BeforeTargets="Clean">
+    <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
+  </Target>
+
+  <Target Name="CreateBuildDirectories" 
+          BeforeTargets="BeforeBuild">
+    <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
+  </Target>
+
   <Target Name="ConfigureCmake" 
           BeforeTargets="BeforeBuild" 
           DependsOnTargets="CreateBuildDirectories">

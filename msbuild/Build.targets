@@ -7,15 +7,6 @@
   <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets" />
   <Import Project="$(MSBuildThisFileDirectory)NativeBuild.Windows.$(BuildToolchain).targets" />
 
-  <Target Name="CleanBuildDirectories" 
-          BeforeTargets="Clean">
-    <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
-  </Target>
-
-  <Target Name="CreateBuildDirectories" 
-          BeforeTargets="BeforeBuild">
-    <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
-  </Target>
 
   <Target Name="RenameROOTLicense" 
           AfterTargets="CopyNativeBinariesForNuGet">
