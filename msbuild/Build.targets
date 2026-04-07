@@ -58,17 +58,11 @@
   <Target Name="CopyNativeBinaries" 
           AfterTargets="BuildNativeDependencies">
     <ItemGroup>
-      <NativeBinaries Include="$(CmakeOutputPath)/$(NativeAssemblyName)$(NativeAssemblyExtension)" 
-                       Visible="false"/>
-    </ItemGroup>
-
-    <ItemGroup>
+      <NativeBinaries Include="$(CmakeOutputPath)/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
       <None Include="@(NativeBinaries)" 
-            Visible="false">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        <Visible>false</Visible>
-      </None>
+            Visible="false" 
+            CopyToOutputDirectory="PreserveNewest" 
+            CopyToPublishDirectory="PreserveNewest"/>
     </ItemGroup>
   </Target>
 
