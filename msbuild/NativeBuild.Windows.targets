@@ -11,8 +11,6 @@
                       PrivateAssets="all"/>
   </ItemGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
-
   <Target Name="CopyNativeBinariesForNuGet" 
           AfterTargets="CopyNativeBinaries" 
           Condition="'$(Platform)' == 'x64' OR '$(Platform)' == 'x86' OR '$(Platform)' == 'ARM64'">

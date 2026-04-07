@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)NativeBuild.Windows.$(BuildToolchain).targets" />
 
 
