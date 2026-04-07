@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets" />
-  <Import Project="$(MSBuildThisFileDirectory)Windows.$(BuildToolchain).targets" />
+  <Import Project="$(MSBuildThisFileDirectory)NativeBuild.Windows.$(BuildToolchain).targets" />
 
   <Target Name="CleanBuildDirectories" 
           BeforeTargets="Clean">

@@ -1,5 +1,5 @@
 ﻿<Project>
-  <Import Project="$(MSBuildThisFileDirectory)Windows.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)NativeBuild.Windows.targets" />
 
   <PropertyGroup>
     <ClangTarget Condition="'$(Platform)' == 'x64'">x86_64-w64-mingw32</ClangTarget>
