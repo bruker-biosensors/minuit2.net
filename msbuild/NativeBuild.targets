@@ -1,6 +1,7 @@
 ﻿<Project>
   <PropertyGroup>
     <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
+    <SwigOutputPath>$(RepoPath)/minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
 
   <Target Name="ConfigureCmake" 
@@ -36,5 +37,16 @@
             CopyToOutputDirectory="PreserveNewest" 
             CopyToPublishDirectory="PreserveNewest"/>
     </ItemGroup>
+  </Target>
+
+  <Target Name="IncludeGeneratedCSharpFiles" 
+          AfterTargets="BuildNativeCode" 
+          BeforeTargets="BeforeCompile">
+    <ItemGroup>
+      <GeneratedCSharpFiles Include="$(SwigOutputPath)/*.cs"/>
+      <Compile Include="@(GeneratedCSharpFiles)"/>
+    </ItemGroup>
+    <Message Text="Included SWIG generated files from: $(SwigOutputPath)" 
+             Importance="high"/>
   </Target>
 </Project>

@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <RepoPath>$(MSBuildThisFileDirectory)..</RepoPath>
-    <SwigOutputPath>$(RepoPath)/minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets" />
@@ -16,17 +15,6 @@
   <Target Name="CreateBuildDirectories" 
           BeforeTargets="BeforeBuild">
     <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
-  </Target>
-
-  <Target Name="IncludeGeneratedCSharpFiles" 
-          AfterTargets="BuildNativeCode" 
-          BeforeTargets="BeforeCompile">
-    <ItemGroup>
-      <GeneratedCSharpFiles Include="$(SwigOutputPath)/*.cs"/>
-      <Compile Include="@(GeneratedCSharpFiles)"/>
-    </ItemGroup>
-    <Message Text="Included SWIG generated files from: $(SwigOutputPath)" 
-             Importance="high"/>
   </Target>
 
   <Target Name="RenameROOTLicense" 
