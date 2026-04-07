@@ -12,13 +12,13 @@
   </ItemGroup>
 
   <Target Name="CopyNativeBinariesForNuGet" 
-          AfterTargets="CopyWrapperDll" 
+          AfterTargets="CopyNativeBinaries" 
           Condition="'$(Platform)' == 'x64' OR '$(Platform)' == 'x86' OR '$(Platform)' == 'ARM64'">
     <Copy
-      SourceFiles="@(NativeDlls)"
-      DestinationFiles="@(NativeDlls->'$(ProjectDir)runtimes/win-$(Platform)/native/$(NativeAssemblyName)$(NativeAssemblyExtension)')"
+      SourceFiles="@(NativeBinaries)"
+      DestinationFiles="@(NativeBinaries->'$(ProjectDir)runtimes/win-$(Platform)/native/$(NativeAssemblyName)$(NativeAssemblyExtension)')"
       SkipUnchangedFiles="true"
-      Condition="Exists('%(NativeDlls.Identity)')"/>
+      Condition="Exists('%(NativeBinaries.Identity)')"/>
   </Target>
 
   <Target Name="CheckAvailableDlls" 

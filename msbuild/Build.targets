@@ -55,16 +55,15 @@
              Importance="high"/>
   </Target>
 
-  <!-- Copy native DLL to output directory -->
-  <Target Name="CopyWrapperDll" 
+  <Target Name="CopyNativeBinaries" 
           AfterTargets="BuildNativeDependencies">
     <ItemGroup>
-      <NativeDlls Include="$(CmakeOutputPath)/$(NativeAssemblyName)$(NativeAssemblyExtension)" 
-                  Visible="false"/>
+      <NativeBinaries Include="$(CmakeOutputPath)/$(NativeAssemblyName)$(NativeAssemblyExtension)" 
+                       Visible="false"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="@(NativeDlls)" 
+      <None Include="@(NativeBinaries)" 
             Visible="false">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
