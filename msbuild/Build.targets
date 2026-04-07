@@ -5,25 +5,7 @@
 
   <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)Packaging.targets"/>
+
   <Import Project="$(MSBuildThisFileDirectory)Windows.$(BuildToolchain).targets"/>
-
-
-  <Target Name="RenameROOTLicense" 
-          AfterTargets="CopyNativeBinariesForNuGet">
-    <Copy SourceFiles="$(RootClonePath)/LICENSE"
-          DestinationFiles="$(IntermediateOutputPath)/ROOT-LICENSE"/>
-  </Target>
-
-  <Target Name="AddROOTLicenseToNuget" 
-          AfterTargets="CopyNativeBinariesForNuGet; RenameROOTLicense">
-    <ItemGroup>
-      <None Include="$(IntermediateOutputPath)/ROOT-LICENSE"
-            Pack="true"
-            PackagePath="third-party-licenses/"/>
-      <None Include="$(RootClonePath)/LGPL2_1.txt"
-            Pack="true"
-            PackagePath="third-party-licenses/"/>
-    </ItemGroup>
-  </Target>
-
 </Project>
