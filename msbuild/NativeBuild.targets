@@ -1,0 +1,40 @@
+﻿<Project>
+  <PropertyGroup>
+    <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
+  </PropertyGroup>
+
+  <Target Name="CmakeConfigure" 
+          BeforeTargets="BeforeBuild" 
+          DependsOnTargets="CreateBuildDirectories">
+    <PropertyGroup>
+      <CmakeBuildCommand>cmake -S $(RepoPath) -B $(CmakeBuildDir) $(CmakeSwigExecutableFlag) $(CmakeBuildToolchainFlags) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootClonePath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
+    </PropertyGroup>
+
+    <Exec Command="$(CmakeBuildCommand)"
+          WorkingDirectory="$(RepoPath)"
+          IgnoreExitCode="false"/>
+  </Target>
+
+  <!-- Build C++ Library and Generate SWIG Wrappers -->
+  <Target Name="BuildNativeDependencies" 
+          BeforeTargets="BeforeBuild" 
+          DependsOnTargets="CmakeConfigure">
+    <PropertyGroup>
+      <CmakeBuildCommand>cmake --build "$(CmakeBuildDir)" --config Release</CmakeBuildCommand>
+    </PropertyGroup>
+
+    <Exec Command="$(CmakeBuildCommand)"
+          WorkingDirectory="$(RepoPath)"/>
+  </Target>
+
+  <Target Name="CopyNativeBinaries" 
+          AfterTargets="BuildNativeDependencies">
+    <ItemGroup>
+      <NativeBinaries Include="$(CmakeOutputPath)/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
+      <None Include="@(NativeBinaries)" 
+            Visible="false" 
+            CopyToOutputDirectory="PreserveNewest" 
+            CopyToPublishDirectory="PreserveNewest"/>
+    </ItemGroup>
+  </Target>
+</Project>

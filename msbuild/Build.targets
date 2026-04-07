@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <RepoPath>$(MSBuildThisFileDirectory)..</RepoPath>
-    <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
     <SwigOutputPath>$(RepoPath)/minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
 
@@ -19,31 +18,6 @@
     <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
   </Target>
 
-  <!-- Run CMake Configure -->
-  <Target Name="CmakeConfigure" 
-          BeforeTargets="BeforeBuild" 
-          DependsOnTargets="CreateBuildDirectories">
-    <PropertyGroup>
-      <CmakeBuildCommand>cmake -S $(RepoPath) -B $(CmakeBuildDir) $(CmakeSwigExecutableFlag) $(CmakeBuildToolchainFlags) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootClonePath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
-    </PropertyGroup>
-
-    <Exec Command="$(CmakeBuildCommand)"
-          WorkingDirectory="$(RepoPath)"
-          IgnoreExitCode="false"/>
-  </Target>
-
-  <!-- Build C++ Library and Generate SWIG Wrappers -->
-  <Target Name="BuildNativeDependencies" 
-          BeforeTargets="BeforeBuild" 
-          DependsOnTargets="CmakeConfigure">
-    <PropertyGroup>
-      <CmakeBuildCommand>cmake --build "$(CmakeBuildDir)" --config Release</CmakeBuildCommand>
-    </PropertyGroup>
-
-    <Exec Command="$(CmakeBuildCommand)"
-          WorkingDirectory="$(RepoPath)"/>
-  </Target>
-
   <Target Name="IncludeGeneratedCSharpFiles" 
           AfterTargets="BuildNativeDependencies" 
           BeforeTargets="BeforeCompile">
@@ -53,17 +27,6 @@
     </ItemGroup>
     <Message Text="Included SWIG generated files from: $(SwigOutputPath)" 
              Importance="high"/>
-  </Target>
-
-  <Target Name="CopyNativeBinaries" 
-          AfterTargets="BuildNativeDependencies">
-    <ItemGroup>
-      <NativeBinaries Include="$(CmakeOutputPath)/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
-      <None Include="@(NativeBinaries)" 
-            Visible="false" 
-            CopyToOutputDirectory="PreserveNewest" 
-            CopyToPublishDirectory="PreserveNewest"/>
-    </ItemGroup>
   </Target>
 
   <Target Name="RenameROOTLicense" 
