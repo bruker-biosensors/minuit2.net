@@ -16,7 +16,7 @@
   </Target>
 
   <!-- Build C++ Library and Generate SWIG Wrappers -->
-  <Target Name="BuildNativeDependencies" 
+  <Target Name="BuildNativeCode" 
           BeforeTargets="BeforeBuild" 
           DependsOnTargets="ConfigureCmake">
     <PropertyGroup>
@@ -28,7 +28,7 @@
   </Target>
 
   <Target Name="CopyNativeBinaries" 
-          AfterTargets="BuildNativeDependencies">
+          AfterTargets="BuildNativeCode">
     <ItemGroup>
       <NativeBinaries Include="$(CmakeOutputPath)/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
       <None Include="@(NativeBinaries)" 

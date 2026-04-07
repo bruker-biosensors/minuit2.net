@@ -19,7 +19,7 @@
   </Target>
 
   <Target Name="IncludeGeneratedCSharpFiles" 
-          AfterTargets="BuildNativeDependencies" 
+          AfterTargets="BuildNativeCode" 
           BeforeTargets="BeforeCompile">
     <ItemGroup>
       <GeneratedCSharpFiles Include="$(SwigOutputPath)/*.cs"/>
