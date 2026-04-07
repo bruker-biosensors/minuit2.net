@@ -3,7 +3,7 @@
     <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
   </PropertyGroup>
 
-  <Target Name="CmakeConfigure" 
+  <Target Name="ConfigureCmake" 
           BeforeTargets="BeforeBuild" 
           DependsOnTargets="CreateBuildDirectories">
     <PropertyGroup>
@@ -18,7 +18,7 @@
   <!-- Build C++ Library and Generate SWIG Wrappers -->
   <Target Name="BuildNativeDependencies" 
           BeforeTargets="BeforeBuild" 
-          DependsOnTargets="CmakeConfigure">
+          DependsOnTargets="ConfigureCmake">
     <PropertyGroup>
       <CmakeBuildCommand>cmake --build "$(CmakeBuildDir)" --config Release</CmakeBuildCommand>
     </PropertyGroup>
