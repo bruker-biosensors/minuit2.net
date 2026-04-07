@@ -1,12 +1,11 @@
 ﻿<Project>
-
   <PropertyGroup>
     <RepoPath>$(MSBuildThisFileDirectory)..</RepoPath>
   </PropertyGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
-  <Import Project="$(MSBuildThisFileDirectory)Windows.$(BuildToolchain).targets" />
+  <Import Project="$(MSBuildThisFileDirectory)Windows.$(BuildToolchain).targets"/>
 
 
   <Target Name="RenameROOTLicense" 
