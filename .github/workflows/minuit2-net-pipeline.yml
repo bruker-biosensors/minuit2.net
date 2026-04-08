@@ -144,7 +144,7 @@ jobs:
         run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.537
 
       - name: Validate NuGet
-        run: dotnet-validate package local **/bin/minuit2.net.*.nupkg
+        run: dotnet-validate package local "./bin/*.nupkg"
 
       - name: Upload NuGet
         uses: actions/upload-artifact@v7
