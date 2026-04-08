@@ -1,7 +1,7 @@
 ﻿<Project>
   <Target Name="CopyNativeBinariesForNuGet" 
           AfterTargets="CopyNativeBinaries" 
-          Condition="$(SupportedNuGetPlatforms.Contains('$(Platform)'))">
+          Condition="$(SupportedPlatformsForNuGet.Contains('$(Platform)'))">
     <Copy
       SourceFiles="@(NativeBinaries)"
       DestinationFiles="@(NativeBinaries->'$(ProjectDir)runtimes/$(RuntimeIdentifierPrefix)-$(Platform)/native/$(NativeAssemblyName)$(NativeAssemblyExtension)')"
@@ -12,7 +12,7 @@
   <Target Name="CheckAvailableBinaries" 
           BeforeTargets="GenerateNuspec">
     <ItemGroup>
-      <RequiredNativeBinaries Include="$(ProjectDir)runtimes/$(RuntimeIdentifierPrefix)-%(RequiredNuGetPlatforms.Identity)/native/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
+      <RequiredNativeBinaries Include="$(ProjectDir)runtimes/$(RuntimeIdentifierPrefix)-%(RequiredPlatformsForNuGet.Identity)/native/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -20,7 +20,7 @@
                          Condition="!Exists('%(RequiredNativeBinaries.Identity)')"/>
     </ItemGroup>
 
-    <Error Text="Cannot pack: Missing native binaries for platform(s): @(MissingNativeBinaries, ', '). Please build all supported platforms ($(SupportedNuGetPlatforms)) before packing."
+    <Error Text="Cannot pack: Missing native binaries for platform(s): @(MissingNativeBinaries, ', '). Please build all supported platforms ($(SupportedPlatformsForNuGet)) before packing."
            Condition="'@(MissingNativeBinaries)' != ''"/>
   </Target>
 

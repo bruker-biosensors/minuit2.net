@@ -1,7 +1,7 @@
 ﻿<Project>
   <PropertyGroup>
     <RuntimeIdentifierPrefix>win</RuntimeIdentifierPrefix>
-    <SupportedNuGetPlatforms>x64;x86;ARM64</SupportedNuGetPlatforms>
+    <SupportedPlatformsForNuGet>x64;x86;ARM64</SupportedPlatformsForNuGet>
     <NativeAssemblyExtension>.dll</NativeAssemblyExtension>
 
     <SwigWinToolsVersion>4.2.0</SwigWinToolsVersion>
@@ -12,6 +12,6 @@
     <PackageReference Include="swigwintools" 
                       Version="$(SwigWinToolsVersion)" 
                       PrivateAssets="all"/>
-    <RequiredNuGetPlatforms Include="$(SupportedNuGetPlatforms)" />
+    <RequiredPlatformsForNuGet Include="$(SupportedPlatformsForNuGet)" />
   </ItemGroup>
 </Project>
