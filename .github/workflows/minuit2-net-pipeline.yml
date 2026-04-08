@@ -31,8 +31,8 @@ jobs:
         with:
           configFilePath: GitVersion.yml
 
-  build:
-    name: Build Project
+  build-windows:
+    name: Build for Windows
     needs: determine-version
     runs-on: windows-latest
     strategy: 
@@ -56,40 +56,79 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v5
 
-      - name: Build x86 Library
+      - name: Build for x86
         run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release -p:Platform=x86 -p:UseOpenMP=${{ matrix.build.use-openmp }}
 
-      - name: Build x64 Library
+      - name: Build for x64
         run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release -p:Platform=x64 -p:UseOpenMP=${{ matrix.build.use-openmp }}
 
-      - name: Build ARM64 Library
+      - name: Build for ARM64
         run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release -p:Platform=ARM64 -p:UseOpenMP=${{ matrix.build.use-openmp }}
 
       - name: Test
         run: dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj --configuration Release -p:UseOpenMP=${{ matrix.build.use-openmp }}
 
-      - name: Extract Assembly Name
-        shell: pwsh
-        run: |
-          $buildDir = "./minuit2.net/bin/Release/"
-          $dllFilter = "minuit2.net*.dll"
-          $dllPath = Get-ChildItem -Path $buildDir -Filter $dllFilter -Recurse | Select-Object -First 1
-          if (-not $dllPath) {
-            Write-Error "No DLL matching '$dllFilter' found in $buildDir"
-            exit 1
-          }
-          $assemblyName = [System.IO.Path]::GetFileNameWithoutExtension($dllPath.Name)
-          Write-Output "Assembly Name: $assemblyName"
-          echo "ASSEMBLY_NAME=$assemblyName" >> $env:GITHUB_ENV
+      - name: Upload C# Assembly
+        uses: actions/upload-artifact@v7
+        with:
+          name: csharp-assembly-${{ matrix.build.package-id }}
+          path: ./minuit2.net/bin/Release/net8.0/
+          if-no-files-found: error
 
-      - name: Build NuGet Package
+      - name: Upload Runtime Binaries
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-binaries-${{ matrix.build.package-id }}
+          path: ./minuit2.net/runtimes/
+          if-no-files-found: error
+
+  package:
+    name: Create NuGet Packages
+    needs: [determine-version, build-windows]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build:
+          - {
+              "use-openmp": "ON",
+              "package-id": "minuit2.net.openmp"
+          }
+          - {
+              "use-openmp": "OFF",
+              "package-id": "minuit2.net"
+          }
+    steps:
+      - name: Check Out Repository Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v5
+
+      - name: Download C# Assembly
+        uses: actions/download-artifact@v8
+        with:
+          name: csharp-assembly-${{ matrix.build.package-id }}
+          path: ./minuit2.net/bin/Release/net8.0/
+
+      - name: Download Runtime Binaries
+        uses: actions/download-artifact@v8
+        with:
+          pattern: "*-binaries-${{ matrix.build.package-id }}"
+          path: ./minuit2.net/runtimes/
+          merge-multiple: true
+
+      - name: Restore Dependencies
+        run: dotnet restore ./minuit2.net/minuit2.net.csproj
+
+      - name: Create NuGet
         shell: pwsh
         # Overview of the different versions: https://gist.github.com/jonlabelle/34993ee032c26420a0943b1c9d106cdc
         run: |
           dotnet pack `
             -p:Version=${{ needs.determine-version.outputs.sem-ver }} `
             -p:FileVersion=${{ needs.determine-version.outputs.assembly-sem-file-ver }} `
-            -p:AssemblyName=${{ env.ASSEMBLY_NAME }} `
             -p:AssemblyVersion=${{ needs.determine-version.outputs.assembly-sem-ver }} `
             -p:AssemblyInformationalVersion=${{ needs.determine-version.outputs.assembly-informational-version }} `
             -p:PackageId=${{ matrix.build.package-id }} `
@@ -104,37 +143,37 @@ jobs:
       - name: Install dotnet-validate
         run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.537
 
-      - name: Validate NuGet Package
+      - name: Validate NuGet
         run: dotnet-validate package local **/bin/minuit2.net.*.nupkg
 
-      - name: Upload Artifacts
+      - name: Upload NuGet
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.build.package-id }}
+          name: nuget-package-${{ matrix.build.package-id }}
           path: ./bin/
           if-no-files-found: error
-          
+
   publish:
-    name: Publish Packages
-    needs: build
+    name: Publish NuGet Packages
+    needs: package
     runs-on: ubuntu-latest
     strategy:
       matrix:
         package-id: ["minuit2.net", "minuit2.net.openmp"]
     if: github.ref_type == 'tag'
     steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
+      - name: Download NuGet
+        uses: actions/download-artifact@v8
         with:
-          name: ${{ matrix.package-id }}
+          name: nuget-package-${{ matrix.package-id }}
           path: ./bin/
 
-      - name: Publish NuGet Package
+      - name: Publish NuGet
         run: |
           dotnet nuget push "**/bin/minuit2.net.*.nupkg" --api-key ${{ secrets.PUBLISH_PACKAGE_TOKEN }} --source "https://api.nuget.org/v3/index.json"
 
   release:
-    name: Release Packages
+    name: Create GitHub Release
     needs: [publish, determine-version]
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'

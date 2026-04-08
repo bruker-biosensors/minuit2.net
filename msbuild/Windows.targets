@@ -12,6 +12,5 @@
     <PackageReference Include="swigwintools" 
                       Version="$(SwigWinToolsVersion)" 
                       PrivateAssets="all"/>
-    <RequiredPlatformsForNuGet Include="$(SupportedPlatformsForNuGet)" />
   </ItemGroup>
 </Project>

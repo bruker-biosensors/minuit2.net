@@ -9,21 +9,6 @@
       Condition="Exists('%(NativeBinaries.Identity)')"/>
   </Target>
 
-  <Target Name="CheckAvailableBinaries" 
-          BeforeTargets="GenerateNuspec">
-    <ItemGroup>
-      <RequiredNativeBinaries Include="$(ProjectDir)runtimes/$(RuntimeIdentifierPrefix)-%(RequiredPlatformsForNuGet.Identity)/native/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
-    </ItemGroup>
-
-    <ItemGroup>
-      <MissingNativeBinaries Include="@(RequiredNativeBinaries)" 
-                         Condition="!Exists('%(RequiredNativeBinaries.Identity)')"/>
-    </ItemGroup>
-
-    <Error Text="Cannot pack: Missing native binaries for platform(s): @(MissingNativeBinaries, ', '). Please build all supported platforms ($(SupportedPlatformsForNuGet)) before packing."
-           Condition="'@(MissingNativeBinaries)' != ''"/>
-  </Target>
-
   <Target Name="RenameRootLicense" 
           AfterTargets="CopyNativeBinariesForNuGet">
     <Copy SourceFiles="$(RootClonePath)/LICENSE"
