@@ -1,4 +1,29 @@
 ﻿<Project>
+  <Target Name="CopyNativeBinariesForNuGet" 
+          AfterTargets="CopyNativeBinaries" 
+          Condition="$(SupportedNuGetPlatforms.Contains('$(Platform)'))">
+    <Copy
+      SourceFiles="@(NativeBinaries)"
+      DestinationFiles="@(NativeBinaries->'$(ProjectDir)runtimes/$(RuntimeIdentifierPrefix)-$(Platform)/native/$(NativeAssemblyName)$(NativeAssemblyExtension)')"
+      SkipUnchangedFiles="true"
+      Condition="Exists('%(NativeBinaries.Identity)')"/>
+  </Target>
+
+  <Target Name="CheckAvailableBinaries" 
+          BeforeTargets="GenerateNuspec">
+    <ItemGroup>
+      <RequiredNativeBinaries Include="$(ProjectDir)runtimes/$(RuntimeIdentifierPrefix)-%(RequiredNuGetPlatforms.Identity)/native/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <MissingNativeBinaries Include="@(RequiredNativeBinaries)" 
+                         Condition="!Exists('%(RequiredNativeBinaries.Identity)')"/>
+    </ItemGroup>
+
+    <Error Text="Cannot pack: Missing native binaries for platform(s): @(MissingNativeBinaries, ', '). Please build all supported platforms ($(SupportedNuGetPlatforms)) before packing."
+           Condition="'@(MissingNativeBinaries)' != ''"/>
+  </Target>
+
   <Target Name="RenameRootLicense" 
           AfterTargets="CopyNativeBinariesForNuGet">
     <Copy SourceFiles="$(RootClonePath)/LICENSE"
