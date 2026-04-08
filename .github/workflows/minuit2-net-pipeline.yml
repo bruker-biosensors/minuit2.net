@@ -119,6 +119,17 @@ jobs:
           path: ./minuit2.net/runtimes/
           merge-multiple: true
 
+      - name: Verify Runtime Binaries
+        shell: pwsh
+        run: |
+          $requiredRids = @("win-x86", "win-x64", "win-arm64")
+          foreach ($rid in $requiredRids) {
+            if (-not (Test-Path "./minuit2.net/runtimes/$rid")) {
+              Write-Error "Cannot package: Missing runtime binaries for RID: $rid. Ensure all architectures are built before packing."
+              exit 1
+            }
+          }
+
       - name: Restore Dependencies
         run: dotnet restore ./minuit2.net/minuit2.net.csproj
 
