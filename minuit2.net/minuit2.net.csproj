@@ -36,6 +36,7 @@
     </ItemGroup>
 
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <!-- ContinuousIntegrationBuild is required for deterministic builds in CI pipeline (dotnet-validate step) -->
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>
 
