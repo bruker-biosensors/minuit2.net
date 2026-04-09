@@ -1,4 +1,4 @@
-﻿<!-- Targets for managing the C++ library ROOT/Minuit2, which is the native dependency of this project -->
+﻿<!-- Targets for managing the ROOT/Minuit2 C++ code, which is the native dependency of this project -->
 <Project>
   <PropertyGroup>
     <RootRevisionRef>$(RootRevision.Replace('tag ', ''))</RootRevisionRef>
