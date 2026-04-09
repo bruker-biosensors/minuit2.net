@@ -12,4 +12,10 @@
     <CmakeToolchainFlags>-G Ninja $(CCompilerFlags) $(CXXCompilerFlags) -DCMAKE_BUILD_TYPE=Release</CmakeToolchainFlags>
     <CmakeOutputPath>$(CmakeBuildDir)/minuit2.wrap</CmakeOutputPath>
   </PropertyGroup>
+
+  <Target Name="ValidateCmakeToolchainFlags"
+          BeforeTargets="ConfigureCmake">
+    <Error Condition="'$(ClangTarget)' == ''"
+           Text="The current RID '$(RuntimeIdentifier)' is not supported by the '$(Toolchain)' toolchain."/>
+  </Target>
 </Project>
