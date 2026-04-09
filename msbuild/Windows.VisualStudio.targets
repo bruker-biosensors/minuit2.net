@@ -6,7 +6,7 @@
     <CmakeArchitecture Condition="$(RuntimeIdentifier.Contains('x86'))">Win32</CmakeArchitecture>
     <CmakeArchitecture Condition="$(RuntimeIdentifier.Contains('arm64'))">ARM64</CmakeArchitecture>
     
-    <CmakeBuildToolchainFlags>-A $(CmakeArchitecture)</CmakeBuildToolchainFlags>
+    <CmakeToolchainFlags>-A $(CmakeArchitecture)</CmakeToolchainFlags>
     <CmakeOutputPath>$(CmakeBuildDir)/minuit2.wrap/Release</CmakeOutputPath>
   </PropertyGroup>
 </Project>

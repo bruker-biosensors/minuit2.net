@@ -9,7 +9,7 @@
     <CCompilerFlags>-DCMAKE_C_COMPILER=clang -DCMAKE_C_FLAGS="--target=$(ClangTarget)"</CCompilerFlags>
     <CXXCompilerFlags>-DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="--target=$(ClangTarget)"</CXXCompilerFlags>
     
-    <CmakeBuildToolchainFlags>-G Ninja $(CCompilerFlags) $(CXXCompilerFlags) -DCMAKE_BUILD_TYPE=Release</CmakeBuildToolchainFlags>
+    <CmakeToolchainFlags>-G Ninja $(CCompilerFlags) $(CXXCompilerFlags) -DCMAKE_BUILD_TYPE=Release</CmakeToolchainFlags>
     <CmakeOutputPath>$(CmakeBuildDir)/minuit2.wrap</CmakeOutputPath>
   </PropertyGroup>
 </Project>

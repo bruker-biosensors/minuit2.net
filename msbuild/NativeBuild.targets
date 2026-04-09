@@ -21,15 +21,15 @@
     <Error Condition="'$(CmakeSwigExecutableFlag)' == ''" 
            Text="SWIG configuration is missing. Ensure '$(ToolchainTargets)' exists and properly sets the 'CmakeSwigExecutableFlag'."/>
 
-    <Error Condition="'$(CmakeBuildToolchainFlags)' == ''" 
-           Text="Native toolchain configuration (compiler/flags) is missing. Ensure '$(ToolchainTargets)' exists and properly sets the 'CmakeBuildToolchainFlags'."/>
+    <Error Condition="'$(CmakeToolchainFlags)' == ''" 
+           Text="Native toolchain configuration (compiler/flags) is missing. Ensure '$(ToolchainTargets)' exists and properly sets the 'CmakeToolchainFlags'."/>
   </Target>
 
   <Target Name="ConfigureCmake" 
           BeforeTargets="BeforeBuild" 
           DependsOnTargets="CreateBuildDirectories">
     <PropertyGroup>
-      <CmakeBuildCommand>cmake -S $(RepoPath) -B $(CmakeBuildDir) $(CmakeSwigExecutableFlag) $(CmakeBuildToolchainFlags) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootClonePath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
+      <CmakeBuildCommand>cmake -S $(RepoPath) -B $(CmakeBuildDir) $(CmakeSwigExecutableFlag) $(CmakeToolchainFlags) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootClonePath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
     </PropertyGroup>
 
     <Exec Command="$(CmakeBuildCommand)"
