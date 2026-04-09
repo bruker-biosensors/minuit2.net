@@ -19,10 +19,10 @@
   <Target Name="ValidateCmakeConfiguration" 
           BeforeTargets="ConfigureCmake">
     <Error Condition="'$(CmakeSwigExecutableFlag)' == ''" 
-           Text="SWIG configuration is missing. Ensure '$(ToolchainTargets)' exists and properly sets the 'CmakeSwigExecutableFlag'."/>
+           Text="SWIG configuration is missing. Ensure '$(ToolchainTargets)' exists and properly sets the SWIG flag."/>
 
     <Error Condition="'$(CmakeToolchainFlags)' == ''" 
-           Text="Native toolchain configuration (compiler/flags) is missing. Ensure '$(ToolchainTargets)' exists and properly sets the 'CmakeToolchainFlags'."/>
+           Text="Native toolchain configuration (compiler/flags) is missing. Ensure '$(ToolchainTargets)' exists and properly sets the toolchain flag."/>
   </Target>
 
   <Target Name="ConfigureCmake" 
