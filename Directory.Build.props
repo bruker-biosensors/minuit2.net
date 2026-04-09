@@ -5,7 +5,6 @@
     <PropertyGroup>
         <UseOpenMP Condition="'$(UseOpenMP)' == ''">OFF</UseOpenMP>
         <RootRevision Condition="'$(RootRevision)' == ''">tag v6-36-10</RootRevision>
-        <Toolchain Condition="'$(Toolchain)' == ''">Windows.VisualStudio</Toolchain>
+        <Toolchain Condition="'$(Toolchain)' == ''">Default</Toolchain>
     </PropertyGroup>
-    
 </Project>
