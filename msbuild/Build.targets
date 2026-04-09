@@ -7,5 +7,5 @@
   <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)Packaging.targets"/>
 
-  <Import Project="$(MSBuildThisFileDirectory)Windows.$(BuildToolchain).targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)$(Toolchain).targets"/>
 </Project>
