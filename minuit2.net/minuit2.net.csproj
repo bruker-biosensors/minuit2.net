@@ -31,9 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="runtimes/win-x64/native/$(NativeAssemblyName).dll" Pack="true" PackagePath="runtimes/win-x64/native/" Visible="false"/>
-        <None Include="runtimes/win-x86/native/$(NativeAssemblyName).dll" Pack="true" PackagePath="runtimes/win-x86/native/" Visible="false"/>
-        <None Include="runtimes/win-ARM64/native/$(NativeAssemblyName).dll" Pack="true" PackagePath="runtimes/win-ARM64/native/" Visible="false"/>
+        <None Include="runtimes/**/*" Pack="true" PackagePath="runtimes/" Visible="false"/>
     </ItemGroup>
 
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
