@@ -53,14 +53,15 @@ Both packages share the same API and can be used interchangeably depending on yo
 ### For Building the Project
 
 1. **Development Environment**:
-   - .NET 8.0 SDK or later
+   - .NET 10.0.105 SDK or later patch
    - Visual Studio 2022 or JetBrains Rider (recommended for development)
-   - C++ compiler (Visual Studio Build Tools or equivalent)
+   - C++ compiler: Visual Studio Build Tools or LLVM/Clang for MinGW
 
 2. **Build Tools**:
    - **CMake** (version 3.18 or later) - for building the C++ layer
-   - **SWIG** (version 4.2.0) - automatically installed via NuGet package `swigwintools`
+   - **SWIG** - automatically installed via NuGet package `swigwintools`
    - **GIT** - will be called from Build.targets
+   - **Ninja** (optional) - required if using the `Windows.NinjaLLVM-MinGW` toolchain
 
 3. **Platform Requirements**:
    - Windows (x64, x86, ARM64)
@@ -68,7 +69,7 @@ Both packages share the same API and can be used interchangeably depending on yo
 ### Runtime Requirements
 
 - .NET 8.0 runtime
-- Visual C++ Redistributable (for the native [Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library)
+- Visual C++ Redistributable (optional) - required if built with `Windows.VisualStudio` toolchain
 
 ## Building the Project
 
@@ -82,7 +83,8 @@ The build process is automated through MSBuild targets and will:
 ### Build Steps
 
 1. Clone the repository
-2. The build system will automatically:
+2. (Optional) Create or update `Directory.Build.props.user` to configure your build (e.g., set `Toolchain`)
+3. Build the solution or project using `dotnet build` or your IDE. The build system will automatically:
    - Install SWIG tools via NuGet
    - Download and compile Minuit2 from [ROOT](https://github.com/root-project/root)
    - Generate C# bindings
@@ -96,10 +98,10 @@ AnyCPU will default to the x64 version of the C++ dll.
 ## Dependencies
 
 ### NuGet Packages
-- `swigwintools` (4.2.0) - SWIG interface generator
+- `swigwintools` - SWIG interface generator
 
 ### External Dependencies (automatically handled)
-- [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library (6.36.08) - downloaded and built during compilation
+- [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library - downloaded and built during compilation
 
 ## Usage
 
