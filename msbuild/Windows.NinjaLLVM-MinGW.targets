@@ -2,9 +2,9 @@
   <Import Project="$(MSBuildThisFileDirectory)Windows.targets" />
 
   <PropertyGroup>
-    <ClangTarget Condition="$(RuntimeIdentifier.Contains('x64'))">x86_64-w64-mingw32</ClangTarget>
-    <ClangTarget Condition="$(RuntimeIdentifier.Contains('x86'))">i686-w64-mingw32</ClangTarget>
-    <ClangTarget Condition="$(RuntimeIdentifier.Contains('arm64'))">aarch64-w64-mingw32</ClangTarget>
+    <ClangTarget Condition="'$(RuntimeIdentifier)' == 'win-x64'">x86_64-w64-mingw32</ClangTarget>
+    <ClangTarget Condition="'$(RuntimeIdentifier)' == 'win-x86'">i686-w64-mingw32</ClangTarget>
+    <ClangTarget Condition="'$(RuntimeIdentifier)' == 'win-arm64'">aarch64-w64-mingw32</ClangTarget>
 
     <CCompilerFlags>-DCMAKE_C_COMPILER=clang -DCMAKE_C_FLAGS="--target=$(ClangTarget)"</CCompilerFlags>
     <CXXCompilerFlags>-DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="--target=$(ClangTarget)"</CXXCompilerFlags>

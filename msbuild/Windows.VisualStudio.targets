@@ -2,9 +2,9 @@
   <Import Project="$(MSBuildThisFileDirectory)Windows.targets" />
 
   <PropertyGroup>
-    <CmakeArchitecture Condition="$(RuntimeIdentifier.Contains('x64'))">x64</CmakeArchitecture>
-    <CmakeArchitecture Condition="$(RuntimeIdentifier.Contains('x86'))">Win32</CmakeArchitecture>
-    <CmakeArchitecture Condition="$(RuntimeIdentifier.Contains('arm64'))">ARM64</CmakeArchitecture>
+    <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'win-x64'">x64</CmakeArchitecture>
+    <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'win-x86'">Win32</CmakeArchitecture>
+    <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'win-arm64'">ARM64</CmakeArchitecture>
 
     <CmakeToolchainFlags>-A $(CmakeArchitecture)</CmakeToolchainFlags>
     <CmakeOutputPath>$(CmakeBuildDir)/minuit2.wrap/Release</CmakeOutputPath>
