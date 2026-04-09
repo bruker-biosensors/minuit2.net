@@ -1,7 +1,8 @@
 ﻿<!-- Platform-agnostic targets for building the native C++ code and creating the associated C# wrapper code, ensuring everything is available to the C# library -->
 <Project>
   <PropertyGroup>
-    <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(Platform)</CmakeBuildDir>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
+    <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(RuntimeIdentifier)</CmakeBuildDir>
     <SwigOutputPath>$(RepoPath)/minuit2.net/obj/swig</SwigOutputPath>
   </PropertyGroup>
 

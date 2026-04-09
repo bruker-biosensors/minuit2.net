@@ -1,9 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <RuntimeIdentifierPrefix>win</RuntimeIdentifierPrefix>
-    <SupportedPlatformsForNuGet>x64;x86;ARM64</SupportedPlatformsForNuGet>
     <NativeAssemblyExtension>.dll</NativeAssemblyExtension>
-
     <SwigWinToolsVersion>4.2.0</SwigWinToolsVersion>
     <CmakeSwigExecutableFlag>-DSWIG_EXECUTABLE="$(NuGetPackageRoot)/swigwintools/$(SwigWinToolsVersion)/tools/swigwin-$(SwigWinToolsVersion)/swig.exe"</CmakeSwigExecutableFlag>
   </PropertyGroup>

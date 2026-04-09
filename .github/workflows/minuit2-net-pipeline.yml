@@ -57,13 +57,13 @@ jobs:
         uses: actions/setup-dotnet@v5
 
       - name: Build for x86
-        run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release -p:Platform=x86 -p:UseOpenMP=${{ matrix.build.use-openmp }}
+        run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release --runtime win-x86 -p:UseOpenMP=${{ matrix.build.use-openmp }} --no-self-contained
 
       - name: Build for x64
-        run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release -p:Platform=x64 -p:UseOpenMP=${{ matrix.build.use-openmp }}
+        run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release --runtime win-x64 -p:UseOpenMP=${{ matrix.build.use-openmp }} --no-self-contained
 
       - name: Build for ARM64
-        run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release -p:Platform=ARM64 -p:UseOpenMP=${{ matrix.build.use-openmp }}
+        run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release --runtime win-arm64 -p:UseOpenMP=${{ matrix.build.use-openmp }} --no-self-contained
 
       - name: Test
         run: dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj --configuration Release -p:UseOpenMP=${{ matrix.build.use-openmp }}

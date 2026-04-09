@@ -1,10 +1,9 @@
 ﻿<Project>
   <Target Name="CopyNativeBinariesForNuGet" 
-          AfterTargets="CopyNativeBinaries" 
-          Condition="$(SupportedPlatformsForNuGet.Contains('$(Platform)'))">
+          AfterTargets="CopyNativeBinaries">
     <Copy
       SourceFiles="@(NativeBinaries)"
-      DestinationFiles="@(NativeBinaries->'$(ProjectDir)runtimes/$(RuntimeIdentifierPrefix)-$(Platform)/native/$(NativeAssemblyName)$(NativeAssemblyExtension)')"
+      DestinationFiles="@(NativeBinaries->'$(ProjectDir)runtimes/$(RuntimeIdentifier)/native/$(NativeAssemblyName)$(NativeAssemblyExtension)')"
       SkipUnchangedFiles="true"
       Condition="Exists('%(NativeBinaries.Identity)')"/>
   </Target>
