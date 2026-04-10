@@ -1,7 +1,7 @@
 ﻿<Project>
-    <Import Project="$(MSBuildThisFileDirectory)Windows.targets"/>
-
     <PropertyGroup>
+        <NativeAssemblyExtension>.dll</NativeAssemblyExtension>
+
         <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'win-x64'">x64</CmakeArchitecture>
         <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'win-x86'">Win32</CmakeArchitecture>
         <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'win-arm64'">ARM64</CmakeArchitecture>

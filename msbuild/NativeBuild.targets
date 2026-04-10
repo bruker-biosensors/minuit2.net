@@ -18,17 +18,15 @@
 
     <Target Name="ValidateCmakeConfiguration"
             BeforeTargets="ConfigureCmake">
-        <Error Condition="'$(CmakeSwigExecutableFlag)' == ''"
-               Text="SWIG configuration is missing. Ensure '$(ToolchainTargets)' exists and properly sets the SWIG flag."/>
-
         <Error Condition="'$(CmakeToolchainFlags)' == ''"
-               Text="Native toolchain configuration (compiler/flags) is missing. Ensure '$(ToolchainTargets)' exists and properly sets the toolchain flag."/>
+               Text="Native toolchain configuration (compiler/flags) is missing. Ensure '$(ToolchainTargets)' exists."/>
     </Target>
 
     <Target Name="ConfigureCmake"
             BeforeTargets="BeforeBuild"
             DependsOnTargets="CreateBuildDirectories">
         <PropertyGroup>
+            <CmakeSwigExecutableFlag Condition="'$(SwigExecutable)' != 'Default'">-DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeSwigExecutableFlag>
             <CmakeBuildCommand>cmake -S $(RepoPath) -B $(CmakeBuildDir) $(CmakeSwigExecutableFlag) $(CmakeToolchainFlags) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootClonePath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
         </PropertyGroup>
 
