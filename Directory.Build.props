@@ -4,8 +4,8 @@
 
     <PropertyGroup>
         <!-- Configurable Properties -->
-        <UseOpenMP Condition="'$(UseOpenMP)' == ''">OFF</UseOpenMP>
         <RootRevision Condition="'$(RootRevision)' == ''">tag v6-36-10</RootRevision>
+        <UseOpenMP Condition="'$(UseOpenMP)' == ''">OFF</UseOpenMP>
         <Toolchain Condition="'$(Toolchain)' == ''">auto</Toolchain>
         <SwigExecutable Condition="'$(SwigExecutable)' == ''">auto</SwigExecutable>
 
