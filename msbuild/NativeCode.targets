@@ -1,48 +1,48 @@
 ﻿<!-- Targets for managing the ROOT/Minuit2 C++ code, which is the native dependency of this project -->
 <Project>
-  <PropertyGroup>
-    <RootRevisionRef>$(RootRevision.Replace('tag ', ''))</RootRevisionRef>
-    <RootClonePath>$(RepoPath)/minuit2.wrap/root</RootClonePath>
-  </PropertyGroup>
+    <PropertyGroup>
+        <RootRevisionRef>$(RootRevision.Replace('tag ', ''))</RootRevisionRef>
+        <RootClonePath>$(RepoPath)/minuit2.wrap/root</RootClonePath>
+    </PropertyGroup>
 
-  <Target Name="CleanLocalRootClone"
-          BeforeTargets="Clean">
-    <Exec Command="git clean -fdx"
-          WorkingDirectory="$(RootClonePath)"
-          Condition="Exists('$(RootClonePath)')"/>
-  </Target>
-  
-  <Target Name="PrepareLocalRootClone" 
-          BeforeTargets="BeforeBuild">
+    <Target Name="CleanLocalRootClone"
+            BeforeTargets="Clean">
+        <Exec Command="git clean -fdx"
+              WorkingDirectory="$(RootClonePath)"
+              Condition="Exists('$(RootClonePath)')"/>
+    </Target>
 
-    <MakeDir Directories="$(RootClonePath)"
-             Condition="!Exists('$(RootClonePath)')"/>
+    <Target Name="PrepareLocalRootClone"
+            BeforeTargets="BeforeBuild">
 
-    <Exec Command="git init &amp;&amp; git remote add origin https://github.com/root-project/root.git"
-          WorkingDirectory="$(RootClonePath)"
-          Condition="!Exists('$(RootClonePath)/.git')"/>
+        <MakeDir Directories="$(RootClonePath)"
+                 Condition="!Exists('$(RootClonePath)')"/>
 
-    <Exec Command="git rev-parse --verify &quot;$(RootRevisionRef)^{commit}&quot;"
-          WorkingDirectory="$(RootClonePath)"
-          ContinueOnError="true"
-          IgnoreExitCode="true"
-          StandardOutputImportance="low"
-          StandardErrorImportance="low"
-          EchoOff="true"
-          Condition="Exists('$(RootClonePath)/.git')">
-      <Output TaskParameter="ExitCode" 
-              PropertyName="RevisionExistsExitCode"/>
-    </Exec>
+        <Exec Command="git init &amp;&amp; git remote add origin https://github.com/root-project/root.git"
+              WorkingDirectory="$(RootClonePath)"
+              Condition="!Exists('$(RootClonePath)/.git')"/>
 
-    <Message Text="Skipping fetch..." 
-             Importance="high"
-             Condition="'$(RevisionExistsExitCode)' == '0'"/>
+        <Exec Command="git rev-parse --verify &quot;$(RootRevisionRef)^{commit}&quot;"
+              WorkingDirectory="$(RootClonePath)"
+              ContinueOnError="true"
+              IgnoreExitCode="true"
+              StandardOutputImportance="low"
+              StandardErrorImportance="low"
+              EchoOff="true"
+              Condition="Exists('$(RootClonePath)/.git')">
+            <Output TaskParameter="ExitCode"
+                    PropertyName="RevisionExistsExitCode"/>
+        </Exec>
 
-    <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
-          WorkingDirectory="$(RootClonePath)"
-          Condition="'$(RevisionExistsExitCode)' != '0'"/>
+        <Message Text="Skipping fetch..."
+                 Importance="high"
+                 Condition="'$(RevisionExistsExitCode)' == '0'"/>
 
-    <Exec Command="git -c advice.detachedHead=false checkout $(RootRevisionRef)"
-          WorkingDirectory="$(RootClonePath)"/>
-  </Target>
+        <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
+              WorkingDirectory="$(RootClonePath)"
+              Condition="'$(RevisionExistsExitCode)' != '0'"/>
+
+        <Exec Command="git -c advice.detachedHead=false checkout $(RootRevisionRef)"
+              WorkingDirectory="$(RootClonePath)"/>
+    </Target>
 </Project>

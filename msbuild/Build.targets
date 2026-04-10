@@ -1,21 +1,21 @@
 ﻿<Project>
-  <PropertyGroup>
-    <RepoPath>$(MSBuildThisFileDirectory)..</RepoPath>
+    <PropertyGroup>
+        <RepoPath>$(MSBuildThisFileDirectory)..</RepoPath>
 
-    <Toolchain Condition="$(Toolchain) == 'Default' And $([MSBuild]::IsOSPlatform('Windows'))">Windows.VisualStudio</Toolchain>
-    <ToolchainTargets>$(MSBuildThisFileDirectory)$(Toolchain).targets</ToolchainTargets>
+        <Toolchain Condition="$(Toolchain) == 'Default' And $([MSBuild]::IsOSPlatform('Windows'))">Windows.VisualStudio</Toolchain>
+        <ToolchainTargets>$(MSBuildThisFileDirectory)$(Toolchain).targets</ToolchainTargets>
 
-    <AssemblySuffix Condition="'$(UseOpenMP)' == 'ON'">.openmp</AssemblySuffix>
-    <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
-  </PropertyGroup>
+        <AssemblySuffix Condition="'$(UseOpenMP)' == 'ON'">.openmp</AssemblySuffix>
+        <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-    <!-- ContinuousIntegrationBuild is required for deterministic builds in CI pipeline (dotnet-validate step) -->
-    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+        <!-- ContinuousIntegrationBuild is required for deterministic builds in CI pipeline (dotnet-validate step) -->
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets"/>
-  <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
-  <Import Project="$(MSBuildThisFileDirectory)Packaging.targets"/>
-  <Import Project="$(ToolchainTargets)" Condition="Exists('$(ToolchainTargets)')"/>
+    <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets"/>
+    <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
+    <Import Project="$(MSBuildThisFileDirectory)Packaging.targets"/>
+    <Import Project="$(ToolchainTargets)" Condition="Exists('$(ToolchainTargets)')"/>
 </Project>
