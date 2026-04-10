@@ -16,11 +16,6 @@
         <Company/>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <DebugType>embedded</DebugType>
-
-        <AssemblySuffix Condition="'$(UseOpenMP)' == 'ON'">.openmp</AssemblySuffix>
-        <AssemblySuffix Condition="'$(UseOpenMP)' != 'ON'"/>
-        <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
-        <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
     </PropertyGroup>
 
     <Import Project="../msbuild/Build.targets"/>
