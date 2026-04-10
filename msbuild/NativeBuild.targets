@@ -25,12 +25,19 @@
     <Target Name="ConfigureCmake"
             BeforeTargets="BeforeBuild"
             DependsOnTargets="CreateBuildDirectories">
-        <PropertyGroup>
-            <CmakeSwigExecutableFlag Condition="'$(SwigExecutable)' != 'auto'">-DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeSwigExecutableFlag>
-            <CmakeBuildCommand>cmake -S $(RepoPath) -B $(CmakeBuildDir) $(CmakeSwigExecutableFlag) $(CmakeToolchainFlags) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootClonePath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
-        </PropertyGroup>
+        <ItemGroup>
+            <CmakeArgs Include='-S "$(RepoPath)"'/>
+            <CmakeArgs Include='-B "$(CmakeBuildDir)"'/>
+            <CmakeArgs Condition="'$(SwigExecutable)' != 'auto'"
+                       Include='-DSWIG_EXECUTABLE="$(SwigExecutable)"'/>
+            <CmakeArgs Include='-DMINUIT2NET_PATH="$(SwigOutputPath)"'/>
+            <CmakeArgs Include='-DROOT_PATH="$(RootClonePath)"'/>
+            <CmakeArgs Include="-Dminuit2_omp=$(UseOpenMP)"/>
+            <CmakeArgs Include="-Dtarget_name=$(NativeAssemblyName)"/>
+            <CmakeArgs Include="$(CmakeToolchainFlags)"/>
+        </ItemGroup>
 
-        <Exec Command="$(CmakeBuildCommand)"
+        <Exec Command="cmake @(CmakeArgs, ' ')"
               WorkingDirectory="$(RepoPath)"
               IgnoreExitCode="false"/>
     </Target>
@@ -39,11 +46,7 @@
     <Target Name="BuildNativeCode"
             BeforeTargets="BeforeBuild"
             DependsOnTargets="ConfigureCmake">
-        <PropertyGroup>
-            <CmakeBuildCommand>cmake --build "$(CmakeBuildDir)" --config Release</CmakeBuildCommand>
-        </PropertyGroup>
-
-        <Exec Command="$(CmakeBuildCommand)"
+        <Exec Command='cmake --build "$(CmakeBuildDir)" --config Release'
               WorkingDirectory="$(RepoPath)"/>
     </Target>
 
