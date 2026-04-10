@@ -37,16 +37,34 @@ jobs:
         uses: actions/setup-dotnet@v5
 
       - name: Build for x86
-        run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release --runtime win-x86 -p:UseOpenMP=${{ inputs.use-openmp }} --no-self-contained
+        run: |
+          dotnet build ./minuit2.net/minuit2.net.csproj `
+            --runtime win-x86 `
+            --configuration Release `
+            -p:UseOpenMP=${{ inputs.use-openmp }} `
+            --no-self-contained
 
       - name: Build for x64
-        run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release --runtime win-x64 -p:UseOpenMP=${{ inputs.use-openmp }} --no-self-contained
+        run: |
+          dotnet build ./minuit2.net/minuit2.net.csproj `
+            --runtime win-x64 `
+            --configuration Release `
+            -p:UseOpenMP=${{ inputs.use-openmp }} `
+            --no-self-contained
 
       - name: Build for ARM64
-        run: dotnet build ./minuit2.net/minuit2.net.csproj --configuration Release --runtime win-arm64 -p:UseOpenMP=${{ inputs.use-openmp }} --no-self-contained
+        run: |
+          dotnet build ./minuit2.net/minuit2.net.csproj `
+            --runtime win-arm64 `
+            --configuration Release `
+            -p:UseOpenMP=${{ inputs.use-openmp }} `
+            --no-self-contained
 
       - name: Test
-        run: dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj --configuration Release -p:UseOpenMP=${{ inputs.use-openmp }}
+        run: |
+          dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj `
+            --configuration Release `
+            -p:UseOpenMP=${{ inputs.use-openmp }}
 
       - name: Upload C# Assembly
         uses: actions/upload-artifact@v7
