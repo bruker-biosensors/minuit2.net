@@ -4,8 +4,6 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Configurations>Debug;Release</Configurations>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
@@ -21,12 +19,6 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.103" PrivateAssets="All"/>
-        <None Include="../README.md" Pack="true" PackagePath=""/>
-        <None Include="../LICENSE" Pack="true" PackagePath=""/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Include="runtimes/**/*" Pack="true" PackagePath="runtimes/" Visible="false"/>
     </ItemGroup>
 
     <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
