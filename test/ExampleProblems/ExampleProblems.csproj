@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -7,7 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\minuit2.net\minuit2.net.csproj" />
+        <ProjectReference Include="..\..\minuit2.net\minuit2.net.csproj"/>
     </ItemGroup>
-
 </Project>
