@@ -3,8 +3,26 @@
             Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.props.user')"/>
 
     <PropertyGroup>
+        <!-- Configurable Properties -->
         <UseOpenMP Condition="'$(UseOpenMP)' == ''">OFF</UseOpenMP>
         <RootRevision Condition="'$(RootRevision)' == ''">tag v6-36-10</RootRevision>
         <Toolchain Condition="'$(Toolchain)' == ''">Default</Toolchain>
+
+        <!-- Project Metadata -->
+        <Authors>Adrian Walser, Felix Kroener, Markus Adamek</Authors>
+
+        <!-- C# Standards -->
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Configurations>Debug;Release</Configurations>
+
+        <!-- Platform & Output Configuration -->
+        <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+
+        <!-- Symbol & SourceLink Settings -->
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <DebugType>embedded</DebugType>
     </PropertyGroup>
 </Project>
