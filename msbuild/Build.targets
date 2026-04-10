@@ -9,11 +9,6 @@
         <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-        <!-- ContinuousIntegrationBuild is required for deterministic builds in CI pipeline (dotnet-validate step) -->
-        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-    </PropertyGroup>
-
     <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets"/>
     <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
     <Import Project="$(MSBuildThisFileDirectory)Packaging.targets"/>

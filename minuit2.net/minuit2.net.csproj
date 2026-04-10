@@ -5,9 +5,5 @@
         <Description>A .NET wrapper for the Minuit2 library from CERN's ROOT project, enhanced with practical extensions.</Description>
     </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.103" PrivateAssets="All"/>
-    </ItemGroup>
-
     <Import Project="../msbuild/Build.targets"/>
 </Project>
