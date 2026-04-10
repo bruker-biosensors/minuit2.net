@@ -22,7 +22,7 @@
               WorkingDirectory="$(RootClonePath)"
               Condition="!Exists('$(RootClonePath)/.git')"/>
 
-        <Exec Command="git rev-parse --verify &quot;$(RootRevisionRef)^{commit}&quot;"
+        <Exec Command='git rev-parse --verify "$(RootRevisionRef)^{commit}"'
               WorkingDirectory="$(RootClonePath)"
               ContinueOnError="true"
               IgnoreExitCode="true"
