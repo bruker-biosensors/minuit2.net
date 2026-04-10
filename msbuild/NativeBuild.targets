@@ -26,7 +26,7 @@
             BeforeTargets="BeforeBuild"
             DependsOnTargets="CreateBuildDirectories">
         <PropertyGroup>
-            <CmakeSwigExecutableFlag Condition="'$(SwigExecutable)' != 'Default'">-DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeSwigExecutableFlag>
+            <CmakeSwigExecutableFlag Condition="'$(SwigExecutable)' != 'auto'">-DSWIG_EXECUTABLE=$(SwigExecutable)</CmakeSwigExecutableFlag>
             <CmakeBuildCommand>cmake -S $(RepoPath) -B $(CmakeBuildDir) $(CmakeSwigExecutableFlag) $(CmakeToolchainFlags) -DMINUIT2NET_PATH=$(SwigOutputPath) -DROOT_PATH=$(RootClonePath) -Dminuit2_omp=$(UseOpenMP) -Dtarget_name=$(NativeAssemblyName)</CmakeBuildCommand>
         </PropertyGroup>
 

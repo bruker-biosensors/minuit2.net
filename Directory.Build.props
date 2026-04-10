@@ -6,8 +6,8 @@
         <!-- Configurable Properties -->
         <UseOpenMP Condition="'$(UseOpenMP)' == ''">OFF</UseOpenMP>
         <RootRevision Condition="'$(RootRevision)' == ''">tag v6-36-10</RootRevision>
-        <Toolchain Condition="'$(Toolchain)' == ''">Default</Toolchain>
-        <SwigExecutable Condition="'$(SwigExecutable)' == ''">Default</SwigExecutable>
+        <Toolchain Condition="'$(Toolchain)' == ''">auto</Toolchain>
+        <SwigExecutable Condition="'$(SwigExecutable)' == ''">auto</SwigExecutable>
 
         <!-- Project Metadata -->
         <Authors>Adrian Walser, Felix Kroener, Markus Adamek</Authors>
