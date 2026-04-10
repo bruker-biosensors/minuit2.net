@@ -3,8 +3,8 @@ run-name: ${{ github.actor }} is creating a new version of Minuit2.NET 🚀
 
 on:
   push:
-    tags: ["v*.*.*"]
-    branches: ['**']
+    tags: [ "v*.*.*" ]
+    branches: [ '**' ]
 
 jobs:
   determine-version:
@@ -34,7 +34,7 @@ jobs:
   standard-branch:
     name: Standard
     uses: ./.github/workflows/build-and-pack.yml
-    needs: [determine-version]
+    needs: [ determine-version ]
     with:
       use-openmp: 'OFF'
       package-id: 'minuit2.net'
@@ -46,7 +46,7 @@ jobs:
   openmp-branch:
     name: OpenMP
     uses: ./.github/workflows/build-and-pack.yml
-    needs: [determine-version]
+    needs: [ determine-version ]
     with:
       use-openmp: 'ON'
       package-id: 'minuit2.net.openmp'
@@ -57,7 +57,7 @@ jobs:
 
   publish:
     name: Publish NuGet Packages
-    needs: [standard-branch, openmp-branch]
+    needs: [ standard-branch, openmp-branch ]
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
     steps:
@@ -74,7 +74,7 @@ jobs:
 
   release:
     name: Create GitHub Release
-    needs: [publish, determine-version]
+    needs: [ publish, determine-version ]
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
     permissions:
