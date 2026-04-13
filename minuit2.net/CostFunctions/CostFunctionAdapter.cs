@@ -24,7 +24,7 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
 
     public override bool HasG2() => function.HasHessianDiagonal;
 
-    public override double Value(VectorDouble parameterValues)
+    public override double CalculateValue(VectorDouble parameterValues)
     {
         Interlocked.Increment(ref _numberOfFunctionCalls);
 
@@ -46,7 +46,7 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
         }
     }
 
-    public override VectorDouble Gradient(VectorDouble parameterValues)
+    public override VectorDouble CalculateGradient(VectorDouble parameterValues)
     {
         try
         {
@@ -57,8 +57,8 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
             return AbortWith(exception);
         }
     }
-    
-    public override VectorDouble Hessian(VectorDouble parameterValues)
+
+    public override VectorDouble CalculateHessian(VectorDouble parameterValues)
     {
         try
         {
@@ -69,8 +69,8 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
             return AbortWith(exception);
         }
     }
-    
-    public override VectorDouble G2(VectorDouble parameterValues)
+
+    public override VectorDouble CalculateG2(VectorDouble parameterValues)
     {
         try
         {
@@ -100,7 +100,7 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
             ? gradient
             : throw new MinimizationAbort(NonFiniteGradient, parameterValues, _numberOfFunctionCalls);
     }
-    
+
     private VectorDouble HessianFor(VectorDouble parameterValues)
     {
         var hessian = new VectorDouble(function.HessianFor(parameterValues.AsReadOnly()).Select(ErrorDefinitionAdjusted));
@@ -108,7 +108,7 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
             ? hessian
             : throw new MinimizationAbort(NonFiniteHessian, parameterValues, _numberOfFunctionCalls);
     }
-    
+
     private VectorDouble HessianDiagonalFor(VectorDouble parameterValues)
     {
         var hessianDiagonal = new VectorDouble(function.HessianDiagonalFor(parameterValues.AsReadOnly()).Select(ErrorDefinitionAdjusted));
@@ -118,7 +118,7 @@ internal sealed class CostFunctionAdapter(ICostFunction function, CancellationTo
     }
 
     private double ErrorDefinitionAdjusted(double value) => value / function.ErrorDefinition;
-    
+
     private VectorDouble AbortWith(Exception exception)
     {
         Exceptions.Enqueue(exception);

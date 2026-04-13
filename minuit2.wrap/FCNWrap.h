@@ -2,6 +2,7 @@
 #define FCN_WRAP_H_
 
 #include "Minuit2/FCNBase.h"
+#include <atomic>
 #include <stdexcept>
 
 namespace ROOT
@@ -13,15 +14,39 @@ namespace ROOT
 		public:
 			FCNWrap() {}
 
-			double operator()(const std::vector<double>& parameterValues) const override final { return Value(parameterValues); }
+			double operator()(const std::vector<double>& parameterValues) const override
+			{
+			    return CalculateValue(parameterValues);
+			}
 
-			virtual double Value(const std::vector<double>& parameterValues) const = 0;
+			std::vector<double> Gradient(const std::vector<double>& parameterValues) const override
+			{
+				auto result = CalculateGradient(parameterValues);
+				ThrowIfAbortRequested();
+				return result;
+			}
 
-			virtual std::vector<double> Gradient(const std::vector<double>& parameterValues) const override { return {}; }
+			std::vector<double> Hessian(const std::vector<double>& parameterValues) const override
+			{
+				auto result = CalculateHessian(parameterValues);
+				ThrowIfAbortRequested();
+				return result;
+			}
 
-			virtual std::vector<double> Hessian(const std::vector<double>& parameterValues) const override { return {}; }
+			std::vector<double> G2(const std::vector<double>& parameterValues) const override
+			{
+				auto result = CalculateG2(parameterValues);
+				ThrowIfAbortRequested();
+				return result;
+			}
 
-			virtual std::vector<double> G2(const std::vector<double>& parameterValues) const override { return {}; }
+			virtual double CalculateValue(const std::vector<double>& parameterValues) const = 0;
+
+			virtual std::vector<double> CalculateGradient(const std::vector<double>& parameterValues) const { return {}; }
+
+			virtual std::vector<double> CalculateHessian(const std::vector<double>& parameterValues) const { return {}; }
+
+			virtual std::vector<double> CalculateG2(const std::vector<double>& parameterValues) const { return {}; }
 
 			virtual bool HasGradient() const override { return false; }
 
@@ -31,9 +56,20 @@ namespace ROOT
 
 			virtual double Up() const override { return 1.0; }
 
-			void Abort() const { throw std::runtime_error("Abort"); }
+			void Abort() const noexcept { _abortRequested.store(true, std::memory_order_relaxed); }
 
-			virtual ~FCNWrap() {}
+		    virtual ~FCNWrap() {}
+
+		private:
+		    void ThrowIfAbortRequested() const
+		    {
+		        if (_abortRequested.exchange(false, std::memory_order_relaxed))
+		        {
+		            throw std::runtime_error("Abort");
+		        }
+		    }
+
+			mutable std::atomic<bool> _abortRequested{ false };
 		};
 	}
 }
