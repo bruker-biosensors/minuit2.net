@@ -1,4 +1,3 @@
-build
 # Build results
 [Bb]uild/
 [Dd]ebug/
@@ -17,9 +16,6 @@ root/
 *.orig
 *.user
 
-# User specific settings
-*.csproj.user
-*.vcxproj.user
 #.editorconfig
 .vs/
 .idea/

@@ -1,0 +1,74 @@
+﻿<Project>
+    <PropertyGroup>
+        <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
+        <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
+        <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(RuntimeIdentifier)</CmakeBuildDir>
+        <SwigOutputPath>$(RepoPath)/minuit2.net/obj/swig</SwigOutputPath>
+    </PropertyGroup>
+
+    <Target Name="CleanBuildDirectories"
+            BeforeTargets="Clean">
+        <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
+    </Target>
+
+    <Target Name="CreateBuildDirectories"
+            BeforeTargets="BeforeBuild">
+        <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
+    </Target>
+
+    <Target Name="ValidateCmakeConfiguration"
+            BeforeTargets="ConfigureCmake">
+        <Error Condition="'$(CmakeToolchainFlags)' == ''"
+               Text="Native toolchain configuration (compiler/flags) is missing. Ensure '$(ToolchainTargets)' exists."/>
+    </Target>
+
+    <Target Name="ConfigureCmake"
+            BeforeTargets="BeforeBuild"
+            DependsOnTargets="CreateBuildDirectories">
+        <ItemGroup>
+            <CmakeArgs Include='-S "$(RepoPath)"'/>
+            <CmakeArgs Include='-B "$(CmakeBuildDir)"'/>
+            <CmakeArgs Condition="'$(SwigExecutable)' != 'auto'"
+                       Include='-DSWIG_EXECUTABLE="$(SwigExecutable)"'/>
+            <CmakeArgs Include='-DMINUIT2NET_PATH="$(SwigOutputPath)"'/>
+            <CmakeArgs Include='-DROOT_PATH="$(RootClonePath)"'/>
+            <CmakeArgs Include="-Dminuit2_omp=$(UseOpenMP)"/>
+            <CmakeArgs Include="-Dtarget_name=$(NativeAssemblyName)"/>
+            <CmakeArgs Include="$(CmakeToolchainFlags)"/>
+        </ItemGroup>
+
+        <Exec Command="cmake @(CmakeArgs, ' ')"
+              WorkingDirectory="$(RepoPath)"
+              IgnoreExitCode="false"/>
+    </Target>
+
+    <!-- Build C++ code and generate SWIG-wrappers -->
+    <Target Name="BuildNativeCode"
+            BeforeTargets="BeforeBuild"
+            DependsOnTargets="ConfigureCmake">
+        <Exec Command='cmake --build "$(CmakeBuildDir)" --config Release'
+              WorkingDirectory="$(RepoPath)"/>
+    </Target>
+
+    <Target Name="CopyNativeBinaries"
+            AfterTargets="BuildNativeCode">
+        <ItemGroup>
+            <NativeBinaries Include="$(CmakeOutputPath)/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
+            <None Include="@(NativeBinaries)"
+                  Visible="false"
+                  CopyToOutputDirectory="PreserveNewest"
+                  CopyToPublishDirectory="PreserveNewest"/>
+        </ItemGroup>
+    </Target>
+
+    <Target Name="IncludeSwigGeneratedCSharpFiles"
+            AfterTargets="BuildNativeCode"
+            BeforeTargets="BeforeCompile">
+        <ItemGroup>
+            <SwigGeneratedCSharpFiles Include="$(SwigOutputPath)/*.cs"/>
+            <Compile Include="@(SwigGeneratedCSharpFiles)"/>
+        </ItemGroup>
+        <Message Text="Included SWIG-generated files from: $(SwigOutputPath)"
+                 Importance="high"/>
+    </Target>
+</Project>

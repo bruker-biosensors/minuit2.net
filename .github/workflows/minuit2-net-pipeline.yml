@@ -3,8 +3,8 @@ run-name: ${{ github.actor }} is creating a new version of Minuit2.NET 🚀
 
 on:
   push:
-    tags: ["v*.*.*"]
-    branches: ['**']
+    tags: [ "v*.*.*" ]
+    branches: [ '**' ]
 
 jobs:
   determine-version:
@@ -18,127 +18,63 @@ jobs:
       pre-release-label: ${{ steps.determine-version.outputs.PreReleaseLabel }}
     steps:
       - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v3.1.1
-        with:
-          versionSpec: '6.0.x'
-          preferLatestVersion: true
+        uses: gittools/actions/gitversion/setup@v4
 
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Determine Version
         id: determine-version
-        uses: gittools/actions/gitversion/execute@v3.1.1
+        uses: gittools/actions/gitversion/execute@v4
         with:
-          useConfigFile: true
+          configFilePath: GitVersion.yml
 
-  build:
-    name: Build Project
-    needs: determine-version
-    runs-on: windows-latest
-    strategy: 
-      matrix:
-        build:
-          - {
-              "use-openmp": "ON",
-              "package-id": "minuit2.net.openmp"
-          }
-          - {
-              "use-openmp": "OFF",
-              "package-id": "minuit2.net"
-          }
-    steps:
-      - name: Check Out Repository Code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 1
+  standard-branch:
+    name: Standard
+    uses: ./.github/workflows/build-and-pack.yml
+    needs: [ determine-version ]
+    with:
+      use-openmp: 'OFF'
+      package-id: 'minuit2.net'
+      sem-ver: ${{ needs.determine-version.outputs.sem-ver }}
+      assembly-sem-ver: ${{ needs.determine-version.outputs.assembly-sem-ver }}
+      assembly-sem-file-ver: ${{ needs.determine-version.outputs.assembly-sem-file-ver }}
+      assembly-informational-version: ${{ needs.determine-version.outputs.assembly-informational-version }}
 
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v4
+  openmp-branch:
+    name: OpenMP
+    uses: ./.github/workflows/build-and-pack.yml
+    needs: [ determine-version ]
+    with:
+      use-openmp: 'ON'
+      package-id: 'minuit2.net.openmp'
+      sem-ver: ${{ needs.determine-version.outputs.sem-ver }}
+      assembly-sem-ver: ${{ needs.determine-version.outputs.assembly-sem-ver }}
+      assembly-sem-file-ver: ${{ needs.determine-version.outputs.assembly-sem-file-ver }}
+      assembly-informational-version: ${{ needs.determine-version.outputs.assembly-informational-version }}
 
-      - name: Build x86 Library
-        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x86 -p:UseOpenMP=${{ matrix.build.use-openmp }}
-
-      - name: Build x64 Library
-        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=x64 -p:UseOpenMP=${{ matrix.build.use-openmp }}
-
-      - name: Build ARM64 Library
-        run: dotnet build ./minuit2.net/ --configuration Release -p:Platform=ARM64 -p:UseOpenMP=${{ matrix.build.use-openmp }}
-
-      - name: Test
-        run: dotnet test ./minuit2.net/ --configuration Release  -p:UseOpenMP=${{ matrix.build.use-openmp }}
-
-      - name: Extract Assembly Name
-        shell: pwsh
-        run: |
-          $buildDir = "./minuit2.net/bin/Release/"
-          $dllFilter = "minuit2.net*.dll"
-          $dllPath = Get-ChildItem -Path $buildDir -Filter $dllFilter -Recurse | Select-Object -First 1
-          if (-not $dllPath) {
-            Write-Error "No DLL matching '$dllFilter' found in $buildDir"
-            exit 1
-          }
-          $assemblyName = [System.IO.Path]::GetFileNameWithoutExtension($dllPath.Name)
-          Write-Output "Assembly Name: $assemblyName"
-          echo "ASSEMBLY_NAME=$assemblyName" >> $env:GITHUB_ENV
-
-      - name: Build NuGet Package
-        shell: pwsh
-        # Overview of the different versions: https://gist.github.com/jonlabelle/34993ee032c26420a0943b1c9d106cdc
-        run: |
-          dotnet pack `
-            -p:Version=${{ needs.determine-version.outputs.sem-ver }} `
-            -p:FileVersion=${{ needs.determine-version.outputs.assembly-sem-file-ver }} `
-            -p:AssemblyName=${{ env.ASSEMBLY_NAME }} `
-            -p:AssemblyVersion=${{ needs.determine-version.outputs.assembly-sem-ver }} `
-            -p:AssemblyInformationalVersion=${{ needs.determine-version.outputs.assembly-informational-version }} `
-            -p:PackageId=${{ matrix.build.package-id }} `
-            -p:UseOpenMP=${{ matrix.build.use-openmp }} `
-            --no-build `
-            --configuration Release `
-            --output ./bin `
-            --warnaserror `
-            --nologo `
-            ./minuit2.net/minuit2.net.csproj
-
-      - name: Install dotnet-validate
-        run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.537
-
-      - name: Validate NuGet Package
-        run: dotnet-validate package local **/bin/minuit2.net.*.nupkg
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.build.package-id }}
-          path: ./bin/
-          if-no-files-found: error
-          
   publish:
-    name: Publish Packages
-    needs: build
+    name: Publish NuGet Packages
+    needs: [ standard-branch, openmp-branch ]
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        package-id: ["minuit2.net", "minuit2.net.openmp"]
     if: github.ref_type == 'tag'
     steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
+      - name: Download NuGet
+        uses: actions/download-artifact@v8
         with:
-          name: ${{ matrix.package-id }}
+          pattern: "nuget-package-*"
           path: ./bin/
+          merge-multiple: true
 
-      - name: Publish NuGet Package
+      - name: Publish NuGet
         run: |
-          dotnet nuget push "**/bin/minuit2.net.*.nupkg" --api-key ${{ secrets.PUBLISH_PACKAGE_TOKEN }} --source "https://api.nuget.org/v3/index.json"
+          dotnet nuget push "./bin/*.nupkg" --api-key ${{ secrets.PUBLISH_PACKAGE_TOKEN }} --source "https://api.nuget.org/v3/index.json"
 
   release:
-    name: Release Packages
-    needs: [publish, determine-version]
+    name: Create GitHub Release
+    needs: [ publish, determine-version ]
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
     permissions:

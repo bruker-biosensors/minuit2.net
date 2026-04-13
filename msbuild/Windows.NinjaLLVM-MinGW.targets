@@ -1,0 +1,21 @@
+﻿<Project>
+    <PropertyGroup>
+        <NativeAssemblyExtension>.dll</NativeAssemblyExtension>
+
+        <ClangTarget Condition="'$(RuntimeIdentifier)' == 'win-x64'">x86_64-w64-mingw32</ClangTarget>
+        <ClangTarget Condition="'$(RuntimeIdentifier)' == 'win-x86'">i686-w64-mingw32</ClangTarget>
+        <ClangTarget Condition="'$(RuntimeIdentifier)' == 'win-arm64'">aarch64-w64-mingw32</ClangTarget>
+
+        <CCompilerFlags>-DCMAKE_C_COMPILER=clang -DCMAKE_C_FLAGS="--target=$(ClangTarget)"</CCompilerFlags>
+        <CXXCompilerFlags>-DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="--target=$(ClangTarget)"</CXXCompilerFlags>
+
+        <CmakeToolchainFlags>-G Ninja $(CCompilerFlags) $(CXXCompilerFlags) -DCMAKE_BUILD_TYPE=Release</CmakeToolchainFlags>
+        <CmakeOutputPath>$(CmakeBuildDir)/minuit2.wrap</CmakeOutputPath>
+    </PropertyGroup>
+
+    <Target Name="ValidateCmakeToolchainFlags"
+            BeforeTargets="ConfigureCmake">
+        <Error Condition="'$(ClangTarget)' == ''"
+               Text="The current RID '$(RuntimeIdentifier)' is not supported by the '$(Toolchain)' toolchain."/>
+    </Target>
+</Project>

@@ -1,0 +1,39 @@
+﻿<Project>
+    <PropertyGroup>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="$(RepoPath)/README.md" Pack="true" PackagePath=""/>
+        <None Include="$(RepoPath)/LICENSE" Pack="true" PackagePath=""/>
+        <None Include="runtimes/**/*" Pack="true" PackagePath="runtimes/" Visible="false"/>
+    </ItemGroup>
+
+    <Target Name="CopyNativeBinariesForNuGet"
+            AfterTargets="CopyNativeBinaries">
+        <Copy
+            SourceFiles="@(NativeBinaries)"
+            DestinationFiles="@(NativeBinaries->'$(ProjectDir)runtimes/$(RuntimeIdentifier)/native/$(NativeAssemblyName)$(NativeAssemblyExtension)')"
+            SkipUnchangedFiles="true"
+            Condition="Exists('%(NativeBinaries.Identity)')"/>
+    </Target>
+
+    <Target Name="RenameRootLicense"
+            AfterTargets="CopyNativeBinariesForNuGet">
+        <Copy SourceFiles="$(RootClonePath)/LICENSE"
+              DestinationFiles="$(IntermediateOutputPath)/ROOT-LICENSE"/>
+    </Target>
+
+    <Target Name="AddRootLicenseToNuget"
+            AfterTargets="CopyNativeBinariesForNuGet; RenameRootLicense">
+        <ItemGroup>
+            <None Include="$(IntermediateOutputPath)/ROOT-LICENSE"
+                  Pack="true"
+                  PackagePath="third-party-licenses/"/>
+            <None Include="$(RootClonePath)/LGPL2_1.txt"
+                  Pack="true"
+                  PackagePath="third-party-licenses/"/>
+        </ItemGroup>
+    </Target>
+</Project>

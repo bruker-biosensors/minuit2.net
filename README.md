@@ -26,15 +26,15 @@ It extends the original library with:
 - Support for data with unknown uncertainties
 - Support for cancelling active minimization processes
 
-Unlike the original library, which exposes a stateful and imperative API, Minuit2.NET adopts a functional approach 
+Unlike the original library, which exposes a stateful and imperative API, Minuit2.NET adopts a functional approach
 centered on statelessness and referential transparency.
 
 ## NuGet Packages
 
-- [minuit2.net](https://www.nuget.org/packages/minuit2.net/) – The standard version that executes C++ backend processes sequentially. 
+- [minuit2.net](https://www.nuget.org/packages/minuit2.net/) – The standard version that executes C++ backend processes sequentially.
   Recommended for lightweight tasks where deterministic execution is preferred.
 
-- [minuit2.net.openmp](https://www.nuget.org/packages/minuit2.net.openmp/) – A performance-enhanced variant that leverages OpenMP-based multithreading for C++ 
+- [minuit2.net.openmp](https://www.nuget.org/packages/minuit2.net.openmp/) – A performance-enhanced variant that leverages OpenMP-based multithreading for C++
   backend processes. Ideal for compute-intensive tasks that benefit from parallel execution.
 
 Both packages share the same API and can be used interchangeably depending on your performance and threading requirements.
@@ -45,30 +45,27 @@ Both packages share the same API and can be used interchangeably depending on yo
 - **minuit2.wrap/**: C++ wrapper layer using SWIG for interoperability
 - **test/minuit2.net.UnitTests/**: Comprehensive unit tests for the .NET library
 - **test/minuit2.net.Benchmarks/**: Benchmarks for the .NET library
-- **Build.targets**: MSBuild targets for automated building of native components
-- **Directory.Build.props**: Defines the flag to enable OpenMP support for multithreaded native builds
+- **msbuild/**: MSBuild targets for automated building of native components
+- **Directory.Build.props**: Solution-wide MSBuild properties and defaults
 
 ## Prerequisites
 
 ### For Building the Project
 
 1. **Development Environment**:
-   - .NET 8.0 SDK or later
+   - .NET 10.0.105 SDK or later patch
    - Visual Studio 2022 or JetBrains Rider (recommended for development)
-   - C++ compiler (Visual Studio Build Tools or equivalent)
+   - C++ compiler: Visual Studio Build Tools or LLVM/Clang for MinGW
 
 2. **Build Tools**:
-   - **CMake** (version 3.18 or later) - for building the C++ layer
-   - **SWIG** (version 4.2.0) - automatically installed via NuGet package `swigwintools`
-   - **GIT** - will be called from Build.targets
-
-3. **Platform Requirements**:
-   - Windows (x64, x86, ARM64)
+   - [CMake](https://cmake.org/): Used for building the C++ layer. Must be installed and available in the system PATH (version 3.18 or later).
+   - [SWIG](https://www.swig.org/): Used to generate C# wrapper code from native C++ headers. Must be in the system PATH or specified via the `SWIG_EXECUTABLE` build property.
+   - [Git](https://git-scm.com/): Used to download [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) source code during the build process.
+   - [Ninja](https://ninja-build.org/) (optional): A build generator for CMake, required when using the `Windows.NinjaLLVM-MinGW` toolchain.
 
 ### Runtime Requirements
 
 - .NET 8.0 runtime
-- Visual C++ Redistributable (for the native [Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library)
 
 ## Building the Project
 
@@ -82,24 +79,19 @@ The build process is automated through MSBuild targets and will:
 ### Build Steps
 
 1. Clone the repository
-2. The build system will automatically:
-   - Install SWIG tools via NuGet
+2. (Optional) Create or update `Directory.Build.props.user` to configure your build (e.g., set `Toolchain`)
+3. Build the solution or project using `dotnet build` or your IDE. The build system will automatically:
    - Download and compile Minuit2 from [ROOT](https://github.com/root-project/root)
    - Generate C# bindings
    - Build the complete .NET library
 
 ### Platform Configuration
 
-**Important**: You must specify a platform target (x64, x86 or ARM64). 
-AnyCPU will default to the x64 version of the C++ dll.
-
-## Dependencies
-
-### NuGet Packages
-- `swigwintools` (4.2.0) - SWIG interface generator
+The build system automatically detects the current platform and architecture (RID) and builds the corresponding native library.
+You can explicitly target a specific platform using the `--runtime` (or `-r`) flag.
 
 ### External Dependencies (automatically handled)
-- [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library (6.36.08) - downloaded and built during compilation
+- [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library - downloaded and built during compilation
 
 ## Usage
 
@@ -107,7 +99,7 @@ The following basic example shows how to fit an exponential decay model to obser
 
 ```csharp
 // Define the cost function
-var cost = CostFunction.LeastSquares( 
+var cost = CostFunction.LeastSquares(
     x: [...],
     y: [...],
     parameters: ["amplitude", "rate", "offset"],

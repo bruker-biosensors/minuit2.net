@@ -28,6 +28,8 @@ namespace ROOT
                     return false;
                 }
             }
+
+            virtual ~MnHesseWrap() {}
         };
     }
 }

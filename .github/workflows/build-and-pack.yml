@@ -1,0 +1,151 @@
+﻿name: Build and Pack Workflow
+
+on:
+  workflow_call:
+    inputs:
+      use-openmp:
+        required: true
+        type: string
+      package-id:
+        required: true
+        type: string
+      sem-ver:
+        required: true
+        type: string
+      assembly-sem-ver:
+        required: true
+        type: string
+      assembly-sem-file-ver:
+        required: true
+        type: string
+      assembly-informational-version:
+        required: true
+        type: string
+
+jobs:
+  build-windows:
+    name: Build for Windows
+    runs-on: windows-latest
+    steps:
+      - name: Check Out Repository Code
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v5
+
+      - name: Build for x86
+        run: |
+          dotnet build ./minuit2.net/minuit2.net.csproj `
+            --runtime win-x86 `
+            --configuration Release `
+            -p:UseOpenMP=${{ inputs.use-openmp }} `
+            --no-self-contained
+
+      - name: Build for x64
+        run: |
+          dotnet build ./minuit2.net/minuit2.net.csproj `
+            --runtime win-x64 `
+            --configuration Release `
+            -p:UseOpenMP=${{ inputs.use-openmp }} `
+            --no-self-contained
+
+      - name: Build for ARM64
+        run: |
+          dotnet build ./minuit2.net/minuit2.net.csproj `
+            --runtime win-arm64 `
+            --configuration Release `
+            -p:UseOpenMP=${{ inputs.use-openmp }} `
+            --no-self-contained
+
+      - name: Test
+        run: |
+          dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj `
+            --configuration Release `
+            -p:UseOpenMP=${{ inputs.use-openmp }}
+
+      - name: Upload C# Assembly
+        uses: actions/upload-artifact@v7
+        with:
+          name: csharp-assembly-${{ inputs.package-id }}
+          path: ./minuit2.net/bin/Release/net8.0/
+          if-no-files-found: error
+
+      - name: Upload Runtime Binaries
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-runtimes-${{ inputs.package-id }}
+          path: ./minuit2.net/runtimes/
+          if-no-files-found: error
+
+  package:
+    name: Create NuGet Package
+    needs: [ build-windows ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repository Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v5
+
+      - name: Download C# Assembly
+        uses: actions/download-artifact@v8
+        with:
+          name: csharp-assembly-${{ inputs.package-id }}
+          path: ./minuit2.net/bin/Release/net8.0/
+
+      - name: Download Runtime Binaries
+        uses: actions/download-artifact@v8
+        with:
+          pattern: "*-runtimes-${{ inputs.package-id }}"
+          path: ./minuit2.net/runtimes/
+          merge-multiple: true
+
+      - name: Verify Runtime Binaries
+        shell: pwsh
+        run: |
+          $requiredRids = @("win-x86", "win-x64", "win-arm64")
+          foreach ($rid in $requiredRids) {
+            if (-not (Test-Path "./minuit2.net/runtimes/$rid")) {
+              Write-Error "Cannot package: Missing runtime binaries for RID: $rid. Ensure all architectures are built before packing."
+              exit 1
+            }
+          }
+
+      - name: Restore Dependencies
+        run: dotnet restore ./minuit2.net/minuit2.net.csproj
+
+      - name: Create NuGet
+        shell: pwsh
+        run: |
+          dotnet pack `
+            -p:Version=${{ inputs.sem-ver }} `
+            -p:FileVersion=${{ inputs.assembly-sem-file-ver }} `
+            -p:AssemblyVersion=${{ inputs.assembly-sem-ver }} `
+            -p:AssemblyInformationalVersion=${{ inputs.assembly-informational-version }} `
+            -p:PackageId=${{ inputs.package-id }} `
+            -p:UseOpenMP=${{ inputs.use-openmp }} `
+            --no-build `
+            --configuration Release `
+            --output ./bin `
+            --warnaserror `
+            --nologo `
+            ./minuit2.net/minuit2.net.csproj
+
+      - name: Install dotnet-validate
+        run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.537
+
+      - name: Validate NuGet
+        run: dotnet-validate package local "./bin/*.nupkg"
+
+      - name: Upload NuGet
+        uses: actions/upload-artifact@v7
+        with:
+          name: nuget-package-${{ inputs.package-id }}
+          path: ./bin/
+          if-no-files-found: error

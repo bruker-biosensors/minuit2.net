@@ -1,0 +1,16 @@
+﻿<Project>
+    <PropertyGroup>
+        <RepoPath>$(MSBuildThisFileDirectory)..</RepoPath>
+
+        <Toolchain Condition="$(Toolchain) == 'auto' And $([MSBuild]::IsOSPlatform('Windows'))">Windows.VisualStudio</Toolchain>
+        <ToolchainTargets>$(MSBuildThisFileDirectory)$(Toolchain).targets</ToolchainTargets>
+
+        <AssemblySuffix Condition="'$(UseOpenMP)' == 'ON'">.openmp</AssemblySuffix>
+        <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
+    </PropertyGroup>
+
+    <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets"/>
+    <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
+    <Import Project="$(MSBuildThisFileDirectory)Packaging.targets"/>
+    <Import Project="$(ToolchainTargets)" Condition="Exists('$(ToolchainTargets)')"/>
+</Project>

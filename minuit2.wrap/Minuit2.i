@@ -48,16 +48,26 @@ namespace std {
 
 
 // Declare C++ types to be wrapped and made accessible in C# (SWIG binding generation)
+%ignore operator();
+%feature("nodirector") operator();
+
 %feature("director") FCNWrap;
+%include "Minuit2/FCNBase.h"
 %include "FCNWrap.h"
+
 %include "Minuit2/MnStrategy.h"
 %include "Minuit2/MnUserCovariance.h"
 %include "Minuit2/MnUserParameterState.h"
-%include "Minuit2/FCNBase.h"
+
 %include "Minuit2/FunctionMinimum.h"
-%include "MnHesseWrap.h"
 %include "FunctionMinimumExtensions.h"
 
+%include "Minuit2/MnHesse.h"
+%include "MnHesseWrap.h"
+
+// Note: Minimizer headers (MnMigrad.h, MnSimplex.h, MnMinimize.h) are excluded here because they use C++11 
+// initializer-list syntax that SWIG cannot yet reliably parse (see https://swig.org/Doc3.0/CPlusPlus11.html).
+// Including them currently causes build errors, while excluding them is safe and only results in build warnings.
 %include "MnApplicationWrap.h"
 namespace ROOT {
   namespace Minuit2 {

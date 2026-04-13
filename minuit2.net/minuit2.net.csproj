@@ -1,43 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <Configurations>Debug;Release</Configurations>
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <Platforms>x64;x86;AnyCPU;ARM64</Platforms>
         <Title>.NET wrapper for Minuit2</Title>
-        <Authors>Markus Adamek, Felix Kroener, Adrian Walser</Authors>
         <Description>A .NET wrapper for the Minuit2 library from CERN's ROOT project, enhanced with practical extensions.</Description>
-        <Company/>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <DebugType>embedded</DebugType>
-
-        <AssemblySuffix Condition="'$(UseOpenMP)' == 'ON'">.openmp</AssemblySuffix>
-        <AssemblySuffix Condition="'$(UseOpenMP)' != 'ON'"/>
-        <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
-        <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
     </PropertyGroup>
 
-    <Import Project="../Build.targets"/>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.103" PrivateAssets="All"/>
-        <None Include="../README.md" Pack="true" PackagePath=""/>
-        <None Include="../LICENSE" Pack="true" PackagePath=""/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Include="runtimes/win-x64/native/$(NativeAssemblyName).dll" Pack="true" PackagePath="runtimes/win-x64/native/" Visible="false"/>
-        <None Include="runtimes/win-x86/native/$(NativeAssemblyName).dll" Pack="true" PackagePath="runtimes/win-x86/native/" Visible="false"/>
-        <None Include="runtimes/win-ARM64/native/$(NativeAssemblyName).dll" Pack="true" PackagePath="runtimes/win-ARM64/native/" Visible="false"/>
-    </ItemGroup>
-
-    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-    </PropertyGroup>
-
+    <Import Project="../msbuild/Build.targets"/>
 </Project>
