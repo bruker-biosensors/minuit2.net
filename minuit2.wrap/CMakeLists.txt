@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.21)
 set(CMAKE_CXX_STANDARD 17)
 project(minuit2.wrap CXX C)
 
@@ -21,7 +21,9 @@ SWIG_ADD_LIBRARY(${target_name}
 target_include_directories(${target_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(${target_name} PROPERTIES
   SWIG_USE_TARGET_INCLUDE_DIRECTORIES ON
-  POSITION_INDEPENDENT_CODE ON)
+  POSITION_INDEPENDENT_CODE ON
+  PREFIX ""
+  IMPORT_PREFIX "")
 
 target_include_directories(${target_name} PRIVATE ${root_minuit2_SOURCE_DIR}/Core/Foundation/inc)
 

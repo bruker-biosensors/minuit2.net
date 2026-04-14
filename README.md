@@ -58,7 +58,7 @@ Both packages share the same API and can be used interchangeably depending on yo
    - C++ compiler: Visual Studio Build Tools or LLVM/Clang for MinGW
 
 2. **Build Tools**:
-   - [CMake](https://cmake.org/): Used for building the C++ layer. Must be installed and available in the system PATH (version 3.18 or later).
+   - [CMake](https://cmake.org/): Used for building the C++ layer. Must be installed and available in the system PATH (version 3.21 or later).
    - [SWIG](https://www.swig.org/): Used to generate C# wrapper code from native C++ headers. Must be in the system PATH or specified via the `SWIG_EXECUTABLE` build property.
    - [Git](https://git-scm.com/): Used to download [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) source code during the build process.
    - [Ninja](https://ninja-build.org/) (optional): A build generator for CMake, required when using the `Windows.NinjaLLVM-MinGW` toolchain.
