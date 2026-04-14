@@ -1,0 +1,17 @@
+﻿<Project>
+    <PropertyGroup>
+        <NativeAssemblyExtension>.dylib</NativeAssemblyExtension>
+
+        <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'osx-x64'">x86_64</CmakeArchitecture>
+        <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">arm64</CmakeArchitecture>
+
+        <CmakeToolchainFlags>-DCMAKE_OSX_ARCHITECTURES=$(CmakeArchitecture) -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0</CmakeToolchainFlags>
+        <CmakeOutputPath>$(CmakeBuildDir)/minuit2.wrap</CmakeOutputPath>
+    </PropertyGroup>
+
+    <Target Name="ValidateCmakeToolchainFlags"
+            BeforeTargets="ConfigureCmake">
+        <Error Condition="'$(CmakeArchitecture)' == ''"
+               Text="The current RID '$(RuntimeIdentifier)' is not supported by the '$(Toolchain)' toolchain."/>
+    </Target>
+</Project>
