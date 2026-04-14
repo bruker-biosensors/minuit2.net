@@ -18,7 +18,7 @@
         <MakeDir Directories="$(RootClonePath)"
                  Condition="!Exists('$(RootClonePath)')"/>
 
-        <Exec Command="git init &amp;&amp; git remote add origin https://github.com/root-project/root.git"
+        <Exec Command="git init -b master &amp;&amp; git remote add origin https://github.com/root-project/root.git"
               WorkingDirectory="$(RootClonePath)"
               Condition="!Exists('$(RootClonePath)/.git')"/>
 
