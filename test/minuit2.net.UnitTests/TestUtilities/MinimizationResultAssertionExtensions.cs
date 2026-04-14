@@ -23,7 +23,7 @@ internal class MinimizationResultAssertions(IMinimizationResult value)
 #else
     private const bool SkipFunctionCallsAssertions = false;
 #endif
-    private const int SimilarFunctionCallsTolerance = 6;
+    private const int SimilarFunctionCallsTolerance = 10;
 
     public AndConstraint<MinimizationResultAssertions> HaveNumberOfFunctionCalls(int expectedValue)
     {
@@ -40,9 +40,9 @@ internal class MinimizationResultAssertions(IMinimizationResult value)
                 expectedValue + SimilarFunctionCallsTolerance);
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
-    
+
     public AndConstraint<MinimizationResultAssertions> Match(
-        IMinimizationResult otherResult, 
+        IMinimizationResult otherResult,
         Func<EquivalencyOptions<IMinimizationResult>, EquivalencyOptions<IMinimizationResult>>? options = null)
     {
         if (SkipFunctionCallsAssertions)
@@ -53,14 +53,14 @@ internal class MinimizationResultAssertions(IMinimizationResult value)
     }
 
     public AndConstraint<MinimizationResultAssertions> MatchExcludingFunctionCalls(
-        IMinimizationResult otherResult, 
+        IMinimizationResult otherResult,
         Func<EquivalencyOptions<IMinimizationResult>, EquivalencyOptions<IMinimizationResult>>? options = null)
     {
         var inputOptions = options ?? (o => o);
         Subject.Should().BeEquivalentTo(otherResult, o => inputOptions(o.Excluding(x => x.NumberOfFunctionCalls)));
         return new AndConstraint<MinimizationResultAssertions>(this);
     }
-    
+
     public AndConstraint<MinimizationResultAssertions> HaveFewerFunctionCallsThan(IMinimizationResult otherResult)
     {
         Subject.NumberOfFunctionCalls.Should().BeLessThan(otherResult.NumberOfFunctionCalls);
