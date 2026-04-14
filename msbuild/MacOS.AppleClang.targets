@@ -13,5 +13,7 @@
             BeforeTargets="ConfigureCmake">
         <Error Condition="'$(CmakeArchitecture)' == ''"
                Text="The current RID '$(RuntimeIdentifier)' is not supported by the '$(Toolchain)' toolchain."/>
+        <Error Condition="'$(UseOpenMP)' == 'ON'"
+               Text="The $(Toolchain) toolchain does not provide built-in OpenMP support. Apple Clang requires manual installation of the OpenMP runtime (libomp), and CMake integration is fragile."/>
     </Target>
 </Project>
