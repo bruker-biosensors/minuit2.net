@@ -1,8 +1,6 @@
 ﻿<Project>
     <PropertyGroup>
-        <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
         <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
-        <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(RuntimeIdentifier)</CmakeBuildDir>
         <SwigOutputPath>$(RepoPath)/minuit2.net/obj/swig</SwigOutputPath>
     </PropertyGroup>
 

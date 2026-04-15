@@ -8,10 +8,14 @@
 
         <AssemblySuffix Condition="'$(UseOpenMP)' == 'ON'">.openmp</AssemblySuffix>
         <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
+
+        <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
+        <RootClonePath>$(RepoPath)/minuit2.wrap/root</RootClonePath>
+        <CmakeBuildDir>$(RepoPath)/minuit2.wrap/build/$(RuntimeIdentifier)</CmakeBuildDir>
     </PropertyGroup>
 
+    <Import Project="$(ToolchainTargets)" Condition="Exists('$(ToolchainTargets)')"/>
     <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets"/>
     <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
     <Import Project="$(MSBuildThisFileDirectory)Packaging.targets"/>
-    <Import Project="$(ToolchainTargets)" Condition="Exists('$(ToolchainTargets)')"/>
 </Project>

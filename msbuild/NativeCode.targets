@@ -1,10 +1,5 @@
 ﻿<!-- Targets for managing the ROOT/Minuit2 C++ code, which is the native dependency of this project -->
 <Project>
-    <PropertyGroup>
-        <RootRevisionRef>$(RootRevision.Replace('tag ', ''))</RootRevisionRef>
-        <RootClonePath>$(RepoPath)/minuit2.wrap/root</RootClonePath>
-    </PropertyGroup>
-
     <Target Name="CleanLocalRootClone"
             BeforeTargets="Clean">
         <Exec Command="git clean -fdx"
@@ -14,6 +9,9 @@
 
     <Target Name="PrepareLocalRootClone"
             BeforeTargets="BeforeBuild">
+        <PropertyGroup>
+            <RootRevisionRef>$(RootRevision.Replace('tag ', ''))</RootRevisionRef>
+        </PropertyGroup>
 
         <MakeDir Directories="$(RootClonePath)"
                  Condition="!Exists('$(RootClonePath)')"/>
