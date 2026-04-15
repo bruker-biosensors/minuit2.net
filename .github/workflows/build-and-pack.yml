@@ -101,8 +101,12 @@ jobs:
           submodules: recursive
           fetch-depth: 1
 
-      - name: Install SWIG
-        run: brew install swig
+      - name: Install Dependencies
+        run: |
+          brew install swig
+          if [ "${{ inputs.use-openmp }}" == "ON" ]; then
+            brew install libomp
+          fi
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v5
