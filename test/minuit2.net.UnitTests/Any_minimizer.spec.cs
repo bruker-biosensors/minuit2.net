@@ -166,7 +166,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         result.Should().Match(referenceResult);
     }
 
-    [TestCase(-1E15, 1E15)]
+    [TestCase(-1E16, 1E16)]
     [TestCase(null, 1E15)]
     [TestCase(-1E15, null)]
     [TestCase(-1e3, 1e10, Description = "Best value are much closer to the lower limit.")]
