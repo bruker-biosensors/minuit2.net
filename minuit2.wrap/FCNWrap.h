@@ -14,26 +14,26 @@ namespace ROOT
 		public:
 			FCNWrap() {}
 
-			double operator()(const std::vector<double>& parameterValues) const override
+			double operator()(const std::vector<double>& parameterValues) const override final
 			{
 			    return CalculateValue(parameterValues);
 			}
 
-			std::vector<double> Gradient(const std::vector<double>& parameterValues) const override
+			std::vector<double> Gradient(const std::vector<double>& parameterValues) const override final
 			{
 				auto result = CalculateGradient(parameterValues);
 				ThrowIfAbortRequested();
 				return result;
 			}
 
-			std::vector<double> Hessian(const std::vector<double>& parameterValues) const override
+			std::vector<double> Hessian(const std::vector<double>& parameterValues) const override final
 			{
 				auto result = CalculateHessian(parameterValues);
 				ThrowIfAbortRequested();
 				return result;
 			}
 
-			std::vector<double> G2(const std::vector<double>& parameterValues) const override
+			std::vector<double> G2(const std::vector<double>& parameterValues) const override final
 			{
 				auto result = CalculateG2(parameterValues);
 				ThrowIfAbortRequested();
