@@ -7,7 +7,7 @@
         <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'win-arm64'">ARM64</CmakeArchitecture>
 
         <CmakeToolchainFlags>-A $(CmakeArchitecture)</CmakeToolchainFlags>
-        <CmakeOutputPath>$(CmakeBuildDir)minuit2.wrap/Release</CmakeOutputPath>
+        <CmakeInnerBuildDir>$(CmakeBuildDir)minuit2.wrap/Release/</CmakeInnerBuildDir>
     </PropertyGroup>
 
     <Target Name="ValidateCmakeToolchainFlags"

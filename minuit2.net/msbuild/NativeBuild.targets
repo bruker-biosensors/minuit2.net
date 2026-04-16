@@ -45,13 +45,13 @@
             BeforeTargets="BeforeBuild"
             DependsOnTargets="ConfigureCmake">
         <Exec Command='cmake --build "$(CmakeBuildDir)" --config Release'
-              WorkingDirectory="$(RepoPath)"/>
+              WorkingDirectory="$(RepoDir)"/>
     </Target>
 
     <Target Name="CopyNativeBinaries"
             AfterTargets="BuildNativeCode">
         <ItemGroup>
-            <NativeBinaries Include="$(CmakeOutputPath)/$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
+            <NativeBinaries Include="$(CmakeInnerBuildDir)$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
             <None Include="@(NativeBinaries)"
                   Visible="false"
                   CopyToOutputDirectory="PreserveNewest"
