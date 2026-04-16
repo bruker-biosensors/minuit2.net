@@ -24,12 +24,12 @@ exceptions bypassing C++ cleanup routines, potentially leaving native objects in
 memory leaks. This problem is solved in the following way:
 
 The `CostFunctionAdapter` intercepts any exceptions that are thrown during the execution of C# callbacks, including
-cancellation requests. For all methods except `Value` (i.e., all derivative methods), such exceptions trigger
+cancellation requests. For all methods except `CalculateValue` (i.e., all cost function derivative methods), such exceptions trigger
 `FCNWrap::Abort`, which raises an "abort exception" on the C++ side and terminates the active process. To safely return
 control to the managed environment, the exception is caught, and a corresponding "non-success indicator" is returned
 together with a null result.
 
-For the `Value` method, which may be invoked concurrently, this approach is not viable because (OpenMP) parallel regions
+For the `CalculateValue` method, which may be invoked concurrently, this approach is not viable because (OpenMP) parallel regions
 in C++ do not allow exceptions to propagate across threads. Instead, we rely on the fact that non-finite return values
 cause the active process to terminate gracefully, while still returning an actual (though invalid) result.
 
@@ -59,7 +59,7 @@ box C++
     activate MigradMinimizer
     activate MnMigrad
     MnMigrad ->> FCNWrap: calls operator()(params)
-    FCNWrap ->> CostFunctionAdapter: calls Value(params)
+    FCNWrap ->> CostFunctionAdapter: calls CalculateValue(params)
     CostFunctionAdapter ->> ICostFunction: calls ValueFor(params)
     ICostFunction ->> CostFunctionAdapter: throws Exception
     CostFunctionAdapter -->> CostFunctionAdapter: catches Exception
@@ -91,7 +91,7 @@ box C++
     activate MigradMinimizer
     activate MnMigrad
     MnMigrad ->> FCNWrap: calls Gradient(params)
-    FCNWrap ->> CostFunctionAdapter: calls Gradient(params)
+    FCNWrap ->> CostFunctionAdapter: calls CalculateGradient(params)
     CostFunctionAdapter ->> ICostFunction: calls GradientFor(params)
     ICostFunction ->> CostFunctionAdapter: throws Exception
     CostFunctionAdapter -->> CostFunctionAdapter: catches Exception
