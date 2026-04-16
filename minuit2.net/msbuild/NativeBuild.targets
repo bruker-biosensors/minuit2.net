@@ -28,10 +28,10 @@
             <CmakeArgs Include='-B "$(CmakeBuildDir)"'/>
             <CmakeArgs Condition="'$(SwigExePath)' != 'auto'"
                        Include='-DSWIG_EXECUTABLE="$(SwigExePath)"'/>
-            <CmakeArgs Include='-DMINUIT2NET_PATH="$(SwigOutputDir)"'/>
-            <CmakeArgs Include='-DROOT_PATH="$(RootCloneDir)"'/>
-            <CmakeArgs Include="-Dminuit2_omp=$(UseOpenMP)"/>
-            <CmakeArgs Include="-Dtarget_name=$(NativeAssemblyName)"/>
+            <CmakeArgs Include='-Dswig_output_dir="$(SwigOutputDir)"'/>
+            <CmakeArgs Include='-Droot_clone_dir="$(RootCloneDir)"'/>
+            <CmakeArgs Include="-Duse_openmp=$(UseOpenMP)"/>
+            <CmakeArgs Include="-Dnative_assembly_name=$(NativeAssemblyName)"/>
             <CmakeArgs Include="$(CmakeToolchainFlags)"/>
         </ItemGroup>
 
