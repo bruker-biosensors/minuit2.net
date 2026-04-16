@@ -24,14 +24,15 @@ exceptions bypassing C++ cleanup routines, potentially leaving native objects in
 memory leaks. This problem is solved in the following way:
 
 The `CostFunctionAdapter` intercepts any exceptions that are thrown during the execution of C# callbacks, including
-cancellation requests. For all methods except `CalculateValue` (i.e., all cost function derivative methods), such exceptions trigger
-`FCNWrap::Abort`, which raises an "abort exception" on the C++ side and terminates the active process. To safely return
-control to the managed environment, the exception is caught, and a corresponding "non-success indicator" is returned
-together with a null result.
+cancellation requests. For all methods except `CalculateValue` (i.e., all cost function derivative methods), such
+exceptions trigger `FCNWrap::Abort`, which raises an "abort exception" on the C++ side and terminates the active
+process. To safely return control to the managed environment, the exception is caught, and a corresponding
+"non-success indicator" is returned together with a null result.
 
-For the `CalculateValue` method, which may be invoked concurrently, this approach is not viable because (OpenMP) parallel regions
-in C++ do not allow exceptions to propagate across threads. Instead, we rely on the fact that non-finite return values
-cause the active process to terminate gracefully, while still returning an actual (though invalid) result.
+For the `CalculateValue` method, which may be invoked concurrently, this approach is not viable because (OpenMP)
+parallel regions in C++ do not allow exceptions to propagate across threads. Instead, we rely on the fact that
+non-finite return values cause the active process to terminate gracefully, while still returning an actual
+(though invalid) result.
 
 On the C# side, the intercepted exceptions are unpacked and either handled or rethrown as appropriate. The entire
 exception-handling mechanism is implemented in a thread-safe manner to ensure correct behavior in multithreaded
