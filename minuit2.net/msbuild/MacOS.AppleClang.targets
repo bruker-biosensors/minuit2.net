@@ -6,7 +6,7 @@
         <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">arm64</CmakeArchitecture>
 
         <CmakeToolchainFlags>-DCMAKE_OSX_ARCHITECTURES=$(CmakeArchitecture) -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0</CmakeToolchainFlags>
-        <CmakeOutputPath>$(CmakeBuildDir)/minuit2.wrap</CmakeOutputPath>
+        <CmakeOutputPath>$(CmakeBuildDir)minuit2.wrap</CmakeOutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(UseOpenMP)' == 'ON' and '$(OpenMPRoot)' == ''">

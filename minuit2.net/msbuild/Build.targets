@@ -9,7 +9,7 @@
 
         <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
         <RootCloneDir>$(RepoDir)minuit2.wrap/root/</RootCloneDir>
-        <CmakeBuildDir>$(RepoDir)minuit2.wrap/build/$(RuntimeIdentifier)</CmakeBuildDir>
+        <CmakeBuildDir>$(RepoDir)minuit2.wrap/build/$(RuntimeIdentifier)/</CmakeBuildDir>
     </PropertyGroup>
 
     <Import Project="$(ToolchainTargets)" Condition="Exists('$(ToolchainTargets)')"/>
