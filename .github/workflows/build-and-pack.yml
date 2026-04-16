@@ -67,7 +67,7 @@ jobs:
       - name: Upload Runtime Binaries
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.rid }}-runtimes-${{ inputs.package-id }}
+          name: ${{ matrix.rid }}-runtime-${{ inputs.package-id }}
           path: ./minuit2.net/runtimes/
           if-no-files-found: error
 
@@ -117,7 +117,7 @@ jobs:
       - name: Upload Runtime Binaries
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.rid }}-runtimes-${{ inputs.package-id }}
+          name: ${{ matrix.rid }}-runtime-${{ inputs.package-id }}
           path: ./minuit2.net/runtimes/
           if-no-files-found: error
 
@@ -143,7 +143,7 @@ jobs:
       - name: Download Runtime Binaries
         uses: actions/download-artifact@v8
         with:
-          pattern: "*-runtimes-${{ inputs.package-id }}"
+          pattern: "*-runtime-${{ inputs.package-id }}"
           path: ./minuit2.net/runtimes/
           merge-multiple: true
 
