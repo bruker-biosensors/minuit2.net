@@ -8,8 +8,8 @@
         <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
 
         <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
-        <RootClonePath>$(RepoPath)minuit2.wrap/root</RootClonePath>
-        <CmakeBuildDir>$(RepoPath)minuit2.wrap/build/$(RuntimeIdentifier)</CmakeBuildDir>
+        <RootClonePath>$(RepoDir)minuit2.wrap/root</RootClonePath>
+        <CmakeBuildDir>$(RepoDir)minuit2.wrap/build/$(RuntimeIdentifier)</CmakeBuildDir>
     </PropertyGroup>
 
     <Import Project="$(ToolchainTargets)" Condition="Exists('$(ToolchainTargets)')"/>

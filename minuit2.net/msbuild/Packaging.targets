@@ -5,8 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="$(RepoPath)README.md" Pack="true" PackagePath=""/>
-        <None Include="$(RepoPath)LICENSE" Pack="true" PackagePath=""/>
+        <None Include="$(RepoDir)README.md" Pack="true" PackagePath=""/>
+        <None Include="$(RepoDir)LICENSE" Pack="true" PackagePath=""/>
         <None Include="runtimes/**/*" Pack="true" PackagePath="runtimes/" Visible="false"/>
     </ItemGroup>
 

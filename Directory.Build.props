@@ -3,7 +3,7 @@
             Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.props.user')"/>
 
     <PropertyGroup>
-        <RepoPath>$(MSBuildThisFileDirectory)</RepoPath>
+        <RepoDir>$(MSBuildThisFileDirectory)</RepoDir>
 
         <!-- Configurable Properties -->
         <RootRevision Condition="'$(RootRevision)' == ''">tag v6-36-10</RootRevision>

@@ -1,7 +1,7 @@
 ﻿<Project>
     <PropertyGroup>
         <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
-        <SwigOutputPath>$(RepoPath)minuit2.net/obj/swig</SwigOutputPath>
+        <SwigOutputPath>$(RepoDir)minuit2.net/obj/swig</SwigOutputPath>
     </PropertyGroup>
 
     <Target Name="CleanBuildDirectories"
@@ -36,7 +36,7 @@
         </ItemGroup>
 
         <Exec Command="cmake @(CmakeArgs, ' ')"
-              WorkingDirectory="$(RepoPath)"
+              WorkingDirectory="$(RepoDir)"
               IgnoreExitCode="false"/>
     </Target>
 
