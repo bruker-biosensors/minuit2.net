@@ -25,7 +25,7 @@ on:
 jobs:
   build-windows:
     name: Build for ${{ matrix.rid }}
-    runs-on: windows-latest
+    runs-on: windows-2025
     strategy:
       matrix:
         rid: [ win-x86, win-x64, win-arm64 ]
