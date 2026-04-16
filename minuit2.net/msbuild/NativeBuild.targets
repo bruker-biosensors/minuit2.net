@@ -26,8 +26,8 @@
         <ItemGroup>
             <CmakeArgs Include='-S .'/>
             <CmakeArgs Include='-B "$(CmakeBuildDir)"'/>
-            <CmakeArgs Condition="'$(SwigExecutable)' != 'auto'"
-                       Include='-DSWIG_EXECUTABLE="$(SwigExecutable)"'/>
+            <CmakeArgs Condition="'$(SwigExePath)' != 'auto'"
+                       Include='-DSWIG_EXECUTABLE="$(SwigExePath)"'/>
             <CmakeArgs Include='-DMINUIT2NET_PATH="$(SwigOutputPath)"'/>
             <CmakeArgs Include='-DROOT_PATH="$(RootClonePath)"'/>
             <CmakeArgs Include="-Dminuit2_omp=$(UseOpenMP)"/>
