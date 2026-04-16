@@ -9,7 +9,7 @@ classes has been introduced.
 Native Minuit2 processes — minimization and error calculation algorithms — invoke implementations of the
 `Minuit2::FCNBase` cost function base class. Our implementation of this base class is `FCNWrap`, which acts as the
 C++-side adapter. It declares virtual methods intended to be overridden on the C# side. This cross-language override
-mechanism is enabled by [SWIG’s director feature](https://www.swig.org/Doc4.0/SWIGPlus.html#SWIGPlus_director_classes_introduction).
+mechanism is enabled by [SWIG’s director feature](https://www.swig.org/Doc4.4/SWIGDocumentation.html#SWIGPlus_director_classes_introduction).
 Additionally, `FCNWrap` provides abort functionality to terminate active processes (see below).
 
 On the C# side, the corresponding implementation of `FCNWrap` — via its SWIG-generated proxy — is the
