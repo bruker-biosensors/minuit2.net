@@ -1,6 +1,6 @@
 ﻿<Project>
     <PropertyGroup>
-        <RepoPath>$(MSBuildThisFileDirectory)..</RepoPath>
+        <RepoPath>$(MSBuildThisFileDirectory)../..</RepoPath>
 
         <Toolchain Condition="$(Toolchain) == 'auto' And $([MSBuild]::IsOSPlatform('Windows'))">Windows.VisualStudio</Toolchain>
         <Toolchain Condition="$(Toolchain) == 'auto' And $([MSBuild]::IsOSPlatform('OSX'))">MacOS.AppleClang</Toolchain>
