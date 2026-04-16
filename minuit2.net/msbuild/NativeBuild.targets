@@ -1,7 +1,7 @@
 ﻿<Project>
     <PropertyGroup>
         <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
-        <SwigOutputPath>$(RepoPath)/minuit2.net/obj/swig</SwigOutputPath>
+        <SwigOutputPath>$(RepoPath)minuit2.net/obj/swig</SwigOutputPath>
     </PropertyGroup>
 
     <Target Name="CleanBuildDirectories"
@@ -24,7 +24,7 @@
             BeforeTargets="BeforeBuild"
             DependsOnTargets="CreateBuildDirectories">
         <ItemGroup>
-            <CmakeArgs Include='-S "$(RepoPath)"'/>
+            <CmakeArgs Include='-S .'/>
             <CmakeArgs Include='-B "$(CmakeBuildDir)"'/>
             <CmakeArgs Condition="'$(SwigExecutable)' != 'auto'"
                        Include='-DSWIG_EXECUTABLE="$(SwigExecutable)"'/>

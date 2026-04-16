@@ -3,6 +3,8 @@
             Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.props.user')"/>
 
     <PropertyGroup>
+        <RepoPath>$(MSBuildThisFileDirectory)</RepoPath>
+
         <!-- Configurable Properties -->
         <RootRevision Condition="'$(RootRevision)' == ''">tag v6-36-10</RootRevision>
         <UseOpenMP Condition="'$(UseOpenMP)' == ''">OFF</UseOpenMP>
