@@ -24,8 +24,11 @@ on:
 
 jobs:
   build-windows:
-    name: Build for Windows
+    name: Build for Windows (${{ matrix.rid }})
     runs-on: windows-latest
+    strategy:
+      matrix:
+        rid: [ win-x86, win-x64, win-arm64 ]
     steps:
       - name: Check Out Repository Code
         uses: actions/checkout@v6
@@ -36,34 +39,17 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v5
 
-      - name: Build for x86
+      - name: Build
         shell: pwsh
         run: |
           dotnet build ./minuit2.net/minuit2.net.csproj `
-            --runtime win-x86 `
-            --configuration Release `
-            -p:UseOpenMP=${{ inputs.use-openmp }} `
-            --no-self-contained
-
-      - name: Build for x64
-        shell: pwsh
-        run: |
-          dotnet build ./minuit2.net/minuit2.net.csproj `
-            --runtime win-x64 `
-            --configuration Release `
-            -p:UseOpenMP=${{ inputs.use-openmp }} `
-            --no-self-contained
-
-      - name: Build for ARM64
-        shell: pwsh
-        run: |
-          dotnet build ./minuit2.net/minuit2.net.csproj `
-            --runtime win-arm64 `
+            --runtime ${{ matrix.rid }} `
             --configuration Release `
             -p:UseOpenMP=${{ inputs.use-openmp }} `
             --no-self-contained
 
       - name: Test
+        if: matrix.rid == 'win-x64'
         shell: pwsh
         run: |
           dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj `
@@ -71,6 +57,7 @@ jobs:
             -p:UseOpenMP=${{ inputs.use-openmp }}
 
       - name: Upload C# Assembly
+        if: matrix.rid == 'win-x64'
         uses: actions/upload-artifact@v7
         with:
           name: csharp-assembly-${{ inputs.package-id }}
@@ -80,7 +67,7 @@ jobs:
       - name: Upload Runtime Binaries
         uses: actions/upload-artifact@v7
         with:
-          name: windows-runtimes-${{ inputs.package-id }}
+          name: ${{ matrix.rid }}-runtimes-${{ inputs.package-id }}
           path: ./minuit2.net/runtimes/
           if-no-files-found: error
 
