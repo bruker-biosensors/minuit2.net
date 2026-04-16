@@ -29,7 +29,7 @@
             <CmakeArgs Condition="'$(SwigExePath)' != 'auto'"
                        Include='-DSWIG_EXECUTABLE="$(SwigExePath)"'/>
             <CmakeArgs Include='-DMINUIT2NET_PATH="$(SwigOutputPath)"'/>
-            <CmakeArgs Include='-DROOT_PATH="$(RootClonePath)"'/>
+            <CmakeArgs Include='-DROOT_PATH="$(RootCloneDir)"'/>
             <CmakeArgs Include="-Dminuit2_omp=$(UseOpenMP)"/>
             <CmakeArgs Include="-Dtarget_name=$(NativeAssemblyName)"/>
             <CmakeArgs Include="$(CmakeToolchainFlags)"/>

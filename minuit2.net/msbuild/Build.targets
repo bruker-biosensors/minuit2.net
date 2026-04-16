@@ -8,7 +8,7 @@
         <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
 
         <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
-        <RootClonePath>$(RepoDir)minuit2.wrap/root</RootClonePath>
+        <RootCloneDir>$(RepoDir)minuit2.wrap/root/</RootCloneDir>
         <CmakeBuildDir>$(RepoDir)minuit2.wrap/build/$(RuntimeIdentifier)</CmakeBuildDir>
     </PropertyGroup>
 

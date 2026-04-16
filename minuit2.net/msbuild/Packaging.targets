@@ -21,7 +21,7 @@
 
     <Target Name="RenameRootLicense"
             AfterTargets="CopyNativeBinariesForNuGet">
-        <Copy SourceFiles="$(RootClonePath)/LICENSE"
+        <Copy SourceFiles="$(RootCloneDir)LICENSE"
               DestinationFiles="$(IntermediateOutputPath)/ROOT-LICENSE"/>
     </Target>
 
@@ -31,7 +31,7 @@
             <None Include="$(IntermediateOutputPath)/ROOT-LICENSE"
                   Pack="true"
                   PackagePath="third-party-licenses/"/>
-            <None Include="$(RootClonePath)/LGPL2_1.txt"
+            <None Include="$(RootCloneDir)LGPL2_1.txt"
                   Pack="true"
                   PackagePath="third-party-licenses/"/>
         </ItemGroup>

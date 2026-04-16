@@ -3,8 +3,8 @@
     <Target Name="CleanLocalRootClone"
             BeforeTargets="Clean">
         <Exec Command="git clean -fdx"
-              WorkingDirectory="$(RootClonePath)"
-              Condition="Exists('$(RootClonePath)')"/>
+              WorkingDirectory="$(RootCloneDir)"
+              Condition="Exists('$(RootCloneDir)')"/>
     </Target>
 
     <Target Name="PrepareLocalRootClone"
@@ -13,21 +13,21 @@
             <RootRevisionRef>$(RootRevision.Replace('tag ', ''))</RootRevisionRef>
         </PropertyGroup>
 
-        <MakeDir Directories="$(RootClonePath)"
-                 Condition="!Exists('$(RootClonePath)')"/>
+        <MakeDir Directories="$(RootCloneDir)"
+                 Condition="!Exists('$(RootCloneDir)')"/>
 
         <Exec Command="git init -b master &amp;&amp; git remote add origin https://github.com/root-project/root.git"
-              WorkingDirectory="$(RootClonePath)"
-              Condition="!Exists('$(RootClonePath)/.git')"/>
+              WorkingDirectory="$(RootCloneDir)"
+              Condition="!Exists('$(RootCloneDir).git')"/>
 
         <Exec Command='git rev-parse --verify "$(RootRevisionRef)^{commit}"'
-              WorkingDirectory="$(RootClonePath)"
+              WorkingDirectory="$(RootCloneDir)"
               ContinueOnError="true"
               IgnoreExitCode="true"
               StandardOutputImportance="low"
               StandardErrorImportance="low"
               EchoOff="true"
-              Condition="Exists('$(RootClonePath)/.git')">
+              Condition="Exists('$(RootCloneDir).git')">
             <Output TaskParameter="ExitCode"
                     PropertyName="RevisionExistsExitCode"/>
         </Exec>
@@ -37,10 +37,10 @@
                  Condition="'$(RevisionExistsExitCode)' == '0'"/>
 
         <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
-              WorkingDirectory="$(RootClonePath)"
+              WorkingDirectory="$(RootCloneDir)"
               Condition="'$(RevisionExistsExitCode)' != '0'"/>
 
         <Exec Command="git -c advice.detachedHead=false checkout $(RootRevisionRef)"
-              WorkingDirectory="$(RootClonePath)"/>
+              WorkingDirectory="$(RootCloneDir)"/>
     </Target>
 </Project>
