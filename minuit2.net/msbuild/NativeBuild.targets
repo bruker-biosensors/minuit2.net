@@ -1,17 +1,17 @@
 ﻿<Project>
     <PropertyGroup>
         <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
-        <SwigOutputPath>$(RepoDir)minuit2.net/obj/swig</SwigOutputPath>
+        <SwigOutputDir>$(RepoDir)minuit2.net/obj/swig/</SwigOutputDir>
     </PropertyGroup>
 
     <Target Name="CleanBuildDirectories"
             BeforeTargets="Clean">
-        <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
+        <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputDir)"/>
     </Target>
 
     <Target Name="CreateBuildDirectories"
             BeforeTargets="BeforeBuild">
-        <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputPath)"/>
+        <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputDir)"/>
     </Target>
 
     <Target Name="ValidateCmakeConfiguration"
@@ -28,7 +28,7 @@
             <CmakeArgs Include='-B "$(CmakeBuildDir)"'/>
             <CmakeArgs Condition="'$(SwigExePath)' != 'auto'"
                        Include='-DSWIG_EXECUTABLE="$(SwigExePath)"'/>
-            <CmakeArgs Include='-DMINUIT2NET_PATH="$(SwigOutputPath)"'/>
+            <CmakeArgs Include='-DMINUIT2NET_PATH="$(SwigOutputDir)"'/>
             <CmakeArgs Include='-DROOT_PATH="$(RootCloneDir)"'/>
             <CmakeArgs Include="-Dminuit2_omp=$(UseOpenMP)"/>
             <CmakeArgs Include="-Dtarget_name=$(NativeAssemblyName)"/>
@@ -63,10 +63,10 @@
             AfterTargets="BuildNativeCode"
             BeforeTargets="BeforeCompile">
         <ItemGroup>
-            <SwigGeneratedCSharpFiles Include="$(SwigOutputPath)/*.cs"/>
+            <SwigGeneratedCSharpFiles Include="$(SwigOutputDir)*.cs"/>
             <Compile Include="@(SwigGeneratedCSharpFiles)"/>
         </ItemGroup>
-        <Message Text="Included SWIG-generated files from: $(SwigOutputPath)"
+        <Message Text="Included SWIG-generated files from: $(SwigOutputDir)"
                  Importance="high"/>
     </Target>
 </Project>
