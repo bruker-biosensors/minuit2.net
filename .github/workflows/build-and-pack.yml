@@ -64,6 +64,14 @@ jobs:
           path: ./minuit2.net/bin/Release/net8.0/
           if-no-files-found: error
 
+      - name: Upload ROOT License
+        if: matrix.rid == 'win-x64'
+        uses: actions/upload-artifact@v7
+        with:
+          name: root-license-${{ inputs.package-id }}
+          path: ./minuit2.net/root-license/
+          if-no-files-found: error
+
       - name: Upload Runtime Binaries
         uses: actions/upload-artifact@v7
         with:
@@ -139,6 +147,12 @@ jobs:
         with:
           name: csharp-assembly-${{ inputs.package-id }}
           path: ./minuit2.net/bin/Release/net8.0/
+
+      - name: Download ROOT License
+        uses: actions/download-artifact@v8
+        with:
+          name: root-license-${{ inputs.package-id }}
+          path: ./minuit2.net/root-license/
 
       - name: Download Runtime Binaries
         uses: actions/download-artifact@v8
