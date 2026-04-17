@@ -48,17 +48,6 @@
               WorkingDirectory="$(RepoDir)"/>
     </Target>
 
-    <Target Name="CopyNativeBinaries"
-            AfterTargets="BuildNativeCode">
-        <ItemGroup>
-            <NativeBinaries Include="$(CmakeInnerBuildDir)$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
-            <None Include="@(NativeBinaries)"
-                  Visible="false"
-                  CopyToOutputDirectory="PreserveNewest"
-                  CopyToPublishDirectory="PreserveNewest"/>
-        </ItemGroup>
-    </Target>
-
     <Target Name="IncludeSwigGeneratedCSharpFiles"
             AfterTargets="BuildNativeCode"
             BeforeTargets="BeforeCompile">
@@ -68,5 +57,29 @@
         </ItemGroup>
         <Message Text="Included SWIG-generated files from: $(SwigOutputDir)"
                  Importance="high"/>
+    </Target>
+
+    <Target Name="PrepareNativeAssets"
+            AfterTargets="BuildNativeCode">
+        <ItemGroup>
+            <NativeBinaries Include="$(CmakeInnerBuildDir)$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
+
+            <!-- Local build: Copy binaries to output directory -->
+            <None Include="@(NativeBinaries)"
+                  Link="%(FileName)%(Extension)"
+                  Visible="false"
+                  CopyToOutputDirectory="PreserveNewest"
+                  CopyToPublishDirectory="PreserveNewest"/>
+        </ItemGroup>
+
+        <!-- NuGet: Copy binaries to runtimes folder -->
+        <Copy SourceFiles="@(NativeBinaries)"
+              DestinationFolder="runtimes/$(RuntimeIdentifier)/native/"
+              SkipUnchangedFiles="true"/>
+
+        <!-- NuGet: Copy ROOT license -->
+        <Copy SourceFiles="$(RootCloneDir)LICENSE;$(RootCloneDir)LGPL2_1.txt"
+              DestinationFolder="root-license/"
+              SkipUnchangedFiles="true"/>
     </Target>
 </Project>

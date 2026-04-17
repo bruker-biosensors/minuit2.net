@@ -16,7 +16,7 @@ root/
 *.orig
 *.user
 
-#.editorconfig
+# .editorconfig
 .vs/
 .idea/
 
@@ -26,5 +26,8 @@ root/
 # Log files
 *.log
 
-#vscode
+# vscode
 .vscode
+
+# root license copy
+root-license/
