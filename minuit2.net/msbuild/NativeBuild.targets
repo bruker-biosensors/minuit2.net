@@ -14,12 +14,6 @@
         <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputDir)"/>
     </Target>
 
-    <Target Name="ValidateCmakeConfiguration"
-            BeforeTargets="ConfigureCmake">
-        <Error Condition="'$(CmakeToolchainFlags)' == ''"
-               Text="Native toolchain configuration (compiler/flags) is missing. Ensure '$(ToolchainTargets)' exists."/>
-    </Target>
-
     <Target Name="ConfigureCmake"
             BeforeTargets="BeforeBuild"
             DependsOnTargets="CreateBuildDirectories">

@@ -19,8 +19,11 @@
                  Importance="high"/>
     </Target>
 
-    <Import Project="$(ToolchainTargets)" Condition="Exists('$(ToolchainTargets)')"/>
-    <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets"/>
-    <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
+    <ImportGroup Condition="Exists('$(ToolchainTargets)')">
+        <Import Project="$(ToolchainTargets)"/>
+        <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets"/>
+        <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
+    </ImportGroup>
+
     <Import Project="$(MSBuildThisFileDirectory)Packaging.targets"/>
 </Project>
