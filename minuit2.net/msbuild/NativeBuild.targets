@@ -65,11 +65,8 @@
             AfterTargets="BuildNativeCode"
             BeforeTargets="BeforeCompile">
         <ItemGroup>
-            <SwigGeneratedCSharpFiles Include="$(SwigOutputDir)*.cs"/>
-            <Compile Include="@(SwigGeneratedCSharpFiles)"/>
+            <Compile Include="$(SwigOutputDir)*.cs"/>
         </ItemGroup>
-        <Message Text="Included SWIG-generated files from: $(SwigOutputDir)"
-                 Importance="high"/>
     </Target>
 
     <Target Name="PrepareNativeAssets"
