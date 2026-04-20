@@ -16,11 +16,7 @@
     <Target Name="TrackNativeBuildInputs">
         <ItemGroup>
             <NativeBuildSources Include="$(RepoDir)CMakeLists.txt"/>
-            <NativeBuildSources Include="$(RepoDir)minuit2.wrap/CMakeLists.txt"/>
-            <NativeBuildSources Include="$(RepoDir)minuit2.wrap/*.i"/>
-            <NativeBuildSources Include="$(RepoDir)minuit2.wrap/*.h"/>
-            <NativeBuildSources Include="$(RepoDir)minuit2.wrap/*.cxx"/>
-            <NativeBuildSources Include="$(RepoDir)minuit2.wrap/*.cpp"/>
+            <NativeBuildSources Include="$(RepoDir)minuit2.wrap/*.*"/>
 
             <NativeBuildProperties Include="$(RootRevision)"/>
             <NativeBuildProperties Include="$(UseOpenMP)"/>
