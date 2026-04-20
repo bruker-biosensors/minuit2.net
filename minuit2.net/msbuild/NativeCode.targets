@@ -32,7 +32,7 @@
                     PropertyName="RevisionExistsExitCode"/>
         </Exec>
 
-        <Message Text="Skipping fetch..."
+        <Message Text="Skipping root.git fetch..."
                  Importance="high"
                  Condition="'$(RevisionExistsExitCode)' == '0'"/>
 
