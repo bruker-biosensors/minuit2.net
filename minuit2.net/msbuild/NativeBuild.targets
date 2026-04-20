@@ -9,13 +9,11 @@
         <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputDir)"/>
     </Target>
 
-    <Target Name="CreateBuildDirectories"
-            BeforeTargets="BeforeBuild">
+    <Target Name="CreateBuildDirectories">
         <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputDir)"/>
     </Target>
 
-    <Target Name="TrackNativeBuildInputs"
-            BeforeTargets="ConfigureCmake;BuildNativeCode">
+    <Target Name="TrackNativeBuildInputs">
         <ItemGroup>
             <NativeBuildSources Include="$(RepoDir)CMakeLists.txt"/>
             <NativeBuildSources Include="$(RepoDir)minuit2.wrap/CMakeLists.txt"/>
@@ -37,7 +35,6 @@
     </Target>
 
     <Target Name="ConfigureCmake"
-            BeforeTargets="BeforeBuild"
             DependsOnTargets="CreateBuildDirectories;TrackNativeBuildInputs"
             Inputs="@(NativeBuildSources);$(IntermediateOutputPath)NativeBuildProperties"
             Outputs="$(CmakeBuildDir)CMakeCache.txt">
@@ -61,7 +58,7 @@
     <!-- Build C++ code and generate SWIG-wrappers -->
     <Target Name="BuildNativeCode"
             BeforeTargets="BeforeBuild"
-            DependsOnTargets="ConfigureCmake;TrackNativeBuildInputs"
+            DependsOnTargets="ConfigureCmake"
             Inputs="@(NativeBuildSources);$(IntermediateOutputPath)NativeBuildProperties"
             Outputs="$(CmakeInnerBuildDir)$(NativeAssemblyName)$(NativeAssemblyExtension)">
         <Exec Command='cmake --build "$(CmakeBuildDir)" --config Release'
