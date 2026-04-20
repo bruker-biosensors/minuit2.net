@@ -14,9 +14,33 @@
         <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputDir)"/>
     </Target>
 
+    <Target Name="TrackNativeBuildInputs"
+            BeforeTargets="ConfigureCmake;BuildNativeCode">
+        <ItemGroup>
+            <NativeBuildSources Include="$(RepoDir)CMakeLists.txt"/>
+            <NativeBuildSources Include="$(RepoDir)minuit2.wrap/CMakeLists.txt"/>
+            <NativeBuildSources Include="$(RepoDir)minuit2.wrap/*.i"/>
+            <NativeBuildSources Include="$(RepoDir)minuit2.wrap/*.h"/>
+            <NativeBuildSources Include="$(RepoDir)minuit2.wrap/*.cxx"/>
+            <NativeBuildSources Include="$(RepoDir)minuit2.wrap/*.cpp"/>
+
+            <NativeBuildProperties Include="$(RootRevision)"/>
+            <NativeBuildProperties Include="$(UseOpenMP)"/>
+            <NativeBuildProperties Include="$(Toolchain)"/>
+            <NativeBuildProperties Include="$(SwigExePath)"/>
+            <NativeBuildProperties Include="$(RuntimeIdentifier)"/>
+        </ItemGroup>
+        <WriteLinesToFile File="$(IntermediateOutputPath)NativeBuildProperties"
+                          Lines="@(NativeBuildProperties)"
+                          Overwrite="true"
+                          WriteOnlyWhenDifferent="true"/>
+    </Target>
+
     <Target Name="ConfigureCmake"
             BeforeTargets="BeforeBuild"
-            DependsOnTargets="CreateBuildDirectories">
+            DependsOnTargets="CreateBuildDirectories;TrackNativeBuildInputs"
+            Inputs="@(NativeBuildSources);$(IntermediateOutputPath)NativeBuildProperties"
+            Outputs="$(CmakeBuildDir)CMakeCache.txt">
         <ItemGroup>
             <CmakeArgs Include='-S .'/>
             <CmakeArgs Include='-B "$(CmakeBuildDir)"'/>
@@ -37,7 +61,9 @@
     <!-- Build C++ code and generate SWIG-wrappers -->
     <Target Name="BuildNativeCode"
             BeforeTargets="BeforeBuild"
-            DependsOnTargets="ConfigureCmake">
+            DependsOnTargets="ConfigureCmake;TrackNativeBuildInputs"
+            Inputs="@(NativeBuildSources);$(IntermediateOutputPath)NativeBuildProperties"
+            Outputs="$(CmakeInnerBuildDir)$(NativeAssemblyName)$(NativeAssemblyExtension)">
         <Exec Command='cmake --build "$(CmakeBuildDir)" --config Release'
               WorkingDirectory="$(RepoDir)"/>
     </Target>
@@ -54,7 +80,8 @@
     </Target>
 
     <Target Name="PrepareNativeAssets"
-            AfterTargets="BuildNativeCode">
+            AfterTargets="BuildNativeCode"
+            BeforeTargets="AssignTargetPaths">
         <ItemGroup>
             <NativeBinaries Include="$(CmakeInnerBuildDir)$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
 
