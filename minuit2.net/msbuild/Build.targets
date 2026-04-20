@@ -12,6 +12,13 @@
         <CmakeBuildDir>$(RepoDir)minuit2.wrap/build/$(RuntimeIdentifier)/</CmakeBuildDir>
     </PropertyGroup>
 
+    <Target Name="ValidateToolchain"
+            BeforeTargets="BeforeBuild">
+        <Message Text="Warning: Toolchain targets file not found: $(ToolchainTargets)"
+                 Condition="!Exists('$(ToolchainTargets)')"
+                 Importance="high"/>
+    </Target>
+
     <Import Project="$(ToolchainTargets)" Condition="Exists('$(ToolchainTargets)')"/>
     <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets"/>
     <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
