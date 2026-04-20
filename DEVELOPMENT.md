@@ -1,14 +1,15 @@
 ﻿# Development Guide
 
-This guide provides the necessary information for developers who want to build the `minuit2.net` library from source, run tests, or contribute to the project.
+This guide provides the necessary information for developers who want to build the Minuit2.NET library from source,
+run tests, or contribute to the project.
 
 ## Project Structure
 
 - **minuit2.net/**: Main C# library containing the .NET API
-- **minuit2.wrap/**: C++ wrapper layer using SWIG for interoperability
+- **minuit2.net/msbuild/**: MSBuild targets for automated building of the .NET library incl. native components
+- **minuit2.wrap/**: C++ wrapper layer around the native library using SWIG for interoperability
 - **test/minuit2.net.UnitTests/**: Comprehensive unit tests for the .NET library
 - **test/minuit2.net.Benchmarks/**: Benchmarks for the .NET library
-- **msbuild/**: MSBuild targets for automated building of native components
 - **Directory.Build.props**: Solution-wide MSBuild properties and defaults
 
 ## Prerequisites
