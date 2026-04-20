@@ -32,10 +32,6 @@
                     PropertyName="RevisionExistsExitCode"/>
         </Exec>
 
-        <Message Text="Skipping root.git fetch..."
-                 Importance="high"
-                 Condition="'$(RevisionExistsExitCode)' == '0'"/>
-
         <Exec Command="git fetch --depth 1 --no-tags origin $(RootRevision)"
               WorkingDirectory="$(RootCloneDir)"
               Condition="'$(RevisionExistsExitCode)' != '0'"/>
