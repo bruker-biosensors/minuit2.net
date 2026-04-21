@@ -55,10 +55,11 @@ jobs:
             --no-self-contained
 
       - name: Test
-        if: matrix.rid == 'win-x64'
+        if: matrix.rid != 'win-x86'
         shell: pwsh
         run: |
           dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj `
+            --runtime ${{ matrix.rid }} `
             --configuration Release `
             -p:UseOpenMP=${{ inputs.use-openmp }}
 
@@ -125,6 +126,7 @@ jobs:
         shell: pwsh
         run: |
           dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj `
+            --runtime ${{ matrix.rid }} `
             --configuration Release `
             -p:UseOpenMP=${{ inputs.use-openmp }}
 
