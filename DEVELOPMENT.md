@@ -17,7 +17,7 @@ run tests, or contribute to the project.
 ### General (Platform-agnostic)
 
 * **.NET SDK**: Version 10.0.105 or later
-* **.NET Runtime**: Version 8.0 or later
+* **.NET Runtime**: Version 8.0
 * **IDE**: Visual Studio 2022 or JetBrains Rider (recommended)
 * **Build Tools**:
   *   [Git](https://git-scm.com/): Required to download [ROOT](https://github.com/root-project/root)/[Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) source code during the build.
