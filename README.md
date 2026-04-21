@@ -1,6 +1,7 @@
 # Minuit2.NET
 
 [![NuGet Version](https://img.shields.io/nuget/v/minuit2.net.svg)](https://www.nuget.org/packages/minuit2.net/)
+![Platforms](https://img.shields.io/badge/platforms-Windows%2C%20macOS-blue)
 
 A .NET wrapper for the [Minuit2](https://root.cern.ch/doc/master/Minuit2Page.html) library from CERN's [ROOT project](https://root.cern/), enhanced with practical extensions.
 
@@ -38,6 +39,9 @@ centered on statelessness and referential transparency.
   backend processes. Ideal for compute-intensive tasks that benefit from parallel execution.
 
 Both packages share the same API and can be used interchangeably depending on your performance and threading requirements.
+They include native binaries for the following runtimes:
+- **Windows**: `win-x86`, `win-x64`, `win-arm64`
+- **macOS** (12.0 or later): `osx-x64`, `osx-arm64`
 
 ## Building from Source
 
