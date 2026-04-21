@@ -25,10 +25,16 @@ on:
 jobs:
   build-windows:
     name: Build for ${{ matrix.rid }}
-    runs-on: windows-2025
+    runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        rid: [ win-x86, win-x64, win-arm64 ]
+        include:
+          - rid: win-x86
+            runner: windows-2025
+          - rid: win-x64
+            runner: windows-2025
+          - rid: win-arm64
+            runner: windows-11-arm
     steps:
       - name: Check Out Repository Code
         uses: actions/checkout@v6
