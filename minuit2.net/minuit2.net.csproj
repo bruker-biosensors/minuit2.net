@@ -5,5 +5,5 @@
         <Description>A .NET wrapper for the Minuit2 library from CERN's ROOT project, enhanced with practical extensions.</Description>
     </PropertyGroup>
 
-    <Import Project="../msbuild/Build.targets"/>
+    <Import Project="msbuild/Build.targets"/>
 </Project>

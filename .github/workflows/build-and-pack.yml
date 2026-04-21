@@ -24,8 +24,11 @@ on:
 
 jobs:
   build-windows:
-    name: Build for Windows
-    runs-on: windows-latest
+    name: Build for ${{ matrix.rid }}
+    runs-on: windows-2025
+    strategy:
+      matrix:
+        rid: [ win-x86, win-x64, win-arm64 ]
     steps:
       - name: Check Out Repository Code
         uses: actions/checkout@v6
@@ -36,53 +39,99 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v5
 
-      - name: Build for x86
+      - name: Build
+        shell: pwsh
         run: |
           dotnet build ./minuit2.net/minuit2.net.csproj `
-            --runtime win-x86 `
-            --configuration Release `
-            -p:UseOpenMP=${{ inputs.use-openmp }} `
-            --no-self-contained
-
-      - name: Build for x64
-        run: |
-          dotnet build ./minuit2.net/minuit2.net.csproj `
-            --runtime win-x64 `
-            --configuration Release `
-            -p:UseOpenMP=${{ inputs.use-openmp }} `
-            --no-self-contained
-
-      - name: Build for ARM64
-        run: |
-          dotnet build ./minuit2.net/minuit2.net.csproj `
-            --runtime win-arm64 `
+            --runtime ${{ matrix.rid }} `
             --configuration Release `
             -p:UseOpenMP=${{ inputs.use-openmp }} `
             --no-self-contained
 
       - name: Test
+        if: matrix.rid == 'win-x64'
+        shell: pwsh
         run: |
           dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj `
             --configuration Release `
             -p:UseOpenMP=${{ inputs.use-openmp }}
 
       - name: Upload C# Assembly
+        if: matrix.rid == 'win-x64'
         uses: actions/upload-artifact@v7
         with:
           name: csharp-assembly-${{ inputs.package-id }}
           path: ./minuit2.net/bin/Release/net8.0/
           if-no-files-found: error
 
+      - name: Upload ROOT License
+        if: matrix.rid == 'win-x64'
+        uses: actions/upload-artifact@v7
+        with:
+          name: root-license-${{ inputs.package-id }}
+          path: ./minuit2.net/root-license/
+          if-no-files-found: error
+
       - name: Upload Runtime Binaries
         uses: actions/upload-artifact@v7
         with:
-          name: windows-runtimes-${{ inputs.package-id }}
+          name: ${{ matrix.rid }}-runtime-${{ inputs.package-id }}
+          path: ./minuit2.net/runtimes/
+          if-no-files-found: error
+
+  build-macos:
+    name: Build for ${{ matrix.rid }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - rid: osx-arm64
+            runner: macos-15
+          - rid: osx-x64
+            runner: macos-15-intel
+    steps:
+      - name: Check Out Repository Code
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Install Dependencies
+        run: |
+          brew install swig
+          if [ "${{ inputs.use-openmp }}" == "ON" ]; then
+            brew install libomp
+          fi
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v5
+
+      - name: Build
+        shell: pwsh
+        run: |
+          dotnet build ./minuit2.net/minuit2.net.csproj `
+            --runtime ${{ matrix.rid }} `
+            --configuration Release `
+            -p:UseOpenMP=${{ inputs.use-openmp }} `
+            --no-self-contained
+
+      - name: Test
+        shell: pwsh
+        run: |
+          dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj `
+            --configuration Release `
+            -p:UseOpenMP=${{ inputs.use-openmp }}
+
+      - name: Upload Runtime Binaries
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.rid }}-runtime-${{ inputs.package-id }}
           path: ./minuit2.net/runtimes/
           if-no-files-found: error
 
   package:
     name: Create NuGet Package
-    needs: [ build-windows ]
+    needs: [ build-windows, build-macos ]
     runs-on: ubuntu-latest
     steps:
       - name: Check Out Repository Code
@@ -99,17 +148,23 @@ jobs:
           name: csharp-assembly-${{ inputs.package-id }}
           path: ./minuit2.net/bin/Release/net8.0/
 
+      - name: Download ROOT License
+        uses: actions/download-artifact@v8
+        with:
+          name: root-license-${{ inputs.package-id }}
+          path: ./minuit2.net/root-license/
+
       - name: Download Runtime Binaries
         uses: actions/download-artifact@v8
         with:
-          pattern: "*-runtimes-${{ inputs.package-id }}"
+          pattern: "*-runtime-${{ inputs.package-id }}"
           path: ./minuit2.net/runtimes/
           merge-multiple: true
 
       - name: Verify Runtime Binaries
         shell: pwsh
         run: |
-          $requiredRids = @("win-x86", "win-x64", "win-arm64")
+          $requiredRids = @("win-x86", "win-x64", "win-arm64", "osx-x64", "osx-arm64")
           foreach ($rid in $requiredRids) {
             if (-not (Test-Path "./minuit2.net/runtimes/$rid")) {
               Write-Error "Cannot package: Missing runtime binaries for RID: $rid. Ensure all architectures are built before packing."

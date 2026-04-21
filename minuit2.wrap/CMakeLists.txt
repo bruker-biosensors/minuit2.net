@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.21)
 set(CMAKE_CXX_STANDARD 17)
 project(minuit2.wrap CXX C)
 
@@ -10,19 +10,21 @@ include(UseSWIG)
 
 SET_SOURCE_FILES_PROPERTIES(Minuit2.i PROPERTIES CPLUSPLUS ON)
 
-cmake_path(ABSOLUTE_PATH MINUIT2NET_PATH NORMALIZE)
+cmake_path(ABSOLUTE_PATH swig_output_dir NORMALIZE)
 cmake_path(ABSOLUTE_PATH CMAKE_CURRENT_SOURCE_DIR NORMALIZE)
 
-SWIG_ADD_LIBRARY(${target_name}
+SWIG_ADD_LIBRARY(${native_assembly_name}
   LANGUAGE csharp
-  OUTPUT_DIR ${MINUIT2NET_PATH}
+  OUTPUT_DIR ${swig_output_dir}
   SOURCES Minuit2.i)
 
-target_include_directories(${target_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-set_target_properties(${target_name} PROPERTIES
+target_include_directories(${native_assembly_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set_target_properties(${native_assembly_name} PROPERTIES
   SWIG_USE_TARGET_INCLUDE_DIRECTORIES ON
-  POSITION_INDEPENDENT_CODE ON)
+  POSITION_INDEPENDENT_CODE ON
+  PREFIX ""
+  IMPORT_PREFIX "")
 
-target_include_directories(${target_name} PRIVATE ${root_minuit2_SOURCE_DIR}/Core/Foundation/inc)
+target_include_directories(${native_assembly_name} PRIVATE ${root_minuit2_SOURCE_DIR}/Core/Foundation/inc)
 
-TARGET_LINK_LIBRARIES(${target_name} PRIVATE Minuit2::Minuit2)
+TARGET_LINK_LIBRARIES(${native_assembly_name} PRIVATE Minuit2::Minuit2)

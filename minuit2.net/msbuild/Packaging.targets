@@ -1,0 +1,16 @@
+﻿<Project>
+    <PropertyGroup>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="$(RepoDir)README.md" Pack="true" PackagePath="" Visible="false"/>
+        <None Include="$(RepoDir)LICENSE" Pack="true" PackagePath="" Visible="false"/>
+        <None Include="root-license/**/*" Pack="true" PackagePath="root-license/"/>
+        <None Include="runtimes/**/*" Pack="true" PackagePath="runtimes/"/>
+
+        <None Update="root-license/**/*" Visible="false"/>
+        <None Update="runtimes/**/*" Visible="false"/>
+    </ItemGroup>
+</Project>

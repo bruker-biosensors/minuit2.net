@@ -3,11 +3,13 @@
             Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.props.user')"/>
 
     <PropertyGroup>
+        <RepoDir>$(MSBuildThisFileDirectory)</RepoDir>
+
         <!-- Configurable Properties -->
         <RootRevision Condition="'$(RootRevision)' == ''">tag v6-36-10</RootRevision>
         <UseOpenMP Condition="'$(UseOpenMP)' == ''">OFF</UseOpenMP>
         <Toolchain Condition="'$(Toolchain)' == ''">auto</Toolchain>
-        <SwigExecutable Condition="'$(SwigExecutable)' == ''">auto</SwigExecutable>
+        <SwigExePath Condition="'$(SwigExePath)' == ''">auto</SwigExePath>
 
         <!-- Project Metadata -->
         <Authors>Adrian Walser, Felix Kroener, Markus Adamek</Authors>
@@ -18,7 +20,7 @@
         <Configurations>Debug;Release</Configurations>
 
         <!-- Platform & Output Configuration -->
-        <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+        <RuntimeIdentifiers>win-x86;win-x64;win-arm64;osx-x64;osx-arm64</RuntimeIdentifiers>
         <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 
         <!-- Symbol & SourceLink Settings -->

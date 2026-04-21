@@ -1,0 +1,29 @@
+﻿<Project>
+    <PropertyGroup>
+        <Toolchain Condition="$(Toolchain) == 'auto' And $([MSBuild]::IsOSPlatform('Windows'))">Windows.VisualStudio</Toolchain>
+        <Toolchain Condition="$(Toolchain) == 'auto' And $([MSBuild]::IsOSPlatform('OSX'))">MacOS.AppleClang</Toolchain>
+        <ToolchainTargets>$(MSBuildThisFileDirectory)$(Toolchain).targets</ToolchainTargets>
+
+        <AssemblySuffix Condition="'$(UseOpenMP)' == 'ON'">.openmp</AssemblySuffix>
+        <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
+
+        <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
+        <RootCloneDir>$(RepoDir)minuit2.wrap/root/</RootCloneDir>
+        <CmakeBuildDir>$(RepoDir)minuit2.wrap/build/$(RuntimeIdentifier)/</CmakeBuildDir>
+    </PropertyGroup>
+
+    <Target Name="ValidateToolchain"
+            BeforeTargets="BeforeBuild">
+        <Message Text="Warning: Toolchain targets file not found: $(ToolchainTargets)"
+                 Condition="!Exists('$(ToolchainTargets)')"
+                 Importance="high"/>
+    </Target>
+
+    <ImportGroup Condition="Exists('$(ToolchainTargets)')">
+        <Import Project="$(ToolchainTargets)"/>
+        <Import Project="$(MSBuildThisFileDirectory)NativeCode.targets"/>
+        <Import Project="$(MSBuildThisFileDirectory)NativeBuild.targets"/>
+    </ImportGroup>
+
+    <Import Project="$(MSBuildThisFileDirectory)Packaging.targets"/>
+</Project>

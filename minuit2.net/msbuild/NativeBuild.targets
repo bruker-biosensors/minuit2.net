@@ -1,0 +1,96 @@
+﻿<Project>
+    <PropertyGroup>
+        <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
+        <SwigOutputDir>$(RepoDir)minuit2.net/obj/swig/</SwigOutputDir>
+    </PropertyGroup>
+
+    <Target Name="CleanBuildDirectories"
+            BeforeTargets="Clean">
+        <RemoveDir Directories="$(CmakeBuildDir);$(SwigOutputDir)"/>
+    </Target>
+
+    <Target Name="CreateBuildDirectories">
+        <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputDir)"/>
+    </Target>
+
+    <Target Name="TrackNativeBuildInputs">
+        <ItemGroup>
+            <NativeBuildSources Include="$(RepoDir)CMakeLists.txt"/>
+            <NativeBuildSources Include="$(RepoDir)minuit2.wrap/*.*"/>
+
+            <NativeBuildProperties Include="$(RootRevision)"/>
+            <NativeBuildProperties Include="$(UseOpenMP)"/>
+            <NativeBuildProperties Include="$(Toolchain)"/>
+            <NativeBuildProperties Include="$(SwigExePath)"/>
+            <NativeBuildProperties Include="$(RuntimeIdentifier)"/>
+        </ItemGroup>
+        <WriteLinesToFile File="$(IntermediateOutputPath)NativeBuildProperties"
+                          Lines="@(NativeBuildProperties)"
+                          Overwrite="true"
+                          WriteOnlyWhenDifferent="true"/>
+    </Target>
+
+    <Target Name="ConfigureCmake"
+            DependsOnTargets="CreateBuildDirectories;TrackNativeBuildInputs"
+            Inputs="@(NativeBuildSources);$(IntermediateOutputPath)NativeBuildProperties"
+            Outputs="$(CmakeBuildDir)CMakeCache.txt">
+        <ItemGroup>
+            <CmakeArgs Include='-S .'/>
+            <CmakeArgs Include='-B "$(CmakeBuildDir)"'/>
+            <CmakeArgs Condition="'$(SwigExePath)' != 'auto'"
+                       Include='-DSWIG_EXECUTABLE="$(SwigExePath)"'/>
+            <CmakeArgs Include="$(CmakeToolchainFlags)"/>
+            <CmakeArgs Include="-Duse_openmp=$(UseOpenMP)"/>
+            <CmakeArgs Include='-Droot_clone_dir="$(RootCloneDir)"'/>
+            <CmakeArgs Include='-Dswig_output_dir="$(SwigOutputDir)"'/>
+            <CmakeArgs Include="-Dnative_assembly_name=$(NativeAssemblyName)"/>
+        </ItemGroup>
+
+        <Exec Command="cmake @(CmakeArgs, ' ')"
+              WorkingDirectory="$(RepoDir)"
+              IgnoreExitCode="false"/>
+    </Target>
+
+    <!-- Build C++ code and generate SWIG-wrappers -->
+    <Target Name="BuildNativeCode"
+            BeforeTargets="BeforeBuild"
+            DependsOnTargets="ConfigureCmake"
+            Inputs="@(NativeBuildSources);$(IntermediateOutputPath)NativeBuildProperties"
+            Outputs="$(CmakeInnerBuildDir)$(NativeAssemblyName)$(NativeAssemblyExtension)">
+        <Exec Command='cmake --build "$(CmakeBuildDir)" --config Release'
+              WorkingDirectory="$(RepoDir)"/>
+    </Target>
+
+    <Target Name="IncludeSwigGeneratedCSharpFiles"
+            AfterTargets="BuildNativeCode"
+            BeforeTargets="BeforeCompile">
+        <ItemGroup>
+            <Compile Include="$(SwigOutputDir)*.cs"/>
+        </ItemGroup>
+    </Target>
+
+    <Target Name="PrepareNativeAssets"
+            AfterTargets="BuildNativeCode"
+            BeforeTargets="AssignTargetPaths">
+        <ItemGroup>
+            <NativeBinaries Include="$(CmakeInnerBuildDir)$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
+
+            <!-- Local build: Copy binaries to output directory -->
+            <None Include="@(NativeBinaries)"
+                  Link="%(FileName)%(Extension)"
+                  Visible="false"
+                  CopyToOutputDirectory="PreserveNewest"
+                  CopyToPublishDirectory="PreserveNewest"/>
+        </ItemGroup>
+
+        <!-- NuGet: Copy binaries to runtimes folder -->
+        <Copy SourceFiles="@(NativeBinaries)"
+              DestinationFolder="runtimes/$(RuntimeIdentifier)/native/"
+              SkipUnchangedFiles="true"/>
+
+        <!-- NuGet: Copy ROOT license -->
+        <Copy SourceFiles="$(RootCloneDir)LICENSE;$(RootCloneDir)LGPL2_1.txt"
+              DestinationFolder="root-license/"
+              SkipUnchangedFiles="true"/>
+    </Target>
+</Project>

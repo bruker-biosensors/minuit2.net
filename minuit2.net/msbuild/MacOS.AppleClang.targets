@@ -1,0 +1,34 @@
+﻿<Project>
+    <PropertyGroup>
+        <NativeAssemblyExtension>.dylib</NativeAssemblyExtension>
+
+        <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'osx-x64'">x86_64</CmakeArchitecture>
+        <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">arm64</CmakeArchitecture>
+
+        <CmakeToolchainFlags>-DCMAKE_OSX_ARCHITECTURES=$(CmakeArchitecture) -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0</CmakeToolchainFlags>
+        <CmakeInnerBuildDir>$(CmakeBuildDir)minuit2.wrap/</CmakeInnerBuildDir>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(UseOpenMP)' == 'ON' and '$(OpenMPRoot)' == ''">
+        <OpenMPRoot Condition="Exists('/opt/homebrew/opt/libomp')">/opt/homebrew/opt/libomp</OpenMPRoot>
+        <OpenMPRoot Condition="Exists('/opt/local/lib/libomp')">/opt/local/lib/libomp</OpenMPRoot>
+        <OpenMPRoot Condition="Exists('/usr/local/opt/libomp')">/usr/local/opt/libomp</OpenMPRoot>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(UseOpenMP)' == 'ON' and '$(OpenMPRoot)' != ''">
+        <CmakeToolchainFlags>$(CmakeToolchainFlags) -DOpenMP_ROOT="$(OpenMPRoot)"</CmakeToolchainFlags>
+        <CmakeToolchainFlags>$(CmakeToolchainFlags) -DOpenMP_C_FLAGS="-Xpreprocessor -fopenmp -I$(OpenMPRoot)/include"</CmakeToolchainFlags>
+        <CmakeToolchainFlags>$(CmakeToolchainFlags) -DOpenMP_C_LIB_NAMES="omp"</CmakeToolchainFlags>
+        <CmakeToolchainFlags>$(CmakeToolchainFlags) -DOpenMP_omp_LIBRARY="$(OpenMPRoot)/lib/libomp.dylib"</CmakeToolchainFlags>
+        <CmakeToolchainFlags>$(CmakeToolchainFlags) -DOpenMP_CXX_FLAGS="-Xpreprocessor -fopenmp -I$(OpenMPRoot)/include"</CmakeToolchainFlags>
+        <CmakeToolchainFlags>$(CmakeToolchainFlags) -DOpenMP_CXX_LIB_NAMES="omp"</CmakeToolchainFlags>
+    </PropertyGroup>
+
+    <Target Name="ValidateCmakeToolchainFlags"
+            BeforeTargets="ConfigureCmake">
+        <Error Condition="'$(CmakeArchitecture)' == ''"
+               Text="The current RID '$(RuntimeIdentifier)' is not supported by the '$(Toolchain)' toolchain."/>
+        <Error Condition="'$(UseOpenMP)' == 'ON' and '$(OpenMPRoot)' == ''"
+               Text="The $(Toolchain) toolchain requires manual installation of the OpenMP runtime (libomp). No valid libomp path was found in standard locations. You can specify the path manually using the 'OpenMPRoot' property."/>
+    </Target>
+</Project>
