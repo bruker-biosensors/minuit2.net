@@ -6,7 +6,7 @@
         <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">arm64</CmakeArchitecture>
 
         <!-- macOS 14 is set as the oldest target version since it is the oldest version supported by .NET8: https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md -->
-        <CmakeToolchainFlags>-DCMAKE_OSX_ARCHITECTURES=$(CmakeArchitecture) -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0</CmakeToolchainFlags>
+        <CmakeToolchainFlags>-DCMAKE_OSX_ARCHITECTURES=$(CmakeArchitecture) -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 -DCMAKE_BUILD_TYPE=Release</CmakeToolchainFlags>
         <CmakeBinaryOutputDir>$(CmakeBinaryOutputBaseDir)</CmakeBinaryOutputDir>
     </PropertyGroup>
 
