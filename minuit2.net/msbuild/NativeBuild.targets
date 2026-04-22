@@ -1,6 +1,6 @@
 ﻿<Project>
     <PropertyGroup>
-        <NativeAssemblyName>minuit2.wrap$(AssemblySuffix)</NativeAssemblyName>
+        <NativeAssemblyName>minuit2.native$(AssemblySuffix)</NativeAssemblyName>
         <SwigOutputDir>$(RepoDir)minuit2.net/obj/swig/</SwigOutputDir>
     </PropertyGroup>
 
