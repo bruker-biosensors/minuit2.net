@@ -8,8 +8,10 @@
         <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
 
         <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
-        <RootCloneDir>$(RepoDir)minuit2.wrap/root/</RootCloneDir>
-        <CmakeBuildDir>$(RepoDir)minuit2.wrap/build/$(RuntimeIdentifier)/</CmakeBuildDir>
+        <NativeCodeDir>$(RepoDir)minuit2.wrap/</NativeCodeDir>
+        <RootCloneDir>$(NativeCodeDir)root/</RootCloneDir>
+        <CmakeBuildDir>$(NativeCodeDir)build/$(RuntimeIdentifier)/</CmakeBuildDir>
+        <CmakeInnerBuildDir>$(CmakeBuildDir)minuit2.wrap/</CmakeInnerBuildDir>
     </PropertyGroup>
 
     <Target Name="ValidateToolchain"
