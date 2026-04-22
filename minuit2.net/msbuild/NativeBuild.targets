@@ -41,6 +41,7 @@
                        Include='-DSWIG_EXECUTABLE="$(SwigExePath)"'/>
             <CmakeArgs Include="$(CmakeToolchainFlags)"/>
             <CmakeArgs Include="-Duse_openmp=$(UseOpenMP)"/>
+            <CmakeArgs Include='-Dnative_code_dir="$(NativeCodeDir)"'/>
             <CmakeArgs Include='-Droot_clone_dir="$(RootCloneDir)"'/>
             <CmakeArgs Include='-Dswig_output_dir="$(SwigOutputDir)"'/>
             <CmakeArgs Include="-Dnative_assembly_name=$(NativeAssemblyName)"/>

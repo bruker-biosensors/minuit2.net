@@ -14,5 +14,5 @@ SET(minuit2_mpi OFF CACHE BOOL "minuit2_mpi Option" FORCE)
 cmake_path(ABSOLUTE_PATH root_clone_dir NORMALIZE)
 SET(root_minuit2 ${root_clone_dir}/math/minuit2)
 
+add_subdirectory(${native_code_dir})
 add_subdirectory(${root_minuit2})
-add_subdirectory("minuit2.wrap")
