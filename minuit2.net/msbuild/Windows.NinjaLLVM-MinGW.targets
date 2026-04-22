@@ -10,7 +10,7 @@
         <CXXCompilerFlags>-DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="--target=$(ClangTarget)"</CXXCompilerFlags>
 
         <CmakeToolchainFlags>-G Ninja $(CCompilerFlags) $(CXXCompilerFlags) -DCMAKE_BUILD_TYPE=Release</CmakeToolchainFlags>
-        <CmakeInnerBuildDir>$(CmakeBuildDir)minuit2.wrap/</CmakeInnerBuildDir>
+        <CmakeBinaryOutputDir>$(CmakeBinaryOutputBaseDir)</CmakeBinaryOutputDir>
     </PropertyGroup>
 
     <Target Name="ValidateCmakeToolchainFlags"

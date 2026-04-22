@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.21)
 set(CMAKE_CXX_STANDARD 17)
 project(minuit2.wrap CXX C)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/minuit2.net)
-
-set(CMAKE_SWIG_FLAGS)
 FIND_PACKAGE(SWIG REQUIRED)
 include(UseSWIG)
 
@@ -24,7 +21,5 @@ set_target_properties(${native_assembly_name} PROPERTIES
   POSITION_INDEPENDENT_CODE ON
   PREFIX ""
   IMPORT_PREFIX "")
-
-target_include_directories(${native_assembly_name} PRIVATE ${root_minuit2_SOURCE_DIR}/Core/Foundation/inc)
 
 TARGET_LINK_LIBRARIES(${native_assembly_name} PRIVATE Minuit2::Minuit2)
