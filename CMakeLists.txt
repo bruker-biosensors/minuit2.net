@@ -15,7 +15,5 @@ endif()
 cmake_path(ABSOLUTE_PATH native_code_dir NORMALIZE)
 cmake_path(ABSOLUTE_PATH root_clone_dir NORMALIZE)
 
-SET(root_minuit2_dir ${root_clone_dir}/math/minuit2)
-
 add_subdirectory(${native_code_dir})
-add_subdirectory(${root_minuit2_dir})
+add_subdirectory(${root_clone_dir}/math/minuit2)

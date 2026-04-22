@@ -25,6 +25,4 @@ set_target_properties(${native_assembly_name} PROPERTIES
   PREFIX ""
   IMPORT_PREFIX "")
 
-target_include_directories(${native_assembly_name} PRIVATE ${root_minuit2_SOURCE_DIR}/Core/Foundation/inc)
-
 TARGET_LINK_LIBRARIES(${native_assembly_name} PRIVATE Minuit2::Minuit2)
