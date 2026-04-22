@@ -43,6 +43,7 @@
             <CmakeArgs Include="-Duse_openmp=$(UseOpenMP)"/>
             <CmakeArgs Include='-Dnative_code_dir="$(NativeCodeDir)"'/>
             <CmakeArgs Include='-Droot_clone_dir="$(RootCloneDir)"'/>
+            <CmakeArgs Include='-Dbinary_output_base_dir="$(CmakeBinaryOutputBaseDir)"'/>
             <CmakeArgs Include='-Dswig_output_dir="$(SwigOutputDir)"'/>
             <CmakeArgs Include="-Dnative_assembly_name=$(NativeAssemblyName)"/>
         </ItemGroup>
@@ -57,7 +58,7 @@
             BeforeTargets="BeforeBuild"
             DependsOnTargets="ConfigureCmake"
             Inputs="@(NativeBuildSources);$(IntermediateOutputPath)NativeBuildProperties"
-            Outputs="$(CmakeInnerBuildDir)$(NativeAssemblyName)$(NativeAssemblyExtension)">
+            Outputs="$(CmakeBinaryOutputDir)$(NativeAssemblyName)$(NativeAssemblyExtension)">
         <Exec Command='cmake --build "$(CmakeBuildDir)" --config Release'
               WorkingDirectory="$(RepoDir)"/>
     </Target>
@@ -74,7 +75,7 @@
             AfterTargets="BuildNativeCode"
             BeforeTargets="AssignTargetPaths">
         <ItemGroup>
-            <NativeBinaries Include="$(CmakeInnerBuildDir)$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
+            <NativeBinaries Include="$(CmakeBinaryOutputDir)$(NativeAssemblyName)$(NativeAssemblyExtension)"/>
 
             <!-- Local build: Copy binaries to output directory -->
             <None Include="@(NativeBinaries)"

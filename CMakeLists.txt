@@ -14,6 +14,7 @@ endif()
 
 cmake_path(ABSOLUTE_PATH native_code_dir NORMALIZE)
 cmake_path(ABSOLUTE_PATH root_clone_dir NORMALIZE)
+cmake_path(ABSOLUTE_PATH binary_output_base_dir NORMALIZE)
 
-add_subdirectory(${native_code_dir})
+add_subdirectory(${native_code_dir} ${binary_output_base_dir})
 add_subdirectory(${root_clone_dir}/math/minuit2)
