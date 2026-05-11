@@ -22,7 +22,7 @@
             <NativeBuildProperties Include="$(UseOpenMP)"/>
             <NativeBuildProperties Include="$(Toolchain)"/>
             <NativeBuildProperties Include="$(SwigExePath)"/>
-            <NativeBuildProperties Include="$(RuntimeIdentifier)"/>
+            <NativeBuildProperties Include="$(RID)"/>
         </ItemGroup>
         <WriteLinesToFile File="$(IntermediateOutputPath)NativeBuildProperties"
                           Lines="@(NativeBuildProperties)"
@@ -87,7 +87,7 @@
 
         <!-- NuGet: Copy binaries to runtimes folder -->
         <Copy SourceFiles="@(NativeBinaries)"
-              DestinationFolder="runtimes/$(RuntimeIdentifier)/native/"
+              DestinationFolder="runtimes/$(RID)/native/"
               SkipUnchangedFiles="true"/>
 
         <!-- NuGet: Copy ROOT license -->

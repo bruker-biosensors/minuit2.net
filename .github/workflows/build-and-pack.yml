@@ -23,8 +23,8 @@ on:
         type: string
 
 jobs:
-  build-windows:
-    name: Build for ${{ matrix.rid }}
+  build-native:
+    name: Build native libraries for ${{ matrix.rid }}
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
@@ -35,12 +35,24 @@ jobs:
             runner: windows-2025
           - rid: win-arm64
             runner: windows-11-arm
+          - rid: osx-arm64
+            runner: macos-15
+          - rid: osx-x64
+            runner: macos-15-intel
     steps:
       - name: Check Out Repository Code
         uses: actions/checkout@v6
         with:
           submodules: recursive
           fetch-depth: 1
+
+      - name: Install SWIG (macOS only)
+        if: runner.os == 'macOS'
+        run: |
+          brew install swig
+          if [ "${{ inputs.use-openmp }}" == "ON" ]; then
+            brew install libomp
+          fi
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v5
@@ -63,22 +75,6 @@ jobs:
             --configuration Release `
             -p:UseOpenMP=${{ inputs.use-openmp }}
 
-      - name: Upload C# Assembly
-        if: matrix.rid == 'win-x64'
-        uses: actions/upload-artifact@v7
-        with:
-          name: csharp-assembly-${{ inputs.package-id }}
-          path: ./minuit2.net/bin/Release/net8.0/
-          if-no-files-found: error
-
-      - name: Upload ROOT License
-        if: matrix.rid == 'win-x64'
-        uses: actions/upload-artifact@v7
-        with:
-          name: root-license-${{ inputs.package-id }}
-          path: ./minuit2.net/root-license/
-          if-no-files-found: error
-
       - name: Upload Runtime Binaries
         uses: actions/upload-artifact@v7
         with:
@@ -86,29 +82,15 @@ jobs:
           path: ./minuit2.net/runtimes/
           if-no-files-found: error
 
-  build-macos:
-    name: Build for ${{ matrix.rid }}
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      matrix:
-        include:
-          - rid: osx-arm64
-            runner: macos-15
-          - rid: osx-x64
-            runner: macos-15-intel
+  build-managed:
+    name: Build managed .NET library
+    runs-on: windows-2025
     steps:
       - name: Check Out Repository Code
         uses: actions/checkout@v6
         with:
           submodules: recursive
           fetch-depth: 1
-
-      - name: Install Dependencies
-        run: |
-          brew install swig
-          if [ "${{ inputs.use-openmp }}" == "ON" ]; then
-            brew install libomp
-          fi
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v5
@@ -117,29 +99,27 @@ jobs:
         shell: pwsh
         run: |
           dotnet build ./minuit2.net/minuit2.net.csproj `
-            --runtime ${{ matrix.rid }} `
             --configuration Release `
             -p:UseOpenMP=${{ inputs.use-openmp }} `
             --no-self-contained
 
-      - name: Test
-        shell: pwsh
-        run: |
-          dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj `
-            --runtime ${{ matrix.rid }} `
-            --configuration Release `
-            -p:UseOpenMP=${{ inputs.use-openmp }}
-
-      - name: Upload Runtime Binaries
+      - name: Upload ROOT License
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.rid }}-runtime-${{ inputs.package-id }}
-          path: ./minuit2.net/runtimes/
+          name: root-license-${{ inputs.package-id }}
+          path: ./minuit2.net/root-license/
+          if-no-files-found: error
+
+      - name: Upload C# Assembly
+        uses: actions/upload-artifact@v7
+        with:
+          name: csharp-assembly-${{ inputs.package-id }}
+          path: ./minuit2.net/bin/Release/net8.0/${{ inputs.package-id }}.dll
           if-no-files-found: error
 
   package:
     name: Create NuGet Package
-    needs: [ build-windows, build-macos ]
+    needs: [ build-native, build-managed ]
     runs-on: ubuntu-latest
     steps:
       - name: Check Out Repository Code
@@ -175,7 +155,7 @@ jobs:
           $requiredRids = @("win-x86", "win-x64", "win-arm64", "osx-x64", "osx-arm64")
           foreach ($rid in $requiredRids) {
             if (-not (Test-Path "./minuit2.net/runtimes/$rid")) {
-              Write-Error "Cannot package: Missing runtime binaries for RID: $rid. Ensure all architectures are built before packing."
+              Write-Error "Cannot package: Missing runtime binaries for RID: $rid"
               exit 1
             }
           }
