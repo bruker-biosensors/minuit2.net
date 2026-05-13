@@ -7,6 +7,7 @@
         <AssemblySuffix Condition="'$(UseOpenMP)' == 'ON'">.openmp</AssemblySuffix>
         <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
 
+        <!-- Custom RID property avoids setting RuntimeIdentifier internally, preventing accidental creation of platform-specific .NET assembly -->
         <RID>$(RuntimeIdentifier)</RID>
         <RID Condition="'$(RID)' == ''">$(NETCoreSdkRuntimeIdentifier)</RID>
 
