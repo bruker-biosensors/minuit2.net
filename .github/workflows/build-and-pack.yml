@@ -24,7 +24,7 @@ on:
 
 jobs:
   build-native:
-    name: Build native libraries for ${{ matrix.rid }}
+    name: Build Native Library for ${{ matrix.rid }}
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
@@ -46,16 +46,16 @@ jobs:
           submodules: recursive
           fetch-depth: 1
 
-      - name: Install SWIG (macOS only)
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v5
+
+      - name: Install Build Requirements (macOS only)
         if: runner.os == 'macOS'
         run: |
           brew install swig
           if [ "${{ inputs.use-openmp }}" == "ON" ]; then
             brew install libomp
           fi
-
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v5
 
       - name: Build
         shell: pwsh
@@ -75,15 +75,15 @@ jobs:
             --configuration Release `
             -p:UseOpenMP=${{ inputs.use-openmp }}
 
-      - name: Upload Runtime Binaries
+      - name: Upload Native Library
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.rid }}-runtime-${{ inputs.package-id }}
+          name: ${{ matrix.rid }}-native-${{ inputs.package-id }}
           path: ./minuit2.net/runtimes/
           if-no-files-found: error
 
   build-managed:
-    name: Build managed .NET library
+    name: Build .NET Assembly
     runs-on: windows-2025
     steps:
       - name: Check Out Repository Code
@@ -114,10 +114,10 @@ jobs:
           path: ./minuit2.net/root-license/
           if-no-files-found: error
 
-      - name: Upload C# Assembly
+      - name: Upload .NET Assembly
         uses: actions/upload-artifact@v7
         with:
-          name: csharp-assembly-${{ inputs.package-id }}
+          name: dotnet-assembly-${{ inputs.package-id }}
           path: ./minuit2.net/bin/Release/net8.0/${{ inputs.package-id }}.dll
           if-no-files-found: error
 
@@ -134,10 +134,10 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v5
 
-      - name: Download C# Assembly
+      - name: Download .NET Assembly
         uses: actions/download-artifact@v8
         with:
-          name: csharp-assembly-${{ inputs.package-id }}
+          name: dotnet-assembly-${{ inputs.package-id }}
           path: ./minuit2.net/bin/Release/net8.0/
 
       - name: Download ROOT License
@@ -146,20 +146,20 @@ jobs:
           name: root-license-${{ inputs.package-id }}
           path: ./minuit2.net/root-license/
 
-      - name: Download Runtime Binaries
+      - name: Download Native Libraries
         uses: actions/download-artifact@v8
         with:
-          pattern: "*-runtime-${{ inputs.package-id }}"
+          pattern: "*-native-${{ inputs.package-id }}"
           path: ./minuit2.net/runtimes/
           merge-multiple: true
 
-      - name: Verify Runtime Binaries
+      - name: Verify Native Libraries
         shell: pwsh
         run: |
           $requiredRids = @("win-x86", "win-x64", "win-arm64", "osx-x64", "osx-arm64")
           foreach ($rid in $requiredRids) {
             if (-not (Test-Path "./minuit2.net/runtimes/$rid")) {
-              Write-Error "Cannot package: Missing runtime binaries for RID: $rid"
+              Write-Error "Cannot package: Missing native library for RID: $rid"
               exit 1
             }
           }
