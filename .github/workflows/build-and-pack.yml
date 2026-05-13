@@ -99,6 +99,10 @@ jobs:
         shell: pwsh
         run: |
           dotnet build ./minuit2.net/minuit2.net.csproj `
+            -p:Version=${{ inputs.sem-ver }} `
+            -p:FileVersion=${{ inputs.assembly-sem-file-ver }} `
+            -p:AssemblyVersion=${{ inputs.assembly-sem-ver }} `
+            -p:AssemblyInformationalVersion=${{ inputs.assembly-informational-version }} `
             --configuration Release `
             -p:UseOpenMP=${{ inputs.use-openmp }} `
             --no-self-contained
