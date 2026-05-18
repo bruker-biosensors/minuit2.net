@@ -61,10 +61,37 @@ jobs:
         shell: pwsh
         run: |
           dotnet build ./minuit2.net/minuit2.net.csproj `
+            -p:FileVersion=${{ inputs.assembly-sem-file-ver }} `
             --runtime ${{ matrix.rid }} `
             --configuration Release `
             -p:UseOpenMP=${{ inputs.use-openmp }} `
             --no-self-contained
+
+      - name: Verify Native Library Version (Windows only)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $v = [version]"${{ inputs.assembly-sem-file-ver }}"
+          $expectedVersion = "{0}.{1}.{2}.{3}" -f $v.Major, $v.Minor, [Math]::Max($v.Build, 0), [Math]::Max($v.Revision, 0)
+
+          $nativeDll = Get-ChildItem -Path "./minuit2.net/runtimes/${{ matrix.rid }}/native/*.dll" | Select-Object -First 1
+          $actualVersion = $nativeDll.VersionInfo.FileVersion
+
+          Write-Host "Verifying version for $($nativeDll.Name)"
+          Write-Host "Expected version: $expectedVersion"
+          Write-Host "Actual version:   $actualVersion"
+
+          if ($actualVersion -ne $expectedVersion) {
+              Write-Error "Native library version mismatch detected!"
+              exit 1
+          }
+
+      - name: Upload Native Library
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.rid }}-native-${{ inputs.package-id }}
+          path: ./minuit2.net/runtimes/
+          if-no-files-found: error
 
       - name: Test
         if: matrix.rid != 'win-x86'
@@ -74,13 +101,6 @@ jobs:
             --runtime ${{ matrix.rid }} `
             --configuration Release `
             -p:UseOpenMP=${{ inputs.use-openmp }}
-
-      - name: Upload Native Library
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ matrix.rid }}-native-${{ inputs.package-id }}
-          path: ./minuit2.net/runtimes/
-          if-no-files-found: error
 
   build-managed:
     name: Build .NET Assembly

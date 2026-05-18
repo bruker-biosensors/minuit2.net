@@ -13,7 +13,32 @@
         <MakeDir Directories="$(CmakeBuildDir);$(SwigOutputDir)"/>
     </Target>
 
-    <Target Name="TrackNativeBuildInputs">
+    <Target Name="GenerateVersionHeader">
+        <PropertyGroup>
+            <NativeFileVersion>$([MSBuild]::ValueOrDefault('$(FileVersion)', '1.0.0.0'))</NativeFileVersion>
+            <Major>$([System.Version]::Parse($(NativeFileVersion)).Major)</Major>
+            <Minor>$([System.Version]::Parse($(NativeFileVersion)).Minor)</Minor>
+            <Patch>$([System.Math]::Max($([System.Version]::Parse($(NativeFileVersion)).Build), 0))</Patch>
+            <Build>$([System.Math]::Max($([System.Version]::Parse($(NativeFileVersion)).Revision), 0))</Build>
+            <VersionHeaderContent>
+#define VERSION_MAJOR $(Major)
+#define VERSION_MINOR $(Minor)
+#define VERSION_PATCH $(Patch)
+#define VERSION_BUILD $(Build)
+#define VERSION_STRING "$(NativeFileVersion)"
+#define ORIGINAL_FILENAME "$(NativeAssemblyName)$(NativeAssemblyExtension)"
+#define PRODUCT_NAME "$(Product)"
+            </VersionHeaderContent>
+        </PropertyGroup>
+
+        <WriteLinesToFile File="$(NativeCodeDir)version.h"
+                          Lines="$(VersionHeaderContent)"
+                          Overwrite="true"
+                          WriteOnlyWhenDifferent="true"/>
+    </Target>
+
+    <Target Name="TrackNativeBuildInputs"
+            DependsOnTargets="GenerateVersionHeader">
         <ItemGroup>
             <NativeBuildSources Include="$(RepoDir)CMakeLists.txt"/>
             <NativeBuildSources Include="$(NativeCodeDir)*.*"/>

@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <Product>Minuit2.NET</Product>
         <Title>.NET wrapper for Minuit2</Title>
         <Description>A .NET wrapper for the Minuit2 library from CERN's ROOT project, enhanced with practical extensions.</Description>
+        <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <Import Project="msbuild/Build.targets"/>
