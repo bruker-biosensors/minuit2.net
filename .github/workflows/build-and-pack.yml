@@ -61,11 +61,11 @@ jobs:
         shell: pwsh
         run: |
           dotnet build ./minuit2.net/minuit2.net.csproj `
-            -p:FileVersion=${{ inputs.assembly-sem-file-ver }} `
-            --runtime ${{ matrix.rid }} `
             --configuration Release `
+            --runtime ${{ matrix.rid }} `
+            --no-self-contained `
             -p:UseOpenMP=${{ inputs.use-openmp }} `
-            --no-self-contained
+            -p:FileVersion=${{ inputs.assembly-sem-file-ver }}
 
       - name: Verify Native Library Version (Windows only)
         if: runner.os == 'Windows'
@@ -98,8 +98,8 @@ jobs:
         shell: pwsh
         run: |
           dotnet test ./test/minuit2.net.UnitTests/minuit2.net.UnitTests.csproj `
-            --runtime ${{ matrix.rid }} `
             --configuration Release `
+            --runtime ${{ matrix.rid }} `
             -p:UseOpenMP=${{ inputs.use-openmp }}
 
   build-managed:
@@ -119,13 +119,13 @@ jobs:
         shell: pwsh
         run: |
           dotnet build ./minuit2.net/minuit2.net.csproj `
+            --configuration Release `
+            --no-self-contained `
+            -p:UseOpenMP=${{ inputs.use-openmp }} `
             -p:Version=${{ inputs.sem-ver }} `
             -p:FileVersion=${{ inputs.assembly-sem-file-ver }} `
             -p:AssemblyVersion=${{ inputs.assembly-sem-ver }} `
-            -p:AssemblyInformationalVersion=${{ inputs.assembly-informational-version }} `
-            --configuration Release `
-            -p:UseOpenMP=${{ inputs.use-openmp }} `
-            --no-self-contained
+            -p:AssemblyInformationalVersion=${{ inputs.assembly-informational-version }}
 
       - name: Upload ROOT License
         uses: actions/upload-artifact@v7
@@ -190,19 +190,18 @@ jobs:
       - name: Create NuGet
         shell: pwsh
         run: |
-          dotnet pack `
+          dotnet pack ./minuit2.net/minuit2.net.csproj `
+            --configuration Release `
+            --no-build `
+            --nologo `
+            --output ./bin `
+            --warnaserror `
+            -p:UseOpenMP=${{ inputs.use-openmp }} `
             -p:Version=${{ inputs.sem-ver }} `
             -p:FileVersion=${{ inputs.assembly-sem-file-ver }} `
             -p:AssemblyVersion=${{ inputs.assembly-sem-ver }} `
             -p:AssemblyInformationalVersion=${{ inputs.assembly-informational-version }} `
-            -p:PackageId=${{ inputs.package-id }} `
-            -p:UseOpenMP=${{ inputs.use-openmp }} `
-            --no-build `
-            --configuration Release `
-            --output ./bin `
-            --warnaserror `
-            --nologo `
-            ./minuit2.net/minuit2.net.csproj
+            -p:PackageId=${{ inputs.package-id }}
 
       - name: Install dotnet-validate
         run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.537
