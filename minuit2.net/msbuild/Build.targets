@@ -7,11 +7,13 @@
         <AssemblySuffix Condition="'$(UseOpenMP)' == 'ON'">.openmp</AssemblySuffix>
         <AssemblyName>minuit2.net$(AssemblySuffix)</AssemblyName>
 
-        <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
+        <!-- Custom RID property avoids setting RuntimeIdentifier internally, preventing accidental creation of platform-specific .NET assembly -->
+        <RID>$(RuntimeIdentifier)</RID>
+        <RID Condition="'$(RID)' == ''">$(NETCoreSdkRuntimeIdentifier)</RID>
 
         <NativeCodeDir>$(RepoDir)minuit2.wrap/</NativeCodeDir>
         <RootCloneDir>$(NativeCodeDir)root/</RootCloneDir>
-        <CmakeBuildDir>$(NativeCodeDir)build/$(RuntimeIdentifier)/</CmakeBuildDir>
+        <CmakeBuildDir>$(NativeCodeDir)build/$(RID)/</CmakeBuildDir>
         <CmakeBinaryOutputBaseDir>$(CmakeBuildDir)native/</CmakeBinaryOutputBaseDir>
     </PropertyGroup>
 

@@ -2,9 +2,9 @@
     <PropertyGroup>
         <NativeAssemblyExtension>.dll</NativeAssemblyExtension>
 
-        <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'win-x64'">x64</CmakeArchitecture>
-        <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'win-x86'">Win32</CmakeArchitecture>
-        <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'win-arm64'">ARM64</CmakeArchitecture>
+        <CmakeArchitecture Condition="'$(RID)' == 'win-x64'">x64</CmakeArchitecture>
+        <CmakeArchitecture Condition="'$(RID)' == 'win-x86'">Win32</CmakeArchitecture>
+        <CmakeArchitecture Condition="'$(RID)' == 'win-arm64'">ARM64</CmakeArchitecture>
 
         <CmakeToolchainFlags>-A $(CmakeArchitecture)</CmakeToolchainFlags>
         <CmakeBinaryOutputDir>$(CmakeBinaryOutputBaseDir)Release/</CmakeBinaryOutputDir>
@@ -13,6 +13,6 @@
     <Target Name="ValidateCmakeToolchainFlags"
             BeforeTargets="ConfigureCmake">
         <Error Condition="'$(CmakeArchitecture)' == ''"
-               Text="The current RID '$(RuntimeIdentifier)' is not supported by the '$(Toolchain)' toolchain."/>
+               Text="The current RID '$(RID)' is not supported by the '$(Toolchain)' toolchain."/>
     </Target>
 </Project>

@@ -2,8 +2,8 @@
     <PropertyGroup>
         <NativeAssemblyExtension>.dylib</NativeAssemblyExtension>
 
-        <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'osx-x64'">x86_64</CmakeArchitecture>
-        <CmakeArchitecture Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">arm64</CmakeArchitecture>
+        <CmakeArchitecture Condition="'$(RID)' == 'osx-x64'">x86_64</CmakeArchitecture>
+        <CmakeArchitecture Condition="'$(RID)' == 'osx-arm64'">arm64</CmakeArchitecture>
 
         <!-- macOS 14 is set as the oldest target version since it is the oldest version supported by .NET8: https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md -->
         <CmakeToolchainFlags>-DCMAKE_OSX_ARCHITECTURES=$(CmakeArchitecture) -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 -DCMAKE_BUILD_TYPE=Release</CmakeToolchainFlags>
@@ -28,7 +28,7 @@
     <Target Name="ValidateCmakeToolchainFlags"
             BeforeTargets="ConfigureCmake">
         <Error Condition="'$(CmakeArchitecture)' == ''"
-               Text="The current RID '$(RuntimeIdentifier)' is not supported by the '$(Toolchain)' toolchain."/>
+               Text="The current RID '$(RID)' is not supported by the '$(Toolchain)' toolchain."/>
         <Error Condition="'$(UseOpenMP)' == 'ON' and '$(OpenMPRoot)' == ''"
                Text="The $(Toolchain) toolchain requires manual installation of the OpenMP runtime (libomp). No valid libomp path was found in standard locations. You can specify the path manually using the 'OpenMPRoot' property."/>
     </Target>
