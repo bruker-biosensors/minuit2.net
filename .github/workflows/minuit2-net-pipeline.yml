@@ -1,5 +1,8 @@
 name: Minuit2.NET CI/CD Pipeline
-run-name: ${{ github.actor }} is creating a new version of Minuit2.NET 🚀
+run-name: >
+  ${{ github.event_name }} ·
+  ${{ github.head_ref || github.ref_name }} ·
+  ${{ github.sha }}
 
 on:
   push:
