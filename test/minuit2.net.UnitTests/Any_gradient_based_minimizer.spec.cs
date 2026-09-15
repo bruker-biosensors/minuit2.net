@@ -19,7 +19,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         [Values(1, 3)] int flawedGradientSize)
     {
         var cost = new ModelEvaluatingCostFunction(1, ["offset", "slope"], (x, p) => p[0] + p[1] * x,
-            modelGradient: (_, _) => Enumerable.Repeat(1.0, flawedGradientSize).ToArray());
+            modelGradient: (_, _) => [.. Enumerable.Repeat(1.0, flawedGradientSize)]);
         var parameterConfigurations = new[] { Variable("offset", 1), Variable("slope", 1) };
 
         Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
@@ -32,7 +32,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         [Values(3, 5)] int flawedHessianSize)
     {
         var cost = new ModelEvaluatingCostFunction(1, ["offset", "slope"], (x, p) => p[0] + p[1] * x,
-            modelHessian: (_, _) => Enumerable.Repeat(1.0, flawedHessianSize).ToArray());
+            modelHessian: (_, _) => [.. Enumerable.Repeat(1.0, flawedHessianSize)]);
         var parameterConfigurations = new[] { Variable("offset", 1), Variable("slope", 1) };
 
         Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
@@ -45,7 +45,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         [Values(1, 3)] int flawedHessianDiagonalSize)
     {
         var cost = new ModelEvaluatingCostFunction(1, ["offset", "slope"], (x, p) => p[0] + p[1] * x,
-            modelHessianDiagonal: (_, _) => Enumerable.Repeat(1.0, flawedHessianDiagonalSize).ToArray());
+            modelHessianDiagonal: (_, _) => [.. Enumerable.Repeat(1.0, flawedHessianDiagonalSize)]);
         var parameterConfigurations = new[] { Variable("offset", 1), Variable("slope", 1) };
 
         Action action = () => _minimizer.Minimize(cost, parameterConfigurations);
@@ -123,7 +123,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var problem = new CubicPolynomialProblem(derivativeConfiguration: WithGradient);
         var parameterConfigurations = problem.ParameterConfigurations;
         var cost = problem.Cost.WithGradientOverride(_ =>
-            Enumerable.Repeat(1.0, parameterConfigurations.Count - 1).Concat([nonFiniteValue]).ToArray());
+            [.. Enumerable.Repeat(1.0, parameterConfigurations.Count - 1), nonFiniteValue]);
 
         var result = _minimizer.Minimize(cost, parameterConfigurations);
 
@@ -184,7 +184,7 @@ public abstract class Any_gradient_based_minimizer(IMinimizer minimizer) : Any_m
         var problem = new CubicPolynomialProblem(derivativeConfiguration: WithGradientAndHessian);
         var parameterConfigurations = problem.ParameterConfigurations;
         var cost = problem.Cost.WithHessianOverride(_ =>
-            Enumerable.Repeat(nonFiniteValue, parameterConfigurations.Count * parameterConfigurations.Count).ToArray());
+            [.. Enumerable.Repeat(nonFiniteValue, parameterConfigurations.Count * parameterConfigurations.Count)]);
 
         var result = _minimizer.Minimize(cost, parameterConfigurations);
 

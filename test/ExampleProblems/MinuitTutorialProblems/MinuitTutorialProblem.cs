@@ -28,5 +28,5 @@ public abstract class MinuitTutorialProblem(
     public IReadOnlyCollection<double> OptimumParameterValues { get; } = optimumValues;
 
     public IReadOnlyCollection<ParameterConfiguration> ParameterConfigurations { get; } =
-        parameters.Zip(initialValues, (name, value) => Variable(name, value)).ToList();
+        [.. parameters.Zip(initialValues, (name, value) => Variable(name, value))];
 }

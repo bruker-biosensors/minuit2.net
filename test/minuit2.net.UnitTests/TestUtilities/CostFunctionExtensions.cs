@@ -13,16 +13,16 @@ internal static class CostFunctionExtensions
     }
 
     private static double ValueFor(this ICostFunction costFunction, IEnumerable<double> parameterValues) =>
-        costFunction.ValueFor(parameterValues.ToArray());
+        costFunction.ValueFor([.. parameterValues]);
 
     public static ICostFunction WithAutoCancellation(
-        this ICostFunction costFunction, 
-        CancellationTokenSource cancellationTokenSource, 
+        this ICostFunction costFunction,
+        CancellationTokenSource cancellationTokenSource,
         int numberOfFunctionCallsBeforeCancellation)
     {
         return new CostFunctionWithAutoCancellation(
-            costFunction, 
-            cancellationTokenSource, 
+            costFunction,
+            cancellationTokenSource,
             numberOfFunctionCallsBeforeCancellation);
     }
 
@@ -33,22 +33,22 @@ internal static class CostFunctionExtensions
         int numberOfFunctionCallsBeforeReturningOverride = 10)
     {
         return new CostFunctionWithOverrides(
-            costFunction, 
-            valueOverride, 
-            null, 
+            costFunction,
+            valueOverride,
+            null,
             null,
             numberOfFunctionCallsBeforeReturningOverride);
     }
-    
+
     public static ICostFunction WithGradientOverride(
         this ICostFunction costFunction,
         Func<IReadOnlyList<double>, IReadOnlyList<double>> gradientOverride,
         int numberOfFunctionCallsBeforeReturningOverride = 10)
     {
         return new CostFunctionWithOverrides(
-            costFunction, 
-            null, 
-            gradientOverride, 
+            costFunction,
+            null,
+            gradientOverride,
             null,
             numberOfFunctionCallsBeforeReturningOverride);
     }
@@ -59,10 +59,10 @@ internal static class CostFunctionExtensions
         int numberOfFunctionCallsBeforeReturningOverride = 1)
     {
         return new CostFunctionWithOverrides(
-            costFunction, 
-            null, 
-            null, 
-            hessianOverride, 
+            costFunction,
+            null,
+            null,
+            hessianOverride,
             numberOfFunctionCallsBeforeReturningOverride);
     }
 }
@@ -83,10 +83,10 @@ internal class CostFunctionWithAutoCancellation(
     public double ValueFor(IReadOnlyList<double> parameterValues)
     {
         Interlocked.Increment(ref _numberOfFunctionCalls);
-        
+
         if (_numberOfFunctionCalls >= numberOfFunctionCallsBeforeCancellation)
             cancellationTokenSource.Cancel();
-        
+
         return wrapped.ValueFor(parameterValues);
     }
 
@@ -96,7 +96,7 @@ internal class CostFunctionWithAutoCancellation(
     public IReadOnlyList<double> HessianFor(IReadOnlyList<double> parameterValues) =>
         throw new NotImplementedException();
 
-    public IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues) => 
+    public IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues) =>
         throw new NotImplementedException();
 
     public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) =>
@@ -119,16 +119,16 @@ internal class CostFunctionWithOverrides(
     public bool HasHessian => wrapped.HasHessian;
     public bool HasHessianDiagonal => false;
     public double ErrorDefinition => wrapped.ErrorDefinition;
-    
+
     public double ValueFor(IReadOnlyList<double> parameterValues)
     {
         Interlocked.Increment(ref _numberOfFunctionCalls);
-        
-        return HasSwitched && valueOverride != null 
-            ? valueOverride(parameterValues) 
+
+        return HasSwitched && valueOverride != null
+            ? valueOverride(parameterValues)
             : wrapped.ValueFor(parameterValues);
     }
-    
+
     public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
     {
         return HasSwitched && gradientOverride != null
@@ -143,7 +143,7 @@ internal class CostFunctionWithOverrides(
             : wrapped.HessianFor(parameterValues);
     }
 
-    public IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues) => 
+    public IReadOnlyList<double> HessianDiagonalFor(IReadOnlyList<double> parameterValues) =>
         throw new NotImplementedException();
 
     public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) =>

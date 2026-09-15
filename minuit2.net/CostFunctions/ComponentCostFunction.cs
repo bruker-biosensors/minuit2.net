@@ -2,14 +2,14 @@ namespace minuit2.net.CostFunctions;
 
 internal class ComponentCostFunction(ICostFunction inner, IList<string> compositeParameters) : ICostFunction
 {
-    private readonly int[] _parameterIndices = inner.Parameters.Select(compositeParameters.IndexOf).ToArray();
+    private readonly int[] _parameterIndices = [.. inner.Parameters.Select(compositeParameters.IndexOf)];
 
     private double[] Belonging(IReadOnlyList<double> parameterValues)
     {
         var belonging = new double[_parameterIndices.Length];
-        for (var i = 0; i < _parameterIndices.Length; i++) 
+        for (var i = 0; i < _parameterIndices.Length; i++)
             belonging[i] = parameterValues[_parameterIndices[i]];
-        
+
         return belonging;
     }
 
@@ -30,7 +30,7 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> composit
         var outerGradient = new double[compositeParameters.Count];
         for (var i = 0; i < inner.Parameters.Count; i++)
             outerGradient[_parameterIndices[i]] = innerGradient[i];
-        
+
         return outerGradient;
     }
 
@@ -45,7 +45,7 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> composit
             var outerIndex = _parameterIndices[j] * compositeParameters.Count + _parameterIndices[k];
             outerHessian[outerIndex] = innerHessian[innerIndex];
         }
-        
+
         return outerHessian;
     }
 
@@ -55,10 +55,10 @@ internal class ComponentCostFunction(ICostFunction inner, IList<string> composit
         var outerHessianDiagonal = new double[compositeParameters.Count];
         for (var i = 0; i < inner.Parameters.Count; i++)
             outerHessianDiagonal[_parameterIndices[i]] = innerHessianDiagonal[i];
-        
+
         return outerHessianDiagonal;
     }
 
-    public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) => 
+    public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) =>
         inner.WithErrorDefinitionRecalculatedBasedOnValid(result);
 }

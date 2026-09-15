@@ -5,25 +5,25 @@ namespace minuit2.net.UnitTests.TestUtilities;
 
 public class AnyNumber<T>(IFixture fixture) where T : INumber<T>, IMinMaxValue<T>
 {
-    private readonly T[] _ascendingNumbers = fixture.CreateMany<T>(3).Order().ToArray();
-    
+    private readonly T[] _ascendingNumbers = [.. fixture.CreateMany<T>(3).Order()];
+
     private T Number => _ascendingNumbers[0];
-    
+
     // The inverse is used to prevent unwanted roundoff, e.g. for integers
     private T InverseUnitIntervalNumber => _ascendingNumbers[1] > _ascendingNumbers[0]
         ? (_ascendingNumbers[2] - _ascendingNumbers[0]) / (_ascendingNumbers[1] - _ascendingNumbers[0])
         : _ascendingNumbers[2] - _ascendingNumbers[0];
-    
+
     public static implicit operator T(AnyNumber<T> number) => number.Number;
-    
+
     // The following MinValue and MaxValue checks ensure that overflow errors are prevented
-    public T GreaterThan(T min) => T.Abs(Number) < T.MaxValue - min 
-        ? min + T.Abs(Number) 
+    public T GreaterThan(T min) => T.Abs(Number) < T.MaxValue - min
+        ? min + T.Abs(Number)
         : Between(min, T.MaxValue);
 
-    public T SmallerThan(T max) => T.Abs(Number) < max - T.MinValue 
-        ? max - T.Abs(Number) 
+    public T SmallerThan(T max) => T.Abs(Number) < max - T.MinValue
+        ? max - T.Abs(Number)
         : Between(T.MinValue, max);
-    
+
     public T Between(T min, T max) => min + (max - min) / InverseUnitIntervalNumber;
 }
