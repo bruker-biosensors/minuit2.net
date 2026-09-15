@@ -56,7 +56,7 @@
     </Target>
 
     <Target Name="ConfigureCmake"
-            DependsOnTargets="CreateBuildDirectories;TrackNativeBuildInputs"
+            DependsOnTargets="TrackNativeBuildInputs"
             Inputs="@(NativeBuildSources);$(IntermediateOutputPath)NativeBuildProperties"
             Outputs="$(CmakeBuildDir)CMakeCache.txt">
         <ItemGroup>
@@ -72,6 +72,8 @@
             <CmakeArgs Include='-Dswig_output_dir="$(SwigOutputDir)"'/>
             <CmakeArgs Include="-Dnative_assembly_name=$(NativeAssemblyName)"/>
         </ItemGroup>
+
+        <CallTarget Targets="CleanBuildDirectories;CreateBuildDirectories"/>
 
         <Exec Command="cmake @(CmakeArgs, ' ')"
               WorkingDirectory="$(RepoDir)"

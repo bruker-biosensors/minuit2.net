@@ -12,8 +12,8 @@ internal class CostFunctionSum : ICompositeCostFunction
         HasHessian = components.All(c => c.HasHessian);
         HasHessianDiagonal = components.All(c => c.HasHessianDiagonal);
         ErrorDefinition = 1;  // Neutral element; Scaling is performed for each component individually since factors may differ.
-        
-        _components = components.Select(c => new ComponentCostFunction(c, parameters)).ToArray();
+
+        _components = [.. components.Select(c => new ComponentCostFunction(c, parameters))];
     }
 
     public IReadOnlyList<string> Parameters { get; }
@@ -22,7 +22,7 @@ internal class CostFunctionSum : ICompositeCostFunction
     public bool HasHessianDiagonal { get; }
     public double ErrorDefinition { get; }
 
-    public double ValueFor(IReadOnlyList<double> parameterValues) => 
+    public double ValueFor(IReadOnlyList<double> parameterValues) =>
         _components.Sum(c => c.ValueFor(parameterValues) / c.ErrorDefinition);
 
     public IReadOnlyList<double> GradientFor(IReadOnlyList<double> parameterValues)
@@ -34,7 +34,7 @@ internal class CostFunctionSum : ICompositeCostFunction
             for (var i = 0; i < Parameters.Count; i++)
                 gradient[i] += componentGradient[i] / component.ErrorDefinition;
         }
-        
+
         return gradient;
     }
 
@@ -47,7 +47,7 @@ internal class CostFunctionSum : ICompositeCostFunction
             for (var i = 0; i < Parameters.Count * Parameters.Count; i++)
                 hessian[i] += componentHessian[i] / component.ErrorDefinition;
         }
-        
+
         return hessian;
     }
 
@@ -60,7 +60,7 @@ internal class CostFunctionSum : ICompositeCostFunction
             for (var i = 0; i < Parameters.Count; i++)
                 hessianDiagonal[i] += componentHessianDiagonal[i] / component.ErrorDefinition;
         }
-        
+
         return hessianDiagonal;
     }
 
@@ -68,5 +68,5 @@ internal class CostFunctionSum : ICompositeCostFunction
         _components.Sum(c => c.ValueFor(parameterValues));
 
     public ICostFunction WithErrorDefinitionRecalculatedBasedOnValid(IMinimizationResult result) =>
-        new CostFunctionSum(_components.Select(c => c.WithErrorDefinitionRecalculatedBasedOnValid(result)).ToArray());
+        new CostFunctionSum([.. _components.Select(c => c.WithErrorDefinitionRecalculatedBasedOnValid(result))]);
 }

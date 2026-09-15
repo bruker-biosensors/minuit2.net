@@ -32,10 +32,10 @@ public class CubicPolynomialProblem(
         (x, _) => [1, x, x * x, x * x * x];
 
     private static readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessian =
-        (_, _) => Enumerable.Repeat(0d, 4 * 4).ToArray();
+        (_, _) => [.. Enumerable.Repeat(0d, 4 * 4)];
 
     private static readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessianDiagonal =
-        (_, _) => Enumerable.Repeat(0d, 4).ToArray();
+        (_, _) => [.. Enumerable.Repeat(0d, 4)];
 
     // The following values are generated using the above model with coefficients c0 = 10, c1 = -2, c2 = 1, c3 = -0.1,
     // adding random normal noise with a standard deviation of 0.1

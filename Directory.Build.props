@@ -6,7 +6,7 @@
         <RepoDir>$(MSBuildThisFileDirectory)</RepoDir>
 
         <!-- Configurable Properties -->
-        <RootRevision Condition="'$(RootRevision)' == ''">tag v6-36-10</RootRevision>
+        <RootRevision Condition="'$(RootRevision)' == ''">tag v6-40-04</RootRevision>
         <UseOpenMP Condition="'$(UseOpenMP)' == ''">OFF</UseOpenMP>
         <Toolchain Condition="'$(Toolchain)' == ''">auto</Toolchain>
         <SwigExePath Condition="'$(SwigExePath)' == ''">auto</SwigExePath>

@@ -119,7 +119,7 @@ public abstract class Any_minimizer(IMinimizer minimizer)
         ICostFunction cost,
         IEnumerable<ParameterConfiguration> mismatchingParameterConfigurations)
     {
-        Action action = () => _ = minimizer.Minimize(cost, mismatchingParameterConfigurations.ToList());
+        Action action = () => _ = minimizer.Minimize(cost, [.. mismatchingParameterConfigurations]);
         action.Should().Throw<ArgumentException>();
     }
 

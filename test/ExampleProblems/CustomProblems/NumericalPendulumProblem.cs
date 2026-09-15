@@ -12,7 +12,7 @@ public class NumericalPendulumProblem : IProblem
 
         var model = NumericalPendulumModelFor(startAngle: 1.5, startAngleVelocity: 0.0);
         var xValues = Values.LinearlySpacedBetween(0, 3, 0.001);
-        var yValues = model(xValues, OptimumParameterValues.ToArray());
+        var yValues = model(xValues, [.. OptimumParameterValues]);
         Cost = CostFunction.LeastSquares(xValues, yValues, ["pendulumLength"], model);
     }
 

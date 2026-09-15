@@ -39,7 +39,7 @@ public class SurfaceBiosensorBindingKineticsProblem(
     // - analyte concentration remains constant during the association measurement
     // - analyte mobility is no restricting factor for the association kinetics (no mass transport limitations)
     // (e.g. cf. https://www.sprpages.nl/data-fitting/kinetic-models/one-to-one)
-    
+
     public static IProblem Global(
         IEnumerable<double> analyteConcentrationsInNanoMolar,
         DerivativeConfiguration modelDerivativeConfiguration = WithoutDerivatives,
@@ -55,7 +55,7 @@ public class SurfaceBiosensorBindingKineticsProblem(
         return Problem.Sum(problems);
     }
 
-    private static readonly Func<double, IReadOnlyList<double>, double> Model = 
+    private static readonly Func<double, IReadOnlyList<double>, double> Model =
         (x, p) =>
         {
             var (amp, ka, c, kd, td) = (p[0], p[1], p[2], p[3], p[4]);
@@ -66,7 +66,7 @@ public class SurfaceBiosensorBindingKineticsProblem(
                 : amp * (1 - Math.Exp(-kaObs * td)) * Math.Exp(-kd * (x - td));
         };
 
-    private static readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient = 
+    private static readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelGradient =
         (x, p) =>
         {
             var (amp, ka, c, kd, td) = (p[0], p[1], p[2], p[3], p[4]);
@@ -91,7 +91,7 @@ public class SurfaceBiosensorBindingKineticsProblem(
             return [g0, g1, g2, g3, g4];
         };
 
-    private static readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessian = 
+    private static readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessian =
         (x, p) =>
         {
             var (amp, ka, c, kd, td) = (p[0], p[1], p[2], p[3], p[4]);
@@ -169,7 +169,7 @@ public class SurfaceBiosensorBindingKineticsProblem(
             ];
         };
 
-    private static readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessianDiagonal = 
+    private static readonly Func<double, IReadOnlyList<double>, IReadOnlyList<double>> ModelHessianDiagonal =
         (x, p) =>
         {
             var (amp, ka, c, kd, td) = (p[0], p[1], p[2], p[3], p[4]);
@@ -195,20 +195,20 @@ public class SurfaceBiosensorBindingKineticsProblem(
 
             return [h00, h11, h22, h33, h44];
         };
-    
+
     private static readonly IReadOnlyList<double> XValues = Values.LinearlySpacedBetween(0, 1000, 1);
-    
+
     private static double[] YValuesFor(double analyteConcentration, int randomSeed)
     {
         var random = new Random(randomSeed);
-        var optimumValues = OptimumValuesFor(analyteConcentration);     
-        return XValues.Select(x => Model(x, optimumValues) + random.NextNormal(0, YError)).ToArray();
+        var optimumValues = OptimumValuesFor(analyteConcentration);
+        return [.. XValues.Select(x => Model(x, optimumValues) + random.NextNormal(0, YError))];
     }
-    
+
     // The standard deviation of the noise overlying the data is chosen small enough such that the optimum parameter
     // values are approximately equal to the values used to generate the data
-    private const double YError = 0.001;  
-    
+    private const double YError = 0.001;
+
     private static IReadOnlyList<double> OptimumValuesFor(double analyteConcentrationInNanoMolar)
     {
         const double ka = 1e-3;  // (s * nM)-1
@@ -219,7 +219,7 @@ public class SurfaceBiosensorBindingKineticsProblem(
 
         return [amp, ka, analyteConcentrationInNanoMolar, kd, td];
     }
-    
+
     private static IReadOnlyList<ParameterConfiguration> ConfigurationsFor(
         ParameterConfiguration? amplitude,
         ParameterConfiguration? associationRate,

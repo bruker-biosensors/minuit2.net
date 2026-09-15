@@ -17,7 +17,7 @@ public abstract class NistProblem(
         x,
         y,
         null,
-        parameters.Zip(initialValues, (name, value) => Variable(name, value)).ToList(),
+        [.. parameters.Zip(initialValues, (name, value) => Variable(name, value))],
         optimumValues,
         model,
         modelGradient,
